@@ -15,7 +15,7 @@ function parse_model_description(model) {
     const data = JSON.parse(model);
     const classes = data['classes'];
     const relations = data['relations'];
-    const check = ['icon', 'label'];
+    const check = ['icon'];
 
     let stylesheet = [];
     for(let key in classes){
@@ -26,8 +26,9 @@ function parse_model_description(model) {
         };
 
         for(let style_key in val['style']){
-            if(check.includes(style_key))
+            if(check.includes(style_key)){
                 continue;
+            }
 
             style['style'][style_key] = val['style'][style_key];
         }
@@ -52,7 +53,7 @@ function parse_model_description(model) {
         stylesheet.push(style);
     }
 
-    write_file('generated_stylesheet.txt', JSON.stringify(stylesheet));
+    write_file('generated_stylesheet.json', JSON.stringify(stylesheet, null, 4));
 }
 
 function read_file(filename, cb) {
@@ -72,7 +73,7 @@ function read_file(filename, cb) {
 
 function write_file(filename, content) {
     if (typeof filename !== "string" || typeof content !== "string"){
-        console.log("Invalid use of function!\nread_file(filename:string, cb:function)");
+        console.log("Invalid use of function!\nwrite_file(filename:string, content:string)");
         return;
     }
 
