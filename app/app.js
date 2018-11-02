@@ -30,7 +30,7 @@ let cy = cytoscape({
         { group: "edges", data: { id: "i1", source: "d1", target: "a3" }, classes: "is-in" },
     ],
     style: stylesheet,
-    layout: {name: 'grid'},
+    layout: {name: 'cose'},
 
     // initial viewport state:
     zoom: 1,
