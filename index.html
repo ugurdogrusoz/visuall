@@ -1,25 +1,86 @@
 <!doctype html>
-
 <html>
 
 <head>
-    <meta charset="utf-8"></meta>
-    <title>Cytoscape Stylesheet Generator</title>
+    <meta charset="utf-8">
+
+    <title>Custom Graph Tool</title>
+
     <script src="app/cytoscape.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <!--Bootstrap CSS-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 
-<style>
-    #cy {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0px;
-        left: 0px;
-    }
-</style>
-
 <body>
-    <div id="cy"></div>
+
+    <!--Navigation bar-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+        <a class="navbar-brand" href="#">Custom Graph Tool</a>
+
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#">File</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Edit</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">View</a>
+            </li>
+        </ul>
+
+    </nav>
+
+
+    <!--Main frame-->
+    <div class="container-fluid">
+
+        <!--Style bar-->
+        <div id="style-bar" class="general-box">
+            Style bar
+        </div>
+
+        <div class="row no-gutters">
+
+            <div class="col-9">
+                <!--Cytoscape.js canvas-->
+                <div id="cy" class="general-box"></div>
+
+                <!--Timeline-->
+                <div id="timeline" class="general-box">
+                    Timeline
+                </div>
+
+            </div>
+
+            <!--Editing column-->
+            <div class="col-3 general-box" id="edit-column">
+
+                <div id="edit-nav">
+
+                    <ul class="nav nav-tabs justify-content-center">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Object</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Map</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Filter</a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script src="app/app.js"></script>
+
 </body>
 </html>
