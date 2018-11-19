@@ -2,30 +2,24 @@ body, html {
     height: 100%;
 }
 
-.general-box {
-    border: 1px solid darkgray;
-    border-radius: 2px;
-}
-
 #style-bar {
-    border: 1px solid darkgray;
     height: 24px;
     margin-bottom: 2px;
 }
 
 #cy {
-    border: 1px solid darkgray;
-    height: 75vh;
+    height: 70vh;
     margin-right: 2px;
     margin-bottom: 1px;
 }
 
 #timeline {
-    border: 1px solid darkgray;
-    height: 10vh;
+    height: 15vh;
     margin-right: 2px;
 }
 
-#edit-column {
-    height: 85vh;
+.tab-column {
+    height: 80vh;
+    margin: 10px 0 0 10px;
+    overflow-y: scroll;
 }

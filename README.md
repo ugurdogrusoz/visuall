@@ -1,7 +1,7 @@
 # JSON to Cytoscape Stylesheet
 
 ## Convert Model Description
-`node style_generator.js {model description filename}`
+`node style-generator.js {model description filename}`
 
 Output file (named _generated_stylesheet.json_) will be generated automatically.
 
