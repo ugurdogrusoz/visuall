@@ -2,7 +2,7 @@ let fs = require('fs');
 
 // Check given inputs for filename
 if(process.argv.length !== 3){
-    console.log("Give model filename as input: \nnode style_generator.js {filename}");
+    console.log("Give model filename as input: \nnode style-generator.js {filename}");
     return;
 }
 
@@ -18,6 +18,7 @@ function parse_model_description(model) {
     const check = ['icon'];
 
     let stylesheet = [];
+    let properties = {};
     for(let key in classes){
         let val = classes[key];
         let style = {
@@ -32,8 +33,9 @@ function parse_model_description(model) {
 
             style['style'][style_key] = val['style'][style_key];
         }
-
         stylesheet.push(style);
+
+        properties[key] = val['properties'];
     }
 
     for(let key in relations){
@@ -53,7 +55,9 @@ function parse_model_description(model) {
         stylesheet.push(style);
     }
 
-    write_file('generated_stylesheet.json', JSON.stringify(stylesheet, null, 4));
+    // Beautify JSON output with 4 space tabs
+    write_file('assets/generated/stylesheet.json', JSON.stringify(stylesheet, null, 4));
+    write_file('assets/generated/properties.json', JSON.stringify(properties, null, 4));
 }
 
 function read_file(filename, cb) {

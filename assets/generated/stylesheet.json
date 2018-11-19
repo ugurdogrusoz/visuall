@@ -1,14 +1,5 @@
 [
     {
-        "selector": "node",
-        "style": {
-            "text-halign": "center",
-            "text-valign": "center",
-            "text-wrap": "ellipsis",
-            "text-max-width": "50px"
-        }
-    },
-    {
         "selector": "node.person",
         "style": {
             "label": "return ele.data('first_name') + ' ' + ele.data('last_name')",
@@ -50,15 +41,6 @@
             "border-color": "black",
             "width": "50px",
             "height": "25px"
-        }
-    },
-    {
-        "selector": "edge",
-        "style": {
-            "text-rotation": "autorotate",
-            "text-margin-y": "-10px",
-            "text-background-opacity": "1",
-            "text-background-color": "white"
         }
     },
     {

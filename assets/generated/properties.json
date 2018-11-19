@@ -1,0 +1,23 @@
+{
+    "person": {
+        "id": "number",
+        "first_name": "string",
+        "last_name": "string",
+        "standing": "boolean"
+    },
+    "sim": {
+        "number": "string",
+        "plan": "number"
+    },
+    "dealer": {
+        "id": "number",
+        "name": "string"
+    },
+    "address": {
+        "street": "string",
+        "apt_number": "number",
+        "zip_code": "string",
+        "city": "string",
+        "country": "string"
+    }
+}
