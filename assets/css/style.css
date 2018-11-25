@@ -2,6 +2,10 @@ body, html {
     height: 100%;
 }
 
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+
 #style-bar {
     height: 24px;
     margin-bottom: 2px;
@@ -31,4 +35,13 @@ body, html {
 
 .strike-through {
     text-decoration: line-through;
+}
+
+.nav-heading {
+    font-size: 16px;
+}
+
+.tab-heading {
+    font-size: 16px;
+    font-weight: bold;
 }

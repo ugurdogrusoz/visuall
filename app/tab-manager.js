@@ -19,9 +19,9 @@ export default class TabManager {
         const edgeProps = this.edgeProperties;
 
         let filterRow = $('<div class="row"></div>');
-        let nodeCol = $('<div class="col-6" id="filter-col-node"><b>Nodes</b><br></div>');
+        let nodeCol = $('<div class="col-6" id="filter-col-node"><p class="text-center">Nodes</p></div>');
         let nodeAttr = $('<div><hr></div>');
-        let edgeCol = $('<div class="col-6" id="filter-col-edge"><b>Edges</b><br></div>');
+        let edgeCol = $('<div class="col-6" id="filter-col-edge"><p class="text-center">Edges</p></div>');
         let edgeAttr = $('<div><hr></div>');
 
         // Generate filter elements for node properties
