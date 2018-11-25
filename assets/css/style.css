@@ -21,5 +21,14 @@ body, html {
 .tab-column {
     height: 80vh;
     margin: 10px 0 0 10px;
-    overflow-y: scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.filter-btn {
+    margin: 2px;
+}
+
+.strike-through {
+    text-decoration: line-through;
 }

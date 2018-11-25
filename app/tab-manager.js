@@ -10,52 +10,50 @@ export default class TabManager {
     }
 
     initProperties(properties){
-        this.nodeProperties = properties;
+        this.nodeProperties = properties.nodes;
+        this.edgeProperties = properties.edges;
     }
 
     initFilterTab(){
-        const props = this.nodeProperties;
-        let propDiv = $('<div class="form-check"><b>Classes</b><br></div>');
+        const nodeProps = this.nodeProperties;
+        const edgeProps = this.edgeProperties;
 
-        // Create filter for class types
-        for(const prop in props){
-            let checkbox = $('<input class="form-check-input" type="checkbox" value="" id="" checked>');
-            checkbox.attr({
+        let filterRow = $('<div class="row"></div>');
+        let nodeCol = $('<div class="col-6" id="filter-col-node"><b>Nodes</b><br></div>');
+        let nodeAttr = $('<div><hr></div>');
+        let edgeCol = $('<div class="col-6" id="filter-col-edge"><b>Edges</b><br></div>');
+        let edgeAttr = $('<div><hr></div>');
+
+        // Generate filter elements for node properties
+        for(const prop in nodeProps){
+            let filterBtn = $('<input type="button" class="btn btn-info filter-btn">');
+            filterBtn.prop({
                 id: prop + 'Check',
                 value: prop
             });
 
-            let label = $('<label class="form-check-label" for="">' + prop + '</label>');
-            label.attr({
-                for: prop + 'Check'
+            nodeCol.append(filterBtn);
+        }
+
+        // Generate filter elements for edge properties
+        for(const prop in edgeProps){
+            let filterBtn = $('<input type="button" class="btn btn-info filter-btn">');
+            filterBtn.prop({
+                id: prop + 'Check',
+                value: prop
             });
 
-            propDiv.append(checkbox, label, '<br>');
+            edgeCol.append(filterBtn);
         }
 
-        // Create filter for attributes
-        propDiv.append('<br><b>Attributes</b><br>');
-        for(const prop in props){
-            for(const value in props[prop]){
-                let div = $('<div class="form-group row"></div>');
+        nodeCol.append(nodeAttr);
+        edgeCol.append(edgeAttr);
+        filterRow.append(nodeCol, edgeCol);
+        $('#filter').append(filterRow);
+    }
 
-                let label = $('<label class="col-4 col-form-label" for="">' + value + '</label>');
-                label.attr({
-                    for: value + 'Form',
-                });
-
-                let input = $('<div class="col-6"><input type="text" class="form-control" id="" placeholder=""></div>');
-                input.attr({
-                    id: value + 'Form',
-                    placeholder: value
-                });
-
-                div.append(label, input);
-                propDiv.append(div);
-            }
-        }
-
-        $('#filter').append(propDiv);
+    bindClassFilterFunctionality(cb){
+        $('.filter-btn').on('click', cb);
     }
 }
 

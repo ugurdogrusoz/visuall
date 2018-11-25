@@ -6,6 +6,7 @@ export default class CyManager {
 
     constructor(){
         this.initCyInstance(stylesheet);
+        this.filteredClasses = [];
     }
 
     get cyInstance(){
@@ -48,12 +49,78 @@ export default class CyManager {
 
                 // initial viewport state:
                 zoom: 1,
-                pan: {x: 0, y: 0},
+                pan: { x: 0, y: 0 },
+
+                // interaction options:
+                minZoom: 1e-50,
+                maxZoom: 1e50,
+                zoomingEnabled: true,
+                userZoomingEnabled: true,
+                panningEnabled: true,
+                userPanningEnabled: true,
+                boxSelectionEnabled: false,
+                selectionType: 'single',
+                touchTapThreshold: 8,
+                desktopTapThreshold: 4,
+                autolock: false,
+                autoungrabify: false,
+                autounselectify: false,
+
+                // rendering options:
+                headless: false,
+                styleEnabled: true,
+                hideEdgesOnViewport: false,
+                hideLabelsOnViewport: false,
+                textureOnViewport: false,
+                motionBlur: false,
+                motionBlurOpacity: 0.2,
+                wheelSensitivity: 0.5,
+                pixelRatio: 'auto'
             });
     }
-}
 
-// Apply Cytoscape styles
+    filterElesByClass(event){
+        const btn = $(event.target);
+
+        const willBeShowed = btn.hasClass('strike-through');
+
+        btn.blur();
+        btn.toggleClass('btn-info btn-outline-secondary strike-through');
+
+        if(willBeShowed)
+            this.showElementsByClass(btn.val());
+        else
+            this.hideElementsByClass(btn.val());
+    }
+
+    hideElementsByClass(className){
+        this.filteredClasses.push(className);
+
+        let eles = this.cy.elements('.' + className);
+        eles.addClass('hidden');
+    }
+
+    showElementsByClass(className){
+        const index = this.filteredClasses.indexOf(className);
+        if(index < 0)
+            return;
+        this.filteredClasses.splice(index, 1);
+
+        let eles = this.cy.elements('.' + className);
+        eles.forEach(ele => {
+            let show = true;
+            for(let filteredClass in this.filteredClasses){
+                if(ele.hasClass(filteredClass)){
+                    show = false;
+                    break;
+                }
+            }
+
+            if(show)
+                ele.removeClass('hidden');
+        });
+    }
+}
 
 // Store node/edge properties
 

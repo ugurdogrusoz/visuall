@@ -1,23 +1,43 @@
 {
-    "person": {
-        "id": "number",
-        "first_name": "string",
-        "last_name": "string",
-        "standing": "boolean"
+    "nodes": {
+        "person": {
+            "id": "number",
+            "first_name": "string",
+            "last_name": "string",
+            "standing": "boolean"
+        },
+        "sim": {
+            "number": "string",
+            "plan": "number"
+        },
+        "dealer": {
+            "id": "number",
+            "name": "string"
+        },
+        "address": {
+            "street": "string",
+            "apt_number": "number",
+            "zip_code": "string",
+            "city": "string",
+            "country": "string"
+        }
     },
-    "sim": {
-        "number": "string",
-        "plan": "number"
-    },
-    "dealer": {
-        "id": "number",
-        "name": "string"
-    },
-    "address": {
-        "street": "string",
-        "apt_number": "number",
-        "zip_code": "string",
-        "city": "string",
-        "country": "string"
+    "edges": {
+        "owns": [
+            "person",
+            "sim"
+        ],
+        "lives-in": [
+            "person",
+            "address"
+        ],
+        "is-sold-by": [
+            "sim",
+            "dealer"
+        ],
+        "is-in": [
+            "dealer",
+            "address"
+        ]
     }
 }

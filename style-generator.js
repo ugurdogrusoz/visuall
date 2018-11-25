@@ -18,7 +18,19 @@ function parse_model_description(model) {
     const check = ['icon'];
 
     let stylesheet = [];
-    let properties = {};
+    let properties = {
+        nodes: {},
+        edges: {}
+    };
+
+    // Apply required fixed styles
+    stylesheet.push({
+        selector: '.hidden',
+        style: {
+            'display': 'none'
+        }
+    });
+
     for(let key in classes){
         let val = classes[key];
         let style = {
@@ -35,7 +47,7 @@ function parse_model_description(model) {
         }
         stylesheet.push(style);
 
-        properties[key] = val['properties'];
+        properties['nodes'][key] = val['properties'];
     }
 
     for(let key in relations){
@@ -53,9 +65,11 @@ function parse_model_description(model) {
         }
 
         stylesheet.push(style);
+
+        properties['edges'][key] = val['valid_ends'];
     }
 
-    // Beautify JSON output with 4 space tabs
+    // Beautify JSON output with 4 space tabs and write to file
     write_file('assets/generated/stylesheet.json', JSON.stringify(stylesheet, null, 4));
     write_file('assets/generated/properties.json', JSON.stringify(properties, null, 4));
 }

@@ -1,5 +1,11 @@
 [
     {
+        "selector": ".hidden",
+        "style": {
+            "display": "none"
+        }
+    },
+    {
         "selector": "node.person",
         "style": {
             "label": "return ele.data('first_name') + ' ' + ele.data('last_name')",
