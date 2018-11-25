@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "Customizable graph visualization tool",
   "dependencies": {
-    "cytoscape": "^3.2.20",
+    "cytoscape": "^3.2.20"
+  },
+  "devDependencies": {
+    "gh-pages": "^2.0.1",
     "parcel-bundler": "^1.10.3"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "parcel index.html",
+    "predeploy": "rmdir /s /q dist && parcel build index.html --public-url /visuall",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
