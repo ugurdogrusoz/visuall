@@ -6,4 +6,7 @@ import TabManager from "./tab-manager";
 let cyManager = new CyManager();
 let tabManager = new TabManager();
 
-tabManager.bindClassFilterFunctionality(cyManager.filterElesByClass.bind(cyManager));
+tabManager.bindFilterByClassFunctionality(cyManager.filterElesByClass.bind(cyManager));
+
+cyManager.bindObjectOnSelectFunctionality(tabManager.showObjectProps.bind(tabManager));
+cyManager.bindObjectOnUnselectFunctionality(tabManager.hideObjectProps.bind(tabManager));

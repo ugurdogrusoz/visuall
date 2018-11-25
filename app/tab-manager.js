@@ -52,9 +52,50 @@ export default class TabManager {
         $('#filter').append(filterRow);
     }
 
-    bindClassFilterFunctionality(cb){
+    bindFilterByClassFunctionality(cb){
         $('.filter-btn').on('click', cb);
     }
+
+    showObjectProps(event){
+        $('#object-tab').click();
+
+        const warning = 'Multiple Instance.';
+
+        let eles = event.target;
+        let className;
+        let props = {};
+        eles.forEach(ele => {
+            const data = ele.data();
+            for(const key in data){
+                if(props[key] && props[key] !== data[key])
+                    props[key] = warning;
+                else
+                    props[key] = data[key];
+            }
+
+            const classes = ele.json().classes;
+            if(!classes)
+                return;
+
+            for(const c of classes.split(' ')){
+                if(className && className !== c)
+                    className = warning;
+                else
+                    className = c;
+            }
+        });
+
+        let propList = '<ul class="list-group list-group-flush">';
+        propList += '<li class="list-group-item text-center"><b>' + className + '</b></li>';
+        for(const key in props){
+            propList += '<li class="list-group-item">' + key + ': ' + props[key] + '</li>';
+        }
+        propList += '</ul>';
+
+        $('#object').html(propList);
+    }
+
+    hideObjectProps(event){}
 }
 
 

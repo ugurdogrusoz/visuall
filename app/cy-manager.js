@@ -120,6 +120,14 @@ export default class CyManager {
                 ele.removeClass('hidden');
         });
     }
+
+    bindObjectOnSelectFunctionality(cb){
+        this.cy.on('select', cb);
+    }
+
+    bindObjectOnUnselectFunctionality(cb){
+        this.cy.on('unselect', cb);
+    }
 }
 
 // Store node/edge properties
