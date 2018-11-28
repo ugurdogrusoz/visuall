@@ -1,5 +1,5 @@
 import properties from "../assets/generated/properties";
-
+import * as utils from "./utils";
 
 export default class TabManager {
 
@@ -69,8 +69,12 @@ export default class TabManager {
             for(const key in data){
                 if(props[key] && props[key] !== data[key])
                     props[key] = warning;
-                else
-                    props[key] = data[key];
+                else{
+                    if(data[key] === 'default' && (key === "begin_date" || key === "end_date"))
+                        props[key] = (key === "begin_date") ? "-∞" : "∞";
+                    else
+                        props[key] = data[key];
+                }
             }
 
             const classes = ele.json().classes;
@@ -85,12 +89,15 @@ export default class TabManager {
             }
         });
 
-        let propList = '<ul class="list-group list-group-flush">';
-        propList += '<li class="list-group-item text-center"><b>' + className + '</b></li>';
+        let propList = '<ul class="list-group list-group-flush">' +
+            '<li class="list-group-item text-center"><b>' + className + '</b></li>';
+
         for(const key in props){
-            propList += '<li class="list-group-item">' + key + ': ' + props[key] + '</li>';
+            propList += '<li class="list-group-item"><div class="row">' +
+                '<div class="col-4 offset-2">' + utils.removeSpecialChars(key) + '</div>' +
+                '<div class="col-6">' + props[key] + '</div></div></li>';
         }
-        propList += '</ul>';
+        propList += '</ul><br>';
 
         $('#object').html(propList);
     }

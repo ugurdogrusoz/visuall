@@ -77,6 +77,21 @@ export default class CyManager {
                 wheelSensitivity: 0.5,
                 pixelRatio: 'auto'
             });
+
+        this.initBeginAndEndDates();
+    }
+
+    initBeginAndEndDates() {
+        // Get elements which don't have begin_date/end_date attribute
+        let eles = this.cy.elements('[^begin_date]');
+        eles.forEach(ele => {
+            ele.data('begin_date', 'default');
+        });
+
+        eles = this.cy.elements('[^end_date]');
+        eles.forEach(ele => {
+            ele.data('end_date', 'default');
+        });
     }
 
     filterElesByClass(event){
