@@ -24,9 +24,21 @@ export default class CyManager {
                     {group: "nodes", data: {id: "p1", first_name: "Ahmet", last_name: "Demir"}, classes: "person"},
                     {group: "nodes", data: {id: "p2", first_name: "Ayşe", last_name: "Yılmaz"}, classes: "person"},
 
-                    {group: "nodes", data: {id: "s1", number: 1111}, classes: "sim"},
-                    {group: "nodes", data: {id: "s2", number: 1223}, classes: "sim"},
-                    {group: "nodes", data: {id: "s3", number: 6666}, classes: "sim"},
+                    {
+                        group: "nodes",
+                        data: {id: "s1", number: 1111, begin_date: new Date(2018, 2, 5), end_date: new Date(2025, 2, 5)},
+                        classes: "sim"
+                    },
+                    {
+                        group: "nodes",
+                        data: {id: "s2", number: 1223, begin_date: new Date(2011, 10, 25), end_date: new Date(2018, 10, 25)},
+                        classes: "sim"
+                    },
+                    {
+                        group: "nodes",
+                        data: {id: "s3", number: 6666, begin_date: new Date(2015, 7, 15), end_date: new Date(2023, 10, 29)},
+                        classes: "sim"
+                    },
 
                     {group: "nodes", data: {id: "d1", name: "Turkcell Bilkent Center"}, classes: "dealer"},
 
@@ -42,7 +54,11 @@ export default class CyManager {
                     {group: "edges", data: {id: "sold1", source: "s1", target: "d1"}, classes: "is-sold-by"},
                     {group: "edges", data: {id: "sold2", source: "s2", target: "d1"}, classes: "is-sold-by"},
                     {group: "edges", data: {id: "sold3", source: "s3", target: "d1"}, classes: "is-sold-by"},
-                    {group: "edges", data: {id: "i1", source: "d1", target: "a3"}, classes: "is-in"},
+                    {
+                        group: "edges",
+                        data: {id: "i1", source: "d1", target: "a3", begin_date: new Date(2001, 5, 4)},
+                        classes: "is-in"
+                    }
                 ],
                 style: stylesheet,
                 layout: {name: 'cose'},
@@ -77,21 +93,6 @@ export default class CyManager {
                 wheelSensitivity: 0.5,
                 pixelRatio: 'auto'
             });
-
-        this.initBeginAndEndDates();
-    }
-
-    initBeginAndEndDates() {
-        // Get elements which don't have begin_date/end_date attribute
-        let eles = this.cy.elements('[^begin_date]');
-        eles.forEach(ele => {
-            ele.data('begin_date', 'default');
-        });
-
-        eles = this.cy.elements('[^end_date]');
-        eles.forEach(ele => {
-            ele.data('end_date', 'default');
-        });
     }
 
     filterElesByClass(event){

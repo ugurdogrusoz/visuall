@@ -1,5 +1,4 @@
 import properties from "../assets/generated/properties";
-import * as utils from "./utils";
 
 
 export default class TabManager {
@@ -60,52 +59,89 @@ export default class TabManager {
     showObjectProps(event){
         $('#object-tab').click();
 
-        const warning = 'Multiple Instance.';
+        let props = getCommonObjectProps(event.target);
 
-        let eles = event.target;
-        let className;
-        let props = {};
-        eles.forEach(ele => {
-            const data = ele.data();
-            for(const key in data){
-                if(props[key] && props[key] !== data[key])
-                    props[key] = warning;
-                else{
-                    if(data[key] === 'default' && (key === "begin_date" || key === "end_date"))
-                        props[key] = (key === "begin_date") ? "-∞" : "∞";
-                    else
-                        props[key] = data[key];
-                }
-            }
+        let htmlToRender = renderCommonObjectProps(props);
 
-            const classes = ele.json().classes;
-            if(!classes)
-                return;
-
-            for(const c of classes.split(' ')){
-                if(className && className !== c)
-                    className = warning;
-                else
-                    className = c;
-            }
-        });
-
-        let propList = '<ul class="list-group list-group-flush">' +
-            '<li class="list-group-item text-center"><b>' + className + '</b></li>';
-
-        for(const key in props){
-            propList += '<li class="list-group-item"><div class="row">' +
-                '<div class="col-4 offset-2">' + utils.removeSpecialChars(key) + '</div>' +
-                '<div class="col-6">' + props[key] + '</div></div></li>';
-        }
-        propList += '</ul><br>';
-
-        $('#object').html(propList);
+        $('#object').html(htmlToRender);
     }
 
     hideObjectProps(event){}
 }
 
+function getCommonObjectProps(eleList){
+    let props = {};
+    let initProps = {};
+
+    // Assume ele is instance of Cytoscape.js element
+    eleList.forEach(ele => {
+        const data = ele.data();
+
+        // Get common object properties
+        for(const key in data){
+            if(!initProps[key]){
+                props[key] = data[key];
+                initProps[key] = true;
+            }
+            else if(props[key] && props[key] !== data[key]){
+                delete props.key;
+            }
+        }
+
+        let classes = ele.json().classes;
+        if(!classes){
+            initProps.classNames = true;
+            return;
+        }
+
+        classes = classes.split(' ');
+
+        // Initialize common classNames array
+        if(!initProps.classNames){
+            props.classNames = classes;
+            initProps.classNames = true;
+            return;
+        }
+
+        // Get common object classes
+        for(let c = 0; c < classes.length; c++){
+            if(!props.classNames.includes(classes[c]))
+                classes.splice(c, 1);
+        }
+    });
+
+    return props;
+}
+
+function renderCommonObjectProps(props){
+    let classNames = "";
+    if(props.classNames && props.classNames.length > 0)
+        classNames = props.classNames.join(' & ');
+
+    let propList = '<ul class="list-group list-group-flush">' +
+        '<li class="list-group-item text-center"><b>' + classNames + '</b></li>';
+
+    for(const key in props){
+        if(key === 'classNames')
+            continue;
+
+        // Replace - and _ with space
+        let renderedKey = key.replace(/[_\-]/g, " ");
+        let renderedValue = props[key];
+
+        if(renderedValue instanceof Date){
+            const options = { weekday: undefined, year: 'numeric', month: 'long', day: 'numeric' };
+            renderedValue = renderedValue.toLocaleDateString('en-EN', options);
+        }
+
+        propList += '<li class="list-group-item"><div class="row">' +
+            '<div class="col-4 offset-2">' + renderedKey + '</div>' +
+            '<div class="col-6">' + renderedValue + '</div></div></li>';
+    }
+    propList += '</ul><br>';
+
+    return propList;
+}
 
 // Handle Tab functionality
 // Node & Edge classes
