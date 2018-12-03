@@ -8,14 +8,15 @@ if(process.argv.length !== 3){
 
 const filename = process.argv[2];
 
-read_file(filename, parse_model_description);
+const model = read_file(filename);
+parse_model_description(model);
 
 
 function parse_model_description(model) {
     const data = JSON.parse(model);
+
     const classes = data['classes'];
     const relations = data['relations'];
-    const check = ['icon'];
 
     let stylesheet = [];
     let properties = {
@@ -23,16 +24,53 @@ function parse_model_description(model) {
         edges: {}
     };
 
+    apply_general_styles(data);
+
     // Apply required fixed styles
+    generate_fixed_styles(stylesheet);
+
+    // Generate stylesheet.json & properties.json for nodes and edges
+    generate_node_styles(classes, stylesheet, properties);
+    generate_edge_styles(relations, stylesheet, properties);
+
+    // Beautify JSON output with 4 space tabs and write to file
+    write_file('assets/generated/stylesheet.json', JSON.stringify(stylesheet, null, 4));
+    write_file('assets/generated/properties.json', JSON.stringify(properties, null, 4));
+}
+
+function apply_general_styles(data){
+    const indexFileName = 'index.html';
+
+    const name = data['name'];
+    const icon = data['icon'];
+
+    let indexFile = read_file(indexFileName);
+
+    // Insert name between <title>___</title>
+    indexFile = indexFile.replace(/(?<=<title>)(.*?)(?=<\/title>)/, name);
+    // Insert name between <b id="tool-name">___</b>
+    indexFile = indexFile.replace(/(?<=<b id="tool-name">)(.*?)(?=<\/b>)/, name);
+
+    // Insert icon <img id="tool-logo" src="___">
+    indexFile = indexFile.replace(/(?<=id="tool-logo" src=")(.*?)(?=")/, icon);
+
+    write_file(indexFileName, indexFile);
+}
+
+function generate_fixed_styles(stylesheet){
     stylesheet.push({
         selector: '.hidden',
         style: {
             'display': 'none'
         }
     });
+}
 
-    for(let key in classes){
-        let val = classes[key];
+function generate_node_styles(nodes, stylesheet, properties){
+    const check = ['icon'];
+
+    for(let key in nodes){
+        let val = nodes[key];
         let style = {
             selector: 'node.' + key,
             style: {}
@@ -49,9 +87,13 @@ function parse_model_description(model) {
 
         properties['nodes'][key] = val['properties'];
     }
+}
 
-    for(let key in relations){
-        let val = relations[key];
+function generate_edge_styles(edges, stylesheet, properties){
+    const check = ['icon'];
+
+    for(let key in edges){
+        let val = edges[key];
         let style = {
             selector: 'edge.' + key,
             style: {}
@@ -68,25 +110,15 @@ function parse_model_description(model) {
 
         properties['edges'][key] = val['valid_ends'];
     }
-
-    // Beautify JSON output with 4 space tabs and write to file
-    write_file('assets/generated/stylesheet.json', JSON.stringify(stylesheet, null, 4));
-    write_file('assets/generated/properties.json', JSON.stringify(properties, null, 4));
 }
 
-function read_file(filename, cb) {
-    if (typeof filename !== "string" || typeof cb !== "function"){
-        console.log("Invalid use of function!\nread_file(filename:string, cb:function)");
+function read_file(filename) {
+    if (typeof filename !== "string"){
+        console.log("Invalid use of function!\nread_file(filename:string)");
         return;
     }
 
-    fs.readFile(filename, 'utf8', function (err, data) {
-        if(err)
-            throw err;
-
-        console.log(filename + " read successfully!");
-        return cb(data);
-    });
+    return fs.readFileSync(filename, 'utf8');
 }
 
 function write_file(filename, content) {

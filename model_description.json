@@ -1,5 +1,6 @@
 {
    "name":"Turkcell Fraud Detection",
+   "icon": "assets/img/logo.png",
    "classes":{
       "person":{
          "properties":{
