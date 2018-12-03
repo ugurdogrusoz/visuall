@@ -1,6 +1,7 @@
 import properties from "../assets/generated/properties";
 import * as utils from "./utils";
 
+
 export default class TabManager {
 
     constructor(){

@@ -2,11 +2,22 @@ import CyManager from "./cy-manager";
 import TabManager from "./tab-manager";
 
 
-// Create managers
-let cyManager = new CyManager();
-let tabManager = new TabManager();
+export default class AppManager{
 
-tabManager.bindFilterByClassFunctionality(cyManager.filterElesByClass.bind(cyManager));
+    constructor(){
+        this.cyManager = new CyManager();
+        this.tabManager = new TabManager();
 
-cyManager.bindObjectOnSelectFunctionality(tabManager.showObjectProps.bind(tabManager));
-cyManager.bindObjectOnUnselectFunctionality(tabManager.hideObjectProps.bind(tabManager));
+        this.bindFunctionsToManagers();
+    }
+
+    bindFunctionsToManagers(){
+        let tabManager = this.tabManager;
+        let cyManager = this.cyManager;
+
+        tabManager.bindFilterByClassFunctionality(cyManager.filterElesByClass.bind(cyManager));
+
+        cyManager.bindObjectOnSelectFunctionality(tabManager.showObjectProps.bind(tabManager));
+        cyManager.bindObjectOnUnselectFunctionality(tabManager.hideObjectProps.bind(tabManager));
+    }
+}
