@@ -1,6 +1,17 @@
 {
    "name":"Turkcell Fraud Detection",
    "icon": "assets/img/logo.png",
+   "font": {
+      "base": {
+         "font-family": "'Open Sans', sans-serif",
+         "font-size": "14px"
+      },
+      "heading": {
+         "font-weight": "bold",
+         "font-size": "16px"
+      },
+      "text": {}
+   },
    "classes":{
       "person":{
          "properties":{

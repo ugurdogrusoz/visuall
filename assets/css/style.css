@@ -4,6 +4,11 @@ body, html {
 
 * {
     font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+}
+
+#tool-name {
+    font-size: 20px;
 }
 
 #style-bar {
@@ -37,11 +42,11 @@ body, html {
     text-decoration: line-through;
 }
 
-.nav-heading {
+.heading {
+    font-weight: bold;
     font-size: 16px;
 }
 
-.tab-heading {
-    font-size: 16px;
-    font-weight: bold;
+.text {
+
 }

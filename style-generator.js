@@ -40,11 +40,14 @@ function parse_model_description(model) {
 
 function apply_general_styles(data){
     const indexFileName = 'index.html';
+    const cssFileName = 'assets/css/style.css';
 
     const name = data['name'];
     const icon = data['icon'];
+    const font = data['font'];
 
     let indexFile = read_file(indexFileName);
+    let cssFile = read_file(cssFileName);
 
     // Insert name between <title>___</title>
     indexFile = indexFile.replace(/(?<=<title>)(.*?)(?=<\/title>)/, name);
@@ -54,7 +57,29 @@ function apply_general_styles(data){
     // Insert icon <img id="tool-logo" src="___">
     indexFile = indexFile.replace(/(?<=id="tool-logo" src=")(.*?)(?=")/, icon);
 
+    for(let key in font){
+        let fontCss = "    ";
+        for(const innerKey in font[key]){
+            fontCss += innerKey + ": " + font[key][innerKey] + ";\n    ";
+        }
+        fontCss = fontCss.trimRight();
+
+        if(key === 'base')
+            key = "*";
+        else
+            key = "." + key;
+
+        let pattern = escape_special_characters(key);
+
+        // Insert css content into .<class name> {___}
+        // (\r\n|\r|\n) to match new line on different OS
+        pattern = '(?<=' + pattern + ' {(\\r\\n|\\r|\\n))(.*?)(?=(\\r\\n|\\r|\\n)})';
+        let re = new RegExp(pattern);
+        cssFile = cssFile.replace(re, fontCss);
+    }
+
     write_file(indexFileName, indexFile);
+    write_file(cssFileName, cssFile);
 }
 
 function generate_fixed_styles(stylesheet){
@@ -133,4 +158,8 @@ function write_file(filename, content) {
 
         console.log(filename + " written successfully!");
     });
+}
+
+function escape_special_characters(string){
+    return string.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
 }
