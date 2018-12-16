@@ -1,23 +1,44 @@
 import CyManager from "./cy-manager";
 import TabManager from "./tab-manager";
+import ViewManager from "./view-manager";
 
 
 export default class AppManager{
 
     constructor(){
-        this.cyManager = new CyManager();
-        this.tabManager = new TabManager();
-
-        this.bindFunctionsToManagers();
+        this.cyManager = new CyManager(this);
+        this.viewManager = new ViewManager(this);
+        this.tabManager = new TabManager(this);
     }
 
-    bindFunctionsToManagers(){
-        let tabManager = this.tabManager;
-        let cyManager = this.cyManager;
+    // CyManager methods
+    createFilterRule(prop, value){
+        this.cyManager.createFilterRule(prop, value);
+    }
 
-        tabManager.bindFilterByClassFunctionality(cyManager.filterElesByClass.bind(cyManager));
+    deleteFilterRule(ruleID){
+        $("#" + ruleID).remove();
+        this.cyManager.deleteFilterRule(ruleID);
+    }
 
-        cyManager.bindObjectOnSelectFunctionality(tabManager.showObjectProps.bind(tabManager));
-        cyManager.bindObjectOnUnselectFunctionality(tabManager.hideObjectProps.bind(tabManager));
+    // TabManager methods
+    showObjectProps(event){
+        this.tabManager.showObjectProps(event);
+    }
+
+    hideObjectProps(event){
+        this.tabManager.hideObjectProps(event);
+    }
+
+    // ViewManager methods
+    initFilterTabView(nodeProps, edgeProps){
+        this.viewManager.initFilterTabView(nodeProps, edgeProps);
+
+        const cyManager = this.cyManager;
+        $('.filter-btn').on('click', cyManager.filterElesByClass.bind(cyManager));
+    }
+
+    renderObjectProps(objectProps){
+        this.viewManager.renderObjectProps(objectProps);
     }
 }

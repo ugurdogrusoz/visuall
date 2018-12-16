@@ -35,7 +35,8 @@ body, html {
 }
 
 .filter-btn {
-    margin: 2px;
+    margin-right: 1%;
+    margin-bottom: 1%;
 }
 
 .strike-through {
@@ -49,4 +50,8 @@ body, html {
 
 .text {
 
+}
+
+.filter-form {
+    margin-bottom: 3%;
 }

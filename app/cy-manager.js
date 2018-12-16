@@ -4,7 +4,8 @@ import stylesheet from "../assets/generated/stylesheet.json";
 
 export default class CyManager {
 
-    constructor(){
+    constructor(appManager){
+        this.appManager = appManager;
         this.initCyInstance(stylesheet);
         this.filteredClasses = [];
     }
@@ -93,6 +94,13 @@ export default class CyManager {
                 wheelSensitivity: 0.5,
                 pixelRatio: 'auto'
             });
+
+        this.initCyEvents();
+    }
+
+    initCyEvents(){
+        this.cy.on('select', this.appManager.showObjectProps);
+        this.cy.on('unselect', this.appManager.hideObjectProps);
     }
 
     filterElesByClass(event){
@@ -137,17 +145,11 @@ export default class CyManager {
         });
     }
 
-    bindObjectOnSelectFunctionality(cb){
-        this.cy.on('select', cb);
+    createFilterRule(prop, value){
+
     }
 
-    bindObjectOnUnselectFunctionality(cb){
-        this.cy.on('unselect', cb);
+    deleteFilterRule(ruleID) {
+
     }
 }
-
-// Store node/edge properties
-
-// Store node/edge styles
-
-// Handle Cytoscape functions

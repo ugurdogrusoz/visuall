@@ -1,11 +1,12 @@
 import properties from "../assets/generated/properties";
-import {initFilterTabView, renderObjectProps} from "./view-utilities";
+
 
 export default class TabManager {
 
-    constructor(){
-        this.initProperties(properties);
+    constructor(appManager){
+        this.appManager = appManager;
 
+        this.initProperties(properties);
         this.initFilterTab();
     }
 
@@ -18,11 +19,7 @@ export default class TabManager {
         const nodeProps = this.nodeProperties;
         const edgeProps = this.edgeProperties;
 
-        initFilterTabView(nodeProps, edgeProps);
-    }
-
-    bindFilterByClassFunctionality(cb){
-        $('.filter-btn').on('click', cb);
+        this.appManager.initFilterTabView(nodeProps, edgeProps);
     }
 
     showObjectProps(event){
@@ -30,7 +27,7 @@ export default class TabManager {
 
         let props = getCommonObjectProps(event.target);
 
-        renderObjectProps(props);
+        this.appManager.renderObjectProps(props);
     }
 
     hideObjectProps(event){}
@@ -79,9 +76,3 @@ function getCommonObjectProps(eleList){
 
     return props;
 }
-
-// Handle Tab functionality
-// Node & Edge classes
-
-// Node properties for each class
-// Edge properties for each class
