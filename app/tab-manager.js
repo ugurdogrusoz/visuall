@@ -5,7 +5,9 @@ export default class TabManager {
 
     constructor(appManager){
         this.appManager = appManager;
+    }
 
+    init(){
         this.initProperties(properties);
         this.initFilterTab();
     }

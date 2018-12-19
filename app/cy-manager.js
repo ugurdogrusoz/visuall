@@ -6,12 +6,12 @@ export default class CyManager {
 
     constructor(appManager){
         this.appManager = appManager;
-        this.initCyInstance(stylesheet);
-        this.filteredClasses = [];
     }
 
-    get cyInstance(){
-        return this.cy;
+    init(){
+        this.filteredClasses = [];
+        this.initCyInstance(stylesheet);
+        this.initCyEvents();
     }
 
     initCyInstance(stylesheet){
@@ -94,13 +94,11 @@ export default class CyManager {
                 wheelSensitivity: 0.5,
                 pixelRatio: 'auto'
             });
-
-        this.initCyEvents();
     }
 
     initCyEvents(){
-        this.cy.on('select', this.appManager.showObjectProps);
-        this.cy.on('unselect', this.appManager.hideObjectProps);
+        this.cy.on('select', event => this.appManager.showObjectProps(event));
+        this.cy.on('unselect', event => this.appManager.hideObjectProps(event));
     }
 
     filterElesByClass(event){

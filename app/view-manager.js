@@ -6,6 +6,8 @@ export default class ViewManager{
         this.appManager = appManager;
     }
 
+    init(){}
+
     initFilterTabView(nodeProps, edgeProps) {
         let filterRow = $('<div class="row"></div>');
         let nodeCol = $('<div class="col-6" id="filter-col-node"><p class="text-center">Nodes</p></div>');

@@ -7,8 +7,12 @@ export default class AppManager{
 
     constructor(){
         this.cyManager = new CyManager(this);
-        this.viewManager = new ViewManager(this);
         this.tabManager = new TabManager(this);
+        this.viewManager = new ViewManager(this);
+
+        this.cyManager.init();
+        this.tabManager.init();
+        this.viewManager.init();
     }
 
     // CyManager methods
@@ -34,8 +38,7 @@ export default class AppManager{
     initFilterTabView(nodeProps, edgeProps){
         this.viewManager.initFilterTabView(nodeProps, edgeProps);
 
-        const cyManager = this.cyManager;
-        $('.filter-btn').on('click', cyManager.filterElesByClass.bind(cyManager));
+        $('.filter-btn').on('click', event => this.cyManager.filterElesByClass(event));
     }
 
     renderObjectProps(objectProps){
