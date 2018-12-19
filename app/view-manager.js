@@ -9,17 +9,18 @@ export default class ViewManager{
     init(){}
 
     initFilterTabView(nodeProps, edgeProps) {
-        let filterRow = $('<div class="row"></div>');
-        let nodeCol = $('<div class="col-6" id="filter-col-node"><p class="text-center">Nodes</p></div>');
-        let edgeCol = $('<div class="col-6" id="filter-col-edge"><p class="text-center">Edges</p></div>');
+        let nodeClassDiv = $('#filter-node-class');
+        let edgeClassDiv = $('#filter-edge-class');
+        let nodeAttrDiv = $('#filter-node-attr');
 
         let nodeAttrList = [];
         let edgeAttrList = [];
 
         // Generate filter elements for node properties
         for(const prop in nodeProps){
-            const filterBtn = generateClassFilterBtn(prop);
-            nodeCol.append(filterBtn);
+            const filterBtn = createFilterBtn(prop);
+            filterBtn.on('click', event => this.appManager.filterElesByClass(event));
+            nodeClassDiv.append(filterBtn);
 
             for(const attr in nodeProps[prop]){
                 if(!nodeAttrList.includes(attr))
@@ -29,17 +30,36 @@ export default class ViewManager{
 
         // Generate filter elements for edge properties
         for(const prop in edgeProps){
-            const filterBtn = generateClassFilterBtn(prop);
-            edgeCol.append(filterBtn);
+            const filterBtn = createFilterBtn(prop);
+            filterBtn.on('click', event => this.appManager.filterElesByClass(event));
+            edgeClassDiv.append(filterBtn);
 
             edgeAttrList.push(prop);
         }
 
-        const nodeAttr = this.generateNodeAttrFilter(nodeAttrList);
+        const attrDropdown = createAttrDropdown(nodeAttrList);
+        const attrInput = createAttrInput();
+        const addRuleBtn = createAddRuleBtn();
+        addRuleBtn.on('click', () => this.addNewRule());
 
-        nodeCol.append(nodeAttr);
-        filterRow.append(nodeCol, edgeCol);
-        $('#filter').append(filterRow);
+        nodeAttrDiv.append(attrDropdown, attrInput, addRuleBtn);
+    }
+
+    addNewRule(){
+        const prop = $('#node-attr-dropdown option:selected').val();
+        const val = $('#node-attr-input').val();
+
+        if(!prop || !val)
+            return;
+
+        const ruleId = this.appManager.createFilterRule(prop, val);
+
+        const listItem = createRuleItem(ruleId, prop, val);
+        const deleteBtn = createDeleteRuleBtn();
+        deleteBtn.click(() => this.appManager.deleteFilterRule(ruleId));
+
+        listItem.append(deleteBtn);
+        $('#filter-node-rules').append(listItem);
     }
 
     renderObjectProps(props) {
@@ -47,8 +67,10 @@ export default class ViewManager{
         if(props.classNames && props.classNames.length > 0)
             classNames = props.classNames.join(' & ');
 
-        let propList = '<ul class="list-group list-group-flush">' +
-            '<li class="list-group-item text-center"><b>' + classNames + '</b></li>';
+        $('#object-class-name').text(classNames);
+
+        let propList = $('#object-prop-list');
+        propList.empty();
 
         for(const key in props){
             if(key === 'classNames')
@@ -63,61 +85,61 @@ export default class ViewManager{
                 renderedValue = renderedValue.toLocaleDateString('en-EN', options);
             }
 
-            propList += '<li class="list-group-item"><div class="row">' +
-                '<div class="col-4 offset-2">' + renderedKey + '</div>' +
-                '<div class="col-6">' + renderedValue + '</div></div></li>';
+            const propItem = createObjectPropItem(renderedKey, renderedValue);
+            propList.append(propItem);
         }
-        propList += '</ul><br>';
-
-        $('#object').html(propList);
-    }
-
-    generateNodeAttrFilter(props){
-        let nodeAttr = $('<div id="nodeAttributes" class="text-center"><hr><p class="text-center">Filter by Node Attribute</p></div>');
-
-        const dropdown = generateAttrFilterDropdown(props);
-        const input = $('<input type="text" id="node-attr-input" class="form-control filter-form" placeholder="Filter...">');
-        const btn = $('<button type="button" class="btn btn-outline-info">Add Rule</button>');
-        btn.click(() => this.generateNewRule());
-
-        const ruleList = $('<br><br><ul id="node-filter-rules" class="list-group list-group-flush"></ul>');
-
-        nodeAttr.append(dropdown, input, btn, ruleList);
-        return nodeAttr;
-    }
-
-    generateNewRule(){
-        const prop = $('#node-attr-dropdown option:selected').val();
-        const val = $('#node-attr-input').val();
-
-        if(!prop || !val)
-            return;
-
-        const ruleID = this.appManager.createFilterRule(prop, val);
-
-        const res = $('<li id="' + ruleID + '" class="list-group-item">' + prop + ': ' + val + '</li>');
-        const deleteBtn = $('<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>');
-        deleteBtn.click(() => this.appManager.deleteFilterRule(ruleID));
-
-        res.append(deleteBtn);
-        $('#node-filter-rules').append(res);
     }
 }
 
-function generateClassFilterBtn(className) {
-    let filterBtn = $('<input type="button" class="btn btn-info filter-btn">');
-    filterBtn.prop({
-        id: className + 'Check',
-        value: className
-    });
-    return filterBtn;
+
+// Create specific HTML elements
+function createFilterBtn(value){
+    return createBtn("btn-info filter-btn", value);
 }
 
-function generateAttrFilterDropdown(props){
-    let dropdown = $('<select id="node-attr-dropdown" class="custom-select filter-form"></select>');
-    props.forEach(prop => {
-        let option = $('<option value="' + prop + '">' + prop + '</option>');
-        dropdown.append(option);
+function createAddRuleBtn() {
+    return createBtn("btn-outline-info", "Add Rule");
+}
+
+function createAttrDropdown(attributes) {
+    return createDropdown("node-attr-dropdown", "filter-form", attributes);
+}
+
+function createAttrInput() {
+    return createTextInput("node-attr-input", "filter-form", "Filter...");
+}
+
+function createRuleItem(id, prop, val){
+    return createListItem(id, "", prop + ": " + val);
+}
+
+function createDeleteRuleBtn(){
+    return $('<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>');
+}
+
+function createObjectPropItem(key, value) {
+    let row = `<div class="row"><div class="col-4 offset-2">${key}</div><div class="col-6">${value}</div></div>`;
+    return createListItem('""', '""', row);
+}
+
+
+// Create general HTML elements
+function createBtn(className, value) {
+    return $(`<input type="button" class="btn ${className}" value=${value}>`);
+}
+
+function createDropdown(id, className, values){
+    let dropdown = $(`<select id=${id} class="custom-select ${className}"></select>`);
+    values.forEach(value => {
+        dropdown.append($(`<option value=${value}>${value}</option>`));
     });
     return dropdown;
+}
+
+function createTextInput(id, className, placeholder) {
+    return $(`<input type="text" id=${id} class="form-control ${className}" placeholder=${placeholder}>`);
+}
+
+function createListItem(id, className, value) {
+    return $(`<li id=${id} class="list-group-item ${className}">${value}</li>`);
 }

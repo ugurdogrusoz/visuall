@@ -99,10 +99,33 @@
                     </li>
                 </ul>
 
-                <!--Content will be added dynamically-->
-                <div class="tab-content" id="edit-tab-content">
-                    <div class="tab-pane fade tab-column" id="object" role="tabpanel" aria-labelledby="object-tab"></div>
-                    <div class="tab-pane fade show active tab-column" id="filter" role="tabpanel" aria-labelledby="filter-tab"></div>
+                <!--Content will be dynamically loaded-->
+                <div class="tab-content" id="edit-tab-content"><br>
+                    <div class="tab-pane fade tab-column" id="object" role="tabpanel" aria-labelledby="object-tab">
+                        <p id="object-class-name" class="text-center heading"></p>
+                        <ul id="object-prop-list" class="list-group list-group-flush"></ul>
+                    </div>
+
+                    <div class="tab-pane fade show active tab-column" id="filter" role="tabpanel" aria-labelledby="filter-tab">
+                        <div class="row">
+                            <div class="col-6 text-center" id="filter-col-node">
+                                <p>Nodes</p>
+                                <div id="filter-node-class"></div>
+                                <hr>
+                                <div id="filter-node-attr">
+                                    <p class="text-center">Filter by Node Attributes</p>
+                                </div>
+                                <br>
+                                <ul id="filter-node-rules" class="list-group list-group-flush"></ul>
+                            </div>
+
+                            <div class="col-6 text-center" id="filter-col-edge">
+                                <p>Edges</p>
+                                <div id="filter-edge-class"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="tab-pane fade tab-column" id="settings" role="tabpanel" aria-labelledby="settings-tab"></div>
                 </div>
 

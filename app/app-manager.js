@@ -25,6 +25,10 @@ export default class AppManager{
         this.cyManager.deleteFilterRule(ruleID);
     }
 
+    filterElesByClass(event){
+        this.cyManager.filterElesByClass(event);
+    }
+
     // TabManager methods
     showObjectProps(event){
         this.tabManager.showObjectProps(event);
@@ -37,8 +41,6 @@ export default class AppManager{
     // ViewManager methods
     initFilterTabView(nodeProps, edgeProps){
         this.viewManager.initFilterTabView(nodeProps, edgeProps);
-
-        $('.filter-btn').on('click', event => this.cyManager.filterElesByClass(event));
     }
 
     renderObjectProps(objectProps){
