@@ -36,6 +36,11 @@ export default class AppManager{
         this.cyManager.loadFile(file);
     }
 
+    // FileManager methods
+    saveAsJson(file){
+        this.fileManager.saveAsJson(file);
+    }
+
     // TabManager methods
     showObjectProps(event){
         this.tabManager.showObjectProps(event);

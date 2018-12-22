@@ -29,4 +29,15 @@ export default class FileManager {
             fileReader.readAsText(file);
         });
     }
+
+    saveAsJson(file){
+
+        const blob = new Blob([file], { type: 'text/plain' });
+        const anchor = document.createElement('a');
+
+        anchor.download = "visuall.txt";
+        anchor.href = (window.webkitURL || window.URL).createObjectURL(blob);
+        anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');
+        anchor.click();
+    }
 }

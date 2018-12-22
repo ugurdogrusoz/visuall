@@ -11,8 +11,10 @@ export default class CyManager {
     init(){
         this.filteredClasses = [];
         this.layout = {name: 'cose'};
+
         this.initCyInstance(stylesheet);
         this.initCyEvents();
+        $('#save-json-btn').on('click', () => this.saveAsJson())
     }
 
     initCyInstance(stylesheet){
@@ -165,5 +167,12 @@ export default class CyManager {
             console.error('Given file is not suitable.', error);
         }
 
+    }
+
+    saveAsJson(){
+        const json = this.cy.json();
+        const elements = json.elements;
+
+        this.appManager.saveAsJson(JSON.stringify(elements, undefined, 4));
     }
 }
