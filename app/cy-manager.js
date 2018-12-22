@@ -10,6 +10,7 @@ export default class CyManager {
 
     init(){
         this.filteredClasses = [];
+        this.layout = {name: 'cose'};
         this.initCyInstance(stylesheet);
         this.initCyEvents();
     }
@@ -62,7 +63,7 @@ export default class CyManager {
                     }
                 ],
                 style: stylesheet,
-                layout: {name: 'cose'},
+                layout: this.layout,
 
                 // initial viewport state:
                 zoom: 1,
@@ -148,6 +149,21 @@ export default class CyManager {
     }
 
     deleteFilterRule(ruleID) {
+
+    }
+
+    loadFile(file){
+
+        // Try to parse file into JSON object
+        try{
+            const fileJSON = JSON.parse(file);
+            this.cy.json({elements: fileJSON});
+
+            this.cy.layout(this.layout).run();
+        }
+        catch (error) {
+            console.error('Given file is not suitable.', error);
+        }
 
     }
 }

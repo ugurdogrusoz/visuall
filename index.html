@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -47,13 +47,18 @@
 
         <ul class="navbar-nav heading">
             <li class="nav-item">
-                <a class="nav-link" href="#">File</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Edit</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">View</a>
+                <div class="dropdown">
+                    <button id="file-dropdown" class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        File
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="file-dropdown">
+                        <button id="load-btn" class="dropdown-item" type="button">Load</button>
+                        <button id="save-json-btn" class="dropdown-item" type="button">Save as JSON</button>
+                        <button id="save-png-btn" class="dropdown-item" type="button">Save as PNG</button>
+
+                        <input id="file-input" type="file" name="file-input" accept="text/*, .json" style="display: none;" />
+                    </div>
+                </div>
             </li>
         </ul>
 
