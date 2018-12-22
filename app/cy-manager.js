@@ -14,7 +14,9 @@ export default class CyManager {
 
         this.initCyInstance(stylesheet);
         this.initCyEvents();
-        $('#save-json-btn').on('click', () => this.saveAsJson())
+
+        $('#save-json-btn').on('click', () => this.saveAsJson());
+        $('#save-png-btn').on('click', () => this.saveAsPng());
     }
 
     initCyInstance(stylesheet){
@@ -174,5 +176,15 @@ export default class CyManager {
         const elements = json.elements;
 
         this.appManager.saveAsJson(JSON.stringify(elements, undefined, 4));
+    }
+
+    saveAsPng(){
+        const options = {
+            bg: "white",
+            scale: 1
+        };
+        const png = this.cy.png(options);
+
+        this.appManager.saveAsPng(png);
     }
 }

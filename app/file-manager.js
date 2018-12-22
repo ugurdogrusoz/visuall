@@ -40,4 +40,12 @@ export default class FileManager {
         anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');
         anchor.click();
     }
+
+    saveAsPng(file){
+        const anchor = document.createElement('a');
+
+        anchor.download = "visuall.png";
+        anchor.href = file;
+        anchor.click();
+    }
 }

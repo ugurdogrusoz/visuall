@@ -41,6 +41,10 @@ export default class AppManager{
         this.fileManager.saveAsJson(file);
     }
 
+    saveAsPng(file){
+        this.fileManager.saveAsPng(file);
+    }
+
     // TabManager methods
     showObjectProps(event){
         this.tabManager.showObjectProps(event);
