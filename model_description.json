@@ -16,124 +16,110 @@
       "person":{
          "properties":{
             "id":"number",
-            "first_name":"string",
-            "last_name":"string",
-            "standing":"boolean"
-         },
-         "style":{
-            "label":"return ele.data('first_name') + ' ' + ele.data('last_name')",
-            "shape":"ellipse",
-            "icon":"/img/person.png",
-            "border-width":"3px",
-            "border-color":"red",
-            "width":"50px",
-            "height":"50px"
-         }
-      },
-      "sim":{
-         "properties":{
-            "number":"string",
-            "plan":"number"
-         },
-         "style":{
-            "label":"return ele.data('number')",
-            "shape":"rectangle",
-            "icon":"/img/sim.png",
-            "border-width":"3px",
-            "border-color":"yellow",
-            "width":"50px",
-            "height":"50px"
-         }
-      },
-      "dealer":{
-         "properties":{
-            "id":"number",
-            "name":"string"
+            "name":"string",
+            "born":"number"
          },
          "style":{
             "label":"return ele.data('name')",
-            "shape":"pentagon",
-            "icon":"/img/dealer.png",
-            "border-width":"5px",
-            "border-color":"blue",
-            "width":"50px",
+            "color": "white",
+            "text-valign":"center",
+            "text-wrap":"wrap",
+            "text-max-width":"100px",
+            "shape":"ellipse",
+            "icon":"/img/person.png",
+            "border-width":"2px",
+            "border-color":"#ff6600",
+            "background-color": "#ff9933",
+            "width":"100px",
             "height":"100px"
          }
       },
-      "address":{
+      "movie":{
          "properties":{
-            "street":"string",
-            "apt_number":"number",
-            "zip_code":"string",
-            "city":"string",
-            "country":"string"
+            "id":"number",
+            "title":"string",
+            "tagline":"string",
+            "released":"number"
          },
          "style":{
-            "label":"return ele.data('street') + ' ' + ele.data('apt_number')",
-            "shape":"rectangle",
-            "icon":"/img/address.png",
+            "label":"return ele.data('title')",
+            "color": "white",
+            "text-valign": "center",
+            "text-wrap": "wrap",
+            "text-max-width": "100px",
+            "shape":"ellipse",
+            "icon":"/img/movie.png",
             "border-width":"2px",
-            "border-color":"black",
-            "width":"50px",
-            "height":"25px"
+            "border-color":"#0066ff",
+            "background-color": "#33adff",
+            "width":"100px",
+            "height":"100px"
          }
       }
    },
    "relations":{
-      "owns":{
+      "ACTED_IN":{
          "valid_ends":[
             "person",
-            "sim"
+            "movie"
          ],
+         "properties":{
+            "id":"number",
+            "roles":"string"
+         },
          "style":{
-            "label": "return 'owns'",
-            "width":"3px",
-            "line-color":"black",
+            "label":"return 'ACTED_IN'",
+            "width":"2px",
+            "line-color":"#339933",
             "line-style":"solid",
-            "source-arrow-shape":"none",
-            "target-arrow-shape":"triangle"
+            "curve-style":"bezier",
+            "target-arrow-shape":"triangle",
+            "target-arrow-color":"#339933",
+            "text-rotation":"autorotate",
+            "text-outline-color":"white",
+            "text-outline-width":"1"
          }
       },
-      "lives-in":{
+      "DIRECTED":{
          "valid_ends":[
             "person",
-            "address"
+            "movie"
          ],
+         "properties":{
+            "id":"number"
+         },
          "style":{
-            "label": "return 'lives-in'",
-            "width":"3px",
-            "line-color":"red",
+            "label": "return 'DIRECTED'",
+            "width":"2px",
+            "line-color":"#808080",
             "line-style":"solid",
-            "source-arrow-shape":"none",
-            "target-arrow-shape":"square"
+            "curve-style":"bezier",
+            "target-arrow-shape":"triangle",
+            "target-arrow-color":"#808080",
+            "text-rotation":"autorotate",
+            "text-outline-color":"white",
+            "text-outline-width":"1"
          }
       },
-      "is-sold-by":{
+      "PRODUCED":{
          "valid_ends":[
-            "sim",
-            "dealer"
+            "person",
+            "movie"
          ],
+         "properties":{
+            "id":"number"
+         },
          "style":{
-           "label": "return 'is-sold-by'",
-            "width":"3px",
-            "line-color":"black",
-            "line-style":"dashed",
-            "source-arrow-shape":"none",
-            "target-arrow-shape":"triangle"
-         }
-      },
-      "is-in":{
-         "valid_ends":[
-            "dealer",
-            "address"
-         ],
-         "style":{
-           "label": "return 'is-in'",
-            "width":"3px",
-            "line-color":"blue",
+           "label": "return 'PRODUCED'",
+            "width":"2px",
+            "line-color":"#808080",
             "line-style":"solid",
-            "source-arrow-shape":"none",
-            "target-arrow-shape":"square"
+            "curve-style":"bezier",
+            "target-arrow-shape":"triangle",
+            "target-arrow-color":"#808080",
+            "text-rotation":"autorotate",
+            "text-outline-color":"white",
+            "text-outline-width":"1"
          }
       }
    }

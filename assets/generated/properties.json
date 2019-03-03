@@ -2,42 +2,28 @@
     "nodes": {
         "person": {
             "id": "number",
-            "first_name": "string",
-            "last_name": "string",
-            "standing": "boolean"
+            "name": "string",
+            "born": "number"
         },
-        "sim": {
-            "number": "string",
-            "plan": "number"
-        },
-        "dealer": {
+        "movie": {
             "id": "number",
-            "name": "string"
-        },
-        "address": {
-            "street": "string",
-            "apt_number": "number",
-            "zip_code": "string",
-            "city": "string",
-            "country": "string"
+            "title": "string",
+            "tagline": "string",
+            "released": "number"
         }
     },
     "edges": {
-        "owns": [
+        "ACTED_IN": [
             "person",
-            "sim"
+            "movie"
         ],
-        "lives-in": [
+        "DIRECTED": [
             "person",
-            "address"
+            "movie"
         ],
-        "is-sold-by": [
-            "sim",
-            "dealer"
-        ],
-        "is-in": [
-            "dealer",
-            "address"
+        "PRODUCED": [
+            "person",
+            "movie"
         ]
     }
 }
