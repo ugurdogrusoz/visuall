@@ -113,20 +113,91 @@
 
                     <div class="tab-pane fade show active tab-column" id="filter" role="tabpanel" aria-labelledby="filter-tab">
                         <div class="row">
-                            <div class="col-6 text-center" id="filter-col-node">
-                                <p>Nodes</p>
-                                <div id="filter-node-class"></div>
-                                <hr>
-                                <div id="filter-node-attr">
-                                    <p class="text-center">Filter by Node Attributes</p>
+                            <div class="col-12" id="filter-col-node">
+                                <div class="text-center">
+                                    <p><b>Filter by Classes</b></p>
+                                    <div id="filter-class"></div>
                                 </div>
-                                <br>
-                                <ul id="filter-node-rules" class="list-group list-group-flush"></ul>
-                            </div>
 
-                            <div class="col-6 text-center" id="filter-col-edge">
-                                <p>Edges</p>
-                                <div id="filter-edge-class"></div>
+                                <hr>
+
+                                <div id="filter-node-attr">
+                                    <p class="text-center"><b>Filter by Attributes</b></p>
+
+                                    <div>
+                                        <select id="rule-operator-dropdown" class="custom-select filter-form">
+                                            <option value="AND" selected>AND</option>
+                                            <option value="OR">OR</option>
+                                        </select>
+
+                                        <select id="node-attr-dropdown" class="custom-select filter-form"></select>
+
+                                        <input type="text" id="node-attr-input" class="form-control filter-form" placeholder="Filter...">
+
+                                        <input type="button" id="filter-add-rule-btn" class="btn btn-outline-info" value="Add Rule">
+                                    </div>
+
+                                    <div id="filter-radio-btn-number">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-number" id="radio-equal-number" value="1" checked>
+                                            <label class="form-check-label" for="radio-equal-number">Equals</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-number" id="radio-not-equal-number" value="2">
+                                            <label class="form-check-label" for="radio-not-equal-number">Not Equals</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-number" id="radio-less-number" value="3">
+                                            <label class="form-check-label" for="radio-less-number">Less Than</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-number" id="radio-greater-number" value="4">
+                                            <label class="form-check-label" for="radio-greater-number">Greater Than</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-number" id="radio-less-equal-number" value="5">
+                                            <label class="form-check-label" for="radio-less-equal-number">Less or Equals</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-number" id="radio-greater-equal-number" value="6">
+                                            <label class="form-check-label" for="radio-greater-equal-number">Greater or Equals</label>
+                                        </div>
+                                    </div>
+
+                                    <div id="filter-radio-btn-string">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-string" id="radio-equal-string" value="1" checked>
+                                            <label class="form-check-label" for="radio-equal-string">Equals</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-string" id="radio-contains-string" value="2">
+                                            <label class="form-check-label" for="radio-contains-string">Contains</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-string" id="radio-start-string" value="3">
+                                            <label class="form-check-label" for="radio-start-string">Starts With</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                   name="radio-btn-string" id="radio-end-string" value="4">
+                                            <label class="form-check-label" for="radio-end-string">Ends With</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br>
+
+                                <p class="text-center" id="rules-title"><b>Rules</b></p>
+                                <ul id="filter-node-rules" class="list-group list-group-flush"></ul>
                             </div>
                         </div>
                     </div>

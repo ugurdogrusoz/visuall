@@ -52,6 +52,21 @@ body, html {
 
 }
 
-.filter-form {
-    margin-bottom: 3%;
+.filter-form, #filter-add-rule-btn{
+    margin-bottom: 1%;
+}
+
+#rule-operator-dropdown {
+    width: 15%;
+    display: inline-flex;
+}
+
+#node-attr-dropdown {
+    width: 30%;
+    display: inline-flex;
+}
+
+#node-attr-input {
+    width: 30%;
+    display: inline-flex;
 }

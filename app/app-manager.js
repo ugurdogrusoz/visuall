@@ -1,7 +1,7 @@
 import CyManager from "./cy-manager";
 import FileManager from "./file-manager";
 import TabManager from "./tab-manager";
-import ViewManager from "./view-manager";
+import DbManager from "./db-manager";
 
 
 export default class AppManager{
@@ -10,12 +10,12 @@ export default class AppManager{
         this.cyManager = new CyManager(this);
         this.fileManager = new FileManager(this);
         this.tabManager = new TabManager(this);
-        this.viewManager = new ViewManager(this);
+        this.dbManager = new DbManager(this);
 
         this.cyManager.init();
         this.fileManager.init();
         this.tabManager.init();
-        this.viewManager.init();
+        this.dbManager.init();
     }
 
     // CyManager methods
@@ -24,7 +24,6 @@ export default class AppManager{
     }
 
     deleteFilterRule(ruleID){
-        $("#" + ruleID).remove();
         this.cyManager.deleteFilterRule(ruleID);
     }
 
@@ -34,6 +33,10 @@ export default class AppManager{
 
     loadFile(file){
         this.cyManager.loadFile(file);
+    }
+
+    loadElementsFromDatabase(data){
+        this.cyManager.loadElementsFromDatabase(data);
     }
 
     // FileManager methods
@@ -54,12 +57,37 @@ export default class AppManager{
         this.tabManager.hideObjectProps(event);
     }
 
-    // ViewManager methods
-    initFilterTabView(nodeProps, edgeProps){
-        this.viewManager.initFilterTabView(nodeProps, edgeProps);
+
+    // DbManager methods
+    runQuery(query, cb){
+        this.dbManager.runQuery(query, cb);
     }
 
-    renderObjectProps(objectProps){
-        this.viewManager.renderObjectProps(objectProps);
+    //General functions
+    static getOperator(value, type){
+        if(type === 'number'){
+            if(value === "1")
+                return '=';
+            else if(value === "2")
+                return '!=';
+            else if(value === "3")
+                return '<';
+            else if(value === "4")
+                return '>';
+            else if(value === "5")
+                return '<=';
+            else if(value === "6")
+                return '>=';
+        }
+        else if(type === 'string'){
+            if(value === "1")
+                return '=';
+            else if(value === "2")
+                return 'CONTAINS';
+            else if(value === "3")
+                return 'STARTS WITH';
+            else if(value === "4")
+                return 'ENDS WITH';
+        }
     }
 }

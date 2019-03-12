@@ -1,5 +1,6 @@
 import cytoscape from "cytoscape";
 import stylesheet from "../assets/generated/stylesheet.json";
+import AppManager from "./app-manager";
 
 
 export default class CyManager {
@@ -10,13 +11,32 @@ export default class CyManager {
 
     init(){
         this.filteredClasses = [];
-        this.layout = {name: 'cose'};
+        this.layout = {
+            name: 'cose',
+            idealEdgeLength: 100,
+            nodeOverlap: 20,
+            refresh: 20,
+            fit: true,
+            padding: 30,
+            randomize: false,
+            componentSpacing: 100,
+            nodeRepulsion: 400000,
+            edgeElasticity: 100,
+            nestingFactor: 5,
+            gravity: 80,
+            numIter: 1000,
+            initialTemp: 200,
+            coolingFactor: 0.95,
+            minTemp: 1.0
+        };
+        this.filteringRules = [];
+        this.ruleCounter = 0;
+
+        $('#rules-title').hide();
 
         this.initCyInstance(stylesheet);
-        this.initCyEvents();
-
-        $('#save-json-btn').on('click', () => this.saveAsJson());
-        $('#save-png-btn').on('click', () => this.saveAsPng());
+        this.bindCyEvents();
+        this.bindHTMLEvents();
     }
 
     initCyInstance(stylesheet){
@@ -26,46 +46,6 @@ export default class CyManager {
 
         this.cy = cytoscape({
                 container: document.getElementById('cy'),
-                elements: [
-                    {group: "nodes", data: {id: "p1", first_name: "Ahmet", last_name: "Demir"}, classes: "person"},
-                    {group: "nodes", data: {id: "p2", first_name: "Ayşe", last_name: "Yılmaz"}, classes: "person"},
-
-                    {
-                        group: "nodes",
-                        data: {id: "s1", number: 1111, begin_date: new Date(2018, 2, 5), end_date: new Date(2025, 2, 5)},
-                        classes: "sim"
-                    },
-                    {
-                        group: "nodes",
-                        data: {id: "s2", number: 1223, begin_date: new Date(2011, 10, 25), end_date: new Date(2018, 10, 25)},
-                        classes: "sim"
-                    },
-                    {
-                        group: "nodes",
-                        data: {id: "s3", number: 6666, begin_date: new Date(2015, 7, 15), end_date: new Date(2023, 10, 29)},
-                        classes: "sim"
-                    },
-
-                    {group: "nodes", data: {id: "d1", name: "Turkcell Bilkent Center"}, classes: "dealer"},
-
-                    {group: "nodes", data: {id: "a1", street: "Tunus", apt_number: 12}, classes: "address"},
-                    {group: "nodes", data: {id: "a2", street: "Üniversiteler", apt_number: 4}, classes: "address"},
-                    {group: "nodes", data: {id: "a3", street: "Bahçeli", apt_number: 39}, classes: "address"},
-
-                    {group: "edges", data: {id: "o1", source: "p1", target: "s1"}, classes: "owns"},
-                    {group: "edges", data: {id: "o2", source: "p1", target: "s3"}, classes: "owns"},
-                    {group: "edges", data: {id: "o3", source: "p2", target: "s2"}, classes: "owns"},
-                    {group: "edges", data: {id: "l1", source: "p1", target: "a1"}, classes: "lives-in"},
-                    {group: "edges", data: {id: "l2", source: "p2", target: "a2"}, classes: "lives-in"},
-                    {group: "edges", data: {id: "sold1", source: "s1", target: "d1"}, classes: "is-sold-by"},
-                    {group: "edges", data: {id: "sold2", source: "s2", target: "d1"}, classes: "is-sold-by"},
-                    {group: "edges", data: {id: "sold3", source: "s3", target: "d1"}, classes: "is-sold-by"},
-                    {
-                        group: "edges",
-                        data: {id: "i1", source: "d1", target: "a3", begin_date: new Date(2001, 5, 4)},
-                        classes: "is-in"
-                    }
-                ],
                 style: stylesheet,
                 layout: this.layout,
 
@@ -101,9 +81,14 @@ export default class CyManager {
             });
     }
 
-    initCyEvents(){
+    bindCyEvents(){
         this.cy.on('select', event => this.appManager.showObjectProps(event));
         this.cy.on('unselect', event => this.appManager.hideObjectProps(event));
+    }
+
+    bindHTMLEvents(){
+        $('#save-json-btn').on('click', () => this.saveAsJson());
+        $('#save-png-btn').on('click', () => this.saveAsPng());
     }
 
     filterElesByClass(event){
@@ -148,12 +133,110 @@ export default class CyManager {
         });
     }
 
-    createFilterRule(prop, value){
+    createFilterRule(rule){
+        this.ruleCounter++;
+        rule.id = this.ruleCounter;
 
+        $('#rules-title').show();
+
+        this.filteringRules.push(rule);
+        this.runFilteringQuery();
     }
 
-    deleteFilterRule(ruleID) {
+    deleteFilterRule(ruleId) {
+        for(let i = 0; i < this.filteringRules.length; i++){
+            const rule = this.filteringRules[i];
+            if(rule.id === ruleId){
+                this.filteringRules.splice(i, 1);
+                this.runFilteringQuery();
+                break;
+            }
+        }
 
+        if(this.filteringRules.length < 1){
+            $('#rules-title').hide();
+        }
+    }
+
+    runFilteringQuery(){
+        const rules = this.filteringRules;
+        if(!rules || rules.length < 1)
+            return;
+
+        const firstRule = rules[0];
+        const variableName1 = 'm';
+        const variableName2 = 'n';
+
+        let query = `MATCH p=(${variableName1})-[*0..1]-(${variableName2}) WHERE (`+ generateQuery(firstRule, variableName1);
+        for(let i = 1; i < rules.length; i++){
+            const rule = rules[i];
+            query += rule.logicOperator + generateQuery(rule, variableName1);
+        }
+        query += ") AND (" + generateQuery(firstRule, variableName2);
+        for(let i = 1; i < rules.length; i++){
+            const rule = rules[i];
+            query += rule.logicOperator + generateQuery(rule, variableName2);
+        }
+        query += `) RETURN DISTINCT relationships(p) as rs, ${variableName1}`;
+
+        this.requestElementsFromDatabase(query);
+
+        function generateQuery(rule, variableName) {
+            let operator = AppManager.getOperator(rule.operator, rule.attributeType);
+            let value = (rule.attributeType === "string") ? '"' + rule.value + '"' : rule.value;
+            return ` (${variableName}.${rule.attribute + ' ' + operator + ' ' + value}) `;
+        }
+    }
+
+    requestElementsFromDatabase(query){
+        this.appManager.runQuery(query, (response) => this.loadElementsFromDatabase(response));
+    }
+
+    loadElementsFromDatabase(data){
+        if(!data || !data.nodes || !data.edges){
+            console.error("Empty response from database!");
+            return;
+        }
+
+        const nodes = data.nodes;
+        const edges = data.edges;
+        let cy_nodes = [];
+        let cy_edges = [];
+
+        for(const id in nodes){
+            const node = nodes[id];
+            const classes = node.labels.join(" ").toLowerCase();
+            let properties = node.properties;
+            properties.id = id;
+
+            const cy_node = {
+                data: properties,
+                classes: classes
+            };
+            cy_nodes.push(cy_node);
+        }
+
+        for(const id in edges){
+            const edge = edges[id];
+            const cy_edge = {
+                data: {
+                    id: id,
+                    source: edge.startNode,
+                    target: edge.endNode,
+                },
+                classes: edge.type
+            };
+
+            cy_edges.push(cy_edge);
+        }
+
+
+        this.cy.elements().remove();
+
+        this.cy.add(cy_nodes);
+        this.cy.add(cy_edges);
+
+        this.cy.layout(this.layout).run();
     }
 
     loadFile(file){
