@@ -1,0 +1,46 @@
+{
+  "nodes": {
+    "Person": {
+      "name": "string",
+      "born": "int",
+      "begin_datetime": "datetime",
+      "end_datetime": "datetime"
+    },
+    "Movie": {
+      "title": "string",
+      "tagline": "string",
+      "released": "int",
+      "rating": "float",
+      "genre": "string",
+      "begin_datetime": "datetime",
+      "end_datetime": "datetime"
+    }
+  },
+  "edges": {
+    "ACTED_IN": {
+      "roles": "list",
+      "begin_datetime": "datetime",
+      "end_datetime": "datetime"
+    },
+    "DIRECTED": {
+      "begin_datetime": "datetime",
+      "end_datetime": "datetime"
+    },
+    "PRODUCED": {
+      "begin_datetime": "datetime",
+      "end_datetime": "datetime"
+    },
+    "WROTE": {
+      "begin_datetime": "datetime",
+      "end_datetime": "datetime"
+    },
+    "REVIEWED": {
+      "begin_datetime": "datetime",
+      "end_datetime": "datetime"
+    },
+    "FOLLOWS": {
+      "begin_datetime": "datetime",
+      "end_datetime": "datetime"
+    }
+  }
+}

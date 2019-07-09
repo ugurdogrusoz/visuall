@@ -1,0 +1,236 @@
+body,
+html {
+  height: 100%;
+}
+
+.va-title {
+  font-size: 20px;
+}
+
+.va-heading1 {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.va-heading2 {
+  font-size: 12px;
+}
+
+.va-heading3 {
+  font-size: 12px;
+}
+
+.va-text {
+  font-size: 12px;
+}
+
+.va-small-text {
+  font-size: 11px;
+}
+
+#tool-bar {
+  height: 30px;
+}
+
+#cy {
+  height: 79vh;
+  margin-right: 2px;
+  margin-bottom: 1px;
+}
+
+#timeline {
+  height: 15vh;
+  margin-right: 2px;
+}
+
+.tab-column {
+  height: 80vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.filter-node-class {
+  margin: 1%;
+}
+
+.filter-edge-class {
+  color: #343a40;
+  border-bottom: 1px solid #343a40;
+  margin: 1%;
+  padding: 3px;
+}
+
+.filter-edge-class:hover {
+  background-color: #343a40;
+  color: white;
+  border-radius: 3px;
+  text-decoration: none;
+}
+
+.filter-class-disabled {
+  opacity: 0.4;
+}
+
+.filter-form {
+  height: 2rem;
+  padding: 3px 20px 3px 5px;
+}
+
+.filter-input {
+  padding-right: 5px;
+}
+
+#rule-elements {
+  font-size: 0.875rem;
+}
+
+#filter-add-rule-btn {
+  vertical-align: sub;
+}
+
+#filter-rule-inputs {
+  margin-bottom: 2%;
+}
+
+.logic-op-link {
+  display: inline-block;
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 1px 5px 2px 5px;
+  color: inherit;
+  width: 3em;
+}
+
+.panel-heading {
+  cursor: pointer;
+  height: 17px;
+  text-align: center;
+  background-color: #eaeaea;
+}
+
+.panel-heading-hideable {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  background-color: #eaeaea;
+}
+
+.panel-title {
+  font-size: 12px;
+  color: #555;
+}
+
+.panel-body {
+  padding-top: 7px;
+  padding-bottom: 3px;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.panel {
+  border: 1px solid transparent;
+}
+
+.accordion-toggle {
+  /* symbol for "opening" panels */
+  height: auto;
+}
+
+/* CSS Method for adding Font Awesome Chevron Icons */
+
+.accordion-toggle:after {
+  /* symbol for "opening" panels */
+  font-family: 'FontAwesome', sans-serif;
+  content: "\f077";
+  float: right;
+  padding-right: 4px;
+  color: inherit;
+}
+
+.panel-heading.collapsed .accordion-toggle:after {
+  /* symbol for "collapsed" panels */
+  content: "\f078";
+}
+
+.cytoscape-navigator-wrapper {
+  position: fixed;
+  z-index: 100;
+  width: 300px;
+  height: 200px;
+  bottom: 3.5%;
+  right: 3.5%;
+  overflow: hidden;
+}
+
+/* borders for navigator and map */
+
+.cytoscape-navigator-wrapper,
+#cy {
+  border: 2px solid #2F4154;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.toolbar-element {
+  cursor: pointer;
+  height: 30px;
+}
+
+[data-toggle="collapse"] .fa:before {
+  content: "\f139";
+}
+
+[data-toggle="collapse"].collapsed .fa:before {
+  content: "\f13a";
+}
+
+#highlight-search-inp {
+  width: 75px;
+  border-radius: 5px;
+  border-color: #ddd;
+  outline-offset: 50px;
+  height: 23px;
+}
+
+/* overwrite context-menu extension css */
+
+.cy-context-menus-cxt-menuitem:hover {
+  color: #555 !important;
+  background-color: #eaeaea !important;
+}
+
+.modal-title {
+  margin: 0 auto;
+}
+
+.img-icon {
+  width: 20px;
+  height: 20px;
+}
+
+#chart_div {
+  height: 7vh;
+}
+
+#filter_div {
+  height: 4vh;
+}
+
+.query-input {
+  width: 60px;
+  height: 2rem;
+  display: inline;
+  margin-top: 2px;
+}
+
+.query-input-wide {
+  width: 105px;
+  height: 2rem;
+  display: inline;
+  margin-top: 2px;
+}
+
+.custom-query {
+  padding: 2%;
+  color: black;
+}

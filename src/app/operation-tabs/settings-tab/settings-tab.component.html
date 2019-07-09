@@ -1,0 +1,55 @@
+<div class="panel m-1">
+  <div class="panel-heading" data-toggle="collapse" data-target="#general-settings" aria-expanded="true">
+    <p class="panel-title accordion-toggle"><b>General</b></p>
+  </div>
+
+  <div id="general-settings" class="collapse show text-center m-1">
+    <div class="card border-0 m-1" *ngFor="let setting of settings; let i = index;">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" [(ngModel)]="setting.isEnable"
+          (change)="onBoolSettingsChanged(i)">
+        <label class="form-check-label va-text">{{setting.text}}</label>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text">Highlight width</label>
+        <div class="mx-1">
+          <input type="number" max="20" min="2" (keydown.enter)="changeHighlightOptions()" [(ngModel)]="highlightWidth"
+            class="form-control inp-3-char va-text">
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text">Compound padding</label>
+        <div class="mx-1">
+          <input type="text" (keydown.enter)="changeCompoundPadding()" [(ngModel)]="compoundPadding"
+            class="form-control inp-3-char va-text">
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text" id="textAl1">Timebar animation step</label>
+        <div class="range-slider" id="rangeDv">
+          <input class="range-slider__range" id="speed_bar" (click)="setUpStep()" [(ngModel)]="stepValue" type="range"
+            min="1" max="100">
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text" id="textAl">Timebar animation speed</label>
+        <div class="range-slider" id="rangeDv">
+          <input class="range-slider__range" id="speed_bar2" (click)="setUpSpeed()" type="range"
+            [(ngModel)]="speedValue" min="-2500" max="-10">
+        </div>
+      </div>
+    </div>
+
+    
+    
+  </div>
+</div>

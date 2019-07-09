@@ -1,0 +1,25 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+  <a class="navbar-brand" href="#">
+    <img [src]="toolLogo" height="30" class="d-inline-block align-top" alt="Logo">
+    <b class="va-title" [innerHTML]="toolName"></b>
+  </a>
+
+  <ul class="navbar-nav heading">
+    <input #file type="file" (change)="fileSelected()" accept="text/*, .json" style="display: none;" />
+
+    <li class="nav-item" *ngFor="let item of menu">
+      <div class="dropdown">
+        <button id="file-dropdown" class="btn btn-light dropdown-toggle va-heading1" type="button"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{item.dropdown}}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="file-dropdown">
+          <button class="dropdown-item va-text" type="button" *ngFor="let act of item.actions" id="{{act.id}}"
+            (click)="triggerAct(act)">{{act.txt}}</button>
+        </div>
+      </div>
+    </li>
+  </ul>
+</nav>
+

@@ -1,0 +1,320 @@
+{
+  "template": {
+    "name": "Visu<i>all</i> Sample App",
+    "html_header": "Visuall Sample App",
+    "icon": "assets/img/logo.png",
+    "version": "1.0.0",
+    "company_name": "i-Vis at Bilkent",
+    "company_contact": "ivis@cs.bilkent.edu.tr",
+    "context_menu": [
+      {
+        "id": "showMoviesOfPerson",
+        "content": "Show All Movies Involving This Person",
+        "selector": "node.Person",
+        "onClickFunction": "getNeighbors"
+      },
+      {
+        "id": "getPoster",
+        "content": "Use Movie Poster",
+        "selector": "node.Movie",
+        "onClickFunction": "getPoster"
+      },
+      {
+        "id": "go to IMDB",
+        "content": "Go to IMDB",
+        "selector": "node.Movie",
+        "onClickFunction": "goInfo"
+      },
+      {
+        "id": "showActorsOfMovie",
+        "content": "Show All Persons Involved in This Movie",
+        "selector": "node.Movie",
+        "onClickFunction": "getNeighbors"
+      },
+      {
+        "id": "performLayout",
+        "content": "Perform Layout",
+        "coreAsWell": true,
+        "onClickFunction": "performLayout"
+      },
+      {
+        "id": "deleteElement",
+        "content": "Delete",
+        "selector": "node,edge",
+        "onClickFunction": "deleteElem"
+      },
+      {
+        "id": "displayAllPosters",
+        "content": "Use Movie Posters",
+        "coreAsWell": true,
+        "onClickFunction": "useMoviePoster"
+      },
+      {
+        "id": "deleteSelected",
+        "content": "Delete Selected",
+        "coreAsWell": true,
+        "onClickFunction": "deleteSelected"
+      }
+    ]
+  },
+  "style": {
+    ".va-title": {
+      "font-size": "20px"
+    },
+    ".va-heading1": {
+      "font-size": "14px",
+      "font-weight": "bold"
+    },
+    ".va-heading2": {
+      "font-size": "12px"
+    },
+    ".panel-heading": {
+      "height": "17px"
+    },
+    ".va-heading3": {
+      "font-size": "12px"
+    },
+    ".va-text": {
+      "font-size": "12px"
+    },
+    ".va-small-text": {
+      "font-size": "11px"
+    }
+  },
+  "classes": {
+    "Person": {
+      "properties": {
+        "name": "string",
+        "born": "int"
+      },
+      "style": {
+        "label": "data(name)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "text-wrap": "wrap",
+        "text-max-width": "58px",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/black-user-shape.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "Movie": {
+      "properties": {
+        "title": "string",
+        "tagline": "string",
+        "released": "int",
+        "rating": "float",
+        "genre": "string"
+      },
+      "style": {
+        "label": "data(title)",
+        "color": "#ffc5a8",
+        "text-valign": "bottom",
+        "text-wrap": "wrap",
+        "text-max-width": "100px",
+        "font-size": "9px",
+        "background-image": "assets/img/movie-roll.png",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "width": "mapData(rating, 0, 10, 20px, 60px)",
+        "height": "mapData(rating, 0, 10, 20px, 60px)"
+      }
+    }
+  },
+  "relations": {
+    "ACTED_IN": {
+      "valid_ends": [
+        "person",
+        "movie"
+      ],
+      "properties": {
+        "roles": "list"
+      },
+      "style": {
+        "label": "acted in",
+        "width": "4px",
+        "font-size": "9px",
+        "line-color": "#abcaf2",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#abcaf2",
+        "text-rotation": "autorotate"
+      }
+    },
+    "DIRECTED": {
+      "valid_ends": [
+        "person",
+        "movie"
+      ],
+      "properties": {},
+      "style": {
+        "label": "directed",
+        "width": "3px",
+        "font-size": "9px",
+        "line-color": "#1eead1",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#1eead1",
+        "text-rotation": "autorotate"
+      }
+    },
+    "PRODUCED": {
+      "valid_ends": [
+        "person",
+        "movie"
+      ],
+      "properties": {},
+      "style": {
+        "label": "produced",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#ed9ca7",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "tee",
+        "target-arrow-color": "#ed9ca7",
+        "text-rotation": "autorotate"
+      }
+    },
+    "WROTE": {
+      "valid_ends": [
+        "person",
+        "movie"
+      ],
+      "properties": {},
+      "style": {
+        "label": "wrote",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#b5b74b",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "circle",
+        "target-arrow-color": "#b5b74b",
+        "text-rotation": "autorotate"
+      }
+    },
+    "REVIEWED": {
+      "valid_ends": [
+        "person",
+        "movie"
+      ],
+      "properties": {},
+      "style": {
+        "label": "reviewed",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f997fc",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f997fc",
+        "text-rotation": "autorotate"
+      }
+    },
+    "FOLLOWS": {
+      "valid_ends": [
+        "person",
+        "movie"
+      ],
+      "properties": {},
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    }
+  },
+  "generalStyles": [
+    {
+      "selector": ".hidden",
+      "style": {
+        "display": "none"
+      }
+    },
+    {
+      "selector": "node",
+      "style": {
+        "background-opacity": 0,
+        "font-size": "13px",
+        "text-valign": "center",
+        "text-halign": "center",
+        "background-color": "#555",
+        "text-outline-color": "#555",
+        "text-outline-width": "2px",
+        "color": "#fff",
+        "overlay-padding": "6px",
+        "z-index": "10"
+      }
+    },
+    {
+      "selector": "node:selected",
+      "style": {
+        "overlay-color": "#6c757d",
+        "overlay-opacity": 0.3,
+        "background-color": "#999999"
+      }
+    },
+    {
+      "selector": "edge:selected",
+      "style": {
+        "overlay-color": "#6c757d",
+        "overlay-opacity": 0.3,
+        "line-color": "#808080"
+      }
+    },
+    {
+      "selector": "edge",
+      "style": {
+        "font-size": "13px"
+      }
+    },
+    {
+      "selector": "node.Cluster",
+      "style": {
+        "background-opacity": 0.1,
+        "background-color": "#555",
+        "shape": "barrel",
+        "border-color": "black",
+        "font-size": "9px"
+      }
+    },
+    {
+      "selector": "node.cy-expand-collapse-collapsed-node",
+      "style": {
+        "label": "data(name)",
+        "font-size": "9px",
+        "border-color": "black",
+        "border-width": 1,
+        "border-style": "dotted",
+        "background-opacity": 0,
+        "shape": "barrel"
+      }
+    },
+    {
+      "selector": ":compound",
+      "style": {
+        "padding": "5%"
+      }
+    }
+  ],
+  "overwriteStyles": [
+    {
+      "selector": "edge.nolabel",
+      "style": {
+        "label": ""
+      }
+    }
+  ]
+}

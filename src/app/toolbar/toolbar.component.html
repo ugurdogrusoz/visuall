@@ -1,0 +1,45 @@
+<input #file type="file" (change)="fileSelected()" accept="text/*, .json" style="display: none;" />
+<div class="row no-gutters my-1">
+  <div class="col-xs-auto border rounded">
+    <img src="assets/img/toolbar/load.svg" class="toolbar-element p-1" title="Load" (click)="load()">
+    <img src="assets/img/toolbar/json-file.svg" class="toolbar-element p-1" title="Save as JSON" (click)="saveAsJson()">
+    <img src="assets/img/toolbar/png.svg" class="toolbar-element p-1" title="Save as PNG" (click)="saveAsPng()">
+  </div>
+  <div>&nbsp;&nbsp;</div>
+  <div class="col-xs-auto border rounded">
+    <img src="assets/img/toolbar/delete-simple.svg" class="toolbar-element p-1" title="Delete Selected"
+      (click)="deleteSelected()">
+  </div>
+  <div>&nbsp;&nbsp;</div>
+  <div class="col-xs-auto border rounded">
+    <img src="assets/img/toolbar/hide-selected.svg" class="toolbar-element p-1" title="Hide Selected"
+      (click)="showHideSelected(true)">
+    <img src="assets/img/toolbar/show-all.svg" class="toolbar-element p-1" title="Show All"
+      (click)="showHideSelected(false)">
+  </div>
+  <div>&nbsp;&nbsp;</div>
+  <div class="col-xs-auto border rounded">
+    <img src="assets/img/toolbar/search.svg" class="toolbar-element p-1" title="Search to Highlight"
+      (click)="highlightSearch()">
+
+    <input class="toolbar-element va-text" id="highlight-search-inp" type="text" [(ngModel)]="searchTxt"
+      (keydown.enter)="highlightSearch()">
+
+    <img src="assets/img/toolbar/highlight-selected.svg" class="toolbar-element p-1" title="Highlight Selected"
+      (click)="highlightSelected()">
+    <img src="assets/img/toolbar/remove-highlights.svg" class="toolbar-element p-1" title="Remove Highlights"
+      (click)="highlightRemove()">
+  </div>
+  <div>&nbsp;&nbsp;</div>
+  <div class="col-xs-auto border rounded">
+    <img src="assets/img/toolbar/layout-cose.svg" class="toolbar-element p-1" title="Perform Layout"
+      (click)="performLayout(false)">
+    <img src="assets/img/toolbar/layout-static.svg" class="toolbar-element p-1" title="Recalculate Layout"
+      (click)="performLayout(true)">
+  </div>
+  <div>&nbsp;&nbsp;</div>
+  <div class="col-xs-auto border rounded">
+    <img src="assets/img/toolbar/quick-help.svg" class="toolbar-element p-1" title="Quick help" (click)="quickHelp()">
+    <img src="assets/img/toolbar/about.svg" class="toolbar-element p-1" title="About" (click)="about()">
+  </div>
+</div>

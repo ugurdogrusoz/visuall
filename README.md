@@ -1,20 +1,9 @@
-# Visuall
+node style-generator.js {model description filename}
+to generate customized application, it changes styles.css and index.html
 
-## Convert Model Description
-`node style-generator.js {model description filename}`
+ng test to run unit tests
 
-Output files will be generated automatically.
+ng serve to run do development and debugging
 
-Changes will be applied directly from that file.
-
-## Build and Start
-
-`npm run start`
-
-This will start a server running at `http://localhost:1234` as default.
-
-Changes to the code will be hot-loaded.
-
-## Demo
-
-[Link to demo](https://ahmetcandiroglu.github.io/visuall)
+ng build to generate a production build 
+ng build --prod to generate a minified, uglified production build 

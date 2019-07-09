@@ -1,27 +1,77 @@
 {
-  "name": "visuall",
+  "name": "ng-visuall",
   "version": "1.0.0",
   "description": "Customizable graph visualization tool",
+  "scripts": {
+    "ng": "ng",
+    "start": "node server.js",
+    "build": "ng build && node server.js",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "heroku-postbuild": "ng build",
+    "prod": "ng build --prod && node server.js"
+  },
+  "private": true,
   "dependencies": {
-    "cytoscape": "^3.2.20"
+    "@angular/animations": "~8.0.2",
+    "@angular/common": "~8.0.2",
+    "@angular/compiler": "~8.0.2",
+    "@angular/core": "~8.0.2",
+    "@angular/forms": "~8.0.2",
+    "@angular/platform-browser": "~8.0.2",
+    "@angular/platform-browser-dynamic": "~8.0.2",
+    "@angular/router": "~8.0.2",
+    "@ng-bootstrap/ng-bootstrap": "^4.1.3",
+    "axios": "^0.19.0",
+    "core-js": "^2.5.4",
+    "css": "^2.2.4",
+    "cytoscape": "^3.7.3",
+    "cytoscape-context-menus": "^3.0.6",
+    "cytoscape-cose-bilkent": "^4.0.0",
+    "cytoscape-expand-collapse": "https://github.com/iVis-at-Bilkent/cytoscape.js-expand-collapse/#unstable",
+    "cytoscape-fcose": "^1.0.0",
+    "cytoscape-navigator": "^1.3.3",
+    "cytoscape-panzoom": "^2.5.3",
+    "cytoscape-view-utilities": "https://github.com/iVis-at-Bilkent/cytoscape.js-view-utilities/#unstable",
+    "express": "^4.17.1",
+    "flatpickr": "^4.6.1",
+    "jquery": "^3.4.1",
+    "path": "^0.12.7",
+    "rxjs": "~6.5.2",
+    "tslib": "^1.9.0",
+    "zone.js": "~0.9.1"
   },
   "devDependencies": {
-    "gh-pages": "^2.0.1",
-    "parcel-bundler": "^1.10.3"
+    "@angular-devkit/build-angular": "~0.800.0",
+    "@angular/cli": "~8.0.3",
+    "@angular/compiler-cli": "~8.0.2",
+    "@angular/language-service": "~8.0.2",
+    "@types/jasmine": "~2.8.8",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~8.9.4",
+    "codelyzer": "^5.0.1",
+    "enhanced-resolve": "^4.1.0",
+    "jasmine-core": "~2.99.1",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~4.0.0",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-coverage-istanbul-reporter": "~2.0.1",
+    "karma-jasmine": "~1.1.2",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "protractor": "~5.4.0",
+    "ts-node": "~7.0.0",
+    "tslint": "~5.11.0",
+    "typescript": "~3.4.5"
   },
-  "scripts": {
-    "start": "parcel index.html",
-    "predeploy": "rmdir /s /q dist && parcel build index.html --public-url /visuall",
-    "deploy": "gh-pages -d dist"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ahmetcandiroglu/visuall.git"
-  },
-  "author": "Ahmet Çandıroğlu",
-  "license": "ISC",
+  "author": "i-Vis Research Lab",
+  "license": "iVis",
   "bugs": {
     "url": "https://github.com/ahmetcandiroglu/visuall/issues"
   },
-  "homepage": "https://github.com/ahmetcandiroglu/visuall#readme"
+  "engines": {
+    "node": "10.15.3",
+    "npm": "6.9.0"
+  },
+  "homepage": "https://github.com/ivis-at-bilkent/visuall#readme"
 }

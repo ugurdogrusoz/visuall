@@ -1,0 +1,11 @@
+<div class="panel-heading-hideable">
+  <div id="object-class-name" class="panel-title"><b class="va-heading2"> {{selectedClasses}}</b></div>
+</div>
+<div id="object-prop-list" class="list-group list-group-flush">
+  <div *ngFor="let item of selectedItemProps">
+    <div class="row small m-1">
+      <div class="col-4 text-right px-1"><b class="va-text">{{item.key}}</b></div>
+      <div class="col-8 px-1 va-text">{{item.val}}</div>
+    </div>
+  </div>
+</div>
