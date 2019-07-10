@@ -43,3 +43,8 @@
     </tr>
   </tbody>
 </table>
+<div class="d-flex align-items-center justify-content-center m-1">
+  <ngb-pagination *ngIf="results.length > 0" (pageChange)="pageChanged($event)" [collectionSize]="resultCnt"
+    [(page)]="currPage" [pageSize]="pageSize" [maxSize]="3" [rotate]="true" [boundaryLinks]="true">
+  </ngb-pagination>
+</div>

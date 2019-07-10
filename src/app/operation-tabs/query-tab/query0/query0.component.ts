@@ -4,8 +4,6 @@ import { DbService } from '../../../db.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
-import { $ } from 'protractor';
-import { timingSafeEqual } from 'crypto';
 
 
 @Component({
@@ -16,18 +14,20 @@ import { timingSafeEqual } from 'crypto';
 export class Query0Component implements OnInit {
   movieCnt: number;
   results: any[];
-  totalCount: number;
   currPage: number;
   pageSize: number;
   isLoadGraph: boolean;
   isMergeGraph: boolean;
   highlighterFn: any;
+  resultCnt: number;
 
   constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
-    this.totalCount = this.currPage = 0;
+    this.currPage = 1;
     this.isLoadGraph = true;
     this.isMergeGraph = true;
     this.highlighterFn = this._cyService.highlightNeighbors();
+    this.resultCnt = 0;
+    this.pageSize = DATA_PAGE_SIZE;
   }
 
   ngOnInit() {
@@ -48,29 +48,53 @@ export class Query0Component implements OnInit {
 
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
-    let skip = this.currPage * DATA_PAGE_SIZE;
-   
-    let cql =
-      `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
+    let skip = (this.currPage - 1) * DATA_PAGE_SIZE;
+
+    this.getCountOfData(d1, d2);
+    this.loadTable(d1, d2, skip);
+    this.loadGraph(d1, d2, skip);
+  }
+
+  getCountOfData(d1: number, d2: number) {
+    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
+    WHERE r.begin_datetime > ${d1} AND r.end_datetime < ${d2}  
+    WITH n, SIZE(COLLECT(r)) as degree
+    WHERE degree > ${this.movieCnt}
+    RETURN DISTINCT COUNT(*)`;
+    this._dbService.runQuery(cql, null, (x) => { this.resultCnt = x.data[0]; }, false);
+  }
+
+  pageChanged(newPage:number) {
+    let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
+    let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
+    let skip = (newPage - 1) * DATA_PAGE_SIZE;
+
+    this.loadTable(d1, d2, skip);
+    this.loadGraph(d1, d2, skip);
+  }
+
+  loadTable(d1: number, d2: number, skip: number) {
+    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
     WHERE r.begin_datetime > ${d1} AND r.end_datetime < ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree > ${this.movieCnt}
     RETURN DISTINCT ID(n) as id, n.name as Actor, degree as Count 
     ORDER BY degree DESC SKIP ${skip} LIMIT ${DATA_PAGE_SIZE}`;
-
     this._dbService.runQuery(cql, null, (x) => this.fillTable(x), false);
-
-    if (this.isLoadGraph) {
-      cql =
-        `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
-    WHERE r.begin_datetime > ${d1} AND r.end_datetime < ${d2}  
-    WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
-    WHERE degree > ${this.movieCnt}
-    return n, edges
-    SKIP ${skip} LIMIT ${DATA_PAGE_SIZE}`;
-      this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.isMergeGraph), true);
-    }
   }
+
+  loadGraph(d1: number, d2: number, skip: number) {
+    if (!this.isLoadGraph) {
+      return;
+    }
+    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
+      WHERE r.begin_datetime > ${d1} AND r.end_datetime < ${d2}  
+      WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
+      WHERE degree > ${this.movieCnt}
+      RETURN n, edges ORDER BY degree DESC SKIP ${skip} LIMIT ${DATA_PAGE_SIZE}`;
+    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.isMergeGraph), true);
+  }
+
   fillTable(data) {
     this.results = [];
     for (let i = 0; i < data.data.length; i++) {

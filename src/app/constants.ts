@@ -2,7 +2,7 @@ export const HIGHLIGHT_OPACITY = '0.3';
 // it is more reasonable to make HIGHLIGHT_ANIM_DUR * 2 < HIGHLIGHT_WAIT_DUR
 export const HIGHLIGHT_ANIM_DUR = 400;
 export const HIGHLIGHT_WAIT_DUR = 1500;
-export const DATA_PAGE_SIZE = 100;
+export const DATA_PAGE_SIZE = 15;
 
 export const EV_MOUSE_ON = 'mouseover';
 export const EV_MOUSE_OFF = 'mouseout';
