@@ -10,7 +10,7 @@ import { GlobalVariableService } from '../global-variable.service';
  * Using 'menu' function, provided items will be added to navbar.
  * 'isStd' property must be false for all items.
  * If 'dropdown' is not existing inside standard menu, it will be added as a new item.
- sample menu array   
+ sample menu   
  this._menu = [{
       dropdown: 'File', actions: [{ txt: 'Custom Action 1', id: '', fn: 'fn1', isStd: false }]
     },
@@ -25,6 +25,7 @@ export class NavbarCustomizationService {
   }
 
   constructor(private _g: GlobalVariableService) {
+    this._menu = [];
     // this._menu = [{
     //   dropdown: 'File', actions: [{ txt: 'Custom Action 1', id: '', fn: 'fn1', isStd: false }]
     // },
