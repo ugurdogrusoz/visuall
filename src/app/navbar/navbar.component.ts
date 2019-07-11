@@ -9,6 +9,8 @@ import { AboutModalComponent } from '../popups/about-modal/about-modal.component
 import { QuickHelpModalComponent } from '../popups/quick-help-modal/quick-help-modal.component';
 import * as $ from 'jquery';
 import ModelDescription from '../../../src/model_description.json';
+import { NavbarCustomizationService } from './navbar-customization.service';
+import { NavbarDropdown, NavbarAction } from './inavbar';
 
 @Component({
   selector: 'app-navbar',
@@ -18,90 +20,121 @@ import ModelDescription from '../../../src/model_description.json';
 export class NavbarComponent implements OnInit {
   @ViewChild('file', { static: false }) file;
 
-  menu: any[];
+  menu: NavbarDropdown[];
   closeResult: string;
   toolName: string;
   toolLogo: string;
 
-  constructor(private _dbService: DbService, private _cyService: CytoscapeService, private modalService: NgbModal, private _g: GlobalVariableService) { }
+  constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _modalService: NgbModal,
+    private _g: GlobalVariableService, private _customizationService: NavbarCustomizationService) {
+    this.menu = [
+      {
+        dropdown: 'File', actions: [{ txt: 'Load...', id: 'nbi00', fn: 'loadFile', isStd: true },
+        { txt: 'Save as JSON', id: 'nbi01', fn: 'saveAsJson', isStd: true },
+        { txt: 'Save as PNG...', id: 'nbi02', fn: 'saveAsPng', isStd: true }]
+      },
+      {
+        dropdown: 'Edit', actions: [{ txt: 'Delete Selected', id: 'nbi10', fn: 'deleteSelected', isStd: true }]
+      },
+      {
+        dropdown: 'View', actions: [{ txt: 'Hide Selected', id: 'nbi20', fn: 'hideSelected', isStd: true },
+        { txt: 'Show All', id: 'nbi21', fn: 'showAll', isStd: true }]
+      },
+      {
+        dropdown: 'Highlight', actions: [{ txt: 'Search...', id: 'nbi30', fn: 'search2Highlight', isStd: true },
+        { txt: 'Selected', id: 'nbi31', fn: 'highlightSelected', isStd: true },
+        { txt: 'Neighbors of Selected', id: 'nbi32', fn: 'highlightNeighborsOfSelected', isStd: true },
+        { txt: 'Remove Highlights', id: 'nbi33', fn: 'removeHighlights', isStd: true }]
+      },
+      {
+        dropdown: 'Layout', actions: [{ txt: 'Perform Layout', id: 'nbi40', fn: 'doLayout', isStd: true },
+        { txt: 'Recalculate Layout', id: 'nbi41', fn: 'recalculateLayout', isStd: true }]
+      },
+      {
+        dropdown: 'Help', actions: [{ txt: 'Quick Help', id: 'nbi50', fn: 'openQuickHelp', isStd: true },
+        { txt: 'About', id: 'nbi51', fn: 'openAbout', isStd: true }]
+      },
+      {
+        dropdown: 'Data', actions: [{ txt: 'Sample Data', id: 'nbi60', fn: 'getSampleData', isStd: true },
+        { txt: 'All Data', id: 'nbi61', fn: 'getAllData', isStd: true },
+        { txt: 'Clear Data', id: 'nbi62', fn: 'clearData', isStd: true }]
+      }
+    ];
+  }
 
   ngOnInit() {
     this.toolName = ModelDescription.template.name;
     this.toolLogo = ModelDescription.template.icon;
-
-    this.menu = [{ dropdown: 'File', actions: [{ txt: 'Load...', id: 'nbi00' }, { txt: 'Save as JSON', id: 'nbi01' }, { txt: 'Save as PNG...', id: 'nbi02' }] },
-    { dropdown: 'Edit', actions: [{ txt: 'Delete Selected', id: 'nbi10' }] },
-    { dropdown: 'View', actions: [{ txt: 'Hide Selected', id: 'nbi20' }, { txt: 'Show All', id: 'nbi21' }] },
-    { dropdown: 'Highlight', actions: [{ txt: 'Search...', id: 'nbi30' }, { txt: 'Selected', id: 'nbi31' }, { txt: 'Neighbors of Selected', id: 'nbi32' }, { txt: 'Remove Highlights', id: 'nbi33' }] },
-    { dropdown: 'Layout', actions: [{ txt: 'Perform Layout', id: 'nbi40' }, { txt: 'Recalculate Layout', id: 'nbi41' }] },
-    { dropdown: 'Help', actions: [{ txt: 'Quick Help', id: 'nbi50' }, { txt: 'About', id: 'nbi51' }] },
-    { dropdown: 'Data', actions: [{ txt: 'Sample Data', id: 'nbi60' }, { txt: 'All Data', id: 'nbi61' }, { txt: 'Clear Data', id: 'nbi62' }] }
-    ];
+    this.mergeCustomMenu();
   }
 
-  getSampleData() {
-  }
+  mergeCustomMenu() {
+    let m = this._customizationService.menu;
+    // in any case, set isStd property to false
+    m.map(x => x.actions.map(y => y.isStd = false));
 
-  triggerAct(act) {
-    console.log(' act: ', act);
-    // menu 0
-    if (act === this.menu[0].actions[0]) {
-      this.file.nativeElement.value = '';
-      this.file.nativeElement.click();
-    } else if (act == this.menu[0].actions[1]) {
-      this._cyService.saveAsJson();
-    } else if (act == this.menu[0].actions[2]) {
-      this.modalService.open(SaveAsPngModalComponent);
-    }
-    // menu 1
-    else if (act === this.menu[1].actions[0]) {
-      this._cyService.deleteSelected(null);
-    }
-    // menu 2
-    else if (act === this.menu[2].actions[0]) {
-      this._cyService.showHideSelectedElements(true);
-    }
-    else if (act === this.menu[2].actions[1]) {
-      this._cyService.showHideSelectedElements(false);
-    }
-    // menu 3
-    else if (act === this.menu[3].actions[0]) {
-      $('#highlight-search-inp').focus();
-    }
-    else if (act === this.menu[3].actions[1]) {
-      this._cyService.highlightSelected();
-    }
-    else if (act === this.menu[3].actions[2]) {
-      this._cyService.staticHighlightNeighbors();
-    }
-    else if (act === this.menu[3].actions[3]) {
-      this._cyService.highlightRemove();
-    }
-    // menu 4
-    else if (act === this.menu[4].actions[0]) {
-      this._g.performLayout(false);
-    }
-    else if (act === this.menu[4].actions[1]) {
-      this._g.performLayout(true);
-    }
-    // menu 5
-    else if (act === this.menu[5].actions[0]) {
-      this.modalService.open(QuickHelpModalComponent);
-    }
-    else if (act === this.menu[5].actions[1]) {
-      this.modalService.open(AboutModalComponent);
-    }
-    // menu 6
-    else if (act === this.menu[6].actions[0]) {
-      this._dbService.runQuery(SAMPLE_DATA_CQL, null, (response) => this._cyService.loadElementsFromDatabase(response, false));
-    } else if (act === this.menu[6].actions[1]) {
-      this._dbService.runQuery(GET_ALL_CQL, null, (response) => this._cyService.loadElementsFromDatabase(response, false));
-    } else if (act === this.menu[6].actions[2]) {
-      this._g.cy.remove(this._g.cy.$());
+    for (let i = 0; i < m.length; i++) {
+      let idx = this.menu.findIndex(x => x.dropdown == m[i].dropdown);
+      if (idx == -1) {
+        this.menu.push(m[i]);
+      } else {
+        this.menu[idx].actions.push(...m[i].actions);
+      }
     }
   }
 
   fileSelected() {
     this._cyService.loadFile(this.file.nativeElement.files[0]);
   }
+
+  triggerAct(act: NavbarAction) {
+    if (act.isStd) {
+      this[act.fn]();
+    } else {
+      this._customizationService[act.fn]();
+    }
+  }
+
+  loadFile() {
+    this.file.nativeElement.value = '';
+    this.file.nativeElement.click();
+  }
+
+  saveAsJson() { this._cyService.saveAsJson(); }
+
+  saveAsPng() { this._modalService.open(SaveAsPngModalComponent); }
+
+  deleteSelected() { this._cyService.deleteSelected(null); }
+
+  hideSelected() { this._cyService.showHideSelectedElements(true); }
+
+  showAll() { this._cyService.showHideSelectedElements(false); }
+
+  search2Highlight() { $('#highlight-search-inp').focus(); }
+
+  highlightSelected() { this._cyService.highlightSelected(); }
+
+  highlightNeighborsOfSelected() { this._cyService.staticHighlightNeighbors(); }
+
+  removeHighlights() { this._cyService.highlightRemove(); }
+
+  doLayout() { this._g.performLayout(false); }
+
+  recalculateLayout() { this._g.performLayout(true); }
+
+  openQuickHelp() { this._modalService.open(QuickHelpModalComponent); }
+
+  openAbout() { this._modalService.open(AboutModalComponent); }
+
+  getSampleData() {
+    this._dbService.runQuery(SAMPLE_DATA_CQL, null, (x) => this._cyService.loadElementsFromDatabase(x, false));
+  }
+
+  getAllData() {
+    this._dbService.runQuery(GET_ALL_CQL, null, (x) => this._cyService.loadElementsFromDatabase(x, false));
+  }
+
+  clearData() { this._g.cy.remove(this._g.cy.$()); }
+
 }
+

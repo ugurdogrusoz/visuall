@@ -426,10 +426,10 @@ export class TimebarService {
     return true;
   }
 
-  coverAllTimes(isSetState) {
+  coverAllTimes(isSetState, isRandomize=true) {
     this.resetMinMaxDate();
     this.renderChart(isSetState);
-    this.rangeChange(true,true);
+    this.rangeChange(true, isRandomize);
   }
 
   resetMinMaxDate() {

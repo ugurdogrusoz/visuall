@@ -450,7 +450,6 @@ export class CytoscapeService {
   }
 
   staticHighlightNeighbors() {
-    console.log('staticHighlightNeighbors');
     let selected = this._g.cy.$(':selected');
     let neighbors = selected.neighborhood();
     let options = { eles: selected.union(neighbors), option: C.HIGHLIGHT_TYPE };
@@ -566,7 +565,7 @@ export class CytoscapeService {
       this._g.applyClassFiltering();
       this._timebarService.cyElemListChanged();
       // this.appManager.showAllTimeRange(true);
-      this._timebarService.coverAllTimes(true);
+      this._timebarService.coverAllTimes(true, false);
     }
   }
 
