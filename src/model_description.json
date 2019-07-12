@@ -5,57 +5,7 @@
     "icon": "assets/img/logo.png",
     "version": "1.0.0",
     "company_name": "i-Vis at Bilkent",
-    "company_contact": "ivis@cs.bilkent.edu.tr",
-    "context_menu": [
-      {
-        "id": "showMoviesOfPerson",
-        "content": "Show All Movies Involving This Person",
-        "selector": "node.Person",
-        "onClickFunction": "getNeighbors"
-      },
-      {
-        "id": "getPoster",
-        "content": "Use Movie Poster",
-        "selector": "node.Movie",
-        "onClickFunction": "getPoster"
-      },
-      {
-        "id": "go to IMDB",
-        "content": "Go to IMDB",
-        "selector": "node.Movie",
-        "onClickFunction": "goInfo"
-      },
-      {
-        "id": "showActorsOfMovie",
-        "content": "Show All Persons Involved in This Movie",
-        "selector": "node.Movie",
-        "onClickFunction": "getNeighbors"
-      },
-      {
-        "id": "performLayout",
-        "content": "Perform Layout",
-        "coreAsWell": true,
-        "onClickFunction": "performLayout"
-      },
-      {
-        "id": "deleteElement",
-        "content": "Delete",
-        "selector": "node,edge",
-        "onClickFunction": "deleteElem"
-      },
-      {
-        "id": "displayAllPosters",
-        "content": "Use Movie Posters",
-        "coreAsWell": true,
-        "onClickFunction": "useMoviePoster"
-      },
-      {
-        "id": "deleteSelected",
-        "content": "Delete Selected",
-        "coreAsWell": true,
-        "onClickFunction": "deleteSelected"
-      }
-    ]
+    "company_contact": "ivis@cs.bilkent.edu.tr"
   },
   "style": {
     ".va-title": {
