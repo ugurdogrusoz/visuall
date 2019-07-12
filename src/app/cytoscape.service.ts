@@ -456,7 +456,7 @@ export class CytoscapeService {
     this._g.viewUtils.highlight(options);
   }
 
-  highlightRemove() {
+  removeHighlights() {
     this._g.viewUtils.removeHighlights();
   }
 

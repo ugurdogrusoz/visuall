@@ -116,7 +116,7 @@ export class NavbarComponent implements OnInit {
 
   highlightNeighborsOfSelected() { this._cyService.staticHighlightNeighbors(); }
 
-  removeHighlights() { this._cyService.highlightRemove(); }
+  removeHighlights() { this._cyService.removeHighlights(); }
 
   doLayout() { this._g.performLayout(false); }
 

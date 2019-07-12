@@ -7,6 +7,8 @@ import { QuickHelpModalComponent } from '../popups/quick-help-modal/quick-help-m
 import { GlobalVariableService } from '../global-variable.service';
 import { HIGHLIGHT_TYPE, getPropNamesFromObj } from '../constants';
 import entityMap from '../../assets/generated/properties.json';
+import { ToolbarCustomizationService } from './toolbar-customization.service';
+import { ToolbarDiv, ToolbarAction } from './itoolbar';
 
 @Component({
   selector: 'app-toolbar',
@@ -15,11 +17,66 @@ import entityMap from '../../assets/generated/properties.json';
 })
 export class ToolbarComponent implements OnInit {
   @ViewChild('file', { static: false }) file;
-  searchTxt: string;
+  private searchTxt: string;
+  menu: ToolbarDiv[];
 
-  constructor(private _cyService: CytoscapeService, private modalService: NgbModal, private _g: GlobalVariableService) { }
+  constructor(private _cyService: CytoscapeService, private modalService: NgbModal,
+    private _g: GlobalVariableService, private _customizationService: ToolbarCustomizationService) {
+    this.menu = [
+      {
+        div: 0, items: [{ imgSrc: 'assets/img/toolbar/load.svg', title: 'Load', fn: 'load', isStd: true, isRegular: true },
+        { imgSrc: 'assets/img/toolbar/json-file.svg', title: 'Save as JSON', fn: 'saveAsJson', isStd: true, isRegular: true },
+        { imgSrc: 'assets/img/toolbar/png.svg', title: 'Save as PNG', fn: 'saveAsPng', isStd: true, isRegular: true }]
+      },
+      { div: 1, items: [{ imgSrc: 'assets/img/toolbar/delete-simple.svg', title: 'Delete Selected', fn: 'deleteSelected', isStd: true, isRegular: true }] },
+      {
+        div: 2, items: [{ imgSrc: 'assets/img/toolbar/hide-selected.svg', title: 'Hide Selected', fn: 'hideSelected', isStd: true, isRegular: true },
+        { imgSrc: 'assets/img/toolbar/show-all.svg', title: 'Show All', fn: 'showAll', isStd: true, isRegular: true }]
+      },
+      {
+        div: 3, items: [{ imgSrc: 'assets/img/toolbar/search.svg', title: 'Search to Highlight', fn: 'highlightSearch', isStd: true, isRegular: true },
+        { imgSrc: '', title: 'must be hard coded to HTML', fn: '', isStd: true, isRegular: false },
+        { imgSrc: 'assets/img/toolbar/highlight-selected.svg', title: 'Highlight Selected', fn: 'highlightSelected', isStd: true, isRegular: true },
+        { imgSrc: 'assets/img/toolbar/remove-highlights.svg', title: 'Remove Highlights', fn: 'removeHighlights', isStd: true, isRegular: true }]
+      },
+      {
+        div: 4, items: [{ imgSrc: 'assets/img/toolbar/layout-cose.svg', title: 'Perform Layout', fn: 'performLayout', isStd: true, isRegular: true },
+        { imgSrc: 'assets/img/toolbar/layout-static.svg', title: 'Recalculate Layout', fn: 'reLayout', isStd: true, isRegular: true }]
+      },
+      {
+        div: 5, items: [{ imgSrc: 'assets/img/toolbar/quick-help.svg', title: 'Quick help', fn: 'openQuickHelp', isStd: true, isRegular: true },
+        { imgSrc: 'assets/img/toolbar/about.svg', title: 'About', fn: 'openAbout', isStd: true, isRegular: true }]
+      },
+    ];
+  }
 
   ngOnInit() {
+    this.mergeCustomMenu();
+  }
+
+  mergeCustomMenu() {
+    let m = this._customizationService.menu;
+    // in any case, set isStd property to false
+    m.map(x => x.items.map(y => y.isStd = false));
+
+    for (let i = 0; i < m.length; i++) {
+      let idx = this.menu.findIndex(x => x.div == m[i].div);
+      if (idx == -1) {
+        this.menu.push(m[i]);
+      } else {
+        this.menu[idx].items.push(...m[i].items);
+      }
+    }
+  }
+
+  fileSelected() { this._cyService.loadFile(this.file.nativeElement.files[0]); }
+
+  triggerAct(act: ToolbarAction) {
+    if (act.isStd) {
+      this[act.fn]();
+    } else {
+      this._customizationService[act.fn]();
+    }
   }
 
   load() {
@@ -27,25 +84,15 @@ export class ToolbarComponent implements OnInit {
     this.file.nativeElement.click();
   }
 
-  fileSelected() {
-    this._cyService.loadFile(this.file.nativeElement.files[0]);
-  }
+  saveAsJson() { this._cyService.saveAsJson(); }
 
-  saveAsJson() {
-    this._cyService.saveAsJson();
-  }
+  saveAsPng() { this.modalService.open(SaveAsPngModalComponent); }
 
-  saveAsPng() {
-    this.modalService.open(SaveAsPngModalComponent);
-  }
+  deleteSelected() { this._cyService.deleteSelected(null); }
 
-  deleteSelected() {
-    this._cyService.deleteSelected(null);
-  }
+  hideSelected() { this._cyService.showHideSelectedElements(true); }
 
-  showHideSelected(isHide: boolean) {
-    this._cyService.showHideSelectedElements(isHide);
-  }
+  showAll() { this._cyService.showHideSelectedElements(false); }
 
   highlightSearch() {
     const q = this.generateCyQueryForStrSearch(this.searchTxt);
@@ -91,23 +138,15 @@ export class ToolbarComponent implements OnInit {
     });
   }
 
-  highlightSelected() {
-    this._cyService.highlightSelected();
-  }
+  highlightSelected() { this._cyService.highlightSelected(); }
 
-  highlightRemove() {
-    this._cyService.highlightRemove();
-  }
+  removeHighlights() { this._cyService.removeHighlights(); }
 
-  performLayout(isRandomize: boolean) {
-    this._g.performLayout(isRandomize);
-  }
+  performLayout() { this._g.performLayout(false); }
 
-  quickHelp() {
-    this.modalService.open(QuickHelpModalComponent);
-  }
+  reLayout() { this._g.performLayout(true); }
 
-  about() {
-    this.modalService.open(AboutModalComponent);
-  }
+  openQuickHelp() { this.modalService.open(QuickHelpModalComponent); }
+
+  openAbout() { this.modalService.open(AboutModalComponent); }
 }

@@ -15,7 +15,7 @@ import { GlobalVariableService } from '../global-variable.service';
       dropdown: 'File', actions: [{ txt: 'Custom Action 1', id: '', fn: 'fn1', isStd: false }]
     },
     {
-      dropdown: 'Custom DropDown 1', actions: [{ txt: 'Custom Action 1', id: '', fn: 'fn2', isStd: true }]
+      dropdown: 'Custom DropDown 1', actions: [{ txt: 'Custom Action 1', id: '', fn: 'fn2', isStd: false }]
     }];
  **/
 export class NavbarCustomizationService {
@@ -30,7 +30,7 @@ export class NavbarCustomizationService {
     //   dropdown: 'File', actions: [{ txt: 'Custom Action 1', id: '', fn: 'fn1', isStd: false }]
     // },
     // {
-    //   dropdown: 'Custom DropDown 1', actions: [{ txt: 'Custom Action 2', id: '', fn: 'fn2', isStd: true }]
+    //   dropdown: 'Custom DropDown 1', actions: [{ txt: 'Custom Action 2', id: '', fn: 'fn2', isStd: false }]
     // }];
   }
 
