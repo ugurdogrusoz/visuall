@@ -359,8 +359,7 @@ export class CytoscapeService {
     this._g.applyClassFiltering();
     this._timebarService.cyElemListChanged();
 
-    if (!isIncremental) {
-      // this.appManager.showAllTimeRange(true);
+    if (!isIncremental && this._g.isTimebarEnabled) {
       this._timebarService.coverAllTimes(true);
     } else {
       this._g.performLayout(!isIncremental || wasEmpty);
@@ -494,8 +493,7 @@ export class CytoscapeService {
       $('#cy').css('height', '79vh');
       $('#timebar').show();
     }
-    // this.appManager.showTimebarChanged();
-    this._timebarService.statusChanged();
+    this._timebarService.statusChanged(isChecked);
     this.setNavigatorPosition();
   }
 

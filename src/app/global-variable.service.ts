@@ -10,9 +10,11 @@ export class GlobalVariableService {
   expandCollapseApi: any;
   hiddenClasses: Set<string>;
   isIgnoreCaseInText: boolean;
+  isTimebarEnabled: boolean;
 
   constructor() {
     this.isIgnoreCaseInText = false;
+    this.isTimebarEnabled = true;
     this.hiddenClasses = new Set([]);
   }
 

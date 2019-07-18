@@ -41,6 +41,7 @@ export class TimebarService {
 
   init() {
     this.loadGoogleChart();
+    this.unbindCommands();
     this.bindCommands();
     this.unbindEventListeners();
     this.bindEventListeners();
@@ -63,12 +64,18 @@ export class TimebarService {
   }
 
   cyElemListChanged() {
+    if (!this._g.isTimebarEnabled) {
+      return;
+    }
     const datas = this._g.cy.$().filter(x => x.visible()).map(x => x.data());
     let times = [];
     for (let i = 0; i < datas.length; i++) {
       const curr = datas[i];
-      times.push({ isBegin: true, d: curr.begin_datetime, id: curr.id });
-      times.push({ isBegin: false, d: curr.end_datetime, id: curr.id });
+      // if date property does not exist in the data, use min max dates
+      const d1 = curr.begin_datetime || 0;
+      const d2 = curr.end_datetime || MAX_DATE / 2;
+      times.push({ isBegin: true, d: d1, id: curr.id });
+      times.push({ isBegin: false, d: d2, id: curr.id });
     }
     if (times.length < 1) {
       return;
@@ -83,6 +90,10 @@ export class TimebarService {
 
   bindCommands() {
     $('#filter_div').on('mousewheel', (e) => this.changeZoom(e.originalEvent.wheelDelta > 0));
+  }
+
+  unbindCommands() {
+    $('#filter_div').off('mousewheel');
   }
 
   prepareChartData(times) {
@@ -163,7 +174,12 @@ export class TimebarService {
 
   rangeChange(isSetCursorPos = true, isRandomize = false) {
     const [s, e] = this.getChartRange();
+    
     let shownElems = this._g.cy.elements(`[begin_datetime <= ${e}][end_datetime > ${s}]`);
+    // property does not exists, don't make any filtering
+    if (this._g.cy.elements('[begin_datetime]').length === 0) {
+      shownElems = this._g.cy.elements();
+    }
     if (isSetCursorPos) {
       this.cursorPos = 0;
     }
@@ -211,6 +227,10 @@ export class TimebarService {
       }
     }
 
+    // objects does not have date property
+    if (min === MAX_DATE) {
+      return [MIN_DATE, MAX_DATE];
+    }
     return [min, max];
   }
 
@@ -462,17 +482,19 @@ export class TimebarService {
     this.playTimerId = -1
   }
 
-  statusChanged() {
-    const isActive = $('#showHideTimebarCheckBox').is(':checked');
+  statusChanged(isActive: boolean) {
+    this._g.isTimebarEnabled = isActive;
+
     if (isActive) {
       this.bindEventListeners();
       this.windowResizer();
+      this.bindCommands();
     } else {
       this.setChartRange(this.onlyDates[0], this.onlyDates[this.onlyDates.length - 1]);
       this.rangeChange(false);
       this.controlWrapper.draw();
-
       this.unbindEventListeners();
+      this.unbindCommands();
     }
   }
 
