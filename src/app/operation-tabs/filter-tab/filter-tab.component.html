@@ -76,7 +76,7 @@
                 </div>
                 <!-- rule body -->
                 <div class="col-lg-9 col-sm-10 text-left va-text">
-                  <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0">{{rule.ruleOperator}}</a>
+                  <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0" (click)="ruleOperatorClicked(i, j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
                   <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
                 </div>
                 <!-- delete rule button -->

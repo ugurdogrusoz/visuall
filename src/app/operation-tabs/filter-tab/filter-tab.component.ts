@@ -61,7 +61,7 @@ export class FilterTabComponent implements OnInit {
       defaultDate: new Date(),
     };
     flatpickr('#filter-date-inp0', opt);
-    
+
     this.classOptions.push({ text: '─── Nodes ───', isDisabled: true });
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
@@ -79,6 +79,14 @@ export class FilterTabComponent implements OnInit {
 
     this.selectedClass = this.classOptions[1].text;
     this.changeSelectedClass();
+  }
+
+  ruleOperatorClicked(i:number, j:number, op: string) {
+    if (op == 'OR') {
+      this.filteringRules[i].rules[j].ruleOperator = 'AND';
+    } else {
+      this.filteringRules[i].rules[j].ruleOperator = 'OR';
+    }
   }
 
   changeSelectedClass() {
@@ -232,6 +240,17 @@ export class FilterTabComponent implements OnInit {
   }
 
   runFilteringOnlyOnGraph() {
+    let filterByRule = function (rule, ele) {
+      const attr = rule.attribute;
+      const op = rule.operator;
+      const ruleVal = rule.value;
+      const eleVal = ele.data(attr);
+      if (rule.attributeType === 'string' && this._g.isIgnoreCaseInText) {
+        return compare(eleVal.toLowerCase(), ruleVal.toLowerCase(), op);
+      }
+      return compare(eleVal, ruleVal, op);
+    }.bind(this);
+
     this._g.viewUtils.hide(this._g.cy.$());
 
     let nodes = this._g.cy.collection();
@@ -262,17 +281,6 @@ export class FilterTabComponent implements OnInit {
 
     this._g.applyClassFiltering();
     this._timebarService.cyElemListChanged();
-    
-    function filterByRule(rule, ele) {
-      const attr = rule.attribute;
-      const op = rule.operator;
-      const ruleVal = rule.value;
-      const eleVal = ele.data(attr);
-      if (rule.attributeType === 'string' && this._g.isIgnoreCaseInText) {
-        return compare(eleVal.toLowerCase(), ruleVal.toLowerCase(), op);
-      }
-      return compare(eleVal, ruleVal, op);
-    }
 
     function compare(a, b, operator) {
       const cmpFunc = COMPARE_FUNCTIONS[operator.toLowerCase()];
