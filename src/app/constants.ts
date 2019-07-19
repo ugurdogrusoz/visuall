@@ -80,19 +80,6 @@ export const LIST_OPERATORS = {
   "in": "In"
 };
 
-export const COMPARE_FUNCTIONS = {
-  "=": function (a, b) { return a === b },
-  "<>": function (a, b) { return a !== b },
-  "<": function (a, b) { return a < b },
-  ">": function (a, b) { return a > b },
-  "<=": function (a, b) { return a <= b },
-  ">=": function (a, b) { return a >= b },
-  "contains": function (a, b) { return a.includes(b) },
-  "starts with": function (a, b) { return a.startsWith(b) },
-  "ends with": function (a, b) { return a.endsWith(b) },
-  "in": function (a, b) { return a.includes(b) },
-};
-
 // https://davidwalsh.name/javascript-debounce-function
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
@@ -188,7 +175,7 @@ export function expandCollapseCuePosition(node) {
   let add = offset * smallness + size;
   const x = node.position('x') - node.width() / 2 - parseFloat(node.css('padding-left')) + add;
   const y = node.position('y') - node.height() / 2 - parseFloat(node.css('padding-top')) + add;
-  return {x: x, y: y};
+  return { x: x, y: y };
 }
 
 export function areSetsEqual(s1: Set<any>, s2: Set<any>) {
@@ -207,4 +194,31 @@ export function areSetsEqual(s1: Set<any>, s2: Set<any>) {
     }
   }
   return true;
+}
+
+export function compareUsingOperator(a: any, b: any, op: string) {
+  op = op.toLowerCase();
+  switch (op) {
+    case '=':
+      return a === b;
+    case '<>':
+      return a !== b;
+    case '<':
+      return a < b;
+    case '>':
+      return a > b;
+    case '>=':
+      return a >= b;
+    case '<=':
+      return a <= b;
+    case 'contains':
+    case 'in':
+      return a.includes(b);
+    case 'starts with':
+      return a.startsWith(b);
+    case 'ends with':
+      return a.endsWith(b);
+    default:
+      return false;
+  }
 }

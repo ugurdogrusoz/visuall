@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
 import {
-  NUMBER_OPERATORS, TEXT_OPERATORS, LIST_OPERATORS, COMPARE_FUNCTIONS, findTypeOfAttribute, FILTER_CLASS_HIDE
+  NUMBER_OPERATORS, TEXT_OPERATORS, LIST_OPERATORS, compareUsingOperator, findTypeOfAttribute, FILTER_CLASS_HIDE
 } from '../../constants';
 import * as $ from 'jquery';
 import { DbService } from '../../db.service';
@@ -81,11 +81,13 @@ export class FilterTabComponent implements OnInit {
     this.changeSelectedClass();
   }
 
-  ruleOperatorClicked(i:number, j:number, op: string) {
+  ruleOperatorClicked(i: number, j: number, op: string) {
     if (op == 'OR') {
       this.filteringRules[i].rules[j].ruleOperator = 'AND';
+      this.allFilteringRules[this.filteringRules[i].className].rules[j].logicOperator = 'AND';
     } else {
       this.filteringRules[i].rules[j].ruleOperator = 'OR';
+      this.allFilteringRules[this.filteringRules[i].className].rules[j].logicOperator = 'OR';
     }
   }
 
@@ -143,7 +145,6 @@ export class FilterTabComponent implements OnInit {
     let renderedOperator = this.selectedOperatorKey;
     const attributeType = this.attributeType;
     if (attributeType === 'datetime') {
-      // value = this.currDatetimes[0].getTime();
       value = document.querySelector('#filter-date-inp0')['_flatpickr'].selectedDates[0].getTime();
     }
 
@@ -169,7 +170,7 @@ export class FilterTabComponent implements OnInit {
 
   addRule2FilteringRules(rule) {
     let idx: number = this.filteringRules.findIndex(x => x.className == rule.className);
-    let r: Rule = { propertyOperand: rule.attribute, operator: rule.operator, inputOperand: rule.value, ruleOperator: rule.logicOperator };
+    let r: Rule = { propertyOperand: rule.attribute, propertyType: rule.attributeType, operator: rule.operator, inputOperand: rule.value, ruleOperator: rule.logicOperator };
     if (rule.attributeType == 'datetime') {
       r.inputOperand = new Date(rule.value).toLocaleString();
     }
@@ -185,9 +186,8 @@ export class FilterTabComponent implements OnInit {
     this.filteringParams[rule.paramName] = rule.value;
 
     const className = rule.className;
-    let allRules = this.allFilteringRules;
-    if (allRules.hasOwnProperty(className)) {
-      let typeRules = allRules[className].rules;
+    if (this.allFilteringRules.hasOwnProperty(className)) {
+      let typeRules = this.allFilteringRules[className].rules;
       typeRules.push(rule);
     }
     else {
@@ -210,7 +210,7 @@ export class FilterTabComponent implements OnInit {
         typeRuleObj.rightNode = rightNode;
       }
 
-      allRules[className] = typeRuleObj;
+      this.allFilteringRules[className] = typeRuleObj;
     }
   }
 
@@ -239,53 +239,44 @@ export class FilterTabComponent implements OnInit {
     this.filteringRules[i].rules[idx] = tmp;
   }
 
-  runFilteringOnlyOnGraph() {
-    let filterByRule = function (rule, ele) {
-      const attr = rule.attribute;
-      const op = rule.operator;
-      const ruleVal = rule.value;
-      const eleVal = ele.data(attr);
-      if (rule.attributeType === 'string' && this._g.isIgnoreCaseInText) {
-        return compare(eleVal.toLowerCase(), ruleVal.toLowerCase(), op);
-      }
-      return compare(eleVal, ruleVal, op);
-    }.bind(this);
+  filterByRule(rule: Rule, ele) {
+    const attr = rule.propertyOperand;
+    const op = rule.operator;
+    const ruleVal = rule.inputOperand;
+    const eleVal = ele.data(attr);
+    if (rule.propertyType === 'string' && this._g.isIgnoreCaseInText) {
+      return compareUsingOperator(eleVal.toLowerCase(), ruleVal.toLowerCase(), op);
+    }
+    return compareUsingOperator(eleVal, ruleVal, op);
+  }
 
+  runFilteringOnClient() {
     this._g.viewUtils.hide(this._g.cy.$());
 
-    let nodes = this._g.cy.collection();
-    let edges = this._g.cy.collection();
-
-    const filteringRules = this.allFilteringRules;
-    for (const className in filteringRules) {
-      const ruleObj = filteringRules[className];
-      const rules = ruleObj.rules;
-      const type = ruleObj.type;
-
-      let eles = this._g.cy.$(type + "." + className);
-      let shownEles = (type.toLowerCase() === 'node') ? nodes : edges;
-      for (let i = 0; i < rules.length; i++) {
-        const rule = rules[i];
-        const logicOp = rule.logicOperator;
-
-        if (i > 0 && logicOp.toLowerCase() === 'or') {
-          shownEles.merge(eles);
-          eles = this._g.cy.$(type + "." + className);
+    let filteredElems = this._g.cy.collection();
+    for (let classBasedRules of this.filteringRules) {
+      let allClassElems = this._g.cy.$('.' + classBasedRules.className);
+      let filteredClassElems = this._g.cy.collection();
+      for (let i = 0; i < classBasedRules.rules.length; i++) {
+        const rule = classBasedRules.rules[i];
+        if (i == 0) {
+          filteredClassElems = allClassElems.filter(ele => { return this.filterByRule(rule, ele) });
+          continue;
         }
-        eles = eles.filter(ele => { return filterByRule(rule, ele) });
+        if (rule.ruleOperator == 'OR') {
+          filteredClassElems.merge(allClassElems.filter(ele => { return this.filterByRule(rule, ele) }));
+        } else if (rule.ruleOperator == 'AND') {
+          filteredClassElems = filteredClassElems.filter(ele => { return this.filterByRule(rule, ele) });
+        }
       }
-      shownEles.merge(eles);
+      // always merge elements from different classes
+      filteredElems.merge(filteredClassElems);
     }
-    nodes.merge(edges.connectedNodes());
-    this._g.viewUtils.show(nodes, edges);
 
+    filteredElems.merge(filteredElems.connectedNodes());
+    this._g.viewUtils.show(filteredElems);
     this._g.applyClassFiltering();
     this._timebarService.cyElemListChanged();
-
-    function compare(a, b, operator) {
-      const cmpFunc = COMPARE_FUNCTIONS[operator.toLowerCase()];
-      return !cmpFunc ? false : cmpFunc(a, b);
-    }
   }
 
   runFilteringOnDatabase() {
@@ -302,7 +293,7 @@ export class FilterTabComponent implements OnInit {
     if (this.isFilterOnDb) {
       this.runFilteringOnDatabase();
     } else {
-      this.runFilteringOnlyOnGraph();
+      this.runFilteringOnClient();
     }
   }
 
@@ -336,11 +327,11 @@ interface ClassOption {
 interface ClassBasedRules {
   className: string;
   rules: Rule[];
-
 }
 
 interface Rule {
   propertyOperand: string;
+  propertyType: string;
   operator: string;
   inputOperand: string;
   ruleOperator: string;

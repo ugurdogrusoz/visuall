@@ -24,7 +24,7 @@ export class TimebarService {
   shownMetrics: any[];
   sampleCount: number;
   playTimerId: number;
-  isHideDisconnectedNodes:boolean;
+  isHideDisconnectedNodes: boolean;
   speed: number;
   step: number;
 
@@ -35,8 +35,8 @@ export class TimebarService {
     this.isRangeSet = false;
     this.onlyDates = [];
     this.isHideDisconnectedNodes = false;
-    this.speed=-100;
-    this.step=50;
+    this.speed = -100;
+    this.step = 50;
   }
 
   init() {
@@ -174,7 +174,7 @@ export class TimebarService {
 
   rangeChange(isSetCursorPos = true, isRandomize = false) {
     const [s, e] = this.getChartRange();
-    
+
     let shownElems = this._g.cy.elements(`[begin_datetime <= ${e}][end_datetime > ${s}]`);
     // property does not exists, don't make any filtering
     if (this._g.cy.elements('[begin_datetime]').length === 0) {
@@ -192,7 +192,7 @@ export class TimebarService {
     this._g.applyClassFiltering();
     this._g.performLayout(isRandomize);
   }
-  
+
   renderChart(isSetState) {
     if (!this.times || this.times.length < 1) {
       return;
@@ -397,10 +397,10 @@ export class TimebarService {
     //chage the step and speed here 
     //initial step is 0.5 s will divide the parameter with 100
     //step = step / 100;
-  //  this.step = this.step /100;
+    //  this.step = this.step /100;
     let [start, end] = this.getChartRange();
     let delta = Math.ceil(end - start);
-    let change = Math.ceil(delta * this.step/100);
+    let change = Math.ceil(delta * this.step / 100);
     const max = this.times[this.times.length - 1].d;
     const min = this.times[0].d;
     if ((this.cursorPos === -1 && isLeft) || (this.cursorPos === 1 && !isLeft)) {
@@ -446,7 +446,7 @@ export class TimebarService {
     return true;
   }
 
-  coverAllTimes(isSetState, isRandomize=true) {
+  coverAllTimes(isSetState, isRandomize = true) {
     this.resetMinMaxDate();
     this.renderChart(isSetState);
     this.rangeChange(true, isRandomize);
@@ -470,7 +470,7 @@ export class TimebarService {
         } else {
           this.stopPlayTimer(callback);
         }
-      }, this.speed*-1);
+      }, this.speed * -1);
     } else {
       this.stopPlayTimer(callback);
     }
@@ -498,17 +498,17 @@ export class TimebarService {
     }
   }
 
-  setisHideDisconnectedNodes(val:boolean) {
+  setisHideDisconnectedNodes(val: boolean) {
     this.isHideDisconnectedNodes = val;
   }
-  changeSpeed(newSpeed)
-{
-  this.speed = newSpeed;
-}
-changeStep(newStep)
-{
-this.step = newStep;
-}
+
+  changeSpeed(newSpeed) {
+    this.speed = newSpeed;
+  }
+  
+  changeStep(newStep) {
+    this.step = newStep;
+  }
 }
 
 
