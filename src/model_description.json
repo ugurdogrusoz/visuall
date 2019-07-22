@@ -208,10 +208,17 @@
     }
   },
   "timebarDataMapping": {
+    "Person": {
+      "begin_datetime": "begin_datetime",
+      "end_datetime": "end_datetime"
+    },
     "Movie": {
+      "begin_datetime": "begin_datetime",
       "end_datetime": "end_datetime"
     },
     "ACTED_IN": {
+      "begin_datetime": "begin_datetime",
+      "end_datetime": "end_datetime"
     },
     "DIRECTED": {
       "begin_datetime": "begin_datetime",
