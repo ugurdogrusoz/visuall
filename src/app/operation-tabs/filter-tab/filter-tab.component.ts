@@ -144,8 +144,12 @@ export class FilterTabComponent implements OnInit {
     let operator = this.operators[this.selectedOperatorKey];
     let renderedOperator = this.selectedOperatorKey;
     const attributeType = this.attributeType;
-    if (attributeType === 'datetime') {
+    if (attributeType == 'datetime') {
       value = document.querySelector('#filter-date-inp0')['_flatpickr'].selectedDates[0].getTime();
+    } else if (attributeType == 'int') {
+      value = parseInt(value);
+    } else if (attributeType == 'float') {
+      value = parseFloat(value);
     }
 
     if (!logicOperator || !className || !attribute || !value || !operator)
