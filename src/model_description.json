@@ -35,7 +35,9 @@
     "Person": {
       "properties": {
         "name": "string",
-        "born": "int"
+        "born": "int",
+        "begin_datetime": "datetime",
+        "end_datetime": "datetime"
       },
       "style": {
         "label": "data(name)",
@@ -57,7 +59,9 @@
         "tagline": "string",
         "released": "int",
         "rating": "float",
-        "genre": "string"
+        "genre": "string",
+        "begin_datetime": "datetime",
+        "end_datetime": "datetime"
       },
       "style": {
         "label": "data(title)",
@@ -81,7 +85,9 @@
         "movie"
       ],
       "properties": {
-        "roles": "list"
+        "roles": "list",
+        "begin_datetime": "datetime",
+        "end_datetime": "datetime"
       },
       "style": {
         "label": "acted in",
@@ -100,7 +106,10 @@
         "person",
         "movie"
       ],
-      "properties": {},
+      "properties": {
+        "begin_datetime": "datetime",
+        "end_datetime": "datetime"
+      },
       "style": {
         "label": "directed",
         "width": "3px",
@@ -118,7 +127,10 @@
         "person",
         "movie"
       ],
-      "properties": {},
+      "properties": {
+        "begin_datetime": "datetime",
+        "end_datetime": "datetime"
+      },
       "style": {
         "label": "produced",
         "width": "2px",
@@ -136,7 +148,10 @@
         "person",
         "movie"
       ],
-      "properties": {},
+      "properties": {
+        "begin_datetime": "datetime",
+        "end_datetime": "datetime"
+      },
       "style": {
         "label": "wrote",
         "width": "2px",
@@ -154,7 +169,10 @@
         "person",
         "movie"
       ],
-      "properties": {},
+      "properties": {
+        "begin_datetime": "datetime",
+        "end_datetime": "datetime"
+      },
       "style": {
         "label": "reviewed",
         "width": "2px",
@@ -172,7 +190,10 @@
         "person",
         "movie"
       ],
-      "properties": {},
+      "properties": {
+        "begin_datetime": "datetime",
+        "end_datetime": "datetime"
+      },
       "style": {
         "label": "follows",
         "width": "2px",
@@ -184,6 +205,33 @@
         "target-arrow-color": "#f7a67e",
         "text-rotation": "autorotate"
       }
+    }
+  },
+  "timebarDataMapping": {
+    "Movie": {
+      "end_datetime": "end_datetime"
+    },
+    "ACTED_IN": {
+    },
+    "DIRECTED": {
+      "begin_datetime": "begin_datetime",
+      "end_datetime": "end_datetime"
+    },
+    "PRODUCED": {
+      "begin_datetime": "begin_datetime",
+      "end_datetime": "end_datetime"
+    },
+    "WROTE": {
+      "begin_datetime": "begin_datetime",
+      "end_datetime": "end_datetime"
+    },
+    "REVIEWED": {
+      "begin_datetime": "begin_datetime",
+      "end_datetime": "end_datetime"
+    },
+    "FOLLOWS": {
+      "begin_datetime": "begin_datetime",
+      "end_datetime": "end_datetime"
     }
   },
   "generalStyles": [

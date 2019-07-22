@@ -32,9 +32,6 @@ function parse_model_description(model) {
   generate_node_styles(classes, stylesheet, properties);
   generate_edge_styles(relations, stylesheet, properties);
 
-  // Add default properties
-  add_default_properties(properties);
-
   // add overwrite styles, these should be written last to overwrite
   generate_fixed_styles(stylesheet, data['overwriteStyles']);
   // Beautify JSON output with 2 space tabs and write to file
@@ -120,16 +117,6 @@ function generate_edge_styles(edges, stylesheet, properties) {
     stylesheet.push(style);
 
     properties['edges'][key] = val['properties'];
-  }
-}
-
-function add_default_properties(properties) {
-  for(const type in properties){
-    for(const className in properties[type]){
-      let classObj = properties[type][className];
-      classObj["begin_datetime"] = "datetime";
-      classObj["end_datetime"] = "datetime";
-    }
   }
 }
 

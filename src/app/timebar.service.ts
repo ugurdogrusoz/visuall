@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import * as $ from 'jquery';
+
 import { debounce, MIN_DATE, MAX_DATE, isClose } from './constants';
 import { GlobalVariableService } from './global-variable.service';
+import ModelDescription from '../model_description.json';
 
-import * as $ from 'jquery';
 declare var google: any;
 
 @Injectable({
@@ -27,6 +29,10 @@ export class TimebarService {
   isHideDisconnectedNodes: boolean;
   speed: number;
   step: number;
+  private beginPropertyName = 'begin_datetime';
+  private endPropertyName = 'end_datetime';
+  private defaultBeginDate = -631159200000; // 1950 
+  private defaultEndDate = 2524597200000; // 1950 
 
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
@@ -63,19 +69,41 @@ export class TimebarService {
     window.removeEventListener('resize', this.windowResizer);
   }
 
+  getTimeRange(ele: { data: object, classes: string[] }): any[] {
+    ele.classes = ele.classes.map(x => x.toLowerCase());
+
+    if (!ModelDescription.timebarDataMapping) {
+      return [this.defaultBeginDate, this.defaultEndDate];
+    }
+    for (let c in ModelDescription.timebarDataMapping) {
+      const idx = ele.classes.findIndex(x => x == c.toLowerCase());
+      if (idx != -1) {
+        const p1 = ModelDescription.timebarDataMapping[c][this.beginPropertyName];
+        const p2 = ModelDescription.timebarDataMapping[c][this.endPropertyName];
+        const v1 = ele.data[p1];
+        const v2 = ele.data[p2];
+        if (v1 && v2) {
+          return [v1, v2];
+        }
+        // if there is only 1, use the same as begin and end
+        else if ((v1 && !v2) || (!v1 && v2)) {
+          return [v1 || v2, v1 || v2]
+        }
+      }
+    }
+    return [this.defaultBeginDate, this.defaultEndDate];
+  }
+
   cyElemListChanged() {
     if (!this._g.isTimebarEnabled) {
       return;
     }
-    const datas = this._g.cy.$().filter(x => x.visible()).map(x => x.data());
+    const eles = this._g.cy.$().filter(x => x.visible()).map(x => { return { data: x.data(), classes: x.classes() } });
     let times = [];
-    for (let i = 0; i < datas.length; i++) {
-      const curr = datas[i];
-      // if date property does not exist in the data, use min max dates
-      const d1 = curr.begin_datetime || 0;
-      const d2 = curr.end_datetime || MAX_DATE / 2;
-      times.push({ isBegin: true, d: d1, id: curr.id });
-      times.push({ isBegin: false, d: d2, id: curr.id });
+    for (let i = 0; i < eles.length; i++) {
+      const [d1, d2] = this.getTimeRange(eles[i]);
+      times.push({ isBegin: true, d: d1, id: eles[i].data.id });
+      times.push({ isBegin: false, d: d2, id: eles[i].data.id });
     }
     if (times.length < 1) {
       return;
@@ -172,14 +200,23 @@ export class TimebarService {
     google.visualization.events.addListener(this.controlWrapper, 'statechange', fn.bind(this));
   }
 
+  getCySelectorForDateRange(start: number, end: number): string {
+    let str = '';
+
+    for (let c in ModelDescription.timebarDataMapping) {
+      const p1 = ModelDescription.timebarDataMapping[c][this.beginPropertyName];
+      const p2 = ModelDescription.timebarDataMapping[c][this.endPropertyName];
+      str += `[${p1} <= ${end}][${p2} > ${start}],`
+    }
+    str = str.substr(0, str.length - 1);
+    return str;
+  }
+
   rangeChange(isSetCursorPos = true, isRandomize = false) {
     const [s, e] = this.getChartRange();
 
-    let shownElems = this._g.cy.elements(`[begin_datetime <= ${e}][end_datetime > ${s}]`);
-    // property does not exists, don't make any filtering
-    if (this._g.cy.elements('[begin_datetime]').length === 0) {
-      shownElems = this._g.cy.elements();
-    }
+    const selector = this.getCySelectorForDateRange(s, e);
+    let shownElems = this._g.cy.elements(selector);
     if (isSetCursorPos) {
       this.cursorPos = 0;
     }
@@ -212,13 +249,12 @@ export class TimebarService {
   getVisibleRange() {
     let visibleItems = this._g.cy.filter(function (e) {
       return e.visible();
-    }).map(x => x.data());
+    }).map(x => { return { data: x.data(), classes: x.classes() } });
 
     let max = MIN_DATE;
     let min = MAX_DATE;
     for (let i = 0; i < visibleItems.length; i++) {
-      const d1 = visibleItems[i].begin_datetime;
-      const d2 = visibleItems[i].end_datetime;
+      const [d1, d2] = this.getTimeRange(visibleItems[i]);
       if (d1 < min) {
         min = d1;
       }
@@ -505,7 +541,7 @@ export class TimebarService {
   changeSpeed(newSpeed) {
     this.speed = newSpeed;
   }
-  
+
   changeStep(newStep) {
     this.step = newStep;
   }
