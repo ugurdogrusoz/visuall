@@ -19,8 +19,8 @@
   "edges": {
     "ACTED_IN": {
       "roles": "list",
-      "begin_datetime": "datetime",
-      "end_datetime": "datetime"
+      "occurence_begin": "datetime",
+      "occurence_enc": "datetime"
     },
     "DIRECTED": {
       "begin_datetime": "datetime",

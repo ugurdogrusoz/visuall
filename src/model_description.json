@@ -86,8 +86,8 @@
       ],
       "properties": {
         "roles": "list",
-        "begin_datetime": "datetime",
-        "end_datetime": "datetime"
+        "occurence_begin": "datetime",
+        "occurence_enc": "datetime"
       },
       "style": {
         "label": "acted in",
@@ -217,8 +217,8 @@
       "end_datetime": "end"
     },
     "ACTED_IN": {
-      "begin_datetime": "begin_datetime",
-      "end_datetime": "end_datetime"
+      "begin_datetime": "occurence_begin",
+      "end_datetime": "occurence_end"
     },
     "DIRECTED": {
       "begin_datetime": "begin_datetime",
