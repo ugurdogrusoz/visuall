@@ -19,12 +19,12 @@
     <label class="form-check-label va-text">Graph</label>
   </div>
   <div class="form-check form-check-inline m-1">
-    <input type="checkbox" class="form-check-input" [(ngModel)]="isMergeGraph" [disabled]="!isLoadGraph" />
+    <input type="checkbox" class="form-check-input" [(ngModel)]="isMergeGraph" />
     <label class="form-check-label va-text">Merge</label>
   </div>
 </div>
 
-<table class="table table-sm table-hover va-text" id="query0-result">
+<table class="table table-sm table-hover va-text">
   <thead *ngIf="results.length > 0">
     <tr>
       <th scope="col">#</th>
@@ -43,8 +43,10 @@
     </tr>
   </tbody>
 </table>
-<div class="d-flex align-items-center justify-content-center m-1">
+<div class="d-flex align-items-center justify-content-center m-1 va-text">
   <ngb-pagination *ngIf="results.length > 0" (pageChange)="pageChanged($event)" [collectionSize]="resultCnt"
-    [(page)]="currPage" [pageSize]="pageSize" [maxSize]="3" [rotate]="true" [boundaryLinks]="true">
+    [(page)]="currPage" [pageSize]="pageSize" [maxSize]="3" [rotate]="true">
+    <ng-template ngbPaginationPrevious><img class="img-sm-icon" src="/assets/img/left-arrow.svg"></ng-template>
+    <ng-template ngbPaginationNext><img class="img-sm-icon" src="/assets/img/right-arrow.svg"></ng-template>
   </ngb-pagination>
 </div>

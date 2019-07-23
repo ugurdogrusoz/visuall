@@ -121,5 +121,4 @@ export class Query0Component implements OnInit {
   onMouseExit(id: number) {
     this.highlighterFn({ target: this._g.cy.$('#n' + id), type: EV_MOUSE_OFF });
   }
-
 }

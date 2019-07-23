@@ -20,7 +20,7 @@ import axios from 'axios';
 export class CytoscapeService {
   cyNavi: any;
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
-
+  
   constructor(private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService) {
   }
 
@@ -417,6 +417,9 @@ export class CytoscapeService {
 
   highlightNeighbors() {
     let timerId;
+    let currOpacity = 1;
+    let nextOpacity = 1;
+
     return function (event) {
       let elements2remain = event.target.neighborhood().union(event.target);
       if (event.target.isEdge()) {
@@ -425,11 +428,20 @@ export class CytoscapeService {
 
       if (event.type === C.EV_MOUSE_ON) {
         timerId = setTimeout(function () {
-          this.setOtherElementsOpacity(elements2remain, C.HIGHLIGHT_OPACITY);
+          currOpacity = nextOpacity;
+          nextOpacity = C.HIGHLIGHT_OPACITY;
+          // eliminate unnecassary animation, it causes blinking
+          if (currOpacity != nextOpacity) {
+            this.setOtherElementsOpacity(elements2remain, C.HIGHLIGHT_OPACITY);
+          }
         }.bind(this), C.HIGHLIGHT_WAIT_DUR);
       } else {
         clearTimeout(timerId);
-        this.setOtherElementsOpacity(elements2remain, 1);
+        currOpacity = nextOpacity;
+        nextOpacity = 1;
+        if (currOpacity != nextOpacity) {
+          this.setOtherElementsOpacity(elements2remain, 1);
+        }
       }
     }.bind(this);
   }

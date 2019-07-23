@@ -50,16 +50,15 @@ export class Query1Component implements OnInit {
     flatpickr('#query1-inp1', opt2);
 
     this.results = [];
-
   }
 
   prepareQuery() {
     let date1 = document.querySelector('#query1-inp0')['_flatpickr'].selectedDates[0];
     let date2 = document.querySelector('#query1-inp1')['_flatpickr'].selectedDates[0];
     let skip = this.currPage * DATA_PAGE_SIZE;
-    let d1=flatpickr.formatDate(date1,"Y-M-D").substring(0,4);;
-    let d2=flatpickr.formatDate(date2,"Y-M-D").substring(0,4);
-  
+    let d1 = flatpickr.formatDate(date1, "Y-M-D").substring(0, 4);;
+    let d2 = flatpickr.formatDate(date2, "Y-M-D").substring(0, 4);
+
     //console.log(document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0]);
     let cql =
       ` MATCH (m:Movie {genre:'${this.selectedGenre}'})<-[:ACTED_IN]-(a:Person)
@@ -80,12 +79,14 @@ export class Query1Component implements OnInit {
       this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.isMergeGraph), true);
     }
   }
+
   fillTable(data) {
     this.results = [];
     for (let i = 0; i < data.data.length; i++) {
       this.results.push({ id: data.data[i][0], name: data.data[i][1] });
     }
   }
+  
   fillGenres(data) {
     this.movieGenres = [];
     for (let i = 0; i < data.data.length; i++) {
@@ -94,11 +95,11 @@ export class Query1Component implements OnInit {
   }
 
   getDataForQueryResult(id: number) {
-    
+
     let date1 = document.querySelector('#query1-inp0')['_flatpickr'].selectedDates[0];
     let date2 = document.querySelector('#query1-inp1')['_flatpickr'].selectedDates[0];
-    let d1=flatpickr.formatDate(date1,"Y-M-D").substring(0,4);;
-    let d2=flatpickr.formatDate(date2,"Y-M-D").substring(0,4);
+    let d1 = flatpickr.formatDate(date1, "Y-M-D").substring(0, 4);;
+    let d2 = flatpickr.formatDate(date2, "Y-M-D").substring(0, 4);
 
     let cql =
       `MATCH p=(m:Movie{genre:'${this.selectedGenre}'})<-[:ACTED_IN]-(a:Person) WHERE ID(m) = ${id} 

@@ -20,11 +20,11 @@
     <label class="form-check-label va-text">Graph</label>
   </div>
   <div class="form-check form-check-inline m-1">
-    <input type="checkbox" class="form-check-input" [(ngModel)]="isMergeGraph" [disabled]="!isLoadGraph" />
+    <input type="checkbox" class="form-check-input" [(ngModel)]="isMergeGraph" />
     <label class="form-check-label va-text">Merge</label>
   </div>
 </div>
-<table class="table table-sm table-hover va-text" id="query0-result">
+<table class="table table-sm table-hover va-text">
   <thead *ngIf="results.length > 0">
     <tr>
       <th scope="col">#</th>

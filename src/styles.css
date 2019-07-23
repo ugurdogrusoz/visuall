@@ -208,6 +208,11 @@ html {
   height: 20px;
 }
 
+.img-sm-icon {
+  width: 12px;
+  height: 12px;
+}
+
 #chart_div {
   height: 7vh;
 }
