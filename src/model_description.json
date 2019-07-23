@@ -86,8 +86,8 @@
       ],
       "properties": {
         "roles": "list",
-        "occurence_begin": "datetime",
-        "occurence_enc": "datetime"
+        "act_begin": "datetime",
+        "act_end": "datetime"
       },
       "style": {
         "label": "acted in",
@@ -149,8 +149,8 @@
         "movie"
       ],
       "properties": {
-        "begin_datetime": "datetime",
-        "end_datetime": "datetime"
+        "occurence_begin": "datetime",
+        "occurence_end": "datetime"
       },
       "style": {
         "label": "wrote",
@@ -217,8 +217,8 @@
       "end_datetime": "end"
     },
     "ACTED_IN": {
-      "begin_datetime": "occurence_begin",
-      "end_datetime": "occurence_end"
+      "begin_datetime": "act_begin",
+      "end_datetime": "act_end"
     },
     "DIRECTED": {
       "begin_datetime": "begin_datetime",
@@ -229,8 +229,8 @@
       "end_datetime": "end_datetime"
     },
     "WROTE": {
-      "begin_datetime": "begin_datetime",
-      "end_datetime": "end_datetime"
+      "begin_datetime": "occurence_begin",
+      "end_datetime": "occurence_end"
     },
     "REVIEWED": {
       "begin_datetime": "begin_datetime",
