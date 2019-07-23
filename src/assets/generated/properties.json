@@ -3,8 +3,8 @@
     "Person": {
       "name": "string",
       "born": "int",
-      "begin_datetime": "datetime",
-      "end_datetime": "datetime"
+      "start_t": "datetime",
+      "end_t": "datetime"
     },
     "Movie": {
       "title": "string",
@@ -12,8 +12,8 @@
       "released": "int",
       "rating": "float",
       "genre": "string",
-      "begin_datetime": "datetime",
-      "end_datetime": "datetime"
+      "begin": "datetime",
+      "end": "datetime"
     }
   },
   "edges": {

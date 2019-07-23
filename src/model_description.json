@@ -36,8 +36,8 @@
       "properties": {
         "name": "string",
         "born": "int",
-        "begin_datetime": "datetime",
-        "end_datetime": "datetime"
+        "start_t": "datetime",
+        "end_t": "datetime"
       },
       "style": {
         "label": "data(name)",
@@ -60,8 +60,8 @@
         "released": "int",
         "rating": "float",
         "genre": "string",
-        "begin_datetime": "datetime",
-        "end_datetime": "datetime"
+        "begin": "datetime",
+        "end": "datetime"
       },
       "style": {
         "label": "data(title)",
@@ -209,12 +209,12 @@
   },
   "timebarDataMapping": {
     "Person": {
-      "begin_datetime": "begin_datetime",
-      "end_datetime": "end_datetime"
+      "begin_datetime": "start_t",
+      "end_datetime": "end_t"
     },
     "Movie": {
-      "begin_datetime": "begin_datetime",
-      "end_datetime": "end_datetime"
+      "begin_datetime": "begin",
+      "end_datetime": "end"
     },
     "ACTED_IN": {
       "begin_datetime": "begin_datetime",
