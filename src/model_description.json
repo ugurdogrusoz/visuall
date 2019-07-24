@@ -107,8 +107,8 @@
         "movie"
       ],
       "properties": {
-        "begin_datetime": "datetime",
-        "end_datetime": "datetime"
+        "begin": "datetime",
+        "end": "datetime"
       },
       "style": {
         "label": "directed",
@@ -128,8 +128,8 @@
         "movie"
       ],
       "properties": {
-        "begin_datetime": "datetime",
-        "end_datetime": "datetime"
+        "begin": "datetime",
+        "end": "datetime"
       },
       "style": {
         "label": "produced",
@@ -170,8 +170,8 @@
         "movie"
       ],
       "properties": {
-        "begin_datetime": "datetime",
-        "end_datetime": "datetime"
+        "begin": "datetime",
+        "end": "datetime"
       },
       "style": {
         "label": "reviewed",
@@ -191,8 +191,8 @@
         "movie"
       ],
       "properties": {
-        "begin_datetime": "datetime",
-        "end_datetime": "datetime"
+        "begin": "datetime",
+        "end": "datetime"
       },
       "style": {
         "label": "follows",
@@ -221,24 +221,24 @@
       "end_datetime": "act_end"
     },
     "DIRECTED": {
-      "begin_datetime": "begin_datetime",
-      "end_datetime": "end_datetime"
+      "begin_datetime": "begin",
+      "end_datetime": "end"
     },
     "PRODUCED": {
-      "begin_datetime": "begin_datetime",
-      "end_datetime": "end_datetime"
+      "begin_datetime": "begin",
+      "end_datetime": "end"
     },
     "WROTE": {
       "begin_datetime": "occurence_begin",
       "end_datetime": "occurence_end"
     },
     "REVIEWED": {
-      "begin_datetime": "begin_datetime",
-      "end_datetime": "end_datetime"
+      "begin_datetime": "begin",
+      "end_datetime": "end"
     },
     "FOLLOWS": {
-      "begin_datetime": "begin_datetime",
-      "end_datetime": "end_datetime"
+      "begin_datetime": "begin",
+      "end_datetime": "end"
     }
   },
   "generalStyles": [
