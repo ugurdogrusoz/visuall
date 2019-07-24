@@ -57,7 +57,7 @@ export class Query0Component implements OnInit {
 
   getCountOfData(d1: number, d2: number) {
     let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
-    WHERE r.begin_datetime > ${d1} AND r.end_datetime < ${d2}  
+    WHERE r.act_begin > ${d1} AND r.act_end < ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree > ${this.movieCnt}
     RETURN DISTINCT COUNT(*)`;
@@ -75,7 +75,7 @@ export class Query0Component implements OnInit {
 
   loadTable(d1: number, d2: number, skip: number) {
     let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
-    WHERE r.begin_datetime > ${d1} AND r.end_datetime < ${d2}  
+    WHERE r.act_begin > ${d1} AND r.act_end < ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree > ${this.movieCnt}
     RETURN DISTINCT ID(n) as id, n.name as Actor, degree as Count 
@@ -88,7 +88,7 @@ export class Query0Component implements OnInit {
       return;
     }
     let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
-      WHERE r.begin_datetime > ${d1} AND r.end_datetime < ${d2}  
+      WHERE r.act_begin > ${d1} AND r.act_end < ${d2}  
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
       WHERE degree > ${this.movieCnt}
       RETURN n, edges ORDER BY degree DESC SKIP ${skip} LIMIT ${DATA_PAGE_SIZE}`;
@@ -107,7 +107,7 @@ export class Query0Component implements OnInit {
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
 
     let cql =
-      `MATCH p=(n:Person)-[r:ACTED_IN]->(:Movie) WHERE ID(n) = ${id} AND r.begin_datetime > ${d1} AND r.end_datetime < ${d2}
+      `MATCH p=(n:Person)-[r:ACTED_IN]->(:Movie) WHERE ID(n) = ${id} AND r.act_begin > ${d1} AND r.act_end < ${d2}
     RETURN nodes(p), relationships(p)`;
 
     this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.isMergeGraph), true);
