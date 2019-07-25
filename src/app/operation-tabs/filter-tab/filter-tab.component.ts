@@ -152,7 +152,7 @@ export class FilterTabComponent implements OnInit {
       value = parseFloat(value);
     }
 
-    if (!logicOperator || !className || !attribute || !value || !operator)
+    if (!logicOperator || !className || !attribute || value === undefined || !operator)
       return;
 
     this.ruleCount++;
