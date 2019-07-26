@@ -5,6 +5,7 @@ import panzoom from 'cytoscape-panzoom';
 import fcose from 'cytoscape-fcose';
 import expandCollapse from 'cytoscape-expand-collapse';
 import viewUtilities from 'cytoscape-view-utilities';
+import layoutUtilities from 'cytoscape-layout-utilities';
 import * as contextMenus from 'cytoscape-context-menus';
 import stylesheet from '../assets/generated/stylesheet.json';
 import * as C from './constants';
@@ -31,6 +32,8 @@ export class CytoscapeService {
     viewUtilities(cytoscape, $);
     //register expand-collapse extension
     expandCollapse(cytoscape, $);
+    //register layour utilities extension
+    layoutUtilities(cytoscape, $);
     // use fcose layout algorithm
     cytoscape.use(fcose);
 
@@ -136,11 +139,16 @@ export class CytoscapeService {
     });
     this.bindNavigatorExtension();
     this.bindViewUtilitiesExtension();
+    this.bindLayoutUtilitiesExtension();
     this.bindPanZoomExtension();
     this.bindExpandCollapseExtension();
     this.bindComponentSelector();
 
     (<any>window).cy = this._g.cy;
+  }
+
+  bindLayoutUtilitiesExtension(){
+    this._g.layoutUtils = this._g.cy.layoutUtilities();
   }
 
   bindNavigatorExtension() {
@@ -333,6 +341,7 @@ export class CytoscapeService {
     const nodes = data.nodes;
     const edges = data.edges;
 
+    var current = this._g.cy.nodes(':visible');
     let elemIds: string[] = [];
     let cy_nodes = [];
     for (const id in nodes) {
@@ -359,11 +368,22 @@ export class CytoscapeService {
     this._g.applyClassFiltering();
     this._timebarService.cyElemListChanged();
 
+    if(isIncremental){
+      var collection = this._g.cy.collection();
+      for(var i = 0; i<cy_nodes.length ; i++){
+        var node = this._g.cy.getElementById(cy_nodes[i].data.id);
+        if(!current.contains(node))
+          collection = collection.union(node);
+      }
+      this._g.layoutUtils.placeNewNodes(collection);
+    }
+
     if (!isIncremental && this._g.isTimebarEnabled) {
       this._timebarService.coverAllTimes(true);
-    } else {
+    } else {     
       this._g.performLayout(!isIncremental || wasEmpty);
     }
+    
     this.highlightElems(isIncremental, elemIds);
   }
 
@@ -571,6 +591,8 @@ export class CytoscapeService {
       if (!this.isAnyHidden()) {
         return;
       }
+      var hiddenNodes = this._g.cy.nodes(":hidden");
+      this._g.layoutUtils.placeNewNodes(hiddenNodes);
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
       this._timebarService.cyElemListChanged();

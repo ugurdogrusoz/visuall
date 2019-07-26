@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class GlobalVariableService {
   cy: any;
   viewUtils: any;
+  layoutUtils: any;
   layout: any;
   expandCollapseApi: any;
   hiddenClasses: Set<string>;
