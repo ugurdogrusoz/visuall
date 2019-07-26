@@ -23,24 +23,24 @@
       "act_end": "datetime"
     },
     "DIRECTED": {
-      "begin_datetime": "datetime",
-      "end_datetime": "datetime"
+      "begin": "datetime",
+      "end": "datetime"
     },
     "PRODUCED": {
-      "begin_datetime": "datetime",
-      "end_datetime": "datetime"
+      "begin": "datetime",
+      "end": "datetime"
     },
     "WROTE": {
       "occurence_begin": "datetime",
       "occurence_end": "datetime"
     },
     "REVIEWED": {
-      "begin_datetime": "datetime",
-      "end_datetime": "datetime"
+      "begin": "datetime",
+      "end": "datetime"
     },
     "FOLLOWS": {
-      "begin_datetime": "datetime",
-      "end_datetime": "datetime"
+      "begin": "datetime",
+      "end": "datetime"
     }
   }
 }
