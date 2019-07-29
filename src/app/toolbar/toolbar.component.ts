@@ -54,6 +54,11 @@ export class ToolbarComponent implements OnInit {
     this.mergeCustomMenu();
   }
 
+  ngAfterViewInit() {
+    // angular rendering harms previous manual positioning
+    this._cyService.setNavigatorPosition();
+  }
+
   mergeCustomMenu() {
     let m = this._customizationService.menu;
     // in any case, set isStd property to false
