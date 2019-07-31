@@ -200,23 +200,27 @@ export class TimebarService {
     google.visualization.events.addListener(this.controlWrapper, 'statechange', fn.bind(this));
   }
 
-  getCySelectorForDateRange(start: number, end: number): string {
-    let str = '';
-
+  getTimeFilteredElems(start: number, end: number) {
+    let elems = this._g.cy.collection();
+    let propNamesSelector = '';
+    // filter by begin_datetime, end_datetime
     for (let c in ModelDescription.timebarDataMapping) {
       const p1 = ModelDescription.timebarDataMapping[c][this.beginPropertyName];
       const p2 = ModelDescription.timebarDataMapping[c][this.endPropertyName];
-      str += `[${p1} <= ${end}][${p2} > ${start}],`
+      const selector = `[${p1} <= ${end}][${p2} > ${start}]`;
+      propNamesSelector += `[^${p1}][^${p2}]`
+      elems = elems.union(selector);
     }
-    str = str.substr(0, str.length - 1);
-    return str;
+
+    // there might be elements that don't have begin_datetime, end_datetime properties
+    elems = elems.union(propNamesSelector);
+    return elems;
   }
 
   rangeChange(isSetCursorPos = true, isRandomize = false) {
     const [s, e] = this.getChartRange();
 
-    const selector = this.getCySelectorForDateRange(s, e);
-    let shownElems = this._g.cy.elements(selector);
+    let shownElems = this.getTimeFilteredElems(s, e);
     if (isSetCursorPos) {
       this.cursorPos = 0;
     }
