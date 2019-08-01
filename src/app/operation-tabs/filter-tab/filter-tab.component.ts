@@ -174,7 +174,7 @@ export class FilterTabComponent implements OnInit {
 
   addRule2FilteringRules(rule) {
     let idx: number = this.filteringRules.findIndex(x => x.className == rule.className);
-    let r: Rule = { propertyOperand: rule.attribute, propertyType: rule.attributeType, operator: rule.operator, inputOperand: rule.value, ruleOperator: rule.logicOperator };
+    let r: Rule = { propertyOperand: rule.attribute, propertyType: rule.attributeType, operator: rule.operator, inputOperand: rule.value, ruleOperator: rule.logicOperator, originalValue: rule.value };
     if (rule.attributeType == 'datetime') {
       r.inputOperand = new Date(rule.value).toLocaleString();
     }
@@ -250,6 +250,9 @@ export class FilterTabComponent implements OnInit {
     const eleVal = ele.data(attr);
     if (rule.propertyType === 'string' && this._g.isIgnoreCaseInText) {
       return compareUsingOperator(eleVal.toLowerCase(), ruleVal.toLowerCase(), op);
+    }
+    if (rule.propertyType == 'datetime') {
+      return compareUsingOperator(eleVal, rule.originalValue, op);
     }
     return compareUsingOperator(eleVal, ruleVal, op);
   }
@@ -339,4 +342,5 @@ interface Rule {
   operator: string;
   inputOperand: string;
   ruleOperator: string;
+  originalValue: number;
 }
