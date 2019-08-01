@@ -37,7 +37,7 @@ export class GlobalVariableService {
 
   applyClassFiltering() {
     let hiddenSelector = '';
-    for (let i in this.hiddenClasses) {
+    for (let i of this.hiddenClasses) {
       hiddenSelector += '.' + i + ',';
     }
 
