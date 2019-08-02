@@ -190,6 +190,8 @@ export class CytoscapeService {
     window.addEventListener('scroll', this.cyNaviPositionSetter);
     // to render navigator, fire zoom event
     this._g.cy.zoom(this._g.cy.zoom() + 0.00001);
+    // to prevent expandCollapse extension's blocking 
+    $('.' + cyNaviClass).css('z-index', 1000);
   }
 
   bindViewUtilitiesExtension() {
