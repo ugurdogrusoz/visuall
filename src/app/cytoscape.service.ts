@@ -368,7 +368,6 @@ export class CytoscapeService {
     this._g.cy.add(cy_edges);
 
     this._g.applyClassFiltering();
-    this._timebarService.cyElemListChanged();
 
     if(isIncremental){
       var collection = this._g.cy.collection();
@@ -381,7 +380,7 @@ export class CytoscapeService {
     }
 
     if (!isIncremental && this._g.isTimebarEnabled) {
-      this._timebarService.coverAllTimes(true);
+      this._timebarService.coverAllTimes(false, true);
     } else {     
       this._g.performLayout(!isIncremental || wasEmpty);
     }

@@ -63,21 +63,34 @@ export const HIGHLIGHTED_EDGE_4 = {
 };
 
 export const NUMBER_OPERATORS = {
-  "=": "=",
-  "\u2260": "<>",
-  "<": "<",
-  ">": ">",
-  "\u2264": "<=",
-  "\u2265": ">="
+  '=': '=',
+  '\u2260': '<>',
+  '<': '<',
+  '>': '>',
+  '\u2264': '<=',
+  '\u2265': '>='
 };
 export const TEXT_OPERATORS = {
-  "equal to": "=",
-  "contains": "Contains",
-  "starts with": "Starts with",
-  "ends with": "Ends with"
+  'equal to': '=',
+  'contains': 'Contains',
+  'starts with': 'Starts with',
+  'ends with': 'Ends with'
 };
 export const LIST_OPERATORS = {
-  "in": "In"
+  'in': 'In'
+};
+
+export const TIME_UNITS = {
+  'century': 3153600000000,
+  'decade': 315360000000,
+  'year': 31536000000,
+  'quarter': 7884000000,
+  'month': 2592000000,
+  'week': 604800000,
+  'day': 86400000,
+  'hour': 3600000,
+  'minute': 60000,
+  'second': 1000
 };
 
 // https://davidwalsh.name/javascript-debounce-function
@@ -146,7 +159,7 @@ export function isSubset(a1, a2) {
   return true;
 }
 
-export function isClose(a1, a2, margin = 1000) {
+export function isClose(a1: number, a2: number, margin = 1000) {
   return Math.abs(a1 - a2) < margin;
 }
 
