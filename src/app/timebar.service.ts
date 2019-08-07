@@ -15,8 +15,8 @@ export class TimebarService {
   cyElemChangeHandler: Function;
   windowResizer: any;
   isRangeSet: boolean;
-  minDate: number;
-  maxDate: number;
+  rangeMinDate: number;
+  rangeMaxDate: number;
   times: iTimebarUnitData[];
   onlyDates: number[];
   graphDates: number[];
@@ -31,6 +31,7 @@ export class TimebarService {
   speed: number;
   step: number;
   idealUnitCount: number;
+  currTimeUnit: number;
   private beginPropertyName = 'begin_datetime';
   private endPropertyName = 'end_datetime';
   private defaultBeginDate = -631159200000; // 1950 
@@ -47,6 +48,7 @@ export class TimebarService {
     this.speed = -100;
     this.step = 50;
     this.graphDates = [];
+    this.currTimeUnit = 3600000;
   }
 
   init() {
@@ -115,7 +117,7 @@ export class TimebarService {
     this.prepareChartData(times);
     this.renderChart(false);
     if (!this.isRangeSet) {
-      this.setChartRange(this.minDate, this.maxDate);
+      this.setChartRange(this.rangeMinDate, this.rangeMaxDate);
       this.isRangeSet = true;
     }
   }
@@ -170,7 +172,7 @@ export class TimebarService {
               'gridlines': { 'color': 'none' }
             }
           },
-          'snapToData': true
+          'snapToData': false
         }
       },
       'state': {
@@ -286,15 +288,15 @@ export class TimebarService {
 
     let arr = [['instance no', ...this.shownMetrics.map(x => x.name)]];
     this.graphDates = [];
-    let unitLength = (this.maxDate - this.minDate) / (this.sampleCount);
+    let unitLength = (this.rangeMaxDate - this.rangeMinDate) / (this.sampleCount);
     let idx1 = 0;
     let idx2 = 0;
     let cnts = new Array(this.shownMetrics.length).fill(0);
     let previousCloses = new Array(this.shownMetrics.length).fill(0);;
 
     for (let i = 0; i < this.sampleCount; i++) {
-      let rangeStart = this.minDate + i * unitLength;
-      let rangeEnd = this.minDate + (i + 1) * unitLength;
+      let rangeStart = this.rangeMinDate + i * unitLength;
+      let rangeEnd = this.rangeMinDate + (i + 1) * unitLength;
       let dateInUnix = Math.round((rangeStart + rangeEnd) / 2);
       let avgDate = new Date(dateInUnix);
 
@@ -343,15 +345,16 @@ export class TimebarService {
     }
     let arr = [['instance no', ...metricsWithTooltips]];
     // let [startTime, endTime] = this.getFluctuatingRange();
-    const quantizationData = this.quantizeDateRange(this.minDate, this.maxDate, this.idealUnitCount);
+    const quantizationData = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.idealUnitCount);
     let rangeStart = quantizationData.rangeStart;
     let rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
 
     let idx1 = 0;
     let idx2 = 0;
     let cnts = new Array(this.shownMetrics.length).fill(0);
+    this.graphDates = [];
 
-    while (rangeEnd < this.maxDate) {
+    while (rangeEnd < this.rangeMaxDate) {
 
       // rangeStart might be smaller than the first index
       if (rangeStart > this.times[0].d) {
@@ -381,6 +384,7 @@ export class TimebarService {
       idx1 = idx2 - 1;
       let tippedData = this.getToolTippedData(rangeStart, quantizationData.selectedUnit, cnts);
       arr.push([new Date(rangeStart), ...tippedData]);
+      this.graphDates.push(rangeStart);
       rangeStart = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
       rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
     }
@@ -443,7 +447,7 @@ export class TimebarService {
       let d = this.times[i];
       for (let j = 0; j < this.shownMetrics.length; j++) {
         let m = this.shownMetrics[j];
-        if ((!m.incrementFn(d)) || this.minDate > d.d) {
+        if ((!m.incrementFn(d)) || this.rangeMinDate > d.d) {
           idxLow++;
         } else {
           // get out of for-for
@@ -458,7 +462,7 @@ export class TimebarService {
       let d = this.times[i];
       for (let j = 0; j < this.shownMetrics.length; j++) {
         let m = this.shownMetrics[j];
-        if ((!m.incrementFn(d)) || this.maxDate < d.d) {
+        if ((!m.incrementFn(d)) || this.rangeMaxDate < d.d) {
           idxHigh--;
         } else {
           // get out of for-for
@@ -484,7 +488,8 @@ export class TimebarService {
       }
     }
 
-    let quantizedD1 = this.getQuantizedTime(selectedUnit, d1, false).getTime();;
+    let quantizedD1 = this.getQuantizedTime(selectedUnit, d1, false).getTime();
+    this.currTimeUnit = TIME_UNITS[selectedUnit];
     return { rangeStart: quantizedD1, unit: TIME_UNITS[selectedUnit], selectedUnit: selectedUnit };
   }
 
@@ -575,27 +580,27 @@ export class TimebarService {
   changeZoom(isIncrease: boolean) {
     let [s, e] = this.getChartRange();
     const m = (e + s) / 2;
-    const ratio = (m - this.minDate) / (this.maxDate - this.minDate);
-    let step = Math.round(0.1 * (this.maxDate - this.minDate));
+    const ratio = (m - this.rangeMinDate) / (this.rangeMaxDate - this.rangeMinDate);
+    let step = Math.round(0.1 * (this.rangeMaxDate - this.rangeMinDate));
 
     if (!isIncrease) {
       step = -step;
     }
 
-    const oldMin = this.minDate;
-    const oldMax = this.maxDate;
+    const oldMin = this.rangeMinDate;
+    const oldMax = this.rangeMaxDate;
 
-    this.minDate += step * ratio;
-    this.maxDate -= step * (1 - ratio);
+    this.rangeMinDate += step * ratio;
+    this.rangeMaxDate -= step * (1 - ratio);
 
     const max = this.times[this.times.length - 1].d;
     const min = this.times[0].d;
 
-    if (this.minDate < min) {
-      this.minDate = min;
+    if (this.rangeMinDate < min) {
+      this.rangeMinDate = min;
     }
-    if (this.maxDate > max) {
-      this.maxDate = max;
+    if (this.rangeMaxDate > max) {
+      this.rangeMaxDate = max;
     }
 
     this.keepChartRange(oldMin, oldMax);
@@ -610,9 +615,9 @@ export class TimebarService {
     const ratio1 = (start - oldMin) / oldDelta;
     const ratio2 = (oldMax - end) / oldDelta;
 
-    const newDelta = this.maxDate - this.minDate;
-    let newStart = ratio1 * newDelta + this.minDate;
-    let newEnd = this.maxDate - ratio2 * newDelta;
+    const newDelta = this.rangeMaxDate - this.rangeMinDate;
+    let newStart = ratio1 * newDelta + this.rangeMinDate;
+    let newEnd = this.rangeMaxDate - ratio2 * newDelta;
 
     this.setChartRange(newStart, newEnd);
   }
@@ -667,14 +672,20 @@ export class TimebarService {
       this.cursorPos = 0;
     }
 
-    // shift shown data range
-    if (start <= this.minDate) {
-      this.maxDate = this.maxDate + start - this.minDate;
-      this.minDate = start;
+    const currMinDate = this.graphDates[0];
+    const currMaxDate = this.graphDates[this.graphDates.length - 1];
+    if (start >= end) {
+      end = start + this.currTimeUnit;
     }
-    if (end >= this.maxDate) {
-      this.minDate = this.minDate + end - this.maxDate;
-      this.maxDate = end;
+    
+    // shift shown data range
+    if (start <= currMinDate) {
+      this.rangeMaxDate = this.rangeMaxDate + start - currMinDate;
+      this.rangeMinDate = start;
+    }
+    if (end >= currMaxDate) {
+      this.rangeMinDate = this.rangeMinDate + end - currMaxDate;
+      this.rangeMaxDate = end;
     }
 
     this.setChartRange(start, end);
@@ -697,8 +708,8 @@ export class TimebarService {
   }
 
   resetMinMaxDate() {
-    this.minDate = this.onlyDates[0];
-    this.maxDate = this.onlyDates[this.onlyDates.length - 1];
+    this.rangeMinDate = this.onlyDates[0];
+    this.rangeMaxDate = this.onlyDates[this.onlyDates.length - 1];
   }
 
   playTiming(callback) {
