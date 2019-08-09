@@ -284,6 +284,7 @@ export class TimebarService {
     return [min, max];
   }
 
+  // stats in continous fashion
   prepareData() {
 
     let arr = [['instance no', ...this.shownMetrics.map(x => x.name)]];
@@ -337,6 +338,7 @@ export class TimebarService {
     this.dashboard.draw(data);
   }
 
+  // time unit based stats
   prepareData2() {
     let metricsWithTooltips = [];
     for (let m of this.shownMetrics) {
@@ -414,7 +416,7 @@ export class TimebarService {
       s = year + '';
     }
     if (selectedUnit == 'quarter') {
-      s = 'Q' + Math.floor(month / 4) + ' ' + year;
+      s = 'Q' + Math.ceil(month / 3) + ' ' + year;
     }
     if (selectedUnit == 'month') {
       s = month + ' ' + year;
