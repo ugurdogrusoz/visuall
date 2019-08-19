@@ -16,9 +16,9 @@ export class SettingsTabComponent implements OnInit {
   stepValue: number;
   speedValue: number;
   compoundPadding: string;
+  timebarInclusionTypes: string[];
 
   constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _g: GlobalVariableService) {
-
   }
 
   ngOnInit() {
@@ -46,6 +46,7 @@ export class SettingsTabComponent implements OnInit {
     this.stepValue = 50;
     this.speedValue = -1350;
     this.compoundPadding = '5%';
+    this.timebarInclusionTypes = ['Contained by', 'Overlaps', 'Contains'];
   }
 
   onBoolSettingsChanged(idx: number) {
@@ -85,8 +86,14 @@ export class SettingsTabComponent implements OnInit {
   }
 
   changeCompoundPadding() {
-    stylesheet.find( x => x.selector == ':compound').style.padding = this.compoundPadding;
+    stylesheet.find(x => x.selector == ':compound').style.padding = this.compoundPadding;
     this._g.setStyleFromJson(stylesheet);
+  }
+
+  inclusionTypeChanged(i: number) {
+    this._timebarService.changeInclusionType(i);
+    this._timebarService.cyElemListChanged();
+    this._timebarService.rangeChange(false, true);
   }
 
 }

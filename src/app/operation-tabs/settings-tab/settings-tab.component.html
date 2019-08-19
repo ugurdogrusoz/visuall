@@ -38,7 +38,6 @@
         </div>
       </div>
     </div>
-
     <div class="card border-0 m-1">
       <div class="form-inline">
         <label class="form-check-label va-text" id="textAl">Timebar animation speed</label>
@@ -48,8 +47,15 @@
         </div>
       </div>
     </div>
-
-    
-    
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text">Timebar inclusion type &nbsp;</label>
+        <div class="form-check-inline va-text" *ngFor="let str of timebarInclusionTypes; let i = index;">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" (click)="inclusionTypeChanged(i)" name="optradio" [checked]="i==0">{{str}}
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

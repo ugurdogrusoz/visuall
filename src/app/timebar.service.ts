@@ -18,6 +18,7 @@ export class TimebarService {
   rangeMinDate: number;
   rangeMaxDate: number;
   times: iTimebarUnitData[];
+  items: iTimebarItem[];
   onlyDates: number[];
   graphDates: number[];
   dashboard: any;
@@ -32,6 +33,7 @@ export class TimebarService {
   step: number;
   idealUnitCount: number;
   currTimeUnit: number;
+  private inclusionType = 0;
   private beginPropertyName = 'begin_datetime';
   private endPropertyName = 'end_datetime';
   private defaultBeginDate = -631159200000; // 1950 
@@ -57,9 +59,12 @@ export class TimebarService {
     this.bindCommands();
     this.unbindEventListeners();
     this.bindEventListeners();
-    this.shownMetrics = [{ incrementFn: (x) => x.isBegin && x.id[0] === 'n', decrementFn: (x) => !x.isBegin && x.id[0] === 'n', name: '# of nodes' },
-    { incrementFn: (x) => x.isBegin && x.id[0] === 'e', decrementFn: (x) => !x.isBegin && x.id[0] === 'e', name: '# of edges' },
-    { incrementFn: (x) => x.isBegin, decrementFn: (x) => !x.isBegin, name: '# of nodes + # of edges' }];
+    // this.shownMetrics = [{ incrementFn: (x) => x.isBegin && x.id[0] === 'n', decrementFn: (x) => !x.isBegin && x.id[0] === 'n', name: '# of nodes' },
+    // { incrementFn: (x) => x.isBegin && x.id[0] === 'e', decrementFn: (x) => !x.isBegin && x.id[0] === 'e', name: '# of edges' },
+    // { incrementFn: (x) => x.isBegin, decrementFn: (x) => !x.isBegin, name: '# of nodes + # of edges' }];
+    this.shownMetrics = [{ incrementFn: (x) => x.id[0] === 'n', decrementFn: (x) => false, name: '# of nodes' },
+    { incrementFn: (x) => x.id[0] === 'e', decrementFn: (x) => false, name: '# of edges' },
+    { incrementFn: (x) => true, decrementFn: (x) => false, name: '# of nodes + # of edges' }];
   }
 
   bindEventListeners() {
@@ -106,10 +111,13 @@ export class TimebarService {
     }
     const eles = this._g.cy.$().filter(x => x.visible()).map(x => { return { data: x.data(), classes: x.classes() } });
     let times: iTimebarUnitData[] = [];
+    this.items = [];
+
     for (let i = 0; i < eles.length; i++) {
       const [d1, d2] = this.getTimeRange(eles[i]);
       times.push({ isBegin: true, d: d1, id: eles[i].data.id });
       times.push({ isBegin: false, d: d2, id: eles[i].data.id });
+      this.items.push({ start: d1, end: d2, id: eles[i].data.id });
     }
     if (times.length < 1) {
       return;
@@ -214,8 +222,18 @@ export class TimebarService {
     for (let c in ModelDescription.timebarDataMapping) {
       const p1 = ModelDescription.timebarDataMapping[c][this.beginPropertyName];
       const p2 = ModelDescription.timebarDataMapping[c][this.endPropertyName];
-      const selector = `[${p1} <= ${end}][${p2} > ${start}]`;
       propNamesSelector += `[^${p1}][^${p2}]`
+      let selector = '';
+      if (this.inclusionType == 0) {
+        // completely contained by
+        selector = `[${p1} >= ${start}][${p2} <= ${end}]`;
+      } else if (this.inclusionType == 1) {
+        // overlaps
+        selector = `[${p1} <= ${end}][${p2} > ${start}]`;
+      } else if (this.inclusionType == 2) {
+        // completely contains the gap
+        selector = `[${start} >= ${p1}][${end} <= ${p2}]`;
+      }
       elems = elems.union(selector);
     }
 
@@ -250,7 +268,7 @@ export class TimebarService {
     }
     $('#timebar').removeClass('d-none');
 
-    this.prepareData2();
+    this.prepareData3();
 
     if (isSetState) {
       let [minVal, maxVal] = this.getVisibleRange();
@@ -391,6 +409,34 @@ export class TimebarService {
       rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
     }
 
+    const data = google.visualization.arrayToDataTable(arr, false); // 'false' means that the first row contains labels, not data.
+    this.dashboard.draw(data);
+  }
+
+  prepareData3() {
+    let metricsWithTooltips = [];
+    for (let m of this.shownMetrics) {
+      metricsWithTooltips.push(m.name);
+      metricsWithTooltips.push({ type: 'string', role: 'tooltip', p: { 'html': true } });
+    }
+    let arr = [['instance no', ...metricsWithTooltips]];
+    // let [startTime, endTime] = this.getFluctuatingRange();
+    const quantizationData = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.idealUnitCount);
+    let rangeStart = quantizationData.rangeStart;
+    let rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
+
+    let cnts = new Array(this.shownMetrics.length).fill(0);
+    this.graphDates = [];
+
+    while (rangeEnd < this.rangeMaxDate) {
+      cnts = this.getMetricsForRange(rangeStart, rangeEnd);
+      let tippedData = this.getToolTippedData(rangeStart, quantizationData.selectedUnit, cnts);
+      arr.push([new Date(rangeStart), ...tippedData]);
+      this.graphDates.push(rangeStart);
+      rangeStart = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
+      rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
+    }
+    
     const data = google.visualization.arrayToDataTable(arr, false); // 'false' means that the first row contains labels, not data.
     this.dashboard.draw(data);
   }
@@ -633,8 +679,11 @@ export class TimebarService {
   }
 
   setChartRange(start: number, end: number) {
-    if (start < this.onlyDates[0] || end > this.onlyDates[this.onlyDates.length - 1]) {
-      return -1;
+    if (start < this.onlyDates[0]) {
+      start = this.onlyDates[0];
+    }
+    if (end > this.onlyDates[this.onlyDates.length - 1]) {
+      end = this.onlyDates[this.onlyDates.length - 1];
     }
     this.controlWrapper.setState({
       'range': {
@@ -679,7 +728,7 @@ export class TimebarService {
     if (start >= end) {
       end = start + this.currTimeUnit;
     }
-    
+
     // shift shown data range
     if (start <= currMinDate) {
       this.rangeMaxDate = this.rangeMaxDate + start - currMinDate;
@@ -762,6 +811,35 @@ export class TimebarService {
   changeStep(newStep) {
     this.step = newStep;
   }
+
+  changeInclusionType(i: number) {
+    if (i < 0 || i > 2) {
+      throw 'timebar inclusion type is not defined'
+    }
+    this.inclusionType = i;
+  }
+
+  getMetricsForRange(start: number, end: number): number[] {
+    let eles: iTimebarItem[];
+    if (this.inclusionType == 0) {
+      eles = this.items.filter(x => x.start > start && x.end < end);
+    } else if (this.inclusionType == 1) {
+      eles = this.items.filter(x => x.start < end && x.end > start);
+    } else if (this.inclusionType == 2) {
+      eles = this.items.filter(x => x.start < start && x.end > end);
+    }
+    let cnts = new Array(this.shownMetrics.length).fill(0);
+
+    for (let i = 0; i < this.shownMetrics.length; i++) {
+      let m = this.shownMetrics[i];
+      for (let j = 0; j < eles.length; j++) {
+        if (m.incrementFn(eles[j])) {
+          cnts[i]++;
+        }
+      }
+    }
+    return cnts;
+  }
 }
 
 interface iTimebarMetric {
@@ -773,5 +851,11 @@ interface iTimebarMetric {
 interface iTimebarUnitData {
   isBegin: boolean;
   d: number;
+  id: string;
+}
+
+interface iTimebarItem {
+  start: number;
+  end: number;
   id: string;
 }
