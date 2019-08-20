@@ -109,7 +109,7 @@ export class TimebarService {
     if (!this._g.isTimebarEnabled) {
       return;
     }
-    const eles = this._g.cy.$().filter(x => x.visible()).map(x => { return { data: x.data(), classes: x.classes() } });
+    const eles = this._g.cy.$().map(x => { return { data: x.data(), classes: x.classes() } });
     let times: iTimebarUnitData[] = [];
     this.items = [];
 
