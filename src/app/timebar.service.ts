@@ -33,7 +33,7 @@ export class TimebarService {
   step: number;
   idealUnitCount: number;
   currTimeUnit: number;
-  private inclusionType = 0;
+  private inclusionType = 1;
   private beginPropertyName = 'begin_datetime';
   private endPropertyName = 'end_datetime';
   private defaultBeginDate = -631159200000; // 1950 
