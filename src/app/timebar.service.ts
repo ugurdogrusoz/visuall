@@ -431,8 +431,8 @@ export class TimebarService {
     while (rangeEnd < this.rangeMaxDate) {
       cnts = this.getMetricsForRange(rangeStart, rangeEnd);
       let tippedData = this.getToolTippedData(rangeStart, quantizationData.selectedUnit, cnts);
-      arr.push([new Date(rangeStart), ...tippedData]);
-      this.graphDates.push(rangeStart);
+      arr.push([new Date((rangeStart + rangeEnd) / 2), ...tippedData]);
+      this.graphDates.push((rangeStart + rangeEnd) / 2);
       rangeStart = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
       rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
     }
