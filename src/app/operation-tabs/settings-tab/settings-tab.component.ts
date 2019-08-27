@@ -60,8 +60,8 @@ export class SettingsTabComponent implements OnInit {
     } else if (idx == 3) {
       this._cyService.showHideTimebar(isEnable);
     } else if (idx == 4) {
-      this._timebarService.rangeChange(false);
       this._timebarService.setisHideDisconnectedNodes(isEnable);
+      this._timebarService.rangeChange(false);
     } else if (idx == 5) {
       this._g.isIgnoreCaseInText = isEnable;
     }

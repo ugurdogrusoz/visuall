@@ -254,8 +254,8 @@ export class TimebarService {
       let edges = shownElems.edges()
       shownElems = edges.union(edges.connectedNodes());
     }
-    var alreadyVisible = this._g.cy.nodes(':visible');
-    var shownNodes = shownElems.nodes().difference(alreadyVisible);
+    let alreadyVisible = this._g.cy.nodes(':visible');
+    let shownNodes = shownElems.nodes().difference(alreadyVisible);
     this._g.layoutUtils.placeNewNodes(shownNodes);
     this._g.viewUtils.show(shownElems);
     this._g.viewUtils.hide(this._g.cy.elements().difference(shownElems));
