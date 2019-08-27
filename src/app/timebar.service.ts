@@ -33,6 +33,7 @@ export class TimebarService {
   step: number;
   idealUnitCount: number;
   currTimeUnit: number;
+  selectedTimeUnit: string;
   private inclusionType = 1;
   private beginPropertyName = 'begin_datetime';
   private endPropertyName = 'end_datetime';
@@ -260,6 +261,9 @@ export class TimebarService {
     this._g.viewUtils.hide(this._g.cy.elements().difference(shownElems));
     this._g.applyClassFiltering();
     this._g.performLayout(isRandomize);
+    if (this.selectedTimeUnit) {
+      this.setTicksForBarChart();
+    }
   }
 
   renderChart(isSetState: boolean) {
@@ -422,6 +426,7 @@ export class TimebarService {
     let arr = [['instance no', ...metricsWithTooltips]];
     // let [startTime, endTime] = this.getFluctuatingRange();
     const quantizationData = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.idealUnitCount);
+    this.selectedTimeUnit = quantizationData.selectedUnit;
     let rangeStart = quantizationData.rangeStart;
     let rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
 
@@ -436,9 +441,29 @@ export class TimebarService {
       rangeStart = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
       rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
     }
-    
+    this.setTicksForBarChart();
     const data = google.visualization.arrayToDataTable(arr, false); // 'false' means that the first row contains labels, not data.
     this.dashboard.draw(data);
+  }
+
+  setTicksForBarChart() {
+    let [s, e] = this.getChartRange();
+    if (s < this.rangeMinDate) {
+      s = this.rangeMinDate;
+    }
+    if (e > this.rangeMaxDate) {
+      e = this.rangeMaxDate;
+    }
+    let rangeStart = this.getQuantizedTime(this.selectedTimeUnit, s, false).getTime();
+    let ticks = [];
+    while (rangeStart <= e) {
+      const d = new Date(rangeStart);
+      ticks.push({ v: d, f: this.getTickStrForDate(d) });
+      rangeStart = this.getQuantizedTime(this.selectedTimeUnit, rangeStart, true).getTime();
+    }
+    const d = new Date(rangeStart);
+    ticks.push({ v: d, f: this.getTickStrForDate(d) });
+    this.chartWrapper.setOption('hAxis.ticks', ticks);
   }
 
   getToolTippedData(rangeStart: number, selectedUnit: string, cnts: number[]) {
@@ -468,7 +493,7 @@ export class TimebarService {
       s = month + ' ' + year;
     }
     if (selectedUnit == 'week') {
-      s = dayOfMonth + ' ' + month + ' ' + year + '-' + (dayOfMonth + 7) + ' ' + month + ' ' + year;
+      s = dayOfMonth + ' ' + month + ' ' + year + ' (w)';
     }
     if (selectedUnit == 'day') {
       s = dayOfMonth + ' ' + month + ' ' + year;
@@ -484,9 +509,31 @@ export class TimebarService {
     }
     for (let cnt of cnts) {
       r.push(cnt);
-      r.push(`<b>${cnt}</b> ${s}`);
+      r.push(`${s} <b>${cnt}</b>`);
     }
     return r;
+  }
+
+  getTickStrForDate(d: Date): string {
+    if (this.selectedTimeUnit == 'decade' || this.selectedTimeUnit == 'century' || this.selectedTimeUnit == 'year') {
+      return '' + d.getFullYear();
+    }
+    if (this.selectedTimeUnit == 'quarter' || this.selectedTimeUnit == 'month') {
+      return '' + (d.getMonth() + 1);
+    }
+    if (this.selectedTimeUnit == 'week' || this.selectedTimeUnit == 'day') {
+      return '' + d.getDate();
+    }
+    if (this.selectedTimeUnit == 'hour') {
+      return '' + d.getHours();
+    }
+    if (this.selectedTimeUnit == 'minute') {
+      return '' + d.getMinutes();
+    }
+    if (this.selectedTimeUnit == 'second') {
+      return '' + d.getSeconds();
+    }
+    return '?';
   }
 
   getFluctuatingRange(): number[] {
@@ -565,11 +612,11 @@ export class TimebarService {
       return new Date(year, 0, 1);
     }
     if (timeUnit == 'quarter') {
-      let opt1 = month - (month % 3);
+      let opt1 = Math.ceil(month / 3) * 3 - 2;
       if (isGreater) {
         return new Date(year, opt1 + 2, 1);
       }
-      return new Date(year, opt1 - 1, 1);
+      return new Date(year, opt1, 1);
     }
     if (timeUnit == 'month') {
       if (isGreater) {
@@ -670,7 +717,7 @@ export class TimebarService {
     this.setChartRange(newStart, newEnd);
   }
 
-  getChartRange() {
+  getChartRange(): number[] {
     const curr = this.controlWrapper.getState();
     let start = curr.range.start.getTime();
     let end = curr.range.end.getTime();
