@@ -31,7 +31,8 @@ export class TimebarService {
   isHideDisconnectedNodes: boolean;
   speed: number;
   step: number;
-  idealUnitCount: number;
+  private readonly IDEAL_SAMPLE_CNT: number;
+  private readonly MIN_SAMPLE_CNT: number;
   currTimeUnit: number;
   selectedTimeUnit: string;
   private inclusionType = 1;
@@ -43,7 +44,8 @@ export class TimebarService {
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
     this.sampleCount = 100;
-    this.idealUnitCount = 20;
+    this.IDEAL_SAMPLE_CNT = 60;
+    this.MIN_SAMPLE_CNT = 10;
     this.playTimerId = -1;
     this.isRangeSet = false;
     this.onlyDates = [];
@@ -369,7 +371,7 @@ export class TimebarService {
     }
     let arr = [['instance no', ...metricsWithTooltips]];
     // let [startTime, endTime] = this.getFluctuatingRange();
-    const quantizationData = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.idealUnitCount);
+    const quantizationData = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.IDEAL_SAMPLE_CNT);
     let rangeStart = quantizationData.rangeStart;
     let rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
 
@@ -425,7 +427,7 @@ export class TimebarService {
     }
     let arr = [['instance no', ...metricsWithTooltips]];
     // let [startTime, endTime] = this.getFluctuatingRange();
-    const quantizationData = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.idealUnitCount);
+    const quantizationData = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.IDEAL_SAMPLE_CNT);
     this.selectedTimeUnit = quantizationData.selectedUnit;
     let rangeStart = quantizationData.rangeStart;
     let rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
@@ -574,6 +576,9 @@ export class TimebarService {
     let range = d2 - d1;
     let minDiff = cnt;
     let selectedUnit = '';
+    let minDiff2 = cnt;
+    let selectedUnit2 = '';
+    
     for (let [k, v] of Object.entries(TIME_UNITS)) {
       let candidateCnt = Math.round(range / v);
       const diff = Math.abs(candidateCnt - cnt);
@@ -581,9 +586,17 @@ export class TimebarService {
         minDiff = diff;
         selectedUnit = k;
       }
+      if (diff < minDiff2 && candidateCnt > this.MIN_SAMPLE_CNT) {
+        minDiff2 = diff;
+        selectedUnit2 = k;
+      }
     }
 
-    let quantizedD1 = this.getQuantizedTime(selectedUnit, d1, false).getTime();
+    if (selectedUnit2 != '') {
+      selectedUnit = selectedUnit2;
+    }
+
+    let quantizedD1 = this.getQuantizedTime(selectedUnit, d1, true).getTime();
     this.currTimeUnit = TIME_UNITS[selectedUnit];
     return { rangeStart: quantizedD1, unit: TIME_UNITS[selectedUnit], selectedUnit: selectedUnit };
   }
@@ -706,14 +719,26 @@ export class TimebarService {
   keepChartRange(oldMin: number, oldMax: number) {
     let [start, end] = this.getChartRange();
     const oldDelta = oldMax - oldMin;
+    const center = (end + start) / 2;
+    const chartRange = end - start;
 
-    const ratio1 = (start - oldMin) / oldDelta;
-    const ratio2 = (oldMax - end) / oldDelta;
-
+    const ratio = (center - oldMin) / oldDelta;
     const newDelta = this.rangeMaxDate - this.rangeMinDate;
-    let newStart = ratio1 * newDelta + this.rangeMinDate;
-    let newEnd = this.rangeMaxDate - ratio2 * newDelta;
+    const newCenter = this.rangeMinDate + newDelta * ratio;
+    const newChartRange = chartRange * newDelta / oldDelta;
 
+    let newStart = newCenter - newChartRange / 2;
+    let newEnd = newCenter + newChartRange / 2
+
+    if (this.rangeMaxDate <= this.rangeMinDate) {
+      console.log('set rangeMaxDate badly');
+      debugger;
+    }
+
+    if (newStart >= newEnd) {
+      console.log('set chart range badly');
+      debugger;
+    }
     this.setChartRange(newStart, newEnd);
   }
 
@@ -731,6 +756,13 @@ export class TimebarService {
     }
     if (end > this.onlyDates[this.onlyDates.length - 1]) {
       end = this.onlyDates[this.onlyDates.length - 1];
+    }
+    // note that chart might show a range which does not contain any data
+    // to prevent that data sample count should be like 10
+    if (start >= end) {
+      console.log('can not set start > end ');
+      debugger;
+      return;
     }
     this.controlWrapper.setState({
       'range': {
