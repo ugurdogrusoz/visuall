@@ -13,8 +13,9 @@ import stylesheet from '../../../assets/generated/stylesheet.json';
 export class SettingsTabComponent implements OnInit {
   settings: any[];
   highlightWidth: number;
-  stepValue: number;
-  speedValue: number;
+  timebarPlayingStep: number;
+  timebarPlayingSpeed: number;
+  timebarZoomingStep: number;
   compoundPadding: string;
   timebarInclusionTypes: string[];
 
@@ -43,8 +44,9 @@ export class SettingsTabComponent implements OnInit {
     ];
 
     this.highlightWidth = 4.5;
-    this.stepValue = 50;
-    this.speedValue = -1350;
+    this.timebarPlayingStep = 50;
+    this.timebarZoomingStep = 50;
+    this.timebarPlayingSpeed = -1350;
     this.compoundPadding = '5%';
     this.timebarInclusionTypes = ['Contained by', 'Overlaps', 'Contains'];
   }
@@ -77,12 +79,16 @@ export class SettingsTabComponent implements OnInit {
     this._cyService.changeHighlightOptions(this.highlightWidth);
   }
 
-  setUpStep() {
-    this._timebarService.changeStep(this.stepValue);
+  setTimebarPlayingStep() {
+    this._timebarService.changeStep(this.timebarPlayingStep);
   }
 
-  setUpSpeed() {
-    this._timebarService.changeSpeed(this.speedValue);
+  setTimebarPlayingSpeed() {
+    this._timebarService.changeSpeed(this.timebarPlayingSpeed);
+  }
+
+  setTimebarZoomStep() {
+    this._timebarService.changeZoomStep(this.timebarZoomingStep);
   }
 
   changeCompoundPadding() {

@@ -29,8 +29,9 @@ export class TimebarService {
   sampleCount: number;
   playTimerId: number;
   isHideDisconnectedNodes: boolean;
-  speed: number;
-  step: number;
+  playingSpeed: number;
+  playingStep: number;
+  zoomingStep: number = 0.2;
   private readonly IDEAL_SAMPLE_CNT: number;
   private readonly MIN_SAMPLE_CNT: number;
   currTimeUnit: number;
@@ -50,8 +51,8 @@ export class TimebarService {
     this.isRangeSet = false;
     this.onlyDates = [];
     this.isHideDisconnectedNodes = false;
-    this.speed = -100;
-    this.step = 50;
+    this.playingSpeed = -100;
+    this.playingStep = 50;
     this.graphDates = [];
     this.currTimeUnit = 3600000;
   }
@@ -724,7 +725,7 @@ export class TimebarService {
     let [s, e] = this.getChartRange();
     const m = (e + s) / 2;
     const ratio = (m - this.rangeMinDate) / (this.rangeMaxDate - this.rangeMinDate);
-    let step = Math.round(0.1 * (this.rangeMaxDate - this.rangeMinDate));
+    let step = Math.round(this.zoomingStep * (this.rangeMaxDate - this.rangeMinDate));
 
     if (!isIncrease) {
       step = -step;
@@ -812,7 +813,7 @@ export class TimebarService {
   moveCursor(isLeft: boolean) {
     let [start, end] = this.getChartRange();
     let delta = Math.ceil(end - start);
-    let change = Math.ceil(delta * this.step / 100);
+    let change = Math.ceil(delta * this.playingStep / 100);
     const max = this.times[this.times.length - 1].d;
     const min = this.times[0].d;
     if ((this.cursorPos === -1 && isLeft) || (this.cursorPos === 1 && !isLeft)) {
@@ -886,7 +887,7 @@ export class TimebarService {
         } else {
           this.stopPlayTimer(callback);
         }
-      }, this.speed * -1);
+      }, this.playingSpeed * -1);
     } else {
       this.stopPlayTimer(callback);
     }
@@ -918,12 +919,17 @@ export class TimebarService {
     this.isHideDisconnectedNodes = val;
   }
 
-  changeSpeed(newSpeed) {
-    this.speed = newSpeed;
+  changeSpeed(newSpeed: number) {
+    this.playingSpeed = newSpeed;
   }
 
-  changeStep(newStep) {
-    this.step = newStep;
+  changeZoomStep(n: number) {
+    // 0 => 0.005, 50 => 0.25, 100 => 0.5
+    this.zoomingStep = 0.000001 * n * n + 0.00485 * n + 0.005;
+  }
+
+  changeStep(newStep: number) {
+    this.playingStep = newStep;
   }
 
   changeInclusionType(i: number) {

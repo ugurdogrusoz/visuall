@@ -33,7 +33,7 @@
       <div class="form-inline">
         <label class="form-check-label va-text" id="textAl1">Timebar animation step</label>
         <div class="range-slider" id="rangeDv">
-          <input class="range-slider__range" id="speed_bar" (click)="setUpStep()" [(ngModel)]="stepValue" type="range"
+          <input class="range-slider__range" (click)="setTimebarPlayingStep()" [(ngModel)]="timebarPlayingStep" type="range"
             min="1" max="100">
         </div>
       </div>
@@ -42,8 +42,17 @@
       <div class="form-inline">
         <label class="form-check-label va-text" id="textAl">Timebar animation speed</label>
         <div class="range-slider" id="rangeDv">
-          <input class="range-slider__range" id="speed_bar2" (click)="setUpSpeed()" type="range"
+          <input class="range-slider__range" (click)="setTimebarPlayingSpeed()" type="range"
             [(ngModel)]="speedValue" min="-2500" max="-10">
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text" id="textAl">Timebar zoom sensitivity</label>
+        <div class="range-slider" id="rangeDv">
+          <input class="range-slider__range" (click)="setTimebarZoomStep()" type="range"
+            [(ngModel)]="timebarZoomingStep" min="0" max="100">
         </div>
       </div>
     </div>
