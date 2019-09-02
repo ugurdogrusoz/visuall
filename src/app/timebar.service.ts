@@ -476,6 +476,7 @@ export class TimebarService {
     let hour = date.getHours();
     let minute = date.getMinutes();
     let second = date.getSeconds();
+    let ms = date.getMilliseconds();
 
     let r = [];
     let s = '';
@@ -503,11 +504,14 @@ export class TimebarService {
     if (selectedUnit == 'hour') {
       s = hour + '';
     }
-    if (selectedUnit == 'minute') {
+    if (selectedUnit == 'minute' || selectedUnit == '5min') {
       s = minute + '';
     }
-    if (selectedUnit == 'second') {
+    if (selectedUnit == 'second' || selectedUnit == '5sec') {
       s = second + '';
+    }
+    if (selectedUnit == '50ms' || selectedUnit == 'ms') {
+      s = ms + '';
     }
     for (let cnt of cnts) {
       r.push(cnt);
@@ -529,11 +533,14 @@ export class TimebarService {
     if (this.selectedTimeUnit == 'hour') {
       return '' + d.getHours();
     }
-    if (this.selectedTimeUnit == 'minute') {
+    if (this.selectedTimeUnit == 'minute' || this.selectedTimeUnit == '5min') {
       return '' + d.getMinutes();
     }
-    if (this.selectedTimeUnit == 'second') {
+    if (this.selectedTimeUnit == 'second' || this.selectedTimeUnit == '5sec') {
       return '' + d.getSeconds();
+    }
+    if (this.selectedTimeUnit == '50ms' || this.selectedTimeUnit == 'ms') {
+      return '' + d.getMilliseconds();
     }
     return '?';
   }
@@ -574,11 +581,11 @@ export class TimebarService {
 
   quantizeDateRange(d1: number, d2: number, cnt: number): { rangeStart: number, unit: number, selectedUnit: string } {
     let range = d2 - d1;
-    let minDiff = cnt;
+    let minDiff = Number.MAX_SAFE_INTEGER;
     let selectedUnit = '';
-    let minDiff2 = cnt;
+    let minDiff2 = Number.MAX_SAFE_INTEGER;
     let selectedUnit2 = '';
-    
+
     for (let [k, v] of Object.entries(TIME_UNITS)) {
       let candidateCnt = Math.round(range / v);
       const diff = Math.abs(candidateCnt - cnt);
@@ -609,6 +616,7 @@ export class TimebarService {
     let hour = date.getHours();
     let minute = date.getMinutes();
     let second = date.getSeconds();
+    let milliSecond = date.getMilliseconds();
 
     if (timeUnit == 'decade' || timeUnit == 'century') {
       const yearCnt = timeUnit == 'decade' ? 10 : 100;
@@ -656,17 +664,44 @@ export class TimebarService {
       }
       return new Date(year, month - 1, dayOfMonth, hour);
     }
+    if (timeUnit == '5min') {
+      let min = Math.floor(minute / 5) * 5;
+      if (isGreater) {
+        return new Date(year, month - 1, dayOfMonth, hour, min + 5);
+      }
+      return new Date(year, month - 1, dayOfMonth, hour, min);
+    }
     if (timeUnit == 'minute') {
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth, hour, minute + 1);
       }
       return new Date(year, month - 1, dayOfMonth, hour, minute);
     }
+    if (timeUnit == '5sec') {
+      let sec = Math.floor(second / 5) * 5
+      if (isGreater) {
+        return new Date(year, month - 1, dayOfMonth, hour, minute, sec + 5);
+      }
+      return new Date(year, month - 1, dayOfMonth, hour, minute, sec);
+    }
     if (timeUnit == 'second') {
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth, hour, minute, second + 1);
       }
       return new Date(year, month - 1, dayOfMonth, hour, minute, second);
+    }
+    if (timeUnit == '50ms') {
+      let ms = Math.floor(milliSecond / 50) * 50;
+      if (isGreater) {
+        return new Date(year, month - 1, dayOfMonth, hour, minute, second, ms + 50);
+      }
+      return new Date(year, month - 1, dayOfMonth, hour, minute, second, ms);
+    }
+    if (timeUnit == 'ms') {
+      if (isGreater) {
+        return new Date(year, month - 1, dayOfMonth, hour, minute, second, milliSecond + 1);
+      }
+      return new Date(year, month - 1, dayOfMonth, hour, minute, second, milliSecond);
     }
     throw 'unknown timeUnit: ' + timeUnit;
   }

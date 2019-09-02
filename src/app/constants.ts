@@ -89,8 +89,12 @@ export const TIME_UNITS = {
   'week': 604800000,
   'day': 86400000,
   'hour': 3600000,
+  '5min': 300000,
   'minute': 60000,
-  'second': 1000
+  '5sec': 5000,
+  'second': 1000,
+  '50ms': 50,
+  'ms': 1
 };
 
 // https://davidwalsh.name/javascript-debounce-function
