@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as $ from 'jquery';
 
-import { debounce, MIN_DATE, MAX_DATE, isClose, TIME_UNITS } from './constants';
+import { debounce, MIN_DATE, MAX_DATE, isClose, TIME_UNITS, MONTHS, SHORT_MONTHS } from './constants';
 import { GlobalVariableService } from './global-variable.service';
 import ModelDescription from '../model_description.json';
 
@@ -480,38 +480,38 @@ export class TimebarService {
 
     let r = [];
     let s = '';
-    if (selectedUnit == 'decade') {
-      s = year + '-' + (year + 10);
-    }
     if (selectedUnit == 'century') {
       s = year + '-' + (year + 100);
+    }
+    if (selectedUnit == 'decade') {
+      s = year + 's';
     }
     if (selectedUnit == 'year') {
       s = year + '';
     }
     if (selectedUnit == 'quarter') {
-      s = 'Q' + Math.ceil(month / 3) + ' ' + year;
+      s = 'Quarter ' + Math.ceil(month / 3) + ' ' + year;
     }
     if (selectedUnit == 'month') {
-      s = month + ' ' + year;
+      s = MONTHS[month - 1] + ' ' + year;
     }
     if (selectedUnit == 'week') {
-      s = dayOfMonth + ' ' + month + ' ' + year + ' (w)';
+      s = 'Week ' + SHORT_MONTHS[month - 1] + ' ' + dayOfMonth;
     }
     if (selectedUnit == 'day') {
-      s = dayOfMonth + ' ' + month + ' ' + year;
+      s = 'Day ' + dayOfMonth;
     }
     if (selectedUnit == 'hour') {
-      s = hour + '';
+      s = 'Hour ' + hour;
     }
     if (selectedUnit == 'minute' || selectedUnit == '5min') {
-      s = minute + '';
+      s = 'Minute ' + minute;
     }
     if (selectedUnit == 'second' || selectedUnit == '5sec') {
-      s = second + '';
+      s = 'Second ' + second;
     }
     if (selectedUnit == '50ms' || selectedUnit == 'ms') {
-      s = ms + '';
+      s = 'Millisecond ' + ms;
     }
     for (let cnt of cnts) {
       r.push(cnt);

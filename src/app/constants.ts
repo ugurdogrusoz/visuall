@@ -97,6 +97,12 @@ export const TIME_UNITS = {
   'ms': 1
 };
 
+export const MONTHS = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"];
+
+export const SHORT_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
 // https://davidwalsh.name/javascript-debounce-function
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
