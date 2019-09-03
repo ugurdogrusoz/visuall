@@ -255,8 +255,9 @@ export class TimebarService {
       this.cursorPos = 0;
     }
     if (this.isHideDisconnectedNodes) {
-      let edges = shownElems.edges()
-      shownElems = edges.union(edges.connectedNodes());
+      let edges = shownElems.edges();
+      let connectedNodes = edges.connectedNodes();
+      shownElems = edges.union(connectedNodes.intersection(shownElems));
     }
     let alreadyVisible = this._g.cy.nodes(':visible');
     let shownNodes = shownElems.nodes().difference(alreadyVisible);
