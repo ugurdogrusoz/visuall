@@ -41,6 +41,7 @@ export class TimebarService {
   private endPropertyName = 'end_datetime';
   private defaultBeginDate = -631159200000; // 1950 
   private defaultEndDate = 2524597200000; // 2050 
+  private setRangeStrFn: () => void;
 
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
@@ -750,6 +751,7 @@ export class TimebarService {
     this.keepChartRange(oldMin, oldMax);
     this.renderChart(false);
     this.rangeChange();
+    this.setRangeStrFn();
   }
 
   keepChartRange(oldMin: number, oldMax: number) {
@@ -853,6 +855,7 @@ export class TimebarService {
       this.rangeMinDate = this.rangeMinDate + end - currMaxDate;
       this.rangeMaxDate = end;
     }
+    this.setRangeStrFn();
 
     this.setChartRange(start, end);
     this.renderChart(false);
@@ -876,6 +879,7 @@ export class TimebarService {
   resetMinMaxDate() {
     this.rangeMinDate = this.onlyDates[0];
     this.rangeMaxDate = this.onlyDates[this.onlyDates.length - 1];
+    this.setRangeStrFn();
   }
 
   playTiming(callback) {
@@ -937,6 +941,10 @@ export class TimebarService {
       throw 'timebar inclusion type is not defined'
     }
     this.inclusionType = i;
+  }
+
+  onVisibleRangeChanged(fn: () => void) {
+    this.setRangeStrFn = fn;
   }
 
   getMetricsForRange(start: number, end: number): number[] {
