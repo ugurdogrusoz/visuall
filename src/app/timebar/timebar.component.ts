@@ -41,8 +41,19 @@ export class TimebarComponent implements OnInit {
       console.log('rangeMaxDate or rangeMinDate is falsy!');
       return;
     }
-    this.rangeStartStr = new Date(this.s.rangeMinDate).toISOString().replace('T', ' ').replace('Z', ' ');
-    this.rangeEndStr = new Date(this.s.rangeMaxDate).toISOString().replace('T', ' ').replace('Z', ' ');
+    this.rangeStartStr = this.date2str(this.s.rangeMinDate);
+    this.rangeEndStr = this.date2str(this.s.rangeMaxDate);
+  }
+
+  date2str(d: number): string {
+    const date = new Date(d);
+    let s = date.toString();
+    let arr = s.split(' ');
+    arr.splice(0, 1);
+    arr.splice(arr.length - 2, 2);
+    s = arr.join(' ');
+    s += '.' + date.getMilliseconds(); 
+    return s;
   }
 
 }
