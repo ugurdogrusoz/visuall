@@ -34,6 +34,7 @@ export class TimebarService {
   zoomingStep: number = 0.2;
   private readonly IDEAL_SAMPLE_CNT: number;
   private readonly MIN_SAMPLE_CNT: number;
+  private readonly MIN_ZOOM_RANGE: number;
   currTimeUnit: number;
   selectedTimeUnit: string;
   private inclusionType = 1;
@@ -48,6 +49,7 @@ export class TimebarService {
     this.sampleCount = 100;
     this.IDEAL_SAMPLE_CNT = 60;
     this.MIN_SAMPLE_CNT = 10;
+    this.MIN_ZOOM_RANGE = 10; // means 10 ms
     this.playTimerId = -1;
     this.isRangeSet = false;
     this.onlyDates = [];
@@ -725,6 +727,9 @@ export class TimebarService {
 
   changeZoom(isIncrease: boolean) {
     let [s, e] = this.getChartRange();
+    if (e - s <= this.MIN_ZOOM_RANGE && isIncrease) {
+      return;
+    }
     const m = (e + s) / 2;
     const ratio = (m - this.rangeMinDate) / (this.rangeMaxDate - this.rangeMinDate);
     let step = Math.round(this.zoomingStep * (this.rangeMaxDate - this.rangeMinDate));
