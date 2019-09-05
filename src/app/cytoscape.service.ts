@@ -380,7 +380,7 @@ export class CytoscapeService {
     }
 
     if (!isIncremental && this._g.isTimebarEnabled) {
-      this._timebarService.coverAllTimes(false, true);
+      this._timebarService.coverAllTimes();
     } else {     
       this._g.performLayout(!isIncremental || wasEmpty);
     }
@@ -597,8 +597,7 @@ export class CytoscapeService {
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
       this._timebarService.cyElemListChanged();
-      // this.appManager.showAllTimeRange(true);
-      this._timebarService.coverAllTimes(true, false);
+      this._timebarService.coverVisibleRange();
     }
   }
 

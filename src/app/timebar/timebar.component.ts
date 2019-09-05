@@ -37,12 +37,14 @@ export class TimebarComponent implements OnInit {
     }
   }
   private setRangeStrings() {
-    if (!this.s.rangeMaxDate || !this.s.rangeMinDate) {
+    const d1 = this.s.graphDates[0];
+    const d2 = this.s.graphDates[this.s.graphDates.length - 1];
+    if (!d1 || !d2) {
       console.log('rangeMaxDate or rangeMinDate is falsy!');
       return;
     }
-    this.rangeStartStr = this.date2str(this.s.rangeMinDate);
-    this.rangeEndStr = this.date2str(this.s.rangeMaxDate);
+    this.rangeStartStr = this.date2str(d1);
+    this.rangeEndStr = this.date2str(d2);
   }
 
   date2str(d: number): string {

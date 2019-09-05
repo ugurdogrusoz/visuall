@@ -130,7 +130,7 @@ export class TimebarService {
       return;
     }
     this.prepareChartData(times);
-    this.renderChart(false);
+    this.renderChart();
     if (!this.isRangeSet) {
       this.setChartRange(this.rangeMinDate, this.rangeMaxDate);
       this.isRangeSet = true;
@@ -167,7 +167,6 @@ export class TimebarService {
     const dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
     const chartPaddings = { 'left': 20, 'top': 7, 'bottom': 25 };
     const controlPaddings = { 'left': 5, 'right': 5, 'bottom': 0 };
-
     // Create a range slider, passing some options
     let controlWrapper = new google.visualization.ControlWrapper({
       'controlType': 'ChartRangeFilter',
@@ -190,13 +189,8 @@ export class TimebarService {
           'snapToData': false
         }
       },
-      'state': {
-        'range': {
-          'start': new Date(MIN_DATE),
-          'end': new Date(MAX_DATE)
-        }
-      }
     });
+    controlWrapper.setState({ 'range': { 'start': new Date(MIN_DATE), 'end': new Date(MAX_DATE) } });
 
     let chartWrapper = new google.visualization.ChartWrapper({
       'chartType': 'ColumnChart',
@@ -239,7 +233,7 @@ export class TimebarService {
         selector = `[${p1} <= ${end}][${p2} > ${start}]`;
       } else if (this.inclusionType == 2) {
         // completely contains the gap
-        selector = `[${start} >= ${p1}][${end} <= ${p2}]`;
+        selector = `[${p1} < ${start}][${p2} > ${end}]`;
       }
       elems = elems.union(selector);
     }
@@ -275,19 +269,12 @@ export class TimebarService {
     }
   }
 
-  renderChart(isSetState: boolean) {
+  renderChart() {
     if (!this.times || this.times.length < 1) {
       return;
     }
     $('#timebar').removeClass('d-none');
-
     this.prepareData3();
-
-    if (isSetState) {
-      let [minVal, maxVal] = this.getVisibleRange();
-      this.setChartRange(minVal, maxVal);
-    }
-
     this.controlWrapper.draw();
   }
 
@@ -442,6 +429,12 @@ export class TimebarService {
     let cnts = new Array(this.shownMetrics.length).fill(0);
     this.graphDates = [];
 
+    // push a begin date
+    let beginDate = this.getQuantizedTime(quantizationData.selectedUnit, this.rangeMinDate, false).getTime();
+    // beginDate = this.rangeMinDate;
+    arr.push([new Date(beginDate), ...(this.getToolTippedData(beginDate, quantizationData.selectedUnit, cnts))]);
+    this.graphDates.push(beginDate);
+
     while (rangeEnd < this.rangeMaxDate) {
       cnts = this.getMetricsForRange(rangeStart, rangeEnd);
       let tippedData = this.getToolTippedData(rangeStart, quantizationData.selectedUnit, cnts);
@@ -450,6 +443,16 @@ export class TimebarService {
       rangeStart = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
       rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
     }
+
+    // push an end date
+    cnts = new Array(this.shownMetrics.length).fill(0);
+    let endDate = this.getQuantizedTime(quantizationData.selectedUnit, this.rangeMaxDate, true).getTime();
+    // endDate = this.rangeMaxDate;
+    arr.push([new Date(endDate), ...(this.getToolTippedData(endDate, quantizationData.selectedUnit, cnts))]);
+    this.graphDates.push(endDate);
+
+    this.setRangeStrFn();
+
     this.setTicksForBarChart();
     const data = google.visualization.arrayToDataTable(arr, false); // 'false' means that the first row contains labels, not data.
     this.dashboard.draw(data);
@@ -757,9 +760,8 @@ export class TimebarService {
     }
 
     this.keepChartRange(oldMin, oldMax);
-    this.renderChart(false);
+    this.renderChart();
     this.rangeChange();
-    this.setRangeStrFn();
   }
 
   keepChartRange(oldMin: number, oldMax: number) {
@@ -797,12 +799,12 @@ export class TimebarService {
   }
 
   setChartRange(start: number, end: number) {
-    if (start < this.onlyDates[0]) {
-      start = this.onlyDates[0];
-    }
-    if (end > this.onlyDates[this.onlyDates.length - 1]) {
-      end = this.onlyDates[this.onlyDates.length - 1];
-    }
+    // if (start < this.onlyDates[0]) {
+    //   start = this.onlyDates[0];
+    // }
+    // if (end > this.onlyDates[this.onlyDates.length - 1]) {
+    //   end = this.onlyDates[this.onlyDates.length - 1];
+    // }
     // note that chart might show a range which does not contain any data
     // to prevent that data sample count should be like 10
     if (start >= end) {
@@ -863,10 +865,9 @@ export class TimebarService {
       this.rangeMinDate = this.rangeMinDate + end - currMaxDate;
       this.rangeMaxDate = end;
     }
-    this.setRangeStrFn();
 
     this.setChartRange(start, end);
-    this.renderChart(false);
+    this.renderChart();
 
     let [s2, e2] = this.getChartRange();
     if (!isClose(s2, start) || !isClose(e2, end)) {
@@ -876,18 +877,25 @@ export class TimebarService {
     return true;
   }
 
-  coverAllTimes(isRenderChart: boolean, isRandomize: boolean) {
+  coverAllTimes() {
     this.resetMinMaxDate();
-    if (isRenderChart) {
-      this.renderChart(true);
-    }
-    this.rangeChange(true, isRandomize);
+    let d1 = this.graphDates[0] || this.rangeMinDate || MIN_DATE;
+    let d2 = this.graphDates[this.graphDates.length - 1] || this.rangeMaxDate || MAX_DATE;
+    this.setChartRange(d1, d2);
+    this.renderChart();
+    this.rangeChange(true, true);
+  }
+
+  coverVisibleRange() {
+    let [minVal, maxVal] = this.getVisibleRange();
+    this.setChartRange(minVal, maxVal);
+    this.renderChart();
+    this.rangeChange(true, false);
   }
 
   resetMinMaxDate() {
     this.rangeMinDate = this.onlyDates[0];
     this.rangeMaxDate = this.onlyDates[this.onlyDates.length - 1];
-    this.setRangeStrFn();
   }
 
   playTiming(callback) {
