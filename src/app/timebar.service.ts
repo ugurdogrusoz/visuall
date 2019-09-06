@@ -54,7 +54,7 @@ export class TimebarService {
     this.isRangeSet = false;
     this.onlyDates = [];
     this.isHideDisconnectedNodes = false;
-    this.playingSpeed = -100;
+    this.playingSpeed = -1350;
     this.playingStep = 50;
     this.graphDates = [];
     this.currTimeUnit = 3600000;
@@ -898,8 +898,9 @@ export class TimebarService {
     this.rangeMaxDate = this.onlyDates[this.onlyDates.length - 1];
   }
 
-  playTiming(callback) {
+  playTiming(callback: (isShowPlay: boolean) => void) {
     if (this.playTimerId < 0) {
+      callback(false);
       this.playTimerId = window.setInterval(() => {
         if (this.moveCursor(false)) {
           callback(false);
@@ -913,7 +914,7 @@ export class TimebarService {
     }
   }
 
-  stopPlayTimer(callback) {
+  stopPlayTimer(callback: (isShowPlay: boolean) => void) {
     callback(true);
     clearTimeout(this.playTimerId);
     this.playTimerId = -1

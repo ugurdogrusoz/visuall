@@ -79,10 +79,6 @@ export class SettingsTabComponent implements OnInit {
     this._cyService.changeHighlightOptions(this.highlightWidth);
   }
 
-  setTimebarPlayingStep() {
-    this._timebarService.changeStep(this.timebarPlayingStep);
-  }
-
   setTimebarPlayingSpeed() {
     this._timebarService.changeSpeed(this.timebarPlayingSpeed);
   }
