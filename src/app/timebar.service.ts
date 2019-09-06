@@ -327,7 +327,7 @@ export class TimebarService {
 
     // push a begin date
     let beginDate = this.getQuantizedTime(this.rangeMinDate, false).getTime();
-    // beginDate = this.rangeMinDate;
+    cnts = this.getMetricsForRange(beginDate, rangeStart);
     arr.push([new Date(beginDate), ...(this.getToolTippedData(beginDate, cnts))]);
     this.graphDates.push(beginDate);
 
@@ -341,9 +341,8 @@ export class TimebarService {
     }
 
     // push an end date
-    cnts = new Array(this.shownMetrics.length).fill(0);
     let endDate = this.getQuantizedTime(this.rangeMaxDate, true).getTime();
-    // endDate = this.rangeMaxDate;
+    cnts = this.getMetricsForRange(this.rangeMaxDate, endDate);
     arr.push([new Date(endDate), ...(this.getToolTippedData(endDate, cnts))]);
     this.graphDates.push(endDate);
 

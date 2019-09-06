@@ -36,8 +36,10 @@ export class ObjectTabComponent implements OnInit {
     }
   }
 
-  showObjectProps() {
-    this.onTabChanged.emit(0);
+  showObjectProps(event) {
+    if (event.type == 'select') {
+      this.onTabChanged.emit(0);
+    }
     const selectedItems = this._g.cy.$(':selected');
     let props, classNames;
     [props, classNames] = this.getCommonObjectProps(selectedItems);

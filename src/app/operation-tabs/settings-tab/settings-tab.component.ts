@@ -94,7 +94,7 @@ export class SettingsTabComponent implements OnInit {
 
   inclusionTypeChanged(i: number) {
     this._timebarService.changeInclusionType(i);
-    this._timebarService.cyElemListChanged();
+    this._timebarService.renderChart();
     this._timebarService.rangeChange(false, true);
   }
 
