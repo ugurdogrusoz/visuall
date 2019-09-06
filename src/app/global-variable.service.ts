@@ -12,18 +12,23 @@ export class GlobalVariableService {
   hiddenClasses: Set<string>;
   isIgnoreCaseInText: boolean;
   isTimebarEnabled: boolean;
+  isAutoIncrementalLayoutOnChange: boolean;
 
   constructor() {
     this.isIgnoreCaseInText = false;
     this.isTimebarEnabled = true;
     this.hiddenClasses = new Set([]);
+    this.isAutoIncrementalLayoutOnChange = true;
   }
 
   runLayout() {
     this.cy.layout(this.layout).run();
   }
 
-  performLayout(isRandomize: boolean) {
+  performLayout(isRandomize: boolean, isDirectCommand: boolean = false) {
+    if (!this.isAutoIncrementalLayoutOnChange && !isRandomize && !isDirectCommand) {
+      return;
+    }
     this.switchLayoutRandomization(isRandomize);
     this.runLayout();
   }

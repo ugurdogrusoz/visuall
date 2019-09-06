@@ -11,7 +11,7 @@ import stylesheet from '../../../assets/generated/stylesheet.json';
   styleUrls: ['./settings-tab.component.css']
 })
 export class SettingsTabComponent implements OnInit {
-  settings: any[];
+  settings: iBoolSetting[];
   highlightWidth: number;
   timebarPlayingStep: number;
   timebarPlayingSpeed: number;
@@ -23,24 +23,28 @@ export class SettingsTabComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.settings = [{
-      text: 'Highlight on hover', isEnable: false
-    },
-    {
-      text: 'Show overview window', isEnable: true
-    },
-    {
-      text: 'Show edge labels', isEnable: true
-    },
-    {
-      text: 'Show timebar', isEnable: true
-    },
-    {
-      text: 'Hide disconnected nodes on time filtering', isEnable: false
-    },
-    {
-      text: 'Ignore case in text operations', isEnable: false
-    },
+    this.settings = [
+      {
+        text: 'Perform layout on changes', isEnable: true, actuator: this, fn: 'autoIncrementalLayoutSettingFn'
+      },
+      {
+        text: 'Highlight on hover', isEnable: false, actuator: this._cyService, fn: 'highlighterCheckBoxClicked'
+      },
+      {
+        text: 'Show overview window', isEnable: true, actuator: this._cyService, fn: 'navigatorCheckBoxClicked'
+      },
+      {
+        text: 'Show edge labels', isEnable: true, actuator: this._cyService, fn: 'showHideEdgeLabelCheckBoxClicked'
+      },
+      {
+        text: 'Show timebar', isEnable: true, actuator: this._cyService, fn: 'showHideTimebar'
+      },
+      {
+        text: 'Hide disconnected nodes on time filtering', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes'
+      },
+      {
+        text: 'Ignore case in text operations', isEnable: false, actuator: this, fn: 'ignoreCaseSettingFn'
+      },
     ];
 
     this.highlightWidth = 4.5;
@@ -51,23 +55,13 @@ export class SettingsTabComponent implements OnInit {
     this.timebarInclusionTypes = ['Contained by', 'Overlaps', 'Contains'];
   }
 
-  onBoolSettingsChanged(idx: number) {
-    const isEnable = this.settings[idx].isEnable;
-    if (idx === 0) {
-      this._cyService.highlighterCheckBoxClicked(isEnable)
-    } else if (idx == 1) {
-      this._cyService.navigatorCheckBoxClicked(isEnable);
-    } else if (idx == 2) {
-      this._cyService.showHideEdgeLabelCheckBoxClicked(isEnable);
-    } else if (idx == 3) {
-      this._cyService.showHideTimebar(isEnable);
-    } else if (idx == 4) {
-      this._timebarService.setisHideDisconnectedNodes(isEnable);
-      this._timebarService.rangeChange(false);
-    } else if (idx == 5) {
-      this._g.isIgnoreCaseInText = isEnable;
-    }
+  onBoolSettingsChanged(setting: iBoolSetting) {
+    setting.actuator[setting.fn](setting.isEnable);
   }
+
+  ignoreCaseSettingFn(isEnable: boolean) { this._g.isIgnoreCaseInText = isEnable; }
+
+  autoIncrementalLayoutSettingFn(isEnable: boolean) { this._g.isAutoIncrementalLayoutOnChange = isEnable; }
 
   changeHighlightOptions() {
     if (this.highlightWidth < MIN_HIGHTLIGHT_WIDTH) {
@@ -97,5 +91,11 @@ export class SettingsTabComponent implements OnInit {
     this._timebarService.renderChart();
     this._timebarService.rangeChange(false, true);
   }
+}
 
+interface iBoolSetting {
+  isEnable: boolean;
+  text: string;
+  actuator: any;
+  fn: string;
 }

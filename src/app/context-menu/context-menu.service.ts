@@ -52,6 +52,6 @@ export class ContextMenuService {
 
   deleteSelected() { this._cyService.deleteSelected(false); }
 
-  performLayout() { this._g.performLayout(false); }
+  performLayout() { this._g.performLayout(false, true); }
 
 }

@@ -147,7 +147,7 @@ export class ToolbarComponent implements OnInit {
 
   removeHighlights() { this._cyService.removeHighlights(); }
 
-  performLayout() { this._g.performLayout(false); }
+  performLayout() { this._g.performLayout(false, true); }
 
   reLayout() { this._g.performLayout(true); }
 

@@ -118,7 +118,7 @@ export class NavbarComponent implements OnInit {
 
   removeHighlights() { this._cyService.removeHighlights(); }
 
-  doLayout() { this._g.performLayout(false); }
+  doLayout() { this._g.performLayout(false, true); }
 
   recalculateLayout() { this._g.performLayout(true); }
 

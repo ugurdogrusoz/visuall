@@ -832,6 +832,7 @@ export class TimebarService {
 
   setisHideDisconnectedNodes(val: boolean) {
     this.isHideDisconnectedNodes = val;
+    this.rangeChange(false);
   }
 
   changeSpeed(newSpeed: number) {
