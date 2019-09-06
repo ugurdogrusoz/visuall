@@ -42,7 +42,8 @@ export class TimebarService {
   private endPropertyName = 'end_datetime';
   private defaultBeginDate = -631159200000; // 1950 
   private defaultEndDate = 2524597200000; // 2050 
-  private setRangeStrFn: () => void;
+  private setStatsRangeStrFn: () => void;
+  private setGraphRangeStrFn: () => void;
 
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
@@ -153,6 +154,14 @@ export class TimebarService {
     this.times.sort((a, b) => a.d - b.d);
     this.onlyDates = this.times.map(x => x.d);
     this.resetMinMaxDate();
+    this.setChartRangeIfNull();
+  }
+
+  setChartRangeIfNull() {
+    let [s] = this.getChartRange();
+    if (!s || s == MIN_DATE) {
+      this.setChartRange(this.onlyDates[0], this.onlyDates[this.onlyDates.length - 1]);
+    }
   }
 
   loadGoogleChart() {
@@ -190,7 +199,6 @@ export class TimebarService {
         }
       },
     });
-    controlWrapper.setState({ 'range': { 'start': new Date(MIN_DATE), 'end': new Date(MAX_DATE) } });
 
     let chartWrapper = new google.visualization.ChartWrapper({
       'chartType': 'ColumnChart',
@@ -244,8 +252,8 @@ export class TimebarService {
   }
 
   rangeChange(isSetCursorPos = true, isRandomize = false) {
+    this.setGraphRangeStrFn();
     const [s, e] = this.getChartRange();
-
     let shownElems = this.getTimeFilteredElems(s, e);
     if (isSetCursorPos) {
       this.cursorPos = 0;
@@ -271,6 +279,7 @@ export class TimebarService {
 
   renderChart() {
     if (!this.times || this.times.length < 1) {
+      console.log('there is no data to render chart');
       return;
     }
     $('#timebar').removeClass('d-none');
@@ -302,117 +311,6 @@ export class TimebarService {
     return [min, max];
   }
 
-  // stats in continous fashion
-  prepareData() {
-
-    let arr = [['instance no', ...this.shownMetrics.map(x => x.name)]];
-    this.graphDates = [];
-    let unitLength = (this.rangeMaxDate - this.rangeMinDate) / (this.sampleCount);
-    let idx1 = 0;
-    let idx2 = 0;
-    let cnts = new Array(this.shownMetrics.length).fill(0);
-    let previousCloses = new Array(this.shownMetrics.length).fill(0);;
-
-    for (let i = 0; i < this.sampleCount; i++) {
-      let rangeStart = this.rangeMinDate + i * unitLength;
-      let rangeEnd = this.rangeMinDate + (i + 1) * unitLength;
-      let dateInUnix = Math.round((rangeStart + rangeEnd) / 2);
-      let avgDate = new Date(dateInUnix);
-
-      // find index positions
-      while (idx1 < this.times.length && rangeStart < this.times[idx1].d) {
-        idx1++;
-      }
-      idx2 = idx1;
-      while (idx2 < this.times.length && rangeEnd > this.times[idx2].d) {
-        idx2++;
-      }
-
-      let avgCnts = new Array(this.shownMetrics.length).fill(0);
-
-      for (let k = 0; k < cnts.length; k++) {
-        let v1 = Number.MAX_SAFE_INTEGER, v2 = previousCloses[k], v3 = cnts[k], v4 = -1;
-        v2 = previousCloses[k];
-
-        for (let j = idx1 + 1; j < idx2; j++) {
-          if (this.shownMetrics[k].incrementFn(this.times[j])) {
-            cnts[k]++;
-          }
-          if (this.shownMetrics[k].decrementFn(this.times[j])) {
-            cnts[k]--;
-          }
-          [v1, previousCloses[k], v3, v4] = this.updateRangeValues(cnts[k], v1, previousCloses[k], v3, v4)
-        }
-        [v1, previousCloses[k], v3, v4] = this.updateRangeValues(cnts[k], v1, previousCloses[k], v3, v4)
-        avgCnts[k] = (v2 + v3) / 2;
-      }
-
-      idx1 = idx2 - 1;
-      this.graphDates.push(dateInUnix);
-      arr.push([avgDate, ...avgCnts]);
-    }
-
-    const data = google.visualization.arrayToDataTable(arr, false); // 'false' means that the first row contains labels, not data.
-    this.dashboard.draw(data);
-  }
-
-  // time unit based stats
-  prepareData2() {
-    let metricsWithTooltips = [];
-    for (let m of this.shownMetrics) {
-      metricsWithTooltips.push(m.name);
-      metricsWithTooltips.push({ type: 'string', role: 'tooltip', p: { 'html': true } });
-    }
-    let arr = [['instance no', ...metricsWithTooltips]];
-    // let [startTime, endTime] = this.getFluctuatingRange();
-    const quantizationData = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.IDEAL_SAMPLE_CNT);
-    let rangeStart = quantizationData.rangeStart;
-    let rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
-
-    let idx1 = 0;
-    let idx2 = 0;
-    let cnts = new Array(this.shownMetrics.length).fill(0);
-    this.graphDates = [];
-
-    while (rangeEnd < this.rangeMaxDate) {
-
-      // rangeStart might be smaller than the first index
-      if (rangeStart > this.times[0].d) {
-        while (idx1 < this.times.length && rangeStart < this.times[idx1].d) {
-          idx1++;
-        }
-      }
-
-      idx2 = idx1;
-      // rangeEnd might me smaller than the first index
-      if (rangeEnd > this.times[0].d) {
-        while (idx2 < this.times.length && rangeEnd > this.times[idx2].d) {
-          idx2++;
-        }
-      } else {
-        idx2++;
-      }
-
-      cnts = new Array(this.shownMetrics.length).fill(0);
-      for (let k = 0; k < cnts.length; k++) {
-        for (let j = idx1 + 1; j < idx2; j++) {
-          if (this.shownMetrics[k].incrementFn(this.times[j])) {
-            cnts[k]++;
-          }
-        }
-      }
-      idx1 = idx2 - 1;
-      let tippedData = this.getToolTippedData(rangeStart, quantizationData.selectedUnit, cnts);
-      arr.push([new Date(rangeStart), ...tippedData]);
-      this.graphDates.push(rangeStart);
-      rangeStart = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
-      rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
-    }
-
-    const data = google.visualization.arrayToDataTable(arr, false); // 'false' means that the first row contains labels, not data.
-    this.dashboard.draw(data);
-  }
-
   prepareData3() {
     let metricsWithTooltips = [];
     for (let m of this.shownMetrics) {
@@ -421,37 +319,35 @@ export class TimebarService {
     }
     let arr = [['instance no', ...metricsWithTooltips]];
     // let [startTime, endTime] = this.getFluctuatingRange();
-    const quantizationData = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.IDEAL_SAMPLE_CNT);
-    this.selectedTimeUnit = quantizationData.selectedUnit;
-    let rangeStart = quantizationData.rangeStart;
-    let rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
+    let rangeStart = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.IDEAL_SAMPLE_CNT);
+    let rangeEnd = this.getQuantizedTime(rangeStart, true).getTime();
 
     let cnts = new Array(this.shownMetrics.length).fill(0);
     this.graphDates = [];
 
     // push a begin date
-    let beginDate = this.getQuantizedTime(quantizationData.selectedUnit, this.rangeMinDate, false).getTime();
+    let beginDate = this.getQuantizedTime(this.rangeMinDate, false).getTime();
     // beginDate = this.rangeMinDate;
-    arr.push([new Date(beginDate), ...(this.getToolTippedData(beginDate, quantizationData.selectedUnit, cnts))]);
+    arr.push([new Date(beginDate), ...(this.getToolTippedData(beginDate, cnts))]);
     this.graphDates.push(beginDate);
 
     while (rangeEnd < this.rangeMaxDate) {
       cnts = this.getMetricsForRange(rangeStart, rangeEnd);
-      let tippedData = this.getToolTippedData(rangeStart, quantizationData.selectedUnit, cnts);
+      let tippedData = this.getToolTippedData(rangeStart, cnts);
       arr.push([new Date((rangeStart + rangeEnd) / 2), ...tippedData]);
       this.graphDates.push((rangeStart + rangeEnd) / 2);
-      rangeStart = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
-      rangeEnd = this.getQuantizedTime(quantizationData.selectedUnit, rangeStart, true).getTime();
+      rangeStart = this.getQuantizedTime(rangeStart, true).getTime();
+      rangeEnd = this.getQuantizedTime(rangeStart, true).getTime();
     }
 
     // push an end date
     cnts = new Array(this.shownMetrics.length).fill(0);
-    let endDate = this.getQuantizedTime(quantizationData.selectedUnit, this.rangeMaxDate, true).getTime();
+    let endDate = this.getQuantizedTime(this.rangeMaxDate, true).getTime();
     // endDate = this.rangeMaxDate;
-    arr.push([new Date(endDate), ...(this.getToolTippedData(endDate, quantizationData.selectedUnit, cnts))]);
+    arr.push([new Date(endDate), ...(this.getToolTippedData(endDate, cnts))]);
     this.graphDates.push(endDate);
 
-    this.setRangeStrFn();
+    this.setStatsRangeStrFn();
 
     this.setTicksForBarChart();
     const data = google.visualization.arrayToDataTable(arr, false); // 'false' means that the first row contains labels, not data.
@@ -466,19 +362,21 @@ export class TimebarService {
     if (e > this.rangeMaxDate) {
       e = this.rangeMaxDate;
     }
-    let rangeStart = this.getQuantizedTime(this.selectedTimeUnit, s, false).getTime();
+    let rangeStart = this.getQuantizedTime(s, false).getTime();
     let ticks = [];
     while (rangeStart <= e) {
       const d = new Date(rangeStart);
       ticks.push({ v: d, f: this.getTickStrForDate(d) });
-      rangeStart = this.getQuantizedTime(this.selectedTimeUnit, rangeStart, true).getTime();
+      rangeStart = this.getQuantizedTime(rangeStart, true).getTime();
     }
     const d = new Date(rangeStart);
     ticks.push({ v: d, f: this.getTickStrForDate(d) });
     this.chartWrapper.setOption('hAxis.ticks', ticks);
+    this.controlWrapper.draw();
   }
 
-  getToolTippedData(rangeStart: number, selectedUnit: string, cnts: number[]) {
+  getToolTippedData(rangeStart: number, cnts: number[]) {
+    const tu = this.selectedTimeUnit;
     let date = new Date(rangeStart);
     let year = date.getFullYear();
     let month = date.getMonth() + 1;
@@ -490,37 +388,37 @@ export class TimebarService {
 
     let r = [];
     let s = '';
-    if (selectedUnit == 'century') {
+    if (tu == 'century') {
       s = year + '-' + (year + 100);
     }
-    if (selectedUnit == 'decade') {
+    if (tu == 'decade') {
       s = year + 's';
     }
-    if (selectedUnit == 'year') {
+    if (tu == 'year') {
       s = year + '';
     }
-    if (selectedUnit == 'quarter') {
+    if (tu == 'quarter') {
       s = 'Quarter ' + Math.ceil(month / 3) + ' ' + year;
     }
-    if (selectedUnit == 'month') {
+    if (tu == 'month') {
       s = MONTHS[month - 1] + ' ' + year;
     }
-    if (selectedUnit == 'week') {
+    if (tu == 'week') {
       s = 'Week ' + SHORT_MONTHS[month - 1] + ' ' + dayOfMonth;
     }
-    if (selectedUnit == 'day') {
+    if (tu == 'day') {
       s = 'Day ' + dayOfMonth;
     }
-    if (selectedUnit == 'hour') {
+    if (tu == 'hour') {
       s = 'Hour ' + hour;
     }
-    if (selectedUnit == 'minute' || selectedUnit == '5min') {
+    if (tu == 'minute' || tu == '5min') {
       s = 'Minute ' + minute;
     }
-    if (selectedUnit == 'second' || selectedUnit == '5sec') {
+    if (tu == 'second' || tu == '5sec') {
       s = 'Second ' + second;
     }
-    if (selectedUnit == '50ms' || selectedUnit == 'ms') {
+    if (tu == '50ms' || tu == 'ms') {
       s = 'Millisecond ' + ms;
     }
     for (let cnt of cnts) {
@@ -589,7 +487,7 @@ export class TimebarService {
     return [this.times[idxLow].d, this.times[idxHigh].d]
   }
 
-  quantizeDateRange(d1: number, d2: number, cnt: number): { rangeStart: number, unit: number, selectedUnit: string } {
+  quantizeDateRange(d1: number, d2: number, cnt: number): number {
     let range = d2 - d1;
     let minDiff = Number.MAX_SAFE_INTEGER;
     let selectedUnit = '';
@@ -612,13 +510,15 @@ export class TimebarService {
     if (selectedUnit2 != '') {
       selectedUnit = selectedUnit2;
     }
-
-    let quantizedD1 = this.getQuantizedTime(selectedUnit, d1, true).getTime();
     this.currTimeUnit = TIME_UNITS[selectedUnit];
-    return { rangeStart: quantizedD1, unit: TIME_UNITS[selectedUnit], selectedUnit: selectedUnit };
+    this.selectedTimeUnit = selectedUnit;
+    let quantizedD1 = this.getQuantizedTime(d1, true).getTime();
+    
+    return quantizedD1;
   }
 
-  getQuantizedTime(timeUnit: string, d: number, isGreater: boolean): Date {
+  getQuantizedTime(d: number, isGreater: boolean): Date {
+    const tu = this.selectedTimeUnit;
     let date = new Date(d);
     let year = date.getFullYear();
     let month = date.getMonth() + 1;
@@ -628,92 +528,92 @@ export class TimebarService {
     let second = date.getSeconds();
     let milliSecond = date.getMilliseconds();
 
-    if (timeUnit == 'decade' || timeUnit == 'century') {
-      const yearCnt = timeUnit == 'decade' ? 10 : 100;
+    if (tu == 'decade' || tu == 'century') {
+      const yearCnt = tu == 'decade' ? 10 : 100;
       let opt1 = year - (year % yearCnt);
       if (isGreater) {
         return new Date(opt1 + yearCnt, 0, 1);
       }
       return new Date(opt1, 0, 1);
     }
-    if (timeUnit == 'year') {
+    if (tu == 'year') {
       if (isGreater) {
         return new Date(year + 1, 0, 1);
       }
       return new Date(year, 0, 1);
     }
-    if (timeUnit == 'quarter') {
+    if (tu == 'quarter') {
       let opt1 = Math.ceil(month / 3) * 3 - 2;
       if (isGreater) {
         return new Date(year, opt1 + 2, 1);
       }
       return new Date(year, opt1, 1);
     }
-    if (timeUnit == 'month') {
+    if (tu == 'month') {
       if (isGreater) {
         return new Date(year, month, 1);
       }
       return new Date(year, month - 1, 1);
     }
-    if (timeUnit == 'week') {
+    if (tu == 'week') {
       let dayOfWeek = (date.getDay() + 6) % 7; // set monday is 0, sunday is 6
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth - dayOfWeek + 7);
       }
       return new Date(year, month - 1, dayOfMonth - dayOfWeek);
     }
-    if (timeUnit == 'day') {
+    if (tu == 'day') {
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth + 1);
       }
       return new Date(year, month - 1, dayOfMonth);
     }
-    if (timeUnit == 'hour') {
+    if (tu == 'hour') {
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth, hour + 1);
       }
       return new Date(year, month - 1, dayOfMonth, hour);
     }
-    if (timeUnit == '5min') {
+    if (tu == '5min') {
       let min = Math.floor(minute / 5) * 5;
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth, hour, min + 5);
       }
       return new Date(year, month - 1, dayOfMonth, hour, min);
     }
-    if (timeUnit == 'minute') {
+    if (tu == 'minute') {
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth, hour, minute + 1);
       }
       return new Date(year, month - 1, dayOfMonth, hour, minute);
     }
-    if (timeUnit == '5sec') {
+    if (tu == '5sec') {
       let sec = Math.floor(second / 5) * 5
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth, hour, minute, sec + 5);
       }
       return new Date(year, month - 1, dayOfMonth, hour, minute, sec);
     }
-    if (timeUnit == 'second') {
+    if (tu == 'second') {
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth, hour, minute, second + 1);
       }
       return new Date(year, month - 1, dayOfMonth, hour, minute, second);
     }
-    if (timeUnit == '50ms') {
+    if (tu == '50ms') {
       let ms = Math.floor(milliSecond / 50) * 50;
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth, hour, minute, second, ms + 50);
       }
       return new Date(year, month - 1, dayOfMonth, hour, minute, second, ms);
     }
-    if (timeUnit == 'ms') {
+    if (tu == 'ms') {
       if (isGreater) {
         return new Date(year, month - 1, dayOfMonth, hour, minute, second, milliSecond + 1);
       }
       return new Date(year, month - 1, dayOfMonth, hour, minute, second, milliSecond);
     }
-    throw 'unknown timeUnit: ' + timeUnit;
+    throw 'unknown timeUnit: ' + tu;
   }
 
   // update min, first, last, max values for a range
@@ -799,12 +699,6 @@ export class TimebarService {
   }
 
   setChartRange(start: number, end: number) {
-    // if (start < this.onlyDates[0]) {
-    //   start = this.onlyDates[0];
-    // }
-    // if (end > this.onlyDates[this.onlyDates.length - 1]) {
-    //   end = this.onlyDates[this.onlyDates.length - 1];
-    // }
     // note that chart might show a range which does not contain any data
     // to prevent that data sample count should be like 10
     if (start >= end) {
@@ -818,6 +712,7 @@ export class TimebarService {
         'end': new Date(end)
       }
     });
+    this.setGraphRangeStrFn();
     return 0;
   }
 
@@ -878,11 +773,11 @@ export class TimebarService {
   }
 
   coverAllTimes() {
+    this.renderChart();
     this.resetMinMaxDate();
     let d1 = this.graphDates[0] || this.rangeMinDate || MIN_DATE;
     let d2 = this.graphDates[this.graphDates.length - 1] || this.rangeMaxDate || MAX_DATE;
     this.setChartRange(d1, d2);
-    this.renderChart();
     this.rangeChange(true, true);
   }
 
@@ -920,7 +815,7 @@ export class TimebarService {
     this.playTimerId = -1
   }
 
-  statusChanged(isActive: boolean) {
+  showHideTimebar(isActive: boolean) {
     this._g.isTimebarEnabled = isActive;
 
     if (isActive) {
@@ -960,8 +855,12 @@ export class TimebarService {
     this.inclusionType = i;
   }
 
-  onVisibleRangeChanged(fn: () => void) {
-    this.setRangeStrFn = fn;
+  onStatsChanged(fn: () => void) {
+    this.setStatsRangeStrFn = fn;
+  }
+
+  onGraphChanged(fn: () => void) {
+    this.setGraphRangeStrFn = fn;
   }
 
   getMetricsForRange(start: number, end: number): number[] {

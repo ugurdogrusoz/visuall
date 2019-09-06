@@ -526,7 +526,7 @@ export class CytoscapeService {
       $('#cy').css('height', '79vh');
       $('#timebar').show();
     }
-    this._timebarService.statusChanged(isChecked);
+    this._timebarService.showHideTimebar(isChecked);
     this.setNavigatorPosition();
   }
 
