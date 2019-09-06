@@ -565,7 +565,7 @@ export class CytoscapeService {
   }
 
   saveAsPng(isWholeGraph: boolean) {
-    const options = { bg: 'white', scale: 1, full: isWholeGraph };
+    const options = { bg: 'white', scale: 3, full: isWholeGraph };
     const png = this._g.cy.png(options);
 
     const anchor = document.createElement('a');
