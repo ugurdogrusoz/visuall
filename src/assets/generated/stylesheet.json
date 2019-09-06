@@ -39,7 +39,9 @@
   {
     "selector": "edge",
     "style": {
-      "font-size": "13px"
+      "font-size": "13px",
+      "text-outline-color": "#ffffff",
+      "text-outline-width": "2px"
     }
   },
   {
