@@ -27,6 +27,7 @@ export class GlobalVariableService {
 
   performLayout(isRandomize: boolean, isDirectCommand: boolean = false) {
     if (!this.isAutoIncrementalLayoutOnChange && !isRandomize && !isDirectCommand) {
+      this.cy.fit();
       return;
     }
     this.switchLayoutRandomization(isRandomize);
