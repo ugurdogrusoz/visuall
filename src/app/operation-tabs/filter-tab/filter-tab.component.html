@@ -67,16 +67,17 @@
               <div class="row align-items-center no-gutters">
                 <!-- up, down buttons for the rule -->
                 <div class="col-lg-2 col-sm-1 text-left">
-                  <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(i, j, true)">
+                  <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(i, j, true)" *ngIf="j!=0">
                     <img src="assets/img/up-arrow.svg" height="16px" width="16px" alt="Navigate Up">
                   </a>
-                  <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(i, j, false)">
+                  <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(i, j, false)" *ngIf="j!=0">
                     <img src="assets/img/down-arrow.svg" height="16px" width="16px" alt="Navigate Down">
                   </a>
                 </div>
                 <!-- rule body -->
                 <div class="col-lg-9 col-sm-10 text-left va-text">
-                  <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0" (click)="ruleOperatorClicked(i, j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
+                  <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
+                    (click)="ruleOperatorClicked(i, j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
                   <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
                 </div>
                 <!-- delete rule button -->

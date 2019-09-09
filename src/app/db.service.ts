@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from './global-variable.service';
+import { ClassBasedRules, ClassOption, Rule } from './operation-tabs/filter-tab/filtering-types';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class DbService {
     const username = this.dbConfig.username;
     const password = this.dbConfig.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
-
+    console.log(query);
     const requestBody = {
       'statements': [{
         'statement': query,
@@ -83,114 +84,73 @@ export class DbService {
     return { columns: response.results[0].columns, data: response.results[0].data.map(x => x.row) };
   }
 
-  runFilteringQuery(rules, params, cb) {
-    let variableList = [];
+  runFilteringQuery2(rules: ClassBasedRules[], cb) {
     let query = '';
-
-    const classNames = Object.keys(rules);
-    for (let i = 0; i < classNames.length; i++) {
-      const className = classNames[i];
-      const ruleObject = rules[className];
-      const hasWithClause = (i === classNames.length - 1);
-
-      query += this.generateQueryBlock(ruleObject, variableList, hasWithClause);
+    for (let i = 0; i < rules.length; i++) {
+      query += this.getMatchWhereClause(rules[i], i);
     }
-
-    query += this.generateFinalQueryBlock(variableList);
-    this.runQuery(query, params, cb);
+    query += this.generateFinalQueryBlock2(rules.map(x => x.isEdge));
+    this.runQuery(query, null, cb);
   }
 
-  generateQueryBlock(rule, variableList, hasWithClause) {
-    const matchClause = this.generateMatchClause(rule);
-    const whereClause = this.generateWhereClause(rule);
-    const withClause = this.generateWithClause(rule, variableList);
-
-    let queryBlock = matchClause + whereClause;
-    if (hasWithClause)
-      queryBlock += withClause;
-
-    return queryBlock;
-  }
-
-  generateMatchClause(rule) {
+  getMatchWhereClause(rule: ClassBasedRules, idx: number) {
     const className = rule.className;
-    const variableName = rule.variableName;
-    let matchClause;
-
-    if (rule.type === 'edge') {
-      const leftNode = rule.leftNode;
-      const rightNode = rule.rightNode;
-      matchClause = `OPTIONAL MATCH (${leftNode})-[${variableName}:${className}]-(${rightNode})\n`;
+    let matchClause: string;
+    let varName = 'x' + idx;
+    if (rule.isEdge) {
+      matchClause = `OPTIONAL MATCH (${varName}_l)-[${varName}:${className}]-(${varName}_r)\n`;
     }
     else {
-      matchClause = `OPTIONAL MATCH (${variableName}:${className})\n`;
+      matchClause = `OPTIONAL MATCH (${varName}:${className})\n`;
     }
 
-    return matchClause;
-  }
-
-  generateWhereClause(rule) {
     const rules = rule.rules;
-    const variableName = rule.variableName;
     if (!rules || rules.length < 1)
       return '';
 
-    let whereClauseItems = [this.generateWhereClauseItem(rules[0], variableName)];
-    for (let i = 1; i < rules.length; i++) {
-      const ruleItem = rules[i];
-      const whereClauseItem = this.generateWhereClauseItem(ruleItem, variableName);
-      whereClauseItems.push(ruleItem.logicOperator, whereClauseItem);
+    let whereClauseItems = [];
+    for (let i = 0; i < rules.length; i++) {
+      whereClauseItems.push(this.generateWhereClauseItem2(rules[i], varName));
+      if (i < rules.length - 1) {
+        whereClauseItems.push(rules[i + 1].ruleOperator);
+      }
     }
 
-    return 'WHERE ' + whereClauseItems.join(' ') + "\n";
+    return matchClause + 'WHERE ' + whereClauseItems.join(' ') + "\n";
   }
 
-  generateWhereClauseItem(rule, variableName) {
-    const operator = rule.operator;
-    const paramName = rule.paramName;
-    const attribute = rule.attribute;
-
-    if (rule.attributeType === 'list') {
-      return `($${paramName} IN ${variableName}.${attribute})`;
+  generateWhereClauseItem2(rule: Rule, varName: string) {
+    let inputOp = '';
+    if (rule.propertyType == 'string' || rule.propertyType == 'list') {
+      inputOp = `'${rule.rawInput}'`;
+    } else {
+      inputOp = '' + rule.rawInput;
+    }
+    if (rule.propertyType === 'list') {
+      return `(${inputOp} IN ${varName}.${rule.propertyOperand})`;
     }
     else {
-      if (rule.attributeType === 'string' && this._g.isIgnoreCaseInText) {
-        return `( LOWER(${variableName}.${attribute}) ${operator} LOWER($${paramName}) )`;
+      if (rule.propertyType === 'string' && this._g.isIgnoreCaseInText) {
+        return `(LOWER(${varName}.${rule.propertyOperand}) ${rule.operator} LOWER(${inputOp}))`;
       }
-      return `(${variableName}.${attribute} ${operator} $${paramName})`;
+      return `(${varName}.${rule.propertyOperand} ${rule.operator} ${inputOp})`;
     }
   }
 
-  generateWithClause(rule, variableList) {
-    const leftNode = rule.leftNode;
-    const rightNode = rule.rightNode;
-    const variableName = rule.variableName;
-
-    if (rule.type === 'edge')
-      variableList.push(leftNode, rightNode);
-    else
-      variableList.push(variableName);
-
-    return 'WITH ' + variableList.join(', ') + "\n";
-  }
-
-  generateFinalQueryBlock(variableList) {
-    let withClause = [];
-    for (const variable of variableList) {
-      withClause.push(`collect(${variable}) as ${variable + 'List'}`);
+  generateFinalQueryBlock2(isEdgeArr: boolean[]) {
+    let s = 'WITH (';
+    for (let i = 0; i < isEdgeArr.length; i++) {
+      if (isEdgeArr[i]) {
+        s += `COLLECT(x${i}_l) + COLLECT(x${i}_r) + `;
+      } else {
+        s += `COLLECT(x${i}) + `;
+      }
     }
-
-    let leftOfWhereClause = [], rightOfWhereClause = [];
-    for (const variable of variableList) {
-      const left = `(n1 in ${variable + 'List'})`;
-      const right = `(n2 in ${variable + 'List'})`;
-      leftOfWhereClause.push(left);
-      rightOfWhereClause.push(right);
-    }
-
-    return `WITH ${withClause.join(', ')}\n`
-      + 'MATCH p=(n1)-[*0..1]-(n2)\n'
-      + `WHERE (${leftOfWhereClause.join(' or ')}) and (${rightOfWhereClause.join(' or ')})\n`
-      + 'RETURN nodes(p), relationships(p)\n';
+    s = s.substr(0, s.length - 2);
+    s += ') AS nodeList';
+    s += `\nMATCH p=(n1)-[*0..1]-(n2)
+    WHERE (n1 in nodeList) and (n2 in nodeList)
+    RETURN nodes(p), relationships(p)`;
+    return s;
   }
 }

@@ -9,7 +9,7 @@ import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import flatpickr from 'flatpickr';
-
+import { ClassOption, ClassBasedRules, Rule } from './filtering-types.js';
 
 @Component({
   selector: 'app-filter-tab',
@@ -30,10 +30,7 @@ export class FilterTabComponent implements OnInit {
   isDateProp: boolean;
   selectedOperatorKey: string;
   currDatetimes: Date[];
-  ruleCount: number;
-  filteringParams: any;
   filteringRules: ClassBasedRules[];
-  allFilteringRules: any;
   filteredTypeCount: number;
   isFilterOnDb: boolean;
   isMergeQueryResults: boolean;
@@ -49,10 +46,7 @@ export class FilterTabComponent implements OnInit {
     this.selectedClassProps = [];
     this.isDateProp = false;
     this.currDatetimes = [new Date()];
-    this.ruleCount = 0;
     this.filteredTypeCount = 0;
-    this.filteringParams = {};
-    this.allFilteringRules = {};
     this.filteringRules = [];
   }
 
@@ -84,10 +78,8 @@ export class FilterTabComponent implements OnInit {
   ruleOperatorClicked(i: number, j: number, op: string) {
     if (op == 'OR') {
       this.filteringRules[i].rules[j].ruleOperator = 'AND';
-      this.allFilteringRules[this.filteringRules[i].className].rules[j].logicOperator = 'AND';
     } else {
       this.filteringRules[i].rules[j].ruleOperator = 'OR';
-      this.allFilteringRules[this.filteringRules[i].className].rules[j].logicOperator = 'OR';
     }
   }
 
@@ -142,7 +134,6 @@ export class FilterTabComponent implements OnInit {
     let value: any = this.filterInp;
 
     let operator = this.operators[this.selectedOperatorKey];
-    let renderedOperator = this.selectedOperatorKey;
     const attributeType = this.attributeType;
     if (attributeType == 'datetime') {
       value = document.querySelector('#filter-date-inp0')['_flatpickr'].selectedDates[0].getTime();
@@ -155,78 +146,35 @@ export class FilterTabComponent implements OnInit {
     if (!logicOperator || !className || !attribute || value === undefined || !operator)
       return;
 
-    this.ruleCount++;
-    const isNode = this.nodeClasses.has(className);
-    const rule = {
-      attribute: attribute,
-      attributeType: this.attributeType,
-      className: className,
-      value: value,
-      logicOperator: logicOperator,
+    const isEdge = this.edgeClasses.has(className);
+    const rule: Rule = {
+      propertyOperand: attribute,
+      propertyType: this.attributeType,
+      rawInput: value,
+      inputOperand: value,
+      ruleOperator: logicOperator,
       operator: operator,
-      renderedOperator: renderedOperator,
-      type: isNode ? 'node' : 'edge',
-      id: this.ruleCount
     };
-    this.createFilterRule(rule);
-    this.addRule2FilteringRules(rule);
+    this.addRule2FilteringRules(rule, isEdge, className);
   }
 
-  addRule2FilteringRules(rule) {
-    let idx: number = this.filteringRules.findIndex(x => x.className == rule.className);
-    let r: Rule = { propertyOperand: rule.attribute, propertyType: rule.attributeType, operator: rule.operator, inputOperand: rule.value, ruleOperator: rule.logicOperator, originalValue: rule.value };
-    if (rule.attributeType == 'datetime') {
-      r.inputOperand = new Date(rule.value).toLocaleString();
+  addRule2FilteringRules(r: Rule, isEdge: boolean, className: string) {
+    let idx: number = this.filteringRules.findIndex(x => x.className == className);
+    if (r.propertyType == 'datetime') {
+      r.inputOperand = new Date(r.rawInput).toLocaleString();
     }
     if (idx == -1) {
-      this.filteringRules.push({ className: rule.className, rules: [r] })
+      this.filteringRules.push({ className: className, rules: [r], isEdge: isEdge });
     } else {
-      this.filteringRules[idx].rules.push(r)
-    }
-  }
-
-  createFilterRule(rule) {
-    rule.paramName = rule.attribute + "_" + rule.id;
-    this.filteringParams[rule.paramName] = rule.value;
-
-    const className = rule.className;
-    if (this.allFilteringRules.hasOwnProperty(className)) {
-      let typeRules = this.allFilteringRules[className].rules;
-      typeRules.push(rule);
-    }
-    else {
-      this.filteredTypeCount++;
-      const variableName = className.toLowerCase() + '_' + this.filteredTypeCount;
-      const leftNode = variableName + '_left';
-      const rightNode = variableName + '_right';
-
-      let typeRuleObj = {
-        className: className,
-        variableName: variableName,
-        type: rule.type,
-        rules: [rule],
-        leftNode: null,
-        rightNode: null
-      };
-
-      if (rule.type === 'edge') {
-        typeRuleObj.leftNode = leftNode;
-        typeRuleObj.rightNode = rightNode;
-      }
-
-      this.allFilteringRules[className] = typeRuleObj;
+      this.filteringRules[idx].rules.push(r);
     }
   }
 
   deleteFilterRule(i: number, j: number) {
-    this.ruleCount--;
-    let cName: string = this.filteringRules[i].className;
     if (this.filteringRules[i].rules.length == 1) {
       this.filteringRules.splice(i, 1);
-      delete this.allFilteringRules[cName]
     } else {
       this.filteringRules[i].rules.splice(j, 1);
-      this.allFilteringRules[cName].rules.splice(j, 1);
     }
   }
 
@@ -252,7 +200,7 @@ export class FilterTabComponent implements OnInit {
       return compareUsingOperator(eleVal.toLowerCase(), ruleVal.toLowerCase(), op);
     }
     if (rule.propertyType == 'datetime') {
-      return compareUsingOperator(eleVal, rule.originalValue, op);
+      return compareUsingOperator(eleVal, rule.rawInput, op);
     }
     return compareUsingOperator(eleVal, ruleVal, op);
   }
@@ -287,16 +235,16 @@ export class FilterTabComponent implements OnInit {
   }
 
   runFilteringOnDatabase() {
-    if ($.isEmptyObject(this.allFilteringRules) || $.isEmptyObject(this.filteringParams))
+    if ($.isEmptyObject(this.filteringRules)) {
+      console.log('there is no filteringRule');
       return;
+    }
 
     const mergeContent = this.isMergeQueryResults && this._g.cy.elements().length > 0;
-    console.log('allRules: ', this.allFilteringRules, ' params: ', this.filteringParams);
-    this._dbService.runFilteringQuery(this.allFilteringRules, this.filteringParams, (response) => this._cyService.loadElementsFromDatabase(response, mergeContent));
+    this._dbService.runFilteringQuery2(this.filteringRules, (response) => this._cyService.loadElementsFromDatabase(response, mergeContent));
   }
 
   runFiltering() {
-    console.log('isFilterOnDb: ', this.isFilterOnDb, ' isMerge: ', this.isMergeQueryResults);
     if (this.isFilterOnDb) {
       this.runFilteringOnDatabase();
     } else {
@@ -326,21 +274,3 @@ export class FilterTabComponent implements OnInit {
 
 }
 
-interface ClassOption {
-  text: string;
-  isDisabled: boolean;
-}
-
-interface ClassBasedRules {
-  className: string;
-  rules: Rule[];
-}
-
-interface Rule {
-  propertyOperand: string;
-  propertyType: string;
-  operator: string;
-  inputOperand: string;
-  ruleOperator: string;
-  originalValue: number;
-}
