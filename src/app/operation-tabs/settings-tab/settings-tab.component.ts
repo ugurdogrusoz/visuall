@@ -17,7 +17,8 @@ export class SettingsTabComponent implements OnInit {
   timebarPlayingSpeed: number;
   timebarZoomingStep: number;
   compoundPadding: string;
-  timebarInclusionTypes: string[];
+  timebarGraphInclusionTypes: string[];
+  timebarStatsInclusionTypes: string[];
 
   constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _g: GlobalVariableService) {
   }
@@ -52,7 +53,8 @@ export class SettingsTabComponent implements OnInit {
     this.timebarZoomingStep = 50;
     this.timebarPlayingSpeed = -1350;
     this.compoundPadding = '5%';
-    this.timebarInclusionTypes = ['Contained by', 'Overlaps', 'Contains'];
+    this.timebarGraphInclusionTypes = ['overlaps', 'contained by', 'contains'];
+    this.timebarStatsInclusionTypes = ['begin', 'middle', 'end', 'all'];
   }
 
   onBoolSettingsChanged(setting: iBoolSetting) {
@@ -86,10 +88,12 @@ export class SettingsTabComponent implements OnInit {
     this._g.setStyleFromJson(stylesheet);
   }
 
-  inclusionTypeChanged(i: number) {
-    this._timebarService.changeInclusionType(i);
-    this._timebarService.renderChart();
-    this._timebarService.rangeChange(false, true);
+  timebarGraphInclusionTypeChanged(i: number) {
+    this._timebarService.changeGraphInclusionType(i);
+  }
+
+  timebarStatsInclusionTypeChanged(i: number) {
+    this._timebarService.changeStatsInclusionType(i);
   }
 }
 

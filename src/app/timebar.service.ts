@@ -15,8 +15,8 @@ export class TimebarService {
   cyElemChangeHandler: Function;
   windowResizer: any;
   isRangeSet: boolean;
-  rangeMinDate: number;
-  rangeMaxDate: number;
+  statsRange1: number;
+  statsRange2: number;
   times: iTimebarUnitData[];
   items: iTimebarItem[];
   onlyDates: number[];
@@ -37,13 +37,17 @@ export class TimebarService {
   private readonly MIN_ZOOM_RANGE: number;
   currTimeUnit: number;
   selectedTimeUnit: string;
-  private inclusionType = 1;
+  private statsInclusionType = 3;
+  private graphInclusionType = 0;
   private beginPropertyName = 'begin_datetime';
   private endPropertyName = 'end_datetime';
   private defaultBeginDate = -631159200000; // 1950 
   private defaultEndDate = 2524597200000; // 2050 
   private setStatsRangeStrFn: () => void;
   private setGraphRangeStrFn: () => void;
+  private GRAPH_RANGE_RATIO = 0.33;
+  private GLOBAL_MAX_DATE = 2556133200000;
+  private GLOBAL_MIN_DATE = -662695200000;
 
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
@@ -133,7 +137,7 @@ export class TimebarService {
     this.prepareChartData(times);
     this.renderChart();
     if (!this.isRangeSet) {
-      this.setChartRange(this.rangeMinDate, this.rangeMaxDate);
+      this.setChartRange(this.statsRange1, this.statsRange2);
       this.isRangeSet = true;
     }
   }
@@ -224,7 +228,7 @@ export class TimebarService {
     google.visualization.events.addListener(this.controlWrapper, 'statechange', fn.bind(this));
   }
 
-  getTimeFilteredElems(start: number, end: number) {
+  getTimeFilteredGraphElems(start: number, end: number) {
     let elems = this._g.cy.collection();
     let propNamesSelector = '';
     // filter by begin_datetime, end_datetime
@@ -233,15 +237,15 @@ export class TimebarService {
       const p2 = ModelDescription.timebarDataMapping[c][this.endPropertyName];
       propNamesSelector += `[^${p1}][^${p2}]`
       let selector = '';
-      if (this.inclusionType == 0) {
-        // completely contained by
-        selector = `[${p1} >= ${start}][${p2} <= ${end}]`;
-      } else if (this.inclusionType == 1) {
+      if (this.graphInclusionType == 0) {
         // overlaps
-        selector = `[${p1} <= ${end}][${p2} > ${start}]`;
-      } else if (this.inclusionType == 2) {
-        // completely contains the gap
-        selector = `[${p1} < ${start}][${p2} > ${end}]`;
+        selector = `[${p1} <= ${end}][${p2} >= ${start}]`;
+      } else if (this.graphInclusionType == 1) {
+        // completely contained by the object's lifetime
+        selector = `[${p1} <= ${start}][${p2} >= ${end}]`;
+      } else if (this.graphInclusionType == 2) {
+        // completely contains the object's lifetime
+        selector = `[${p1} >= ${start}][${p2} <= ${end}]`;
       }
       elems = elems.union(selector);
     }
@@ -251,10 +255,10 @@ export class TimebarService {
     return elems;
   }
 
-  rangeChange(isSetCursorPos = true, isRandomize = false) {
+  rangeChange(isSetCursorPos = true, isRandomize = false, isNormalizeStatsRange = true) {
     this.setGraphRangeStrFn();
     const [s, e] = this.getChartRange();
-    let shownElems = this.getTimeFilteredElems(s, e);
+    let shownElems = this.getTimeFilteredGraphElems(s, e);
     if (isSetCursorPos) {
       this.cursorPos = 0;
     }
@@ -274,6 +278,9 @@ export class TimebarService {
     this._g.performLayout(isRandomize);
     if (this.selectedTimeUnit) {
       this.setTicksForBarChart();
+    }
+    if (isNormalizeStatsRange) {
+      this.setStatsRangeByRatio();
     }
   }
 
@@ -319,20 +326,20 @@ export class TimebarService {
     }
     let arr = [['instance no', ...metricsWithTooltips]];
     // let [startTime, endTime] = this.getFluctuatingRange();
-    let rangeStart = this.quantizeDateRange(this.rangeMinDate, this.rangeMaxDate, this.IDEAL_SAMPLE_CNT);
+    let rangeStart = this.quantizeDateRange(this.statsRange1, this.statsRange2, this.IDEAL_SAMPLE_CNT);
     let rangeEnd = this.getQuantizedTime(rangeStart, true).getTime();
 
     let cnts = new Array(this.shownMetrics.length).fill(0);
     this.graphDates = [];
 
     // push a begin date
-    let beginDate = this.getQuantizedTime(this.rangeMinDate, false).getTime();
-    cnts = this.getMetricsForRange(beginDate, rangeStart);
+    let beginDate = this.getQuantizedTime(this.statsRange1, false).getTime();
+    cnts = this.getStatsForRange(beginDate, rangeStart);
     arr.push([new Date(beginDate), ...(this.getToolTippedData(beginDate, cnts))]);
     this.graphDates.push(beginDate);
 
-    while (rangeEnd < this.rangeMaxDate) {
-      cnts = this.getMetricsForRange(rangeStart, rangeEnd);
+    while (rangeEnd < this.statsRange2) {
+      cnts = this.getStatsForRange(rangeStart, rangeEnd);
       let tippedData = this.getToolTippedData(rangeStart, cnts);
       arr.push([new Date((rangeStart + rangeEnd) / 2), ...tippedData]);
       this.graphDates.push((rangeStart + rangeEnd) / 2);
@@ -341,8 +348,8 @@ export class TimebarService {
     }
 
     // push an end date
-    let endDate = this.getQuantizedTime(this.rangeMaxDate, true).getTime();
-    cnts = this.getMetricsForRange(this.rangeMaxDate, endDate);
+    let endDate = this.getQuantizedTime(this.statsRange2, true).getTime();
+    cnts = this.getStatsForRange(this.statsRange2, endDate);
     arr.push([new Date(endDate), ...(this.getToolTippedData(endDate, cnts))]);
     this.graphDates.push(endDate);
 
@@ -355,11 +362,11 @@ export class TimebarService {
 
   setTicksForBarChart() {
     let [s, e] = this.getChartRange();
-    if (s < this.rangeMinDate) {
-      s = this.rangeMinDate;
+    if (s < this.statsRange1) {
+      s = this.statsRange1;
     }
-    if (e > this.rangeMaxDate) {
-      e = this.rangeMaxDate;
+    if (e > this.statsRange2) {
+      e = this.statsRange2;
     }
     let rangeStart = this.getQuantizedTime(s, false).getTime();
     let ticks = [];
@@ -458,7 +465,7 @@ export class TimebarService {
       let d = this.times[i];
       for (let j = 0; j < this.shownMetrics.length; j++) {
         let m = this.shownMetrics[j];
-        if ((!m.incrementFn(d)) || this.rangeMinDate > d.d) {
+        if ((!m.incrementFn(d)) || this.statsRange1 > d.d) {
           idxLow++;
         } else {
           // get out of for-for
@@ -473,7 +480,7 @@ export class TimebarService {
       let d = this.times[i];
       for (let j = 0; j < this.shownMetrics.length; j++) {
         let m = this.shownMetrics[j];
-        if ((!m.incrementFn(d)) || this.rangeMaxDate < d.d) {
+        if ((!m.incrementFn(d)) || this.statsRange2 < d.d) {
           idxHigh--;
         } else {
           // get out of for-for
@@ -512,7 +519,7 @@ export class TimebarService {
     this.currTimeUnit = TIME_UNITS[selectedUnit];
     this.selectedTimeUnit = selectedUnit;
     let quantizedD1 = this.getQuantizedTime(d1, true).getTime();
-    
+
     return quantizedD1;
   }
 
@@ -615,52 +622,38 @@ export class TimebarService {
     throw 'unknown timeUnit: ' + tu;
   }
 
-  // update min, first, last, max values for a range
-  updateRangeValues(currCnt, v1, previousClose, v3, v4) {
-    if (currCnt > v4) {
-      v4 = currCnt;
-    }
-    if (currCnt < v1) {
-      v1 = currCnt;
-    }
-    previousClose = v3;
-    v3 = currCnt;
-
-    return [v1, previousClose, v3, v4];
-  }
-
   changeZoom(isIncrease: boolean) {
     let [s, e] = this.getChartRange();
     if (e - s <= this.MIN_ZOOM_RANGE && isIncrease) {
       return;
     }
     const m = (e + s) / 2;
-    const ratio = (m - this.rangeMinDate) / (this.rangeMaxDate - this.rangeMinDate);
-    let step = Math.round(this.zoomingStep * (this.rangeMaxDate - this.rangeMinDate));
+    const ratio = (m - this.statsRange1) / (this.statsRange2 - this.statsRange1);
+    let step = Math.round(this.zoomingStep * (this.statsRange2 - this.statsRange1));
 
     if (!isIncrease) {
       step = -step;
     }
 
-    const oldMin = this.rangeMinDate;
-    const oldMax = this.rangeMaxDate;
+    const oldMin = this.statsRange1;
+    const oldMax = this.statsRange2;
 
-    this.rangeMinDate += step * ratio;
-    this.rangeMaxDate -= step * (1 - ratio);
+    this.statsRange1 += step * ratio;
+    this.statsRange2 -= step * (1 - ratio);
 
     const max = this.times[this.times.length - 1].d;
     const min = this.times[0].d;
 
-    if (this.rangeMinDate < min) {
-      this.rangeMinDate = min;
+    if (this.statsRange1 < min) {
+      this.statsRange1 = min;
     }
-    if (this.rangeMaxDate > max) {
-      this.rangeMaxDate = max;
+    if (this.statsRange2 > max) {
+      this.statsRange2 = max;
     }
 
     this.keepChartRange(oldMin, oldMax);
     this.renderChart();
-    this.rangeChange();
+    this.rangeChange(true, false, false);
   }
 
   keepChartRange(oldMin: number, oldMax: number) {
@@ -670,14 +663,14 @@ export class TimebarService {
     const chartRange = end - start;
 
     const ratio = (center - oldMin) / oldDelta;
-    const newDelta = this.rangeMaxDate - this.rangeMinDate;
-    const newCenter = this.rangeMinDate + newDelta * ratio;
+    const newDelta = this.statsRange2 - this.statsRange1;
+    const newCenter = this.statsRange1 + newDelta * ratio;
     const newChartRange = chartRange * newDelta / oldDelta;
 
     let newStart = newCenter - newChartRange / 2;
     let newEnd = newCenter + newChartRange / 2
 
-    if (this.rangeMaxDate <= this.rangeMinDate) {
+    if (this.statsRange2 <= this.statsRange1) {
       console.log('set rangeMaxDate badly');
       debugger;
     }
@@ -711,11 +704,11 @@ export class TimebarService {
         'end': new Date(end)
       }
     });
+    this.controlWrapper.draw();
     this.setGraphRangeStrFn();
     return 0;
   }
 
-  // google charts always set range from provided data
   moveCursor(isLeft: boolean) {
     let [start, end] = this.getChartRange();
     let delta = Math.ceil(end - start);
@@ -752,12 +745,12 @@ export class TimebarService {
 
     // shift shown data range
     if (start <= currMinDate) {
-      this.rangeMaxDate = this.rangeMaxDate + start - currMinDate;
-      this.rangeMinDate = start;
+      this.statsRange2 = this.statsRange2 + start - currMinDate;
+      this.statsRange1 = start;
     }
     if (end >= currMaxDate) {
-      this.rangeMinDate = this.rangeMinDate + end - currMaxDate;
-      this.rangeMaxDate = end;
+      this.statsRange1 = this.statsRange1 + end - currMaxDate;
+      this.statsRange2 = end;
     }
 
     this.setChartRange(start, end);
@@ -772,12 +765,19 @@ export class TimebarService {
   }
 
   coverAllTimes() {
-    this.renderChart();
     this.resetMinMaxDate();
-    let d1 = this.graphDates[0] || this.rangeMinDate || MIN_DATE;
-    let d2 = this.graphDates[this.graphDates.length - 1] || this.rangeMaxDate || MAX_DATE;
-    this.setChartRange(d1, d2);
-    this.rangeChange(true, true);
+    this.setChartRange(this.statsRange1, this.statsRange2);
+    this.rangeChange(true, true, false);
+    this.renderChart();
+  }
+
+  setStatsRangeByRatio() {
+    let [s, e] = this.getChartRange();
+    let center = (e + s) / 2;
+    let perimeter = (e - s) / (2 * this.GRAPH_RANGE_RATIO);
+    this.statsRange1 = center - perimeter;
+    this.statsRange2 = center + perimeter;
+    this.renderChart();
   }
 
   coverVisibleRange() {
@@ -788,8 +788,8 @@ export class TimebarService {
   }
 
   resetMinMaxDate() {
-    this.rangeMinDate = this.onlyDates[0];
-    this.rangeMaxDate = this.onlyDates[this.onlyDates.length - 1];
+    this.statsRange1 = this.onlyDates[0];
+    this.statsRange2 = this.onlyDates[this.onlyDates.length - 1];
   }
 
   playTiming(callback: (isShowPlay: boolean) => void) {
@@ -848,11 +848,20 @@ export class TimebarService {
     this.playingStep = newStep;
   }
 
-  changeInclusionType(i: number) {
+  changeGraphInclusionType(i: number) {
     if (i < 0 || i > 2) {
-      throw 'timebar inclusion type is not defined'
+      throw 'graphInclusionType is not defined'
     }
-    this.inclusionType = i;
+    this.graphInclusionType = i;
+    this.rangeChange(true, false);
+  }
+
+  changeStatsInclusionType(i: number) {
+    if (i < 0 || i > 3) {
+      throw 'statsInclusionType is not defined'
+    }
+    this.statsInclusionType = i;
+    this.renderChart();
   }
 
   onStatsChanged(fn: () => void) {
@@ -863,14 +872,20 @@ export class TimebarService {
     this.setGraphRangeStrFn = fn;
   }
 
-  getMetricsForRange(start: number, end: number): number[] {
+  getStatsForRange(start: number, end: number): number[] {
     let eles: iTimebarItem[];
-    if (this.inclusionType == 0) {
-      eles = this.items.filter(x => x.start > start && x.end < end);
-    } else if (this.inclusionType == 1) {
-      eles = this.items.filter(x => x.start < end && x.end > start);
-    } else if (this.inclusionType == 2) {
-      eles = this.items.filter(x => x.start < start && x.end > end);
+    // represent element with begin
+    if (this.statsInclusionType == 0) {
+      eles = this.items.filter(x => x.start >= start && x.start <= end);
+    } // represent element with middle
+    else if (this.statsInclusionType == 1) {
+      eles = this.items.filter(x => (x.start + x.end) / 2 >= start && (x.start + x.end) / 2 <= end);
+    } // represent element with end
+    else if (this.statsInclusionType == 2) {
+      eles = this.items.filter(x => x.end >= start && x.end <= end);
+    } // represent element with range
+    else if (this.statsInclusionType == 3) {
+      eles = this.items.filter(x => x.start <= end && x.end >= start);
     }
     let cnts = new Array(this.shownMetrics.length).fill(0);
 

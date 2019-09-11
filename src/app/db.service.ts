@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from './global-variable.service';
-import { ClassBasedRules, ClassOption, Rule } from './operation-tabs/filter-tab/filtering-types';
+import { ClassBasedRules, Rule } from './operation-tabs/filter-tab/filtering-types';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,8 @@ export class DbService {
     password: 'b.i5WWJaGHdH4h.RLVDXx9PyExkPHDa'
   };
 
-  constructor(private http: HttpClient, private _g: GlobalVariableService) { }
+  constructor(private _http: HttpClient, private _g: GlobalVariableService) {
+   }
 
   runQuery(query, params, cb, isGraphResponse = true) {
     const url = this.dbConfig.url;
@@ -29,7 +30,7 @@ export class DbService {
         'resultDataContents': [requestType]
       }]
     };
-    this.http.post(url, requestBody, {
+    this._http.post(url, requestBody, {
       headers: {
         Accept: 'application/json; charset=UTF-8',
         'Content-Type': 'application/json',
@@ -46,7 +47,16 @@ export class DbService {
 
   }
 
-  extractGraphFromQueryResponse(response) {
+  runFilteringQuery2(rules: ClassBasedRules[], cb) {
+    let query = '';
+    for (let i = 0; i < rules.length; i++) {
+      query += this.getMatchWhereClause(rules[i], i);
+    }
+    query += this.generateFinalQueryBlock2(rules.map(x => x.isEdge));
+    this.runQuery(query, null, cb);
+  }
+
+  private extractGraphFromQueryResponse(response) {
     let nodes = {};
     let edges = {};
 
@@ -76,7 +86,7 @@ export class DbService {
     return { 'nodes': nodes, 'edges': edges };
   }
 
-  extractTableFromQueryResponse(response) {
+  private extractTableFromQueryResponse(response) {
     if (response.errors && response.errors.length > 0) {
       console.error('DB server returns erronous result', response.errors);
       return;
@@ -84,16 +94,7 @@ export class DbService {
     return { columns: response.results[0].columns, data: response.results[0].data.map(x => x.row) };
   }
 
-  runFilteringQuery2(rules: ClassBasedRules[], cb) {
-    let query = '';
-    for (let i = 0; i < rules.length; i++) {
-      query += this.getMatchWhereClause(rules[i], i);
-    }
-    query += this.generateFinalQueryBlock2(rules.map(x => x.isEdge));
-    this.runQuery(query, null, cb);
-  }
-
-  getMatchWhereClause(rule: ClassBasedRules, idx: number) {
+  private getMatchWhereClause(rule: ClassBasedRules, idx: number) {
     const className = rule.className;
     let matchClause: string;
     let varName = 'x' + idx;
@@ -119,7 +120,7 @@ export class DbService {
     return matchClause + 'WHERE ' + whereClauseItems.join(' ') + "\n";
   }
 
-  generateWhereClauseItem2(rule: Rule, varName: string) {
+  private generateWhereClauseItem2(rule: Rule, varName: string) {
     let inputOp = '';
     if (rule.propertyType == 'string' || rule.propertyType == 'list') {
       inputOp = `'${rule.rawInput}'`;
@@ -137,7 +138,7 @@ export class DbService {
     }
   }
 
-  generateFinalQueryBlock2(isEdgeArr: boolean[]) {
+  private generateFinalQueryBlock2(isEdgeArr: boolean[]) {
     let s = 'WITH (';
     for (let i = 0; i < isEdgeArr.length; i++) {
       if (isEdgeArr[i]) {

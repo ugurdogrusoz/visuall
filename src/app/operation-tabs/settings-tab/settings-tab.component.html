@@ -58,10 +58,20 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
-        <label class="form-check-label va-text">Timebar inclusion type &nbsp;</label>
-        <div class="form-check-inline va-text" *ngFor="let str of timebarInclusionTypes; let i = index;">
+        <label class="form-check-label va-text">Timebar graph inclusion type &nbsp;</label>
+        <div class="form-check-inline va-text" *ngFor="let str of timebarGraphInclusionTypes; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="inclusionTypeChanged(i)" name="optradio" [checked]="i==1">{{str}}
+            <input type="radio" class="form-check-input" (click)="timebarGraphInclusionTypeChanged(i)" name="optradio" [checked]="i==0">{{str}}
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text">Timebar statistics inclusion type &nbsp;</label>
+        <div class="form-check-inline va-text" *ngFor="let str of timebarStatsInclusionTypes; let i = index;">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" (click)="timebarStatsInclusionTypeChanged(i)" name="optradio2" [checked]="i==3">{{str}}
           </label>
         </div>
       </div>
