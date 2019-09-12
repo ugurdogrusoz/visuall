@@ -135,7 +135,7 @@ export class TimebarService {
     this.prepareChartData(times);
     this.renderChart();
     if (!this.isRangeSet) {
-      this.setChartRange(this.statsRange1, this.statsRange2);
+      this.setStatsRangeByRatio();
       this.isRangeSet = true;
     }
   }
@@ -156,7 +156,7 @@ export class TimebarService {
     this.times.sort((a, b) => a.d - b.d);
     this.onlyDates = this.times.map(x => x.d);
     this.resetMinMaxDate();
-    this.setChartRangeIfNull();
+    // this.setChartRangeIfNull();
   }
 
   setChartRangeIfNull() {
@@ -202,7 +202,7 @@ export class TimebarService {
         }
       },
     });
-
+    
     let chartWrapper = new google.visualization.ChartWrapper({
       'chartType': 'ColumnChart',
       'containerId': 'chart_div',
@@ -228,6 +228,8 @@ export class TimebarService {
     this.dashboard = dashboard;
     this.chartWrapper = chartWrapper;
     this.controlWrapper = controlWrapper;
+    this.setChartRange(MIN_DATE, MAX_DATE);
+    this.controlWrapper.draw();
     const fn = debounce(this.rangeChange, 500, false);
     google.visualization.events.addListener(this.controlWrapper, 'statechange', fn.bind(this));
   }
