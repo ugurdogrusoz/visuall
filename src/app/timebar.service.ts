@@ -46,6 +46,7 @@ export class TimebarService {
   private setStatsRangeStrFn: () => void;
   private setGraphRangeStrFn: () => void;
   private GRAPH_RANGE_RATIO = 0.33;
+  private dataColors = ['#3366cc', '#dc3912', '#ff9900'];
 
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
@@ -202,7 +203,7 @@ export class TimebarService {
         }
       },
     });
-    
+
     let chartWrapper = new google.visualization.ChartWrapper({
       'chartType': 'ColumnChart',
       'containerId': 'chart_div',
@@ -329,39 +330,30 @@ export class TimebarService {
       metricsWithTooltips.push({ type: 'string', role: 'tooltip', p: { 'html': true } });
     }
     let arr = [['instance no', ...metricsWithTooltips]];
-    // let [startTime, endTime] = this.getFluctuatingRange();
     let rangeStart = this.quantizeDateRange(this.statsRange1, this.statsRange2, this.IDEAL_SAMPLE_CNT);
     let rangeEnd = this.getQuantizedTime(rangeStart, true).getTime();
-
-    let cnts = new Array(this.shownMetrics.length).fill(0);
     this.graphDates = [];
 
     // push a begin date
-    let beginDate = this.getQuantizedTime(this.statsRange1, false).getTime();
-    cnts = this.getStatsForRange(beginDate, rangeStart);
-    arr.push([new Date(beginDate), ...(this.getToolTippedData(beginDate, cnts))]);
-    this.graphDates.push(beginDate);
-
+    this.putStatDataForRange(this.statsRange1, rangeStart, this.statsRange1, arr);
     while (rangeEnd < this.statsRange2) {
-      cnts = this.getStatsForRange(rangeStart, rangeEnd);
-      let tippedData = this.getToolTippedData(rangeStart, cnts);
-      arr.push([new Date((rangeStart + rangeEnd) / 2), ...tippedData]);
-      this.graphDates.push((rangeStart + rangeEnd) / 2);
+      this.putStatDataForRange(rangeStart, rangeEnd, (rangeStart + rangeEnd) / 2, arr);
       rangeStart = this.getQuantizedTime(rangeStart, true).getTime();
       rangeEnd = this.getQuantizedTime(rangeStart, true).getTime();
     }
-
     // push an end date
-    let endDate = this.getQuantizedTime(this.statsRange2, true).getTime();
-    cnts = this.getStatsForRange(this.statsRange2, endDate);
-    arr.push([new Date(endDate), ...(this.getToolTippedData(endDate, cnts))]);
-    this.graphDates.push(endDate);
+    this.putStatDataForRange(rangeEnd, this.statsRange2, this.statsRange2, arr);
 
     this.setStatsRangeStrFn();
-
     this.setTicksForBarChart();
     const data = google.visualization.arrayToDataTable(arr, false); // 'false' means that the first row contains labels, not data.
     this.dashboard.draw(data);
+  }
+
+  putStatDataForRange(s: number, e: number, data4arr: number, arr: any[]) {
+    let cnts = this.getStatsForRange(s, e);
+    arr.push([new Date(data4arr), ...(this.getToolTippedData(data4arr, cnts))]);
+    this.graphDates.push(data4arr);
   }
 
   setTicksForBarChart() {
@@ -431,9 +423,10 @@ export class TimebarService {
     if (tu == '50ms' || tu == 'ms') {
       s = 'Millisecond ' + ms;
     }
+    let i = 0;
     for (let cnt of cnts) {
       r.push(cnt);
-      r.push(`${s} <b>${cnt}</b>`);
+      r.push(`<div style="border:2px solid ${this.dataColors[i++]};">${s} <b>${cnt}</b></div>`);
     }
     return r;
   }
@@ -461,40 +454,6 @@ export class TimebarService {
       return '' + d.getMilliseconds();
     }
     return '?';
-  }
-
-  getFluctuatingRange(): number[] {
-    let idxLow = 0;
-    for (let i = 0; i < this.times.length; i++) {
-      let d = this.times[i];
-      for (let j = 0; j < this.shownMetrics.length; j++) {
-        let m = this.shownMetrics[j];
-        if ((!m.incrementFn(d)) || this.statsRange1 > d.d) {
-          idxLow++;
-        } else {
-          // get out of for-for
-          i = this.times.length;
-          j = this.shownMetrics.length;
-        }
-      }
-    }
-
-    let idxHigh = this.times.length - 1;
-    for (let i = this.times.length - 1; i > -1; i--) {
-      let d = this.times[i];
-      for (let j = 0; j < this.shownMetrics.length; j++) {
-        let m = this.shownMetrics[j];
-        if ((!m.incrementFn(d)) || this.statsRange2 < d.d) {
-          idxHigh--;
-        } else {
-          // get out of for-for
-          i = -1;
-          j = this.shownMetrics.length;
-        }
-      }
-    }
-
-    return [this.times[idxLow].d, this.times[idxHigh].d]
   }
 
   quantizeDateRange(d1: number, d2: number, cnt: number): number {
@@ -628,35 +587,22 @@ export class TimebarService {
 
   changeZoom(isIncrease: boolean) {
     let [s, e] = this.getChartRange();
-    if (e - s <= this.MIN_ZOOM_RANGE && isIncrease) {
+    const delta = e - s;
+
+    if (delta <= this.MIN_ZOOM_RANGE && isIncrease) {
       return;
     }
-    const m = (e + s) / 2;
-    const ratio = (m - this.statsRange1) / (this.statsRange2 - this.statsRange1);
-    let step = Math.round(this.zoomingStep * (this.statsRange2 - this.statsRange1));
+    let step = Math.floor(this.zoomingStep * (delta));
 
     if (!isIncrease) {
       step = -step;
     }
-
-    const oldMin = this.statsRange1;
-    const oldMax = this.statsRange2;
-
-    this.statsRange1 += step * ratio;
-    this.statsRange2 -= step * (1 - ratio);
-
-    const max = this.times[this.times.length - 1].d;
-    const min = this.times[0].d;
-
-    if (this.statsRange1 < min) {
-      this.statsRange1 = min;
+    s += step;
+    e -= step;
+    if (s <= MIN_DATE) {
+      return;
     }
-    if (this.statsRange2 > max) {
-      this.statsRange2 = max;
-    }
-
-    this.keepChartRange(oldMin, oldMax);
-    this.renderChart();
+    this.setChartRange(s, e);
     this.rangeChange(true, false);
   }
 
