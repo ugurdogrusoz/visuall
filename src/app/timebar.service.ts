@@ -46,8 +46,6 @@ export class TimebarService {
   private setStatsRangeStrFn: () => void;
   private setGraphRangeStrFn: () => void;
   private GRAPH_RANGE_RATIO = 0.33;
-  private GLOBAL_MAX_DATE = 2556133200000;
-  private GLOBAL_MIN_DATE = -662695200000;
 
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
@@ -197,7 +195,8 @@ export class TimebarService {
             'vAxis': {
               'textPosition': 'none',
               'gridlines': { 'color': 'none' }
-            }
+            },
+
           },
           'snapToData': false
         }
@@ -214,6 +213,11 @@ export class TimebarService {
         'hAxis': { textStyle: { fontSize: 11 } },
         'vAxis': { textStyle: { fontSize: 11 } },
         'chartArea': chartPaddings,
+        // 'animation':{
+        //   duration: 350,
+        //   easing: 'out',
+        //   'startup': true
+        // },
       },
       // The pie chart will use the columns 'Name' and 'Donuts eaten'
       // out of all the available ones.
@@ -255,7 +259,7 @@ export class TimebarService {
     return elems;
   }
 
-  rangeChange(isSetCursorPos = true, isRandomize = false, isNormalizeStatsRange = true) {
+  rangeChange(isSetCursorPos = true, isRandomize = false) {
     this.setGraphRangeStrFn();
     const [s, e] = this.getChartRange();
     let shownElems = this.getTimeFilteredGraphElems(s, e);
@@ -279,9 +283,7 @@ export class TimebarService {
     if (this.selectedTimeUnit) {
       this.setTicksForBarChart();
     }
-    if (isNormalizeStatsRange) {
-      this.setStatsRangeByRatio();
-    }
+    this.setStatsRangeByRatio();
   }
 
   renderChart() {
@@ -653,7 +655,7 @@ export class TimebarService {
 
     this.keepChartRange(oldMin, oldMax);
     this.renderChart();
-    this.rangeChange(true, false, false);
+    this.rangeChange(true, false);
   }
 
   keepChartRange(oldMin: number, oldMax: number) {
@@ -766,9 +768,10 @@ export class TimebarService {
 
   coverAllTimes() {
     this.resetMinMaxDate();
-    this.setChartRange(this.statsRange1, this.statsRange2);
-    this.rangeChange(true, true, false);
     this.renderChart();
+    // can not set chart range when there is not data
+    this.setChartRange(this.statsRange1, this.statsRange2);
+    this.rangeChange(true, true);
   }
 
   setStatsRangeByRatio() {
