@@ -603,32 +603,6 @@ export class TimebarService {
     this.rangeChange(true, false);
   }
 
-  keepChartRange(oldMin: number, oldMax: number) {
-    let [start, end] = this.getChartRange();
-    const oldDelta = oldMax - oldMin;
-    const center = (end + start) / 2;
-    const chartRange = end - start;
-
-    const ratio = (center - oldMin) / oldDelta;
-    const newDelta = this.statsRange2 - this.statsRange1;
-    const newCenter = this.statsRange1 + newDelta * ratio;
-    const newChartRange = chartRange * newDelta / oldDelta;
-
-    let newStart = newCenter - newChartRange / 2;
-    let newEnd = newCenter + newChartRange / 2
-
-    if (this.statsRange2 <= this.statsRange1) {
-      console.log('set rangeMaxDate badly');
-      debugger;
-    }
-
-    if (newStart >= newEnd) {
-      console.log('set chart range badly');
-      debugger;
-    }
-    this.setChartRange(newStart, newEnd);
-  }
-
   getChartRange(): number[] {
     const curr = this.controlWrapper.getState();
     let start = curr.range.start.getTime();
@@ -722,7 +696,14 @@ export class TimebarService {
   setStatsRangeByRatio(isCallGraphRangeStrFn: boolean) {
     let [s, e] = this.getChartRange();
     let center = (e + s) / 2;
-    let perimeter = (e - s) / (2 * this.GRAPH_RANGE_RATIO);
+    let diff = e - s;
+    if (diff < this.MIN_ZOOM_RANGE) {
+      s = center - this.MIN_ZOOM_RANGE / 2;
+      e = center + this.MIN_ZOOM_RANGE / 2;
+      this.setChartRange(s, e);
+      diff = this.MIN_ZOOM_RANGE;
+    }
+    let perimeter = diff / (2 * this.GRAPH_RANGE_RATIO);
     this.statsRange1 = center - perimeter;
     this.statsRange2 = center + perimeter;
     this.renderChart();
