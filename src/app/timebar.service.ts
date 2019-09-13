@@ -14,7 +14,6 @@ export class TimebarService {
 
   cyElemChangeHandler: Function;
   windowResizer: any;
-  isRangeSet: boolean;
   statsRange1: number;
   statsRange2: number;
   times: iTimebarUnitData[];
@@ -47,6 +46,7 @@ export class TimebarService {
   private setGraphRangeStrFn: () => void;
   private GRAPH_RANGE_RATIO = 0.33;
   private dataColors = ['#3366cc', '#dc3912', '#ff9900'];
+  private isRefreshChart = false;
 
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
@@ -55,7 +55,6 @@ export class TimebarService {
     this.MIN_SAMPLE_CNT = 10;
     this.MIN_ZOOM_RANGE = 10; // means 10 ms
     this.playTimerId = -1;
-    this.isRangeSet = false;
     this.onlyDates = [];
     this.isHideDisconnectedNodes = false;
     this.playingSpeed = -1350;
@@ -76,6 +75,10 @@ export class TimebarService {
     this.shownMetrics = [{ incrementFn: (x) => x.id[0] === 'n', decrementFn: (x) => false, name: '# of nodes' },
     { incrementFn: (x) => x.id[0] === 'e', decrementFn: (x) => false, name: '# of edges' },
     { incrementFn: (x) => true, decrementFn: (x) => false, name: '# of nodes + # of edges' }];
+  }
+
+  setRefreshFlag(b: boolean) {
+    this.isRefreshChart = b;
   }
 
   bindEventListeners() {
@@ -134,10 +137,12 @@ export class TimebarService {
       return;
     }
     this.prepareChartData(times);
-    this.renderChart();
-    if (!this.isRangeSet) {
-      this.setStatsRangeByRatio();
-      this.isRangeSet = true;
+    if (this.isRefreshChart) {
+      this.coverAllTimes();
+      this.isRefreshChart = false;
+    } else {
+      this.renderChart();
+      this.setStatsRangeByRatio(true);
     }
   }
 
@@ -156,15 +161,7 @@ export class TimebarService {
     this.times = times;
     this.times.sort((a, b) => a.d - b.d);
     this.onlyDates = this.times.map(x => x.d);
-    this.resetMinMaxDate();
-    // this.setChartRangeIfNull();
-  }
-
-  setChartRangeIfNull() {
-    let [s] = this.getChartRange();
-    if (!s || s == MIN_DATE) {
-      this.setChartRange(this.onlyDates[0], this.onlyDates[this.onlyDates.length - 1]);
-    }
+    this.resetStatsRange();
   }
 
   loadGoogleChart() {
@@ -286,7 +283,7 @@ export class TimebarService {
     if (this.selectedTimeUnit) {
       this.setTicksForBarChart();
     }
-    this.setStatsRangeByRatio();
+    this.setStatsRangeByRatio(false);
   }
 
   renderChart() {
@@ -715,20 +712,23 @@ export class TimebarService {
   }
 
   coverAllTimes() {
-    this.resetMinMaxDate();
+    this.resetStatsRange();
     this.renderChart();
-    // can not set chart range when there is not data
+    // can not set chart range when there is no data
     this.setChartRange(this.statsRange1, this.statsRange2);
     this.rangeChange(true, true);
   }
 
-  setStatsRangeByRatio() {
+  setStatsRangeByRatio(isCallGraphRangeStrFn: boolean) {
     let [s, e] = this.getChartRange();
     let center = (e + s) / 2;
     let perimeter = (e - s) / (2 * this.GRAPH_RANGE_RATIO);
     this.statsRange1 = center - perimeter;
     this.statsRange2 = center + perimeter;
     this.renderChart();
+    if (isCallGraphRangeStrFn) {
+      this.setGraphRangeStrFn();
+    }
   }
 
   coverVisibleRange() {
@@ -738,7 +738,7 @@ export class TimebarService {
     this.rangeChange(true, false);
   }
 
-  resetMinMaxDate() {
+  resetStatsRange() {
     this.statsRange1 = this.onlyDates[0];
     this.statsRange2 = this.onlyDates[this.onlyDates.length - 1];
   }
