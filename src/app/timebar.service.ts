@@ -712,8 +712,14 @@ export class TimebarService {
     let perimeter = diff / (2 * this.GRAPH_RANGE_RATIO);
     this.statsRange1 = center - perimeter;
     this.statsRange2 = center + perimeter;
-    if (this.statsRange1 < MIN_DATE) {
-      this.statsRange1 = MIN_DATE;
+    const min = ModelDescription.template.timebar_min || MIN_DATE;
+    const max = ModelDescription.template.timebar_max || MAX_DATE;
+    if (this.statsRange1 < min) {
+      this.statsRange1 = min;
+      this.setGraphRangeByRatio();
+    }
+    if (this.statsRange2 > max) {
+      this.statsRange2 = max;
       this.setGraphRangeByRatio();
     }
     this.renderChart();
