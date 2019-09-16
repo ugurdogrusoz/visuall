@@ -226,6 +226,7 @@ export class TimebarService {
     this.dashboard = dashboard;
     this.chartWrapper = chartWrapper;
     this.controlWrapper = controlWrapper;
+    window['controlWrapper'] = controlWrapper;
     this.setChartRange(MIN_DATE, MAX_DATE);
     this.controlWrapper.draw();
     const fn = debounce(this.rangeChange, 500, false);
@@ -706,10 +707,21 @@ export class TimebarService {
     let perimeter = diff / (2 * this.GRAPH_RANGE_RATIO);
     this.statsRange1 = center - perimeter;
     this.statsRange2 = center + perimeter;
+    if (this.statsRange1 < MIN_DATE) {
+      this.statsRange1 = MIN_DATE;
+      this.setGraphRangeByRatio();
+    }
     this.renderChart();
     if (isCallGraphRangeStrFn) {
       this.setGraphRangeStrFn();
     }
+  }
+
+  setGraphRangeByRatio() {
+    const diff = (this.statsRange2 - this.statsRange1) * (1 - this.GRAPH_RANGE_RATIO) / 2;
+    const s = this.statsRange1 + diff;
+    const e = this.statsRange2 - diff;
+    this.setChartRange(s, e);
   }
 
   coverVisibleRange() {
