@@ -47,6 +47,7 @@ export class TimebarService {
   private GRAPH_RANGE_RATIO = 0.33;
   private dataColors = ['#3366cc', '#dc3912', '#ff9900'];
   private isRefreshChart = false;
+  private ignoreEndNodesForEdgeInclusion: boolean = true;
 
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
@@ -257,6 +258,10 @@ export class TimebarService {
 
     // there might be elements that don't have begin_datetime, end_datetime properties
     elems = elems.union(propNamesSelector);
+    // get nodes of edges
+    if (this.ignoreEndNodesForEdgeInclusion) {
+      elems = elems.union(elems.edges().connectedNodes());
+    }
     return elems;
   }
 
