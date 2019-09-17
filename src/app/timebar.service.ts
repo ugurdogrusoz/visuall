@@ -720,12 +720,12 @@ export class TimebarService {
     if (this.statsRange1 < min) {
       this.statsRange2 += min - this.statsRange1;
       this.statsRange1 = min;
-      this.setGraphRangeByRatio(s1, s2);
+      this.setGraphRangeByRatio(s1, s2, false);
     }
     if (this.statsRange2 > max) {
       this.statsRange1 -= this.statsRange2 - max;
       this.statsRange2 = max;
-      this.setGraphRangeByRatio(s1, s2);
+      this.setGraphRangeByRatio(s1, s2, true);
     }
     this.renderChart();
     if (isCallGraphRangeStrFn) {
@@ -733,21 +733,25 @@ export class TimebarService {
     }
   }
 
-  setGraphRangeByRatio(prevStatsRange1: number, prevStatsRange2: number) {
+  setGraphRangeByRatio(prevStatsRange1: number, prevStatsRange2: number, isOnMax: boolean) {
     const currStatsGap = this.statsRange2 - this.statsRange1;
     const prevStatsGap = prevStatsRange2 - prevStatsRange1;
 
     // set graphRange/statsRange to previous state
     if (currStatsGap > prevStatsGap && !isClose(currStatsGap, prevStatsGap)) {
-      this.setGraphRangeByStatsRange(prevStatsGap, prevStatsRange1, prevStatsRange2);
-      this.statsRange1 = prevStatsRange1;
-      this.statsRange2 = prevStatsRange2;
-    } else {
-      this.setGraphRangeByStatsRange(currStatsGap, this.statsRange1, this.statsRange2);
+      if (isOnMax) {
+        // let statsRange2 stay max
+        this.statsRange1 = prevStatsRange1;
+      } else {
+        // let statsRange1 stay min
+        this.statsRange2 = prevStatsRange2;
+      }
     }
+    this.setGraphRangeByStatsRange(this.statsRange1, this.statsRange2);
   }
 
-  setGraphRangeByStatsRange(gap: number, r1: number, r2: number) {
+  setGraphRangeByStatsRange(r1: number, r2: number) {
+    const gap = r2 - r1;
     const diff = gap * (1 - this.GRAPH_RANGE_RATIO) / 2;
     const s = r1 + diff;
     const e = r2 - diff;
