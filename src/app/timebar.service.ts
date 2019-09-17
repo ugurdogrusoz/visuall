@@ -355,7 +355,7 @@ export class TimebarService {
 
   putStatDataForRange(s: number, e: number, data4arr: number, arr: any[]) {
     let cnts = this.getStatsForRange(s, e);
-    arr.push([new Date(data4arr), ...(this.getToolTippedData(data4arr, cnts))]);
+    arr.push([new Date(data4arr), ...(this.getToolTippedData(s, cnts))]);
     this.graphDates.push(data4arr);
   }
 
