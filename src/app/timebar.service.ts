@@ -710,17 +710,22 @@ export class TimebarService {
       diff = this.MIN_ZOOM_RANGE;
     }
     let perimeter = diff / (2 * this.GRAPH_RANGE_RATIO);
+    const s1 = this.statsRange1;
+    const s2 = this.statsRange2;
+
     this.statsRange1 = center - perimeter;
     this.statsRange2 = center + perimeter;
     const min = ModelDescription.template.timebar_min || MIN_DATE;
     const max = ModelDescription.template.timebar_max || MAX_DATE;
     if (this.statsRange1 < min) {
+      this.statsRange2 += min - this.statsRange1;
       this.statsRange1 = min;
-      this.setGraphRangeByRatio();
+      this.setGraphRangeByRatio(s1, s2);
     }
     if (this.statsRange2 > max) {
+      this.statsRange1 -= this.statsRange2 - max;
       this.statsRange2 = max;
-      this.setGraphRangeByRatio();
+      this.setGraphRangeByRatio(s1, s2);
     }
     this.renderChart();
     if (isCallGraphRangeStrFn) {
@@ -728,10 +733,24 @@ export class TimebarService {
     }
   }
 
-  setGraphRangeByRatio() {
-    const diff = (this.statsRange2 - this.statsRange1) * (1 - this.GRAPH_RANGE_RATIO) / 2;
-    const s = this.statsRange1 + diff;
-    const e = this.statsRange2 - diff;
+  setGraphRangeByRatio(prevStatsRange1: number, prevStatsRange2: number) {
+    const currStatsGap = this.statsRange2 - this.statsRange1;
+    const prevStatsGap = prevStatsRange2 - prevStatsRange1;
+
+    // set graphRange/statsRange to previous state
+    if (currStatsGap > prevStatsGap && !isClose(currStatsGap, prevStatsGap)) {
+      this.setGraphRangeByStatsRange(prevStatsGap, prevStatsRange1, prevStatsRange2);
+      this.statsRange1 = prevStatsRange1;
+      this.statsRange2 = prevStatsRange2;
+    } else {
+      this.setGraphRangeByStatsRange(currStatsGap, this.statsRange1, this.statsRange2);
+    }
+  }
+
+  setGraphRangeByStatsRange(gap: number, r1: number, r2: number) {
+    const diff = gap * (1 - this.GRAPH_RANGE_RATIO) / 2;
+    const s = r1 + diff;
+    const e = r2 - diff;
     this.setChartRange(s, e);
   }
 
