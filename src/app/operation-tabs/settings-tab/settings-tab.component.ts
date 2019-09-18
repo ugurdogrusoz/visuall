@@ -11,7 +11,8 @@ import stylesheet from '../../../assets/generated/stylesheet.json';
   styleUrls: ['./settings-tab.component.css']
 })
 export class SettingsTabComponent implements OnInit {
-  settings: iBoolSetting[];
+  generalBoolSettings: iBoolSetting[];
+  timebarBoolSettings: iBoolSetting[];
   highlightWidth: number;
   timebarPlayingStep: number;
   timebarPlayingSpeed: number;
@@ -24,7 +25,7 @@ export class SettingsTabComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.settings = [
+    this.generalBoolSettings = [
       {
         text: 'Perform layout on changes', isEnable: true, actuator: this, fn: 'autoIncrementalLayoutSettingFn'
       },
@@ -37,9 +38,7 @@ export class SettingsTabComponent implements OnInit {
       {
         text: 'Show edge labels', isEnable: true, actuator: this._cyService, fn: 'showHideEdgeLabelCheckBoxClicked'
       },
-      {
-        text: 'Show timebar', isEnable: true, actuator: this._cyService, fn: 'showHideTimebar'
-      },
+
       {
         text: 'Hide disconnected nodes on time filtering', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes'
       },
@@ -48,13 +47,15 @@ export class SettingsTabComponent implements OnInit {
       },
     ];
 
+    this.timebarBoolSettings = [{ text: 'Show timebar', isEnable: true, actuator: this._cyService, fn: 'showHideTimebar' }];
+
     this.highlightWidth = 4.5;
     this.timebarPlayingStep = 50;
     this.timebarZoomingStep = 50;
     this.timebarPlayingSpeed = -1350;
     this.compoundPadding = '5%';
-    this.timebarGraphInclusionTypes = ['overlaps', 'contained by', 'contains'];
-    this.timebarStatsInclusionTypes = ['begin', 'middle', 'end', 'all'];
+    this.timebarGraphInclusionTypes = ['overlaps', 'contains', 'contained by'];
+    this.timebarStatsInclusionTypes = ['all', 'begin', 'middle', 'end'];
   }
 
   onBoolSettingsChanged(setting: iBoolSetting) {
@@ -77,6 +78,10 @@ export class SettingsTabComponent implements OnInit {
 
   setTimebarPlayingSpeed() {
     this._timebarService.changeSpeed(this.timebarPlayingSpeed);
+  }
+
+  setTimebarPlayingStep() {
+    this._timebarService.changeStep(this.timebarPlayingStep);
   }
 
   setTimebarZoomStep() {

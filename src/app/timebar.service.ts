@@ -36,7 +36,7 @@ export class TimebarService {
   private readonly MIN_ZOOM_RANGE: number;
   currTimeUnit: number;
   selectedTimeUnit: string;
-  private statsInclusionType = 3;
+  private statsInclusionType = 0;
   private graphInclusionType = 0;
   private beginPropertyName = 'begin_datetime';
   private endPropertyName = 'end_datetime';
@@ -247,11 +247,11 @@ export class TimebarService {
         // overlaps
         selector = `[${p1} <= ${end}][${p2} >= ${start}]`;
       } else if (this.graphInclusionType == 1) {
-        // completely contained by the object's lifetime
-        selector = `[${p1} <= ${start}][${p2} >= ${end}]`;
-      } else if (this.graphInclusionType == 2) {
         // completely contains the object's lifetime
         selector = `[${p1} >= ${start}][${p2} <= ${end}]`;
+      } else if (this.graphInclusionType == 2) {
+        // completely contained by the object's lifetime
+        selector = `[${p1} <= ${start}][${p2} >= ${end}]`;
       }
       elems = elems.union(selector);
     }
@@ -853,16 +853,16 @@ export class TimebarService {
   getStatsForRange(start: number, end: number): number[] {
     let eles: iTimebarItem[];
     // represent element with begin
-    if (this.statsInclusionType == 0) {
+    if (this.statsInclusionType == 1) {
       eles = this.items.filter(x => x.start >= start && x.start <= end);
     } // represent element with middle
-    else if (this.statsInclusionType == 1) {
+    else if (this.statsInclusionType == 2) {
       eles = this.items.filter(x => (x.start + x.end) / 2 >= start && (x.start + x.end) / 2 <= end);
     } // represent element with end
-    else if (this.statsInclusionType == 2) {
+    else if (this.statsInclusionType == 3) {
       eles = this.items.filter(x => x.end >= start && x.end <= end);
     } // represent element with range
-    else if (this.statsInclusionType == 3) {
+    else if (this.statsInclusionType == 0) {
       eles = this.items.filter(x => x.start <= end && x.end >= start);
     }
     let cnts = new Array(this.shownMetrics.length).fill(0);

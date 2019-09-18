@@ -1,10 +1,9 @@
 <div class="panel m-1">
   <div class="panel-heading" data-toggle="collapse" data-target="#general-settings" aria-expanded="true">
-    <p class="panel-title accordion-toggle"><b>General</b></p>
+    <p class="panel-title accordion-toggle"><b class="va-heading2">General</b></p>
   </div>
-
   <div id="general-settings" class="collapse show text-center m-1">
-    <div class="card border-0 m-1" *ngFor="let setting of settings; let i = index;">
+    <div class="card border-0 m-1" *ngFor="let setting of generalBoolSettings; let i = index;">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="checkbox" [(ngModel)]="setting.isEnable"
           (change)="onBoolSettingsChanged(setting)">
@@ -29,49 +28,66 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="panel m-1">
+  <div class="panel-heading collapsed" data-toggle="collapse" data-target="#timebar-settings" aria-expanded="false">
+    <p class="panel-title accordion-toggle"><b class="va-heading2">Timebar</b></p>
+  </div>
+  <div id="timebar-settings" class="collapse">
+    <div class="card border-0 m-1" *ngFor="let setting of timebarBoolSettings; let i = index;">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" [(ngModel)]="setting.isEnable"
+          (change)="onBoolSettingsChanged(setting)">
+        <label class="form-check-label va-text">{{setting.text}}</label>
+      </div>
+    </div>
     <div class="card border-0 m-1">
-      <div class="form-inline">
-        <label class="form-check-label va-text" id="textAl1">Timebar animation step</label>
-        <div class="range-slider" id="rangeDv">
-          <input class="range-slider__range" (click)="setTimebarPlayingStep()" [(ngModel)]="timebarPlayingStep" type="range"
-            min="1" max="100">
+      <div class="form-inline" disable>
+        <label class="form-check-label va-text" id="textAl1">Animation step</label>
+        <div>
+          <input (click)="setTimebarPlayingStep()" [(ngModel)]="timebarPlayingStep" type="range" min="1" max="100"
+            [disabled]="!timebarBoolSettings[0].isEnable">
         </div>
       </div>
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
-        <label class="form-check-label va-text" id="textAl">Timebar animation speed</label>
-        <div class="range-slider" id="rangeDv">
-          <input class="range-slider__range" (click)="setTimebarPlayingSpeed()" type="range"
-            [(ngModel)]="timebarPlayingSpeed" min="-2500" max="-10">
+        <label class="form-check-label va-text" id="textAl">Animation speed</label>
+        <div>
+          <input (click)="setTimebarPlayingSpeed()" type="range" [(ngModel)]="timebarPlayingSpeed" min="-2500" max="-10"
+            [disabled]="!timebarBoolSettings[0].isEnable">
         </div>
       </div>
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
-        <label class="form-check-label va-text" id="textAl">Timebar zoom sensitivity</label>
-        <div class="range-slider" id="rangeDv">
-          <input class="range-slider__range" (click)="setTimebarZoomStep()" type="range"
-            [(ngModel)]="timebarZoomingStep" min="0" max="100">
+        <label class="form-check-label va-text" id="textAl">Zoom sensitivity</label>
+        <div>
+          <input (click)="setTimebarZoomStep()" type="range" [(ngModel)]="timebarZoomingStep" min="0" max="100"
+            [disabled]="!timebarBoolSettings[0].isEnable">
         </div>
       </div>
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
-        <label class="form-check-label va-text">Timebar graph inclusion type &nbsp;</label>
+        <label class="form-check-label va-text">Graph inclusion type &nbsp;</label>
         <div class="form-check-inline va-text" *ngFor="let str of timebarGraphInclusionTypes; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="timebarGraphInclusionTypeChanged(i)" name="optradio" [checked]="i==0">{{str}}
+            <input type="radio" class="form-check-input" (click)="timebarGraphInclusionTypeChanged(i)" name="optradio"
+              [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==0">{{str}}
           </label>
         </div>
       </div>
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
-        <label class="form-check-label va-text">Timebar statistics inclusion type &nbsp;</label>
+        <label class="form-check-label va-text">Statistics inclusion type &nbsp;</label>
         <div class="form-check-inline va-text" *ngFor="let str of timebarStatsInclusionTypes; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="timebarStatsInclusionTypeChanged(i)" name="optradio2" [checked]="i==3">{{str}}
+            <input type="radio" class="form-check-input" (click)="timebarStatsInclusionTypeChanged(i)" name="optradio2"
+              [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==0">{{str}}
           </label>
         </div>
       </div>

@@ -97,6 +97,3 @@ input[type=range]:focus::-ms-fill-upper {
 #textAl{
   margin-right: .25rem!important;
 }
-#rangeDv{
-  text-align: left !important;
-}

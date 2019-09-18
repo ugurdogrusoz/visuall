@@ -6,14 +6,12 @@ import fcose from 'cytoscape-fcose';
 import expandCollapse from 'cytoscape-expand-collapse';
 import viewUtilities from 'cytoscape-view-utilities';
 import layoutUtilities from 'cytoscape-layout-utilities';
-import * as contextMenus from 'cytoscape-context-menus';
 import stylesheet from '../assets/generated/stylesheet.json';
 import * as C from './constants';
 import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
 import { DbService } from './db.service';
 import { TimebarService } from './timebar.service';
-import axios from 'axios';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +19,7 @@ import axios from 'axios';
 export class CytoscapeService {
   cyNavi: any;
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
-  
+
   constructor(private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService) {
   }
 
@@ -147,7 +145,7 @@ export class CytoscapeService {
     (<any>window).cy = this._g.cy;
   }
 
-  bindLayoutUtilitiesExtension(){
+  bindLayoutUtilitiesExtension() {
     this._g.layoutUtils = this._g.cy.layoutUtilities();
   }
 
@@ -369,11 +367,11 @@ export class CytoscapeService {
 
     this._g.applyClassFiltering();
 
-    if(isIncremental){
+    if (isIncremental) {
       var collection = this._g.cy.collection();
-      for(var i = 0; i<cy_nodes.length ; i++){
+      for (var i = 0; i < cy_nodes.length; i++) {
         var node = this._g.cy.getElementById(cy_nodes[i].data.id);
-        if(!current.contains(node))
+        if (!current.contains(node))
           collection = collection.union(node);
       }
       this._g.layoutUtils.placeNewNodes(collection);
