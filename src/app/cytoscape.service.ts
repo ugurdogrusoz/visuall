@@ -376,8 +376,11 @@ export class CytoscapeService {
       }
       this._g.layoutUtils.placeNewNodes(collection);
     }
-    this._timebarService.setRefreshFlag(true);
-    this._g.performLayout(!isIncremental || wasEmpty);
+    if (!isIncremental && this._g.isTimebarEnabled) {
+      this._timebarService.setRefreshFlag(true);
+    } else {     
+      this._g.performLayout(!isIncremental || wasEmpty);
+    }
     this.highlightElems(isIncremental, elemIds);
   }
 
