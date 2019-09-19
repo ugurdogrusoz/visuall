@@ -22,7 +22,7 @@ export class GlobalVariableService {
   }
 
   runLayout() {
-    this.cy.layout(this.layout).run();
+    this.cy.elements().not(':hidden, :transparent').layout(this.layout).run();
   }
 
   performLayout(isRandomize: boolean, isDirectCommand: boolean = false) {
