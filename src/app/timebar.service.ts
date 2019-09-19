@@ -280,8 +280,10 @@ export class TimebarService {
       }
     }
     let alreadyVisible = this._g.cy.nodes(':visible');
-    let shownNodes = shownElems.nodes().difference(alreadyVisible);
-    this._g.layoutUtils.placeNewNodes(shownNodes);
+    if (alreadyVisible.length > 0) {
+      let shownNodes = shownElems.nodes().difference(alreadyVisible);
+      this._g.layoutUtils.placeNewNodes(shownNodes);
+    }
     this._g.viewUtils.show(shownElems);
     this._g.viewUtils.hide(this._g.cy.elements().difference(shownElems));
     this._g.applyClassFiltering();

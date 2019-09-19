@@ -38,12 +38,12 @@ export class CytoscapeService {
     this._g.layout = {
       name: 'fcose',
       // 'draft', 'default' or 'proof' 
-      // - "draft" only applies spectral layout 
-      // - "default" improves the quality with incremental layout (fast cooling rate)
-      // - "proof" improves the quality with incremental layout (slow cooling rate) 
+      // - 'draft' only applies spectral layout 
+      // - 'default' improves the quality with incremental layout (fast cooling rate)
+      // - 'proof' improves the quality with incremental layout (slow cooling rate) 
       quality: 'default',
       // use random node positions at beginning of layout
-      // if this is set to false, then quality option must be "proof"
+      // if this is set to false, then quality option must be 'proof'
       randomize: true,
       // whether or not to animate the layout
       animate: true,
@@ -55,7 +55,7 @@ export class CytoscapeService {
       fit: true,
       // padding around layout
       padding: 10,
-      // whether to include labels in node dimensions. Valid in "proof" quality
+      // whether to include labels in node dimensions. Valid in 'proof' quality
       nodeDimensionsIncludeLabels: false,
 
       /* spectral layout options */
@@ -152,7 +152,7 @@ export class CytoscapeService {
   bindNavigatorExtension() {
 
     const cyNaviClass = 'cytoscape-navigator-wrapper';
-    $('.cyContainer').append(`<div class="${cyNaviClass}"></div>`);
+    $('.cyContainer').append(`<div class='${cyNaviClass}'></div>`);
 
     this.setNavigatorPosition();
     var defaults = {
@@ -341,7 +341,7 @@ export class CytoscapeService {
     const nodes = data.nodes;
     const edges = data.edges;
 
-    var current = this._g.cy.nodes(':visible');
+    let current = this._g.cy.nodes(':visible');
     let elemIds: string[] = [];
     let cy_nodes = [];
     for (const id in nodes) {
@@ -367,18 +367,19 @@ export class CytoscapeService {
 
     this._g.applyClassFiltering();
 
-    if (isIncremental) {
-      var collection = this._g.cy.collection();
-      for (var i = 0; i < cy_nodes.length; i++) {
-        var node = this._g.cy.getElementById(cy_nodes[i].data.id);
-        if (!current.contains(node))
+    if (isIncremental && !wasEmpty) {
+      let collection = this._g.cy.collection();
+      for (let i = 0; i < cy_nodes.length; i++) {
+        let node = this._g.cy.getElementById(cy_nodes[i].data.id);
+        if (!current.contains(node)) {
           collection = collection.union(node);
+        }
       }
       this._g.layoutUtils.placeNewNodes(collection);
     }
     if (!isIncremental && this._g.isTimebarEnabled) {
       this._timebarService.setRefreshFlag(true);
-    } else {     
+    } else {
       this._g.performLayout(!isIncremental || wasEmpty);
     }
     this.highlightElems(isIncremental, elemIds);
@@ -588,8 +589,11 @@ export class CytoscapeService {
       if (!this.isAnyHidden()) {
         return;
       }
-      var hiddenNodes = this._g.cy.nodes(":hidden");
-      this._g.layoutUtils.placeNewNodes(hiddenNodes);
+      let hiddenNodes = this._g.cy.nodes(':hidden');
+      let prevVisible = this._g.cy.nodes(':visible');
+      if (prevVisible.length > 0) {
+        this._g.layoutUtils.placeNewNodes(hiddenNodes);
+      }
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
       this._timebarService.cyElemListChanged();
