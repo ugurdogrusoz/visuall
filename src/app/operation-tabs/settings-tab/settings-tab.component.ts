@@ -38,16 +38,14 @@ export class SettingsTabComponent implements OnInit {
       {
         text: 'Show edge labels', isEnable: true, actuator: this._cyService, fn: 'showHideEdgeLabelCheckBoxClicked'
       },
-
-      {
-        text: 'Hide disconnected nodes on time filtering', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes'
-      },
       {
         text: 'Ignore case in text operations', isEnable: false, actuator: this, fn: 'ignoreCaseSettingFn'
       },
     ];
 
-    this.timebarBoolSettings = [{ text: 'Show timebar', isEnable: true, actuator: this._cyService, fn: 'showHideTimebar' }];
+    this.timebarBoolSettings = [
+      { text: 'Show timebar', isEnable: true, actuator: this._cyService, fn: 'showHideTimebar' },
+      { text: 'Hide disconnected nodes', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes' }];
 
     this.highlightWidth = 4.5;
     this.timebarPlayingStep = 50;
