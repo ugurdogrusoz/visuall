@@ -45,7 +45,7 @@ export class SettingsTabComponent implements OnInit {
 
     this.timebarBoolSettings = [
       { text: 'Show timebar', isEnable: true, actuator: this._cyService, fn: 'showHideTimebar' },
-      { text: 'Hide disconnected nodes', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes' }];
+      { text: 'Hide disconnected nodes on animation', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes' }];
 
     this.highlightWidth = 4.5;
     this.timebarPlayingStep = 50;
