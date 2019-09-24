@@ -273,7 +273,7 @@ export class TimebarService {
     if (isSetCursorPos) {
       this.cursorPos = 0;
     }
-    if (this.isHideDisconnectedNodes && this.playTimerId > -1) {
+    if (this.isHideDisconnectedNodes) {
       let disconnectedComponents = shownElems.components().filter(x => x.length < 2);
       let disconnecteds = this._g.cy.collection();
       for (let i = 0; i < disconnectedComponents.length; i++) {
@@ -813,9 +813,7 @@ export class TimebarService {
 
   setisHideDisconnectedNodes(val: boolean) {
     this.isHideDisconnectedNodes = val;
-    if (this.playTimerId > -1) {
-      this.rangeChange(false);
-    }
+    this.rangeChange(false);
   }
 
   changeSpeed(newSpeed: number) {
