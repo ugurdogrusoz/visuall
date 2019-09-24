@@ -52,9 +52,20 @@ export class GlobalVariableService {
     if (hiddenSelector.length > 1) {
       this.viewUtils.hide(this.cy.$(hiddenSelector));
     }
-    // if (updateTimebar) {
-    //   // this.appManager.visibilityChanged();
-    // }
+  }
+
+  filterByClass(elems) {
+    let hiddenSelector = '';
+    for (let i of this.hiddenClasses) {
+      hiddenSelector += '.' + i + ',';
+    }
+
+    hiddenSelector = hiddenSelector.substr(0, hiddenSelector.length - 1);
+
+    if (hiddenSelector.length < 1) {
+      return elems;
+    }
+    return elems.not(hiddenSelector);
   }
 
   getGraphElemSet() {

@@ -269,15 +269,17 @@ export class TimebarService {
     this.setGraphRangeStrFn();
     const [s, e] = this.getChartRange();
     let shownElems = this.getTimeFilteredGraphElems(s, e);
+    shownElems = this._g.filterByClass(shownElems);
     if (isSetCursorPos) {
       this.cursorPos = 0;
     }
     if (this.isHideDisconnectedNodes) {
-      let connectedComponents = shownElems.components().filter(x => x.length > 1);
-      shownElems = this._g.cy.collection();
-      for (let i = 0; i < connectedComponents.length; i++) {
-        shownElems = shownElems.union(connectedComponents[i]);
+      let disconnectedComponents = shownElems.components().filter(x => x.length < 2);
+      let disconnecteds = this._g.cy.collection();
+      for (let i = 0; i < disconnectedComponents.length; i++) {
+        disconnecteds = disconnecteds.union(disconnectedComponents[i]);
       }
+      shownElems = shownElems.not(disconnecteds);
     }
     let alreadyVisible = this._g.cy.nodes(':visible');
     if (alreadyVisible.length > 0) {
@@ -286,7 +288,6 @@ export class TimebarService {
     }
     this._g.viewUtils.show(shownElems);
     this._g.viewUtils.hide(this._g.cy.elements().difference(shownElems));
-    this._g.applyClassFiltering();
     this._g.performLayout(isRandomize);
     if (this.selectedTimeUnit) {
       this.setTicksForBarChart();
