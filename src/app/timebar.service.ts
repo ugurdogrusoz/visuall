@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as $ from 'jquery';
 
-import { debounce, MIN_DATE, MAX_DATE, isClose, TIME_UNITS, MONTHS, SHORT_MONTHS } from './constants';
+import { debounce, MIN_DATE, MAX_DATE, isClose, TIME_UNITS, MONTHS, SHORT_MONTHS, CSS_SM_TEXT_SIZE, CSS_FONT_NAME } from './constants';
 import { GlobalVariableService } from './global-variable.service';
 import ModelDescription from '../model_description.json';
 
@@ -48,6 +48,7 @@ export class TimebarService {
   private dataColors = ['#3366cc', '#dc3912', '#ff9900'];
   private isRefreshChart = false;
   private ignoreEndNodesForEdgeInclusion: boolean = true;
+  private textStyle: any;
 
   constructor(private _g: GlobalVariableService) {
     this.cursorPos = 0;
@@ -62,6 +63,7 @@ export class TimebarService {
     this.playingStep = 50;
     this.graphDates = [];
     this.currTimeUnit = 3600000;
+    this.textStyle = { fontSize: CSS_SM_TEXT_SIZE, fontName: CSS_FONT_NAME };
   }
 
   init() {
@@ -190,7 +192,7 @@ export class TimebarService {
             'enableInteractivity': false,
             'chartArea': controlPaddings,
             'legend': 'none',
-            'hAxis': { textStyle: { fontSize: 11 } },
+            'hAxis': { textStyle:  this.textStyle},
             'vAxis': {
               'textPosition': 'none',
               'gridlines': { 'color': 'none' }
@@ -206,11 +208,11 @@ export class TimebarService {
       'chartType': 'ColumnChart',
       'containerId': 'chart_div',
       'options': {
-        'legend': { 'textPosition': 'right', textStyle: { fontSize: 11 } },
+        'legend': { textStyle: this.textStyle },
         'tooltip': { isHtml: true },
         // get text size of va-small-text
-        'hAxis': { textStyle: { fontSize: 11 } },
-        'vAxis': { textStyle: { fontSize: 11 } },
+        'hAxis': { textStyle: this.textStyle, 'textPosition': 'in'},
+        'vAxis': { textStyle: this.textStyle },
         'chartArea': chartPaddings,
         // 'animation':{
         //   duration: 350,
@@ -228,6 +230,7 @@ export class TimebarService {
     this.chartWrapper = chartWrapper;
     this.controlWrapper = controlWrapper;
     window['controlWrapper'] = controlWrapper;
+    window['chartWrapper'] = chartWrapper;
     this.setChartRange(MIN_DATE, MAX_DATE);
     this.controlWrapper.draw();
     const fn = debounce(this.rangeChange, 500, false);

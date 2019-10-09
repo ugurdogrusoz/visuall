@@ -28,6 +28,10 @@ html {
   font-size: 11px;
 }
 
+body {
+  font-family: 'Arial' !important;
+}
+
 #cy {
   height: 79vh;
   margin-right: 2px;
@@ -165,11 +169,6 @@ html {
   border: 2px solid #2F4154;
   border-radius: 6px;
   background: #fff;
-}
-
-.toolbar-element {
-  cursor: pointer;
-  height: 30px;
 }
 
 [data-toggle="collapse"] .fa:before {

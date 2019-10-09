@@ -1,5 +1,5 @@
 <input #file type="file" (change)="fileSelected()" accept="text/*, .json" style="display: none;" />
-<div class="row no-gutters my-1">
+<div class="row no-gutters my-1" id="toolbar-container">
   <ng-container *ngFor="let m of menu">
     <div class="col-xs-auto border rounded">
       <ng-container *ngFor="let i of m.items">

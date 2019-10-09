@@ -24,6 +24,9 @@ export const MAX_HIGHTLIGHT_WIDTH = 20;
 export const MIN_HIGHTLIGHT_WIDTH = 1;
 export const EXPAND_COLLAPSE_CUE_SIZE = 12;
 
+export const CSS_SM_TEXT_SIZE = 11;
+export const CSS_FONT_NAME = 'Arial';
+
 export const HIGHLIGHTED_NODE_1 = {
   'border-color': '#0B9BCD',  //blue
   'border-width': 4.5
