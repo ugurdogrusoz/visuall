@@ -38,6 +38,10 @@ body {
   margin-bottom: 1px;
 }
 
+.zoom-cursor {
+  cursor: url(../src/assets/img/zoom-cursor.svg), pointer!important;
+}
+
 #timeline {
   height: 15vh;
   margin-right: 2px;

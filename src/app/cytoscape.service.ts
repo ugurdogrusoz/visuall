@@ -12,6 +12,7 @@ import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
 import { DbService } from './db.service';
 import { TimebarService } from './timebar.service';
+import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class CytoscapeService {
   cyNavi: any;
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
 
-  constructor(private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService) {
+  constructor(private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
   }
 
   initCy(containerElem) {
@@ -141,6 +142,7 @@ export class CytoscapeService {
     this.bindPanZoomExtension();
     this.bindExpandCollapseExtension();
     this.bindComponentSelector();
+    this._marqueeZoomService.init();
 
     (<any>window).cy = this._g.cy;
   }
@@ -275,7 +277,7 @@ export class CytoscapeService {
       // on systems with bad mousewheel resolution)
       fitSelector: undefined,     // selector of elements to fit
       animateOnFit: function () {  // whether to animate on fit
-        return false;
+        return true;
       },
       fitAnimationDuration: 1000,  // duration of animation on fit
 
