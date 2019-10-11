@@ -14,12 +14,10 @@ export class MarqueeZoomService {
   private onKeyDownFn = null;
   private onTapStartFn = null;
   private onTapEndFn = null;
-  private readonly KEY_EVENT_DELAY = 500;
+  private readonly ANIM_DURATION = 500;
   private changeClassFn: (arg0: boolean) => void;
 
   constructor(private _g: GlobalVariableService, private cdr: ApplicationRef) {
-    // this.onKeyDownFn = debounce(this.onKeyDown.bind(this), this.KEY_EVENT_DELAY, false);
-    // this.onKeyUpFn = debounce(this.onKeyUp.bind(this), this.KEY_EVENT_DELAY, false);
     this.onKeyDownFn = this.onKeyDown.bind(this);
     this.onKeyUpFn = this.onKeyUp.bind(this);
     this.onTapStartFn = this.onTapStart.bind(this);
@@ -34,8 +32,6 @@ export class MarqueeZoomService {
   }
 
   private onKeyDown(event: KeyboardEvent) {
-    console.log('onKeyDown');
-
     if (this.areCtrlShiftKeysDown) {
       return;
     }
@@ -46,10 +42,8 @@ export class MarqueeZoomService {
       this.areCtrlShiftKeysDown = true;
       this.rect1 = null;
       this.rect2 = null;
-      console.log('binding event listeners');
       //disable cytoscape shift+drage selection
       this._g.cy.autounselectify(true);
-
 
       // bind tap start event
       this._g.cy.one('tapstart', this.onTapStartFn);
@@ -59,31 +53,26 @@ export class MarqueeZoomService {
   }
 
   private onKeyUp(ev: KeyboardEvent) {
-    console.log('onKeyUp');
 
     if (ev.shiftKey || ev.ctrlKey || ev.keyCode == 91 || ev.keyCode == 93 || ev.keyCode == 224) {
-      console.log('disable marquee zoom');
       this.changeCursor(false);
       this.areCtrlShiftKeysDown = false;
-      this.offMarqueeKeysDown();
+      this.removeCyListeners();
     }
   }
 
-  private offMarqueeKeysDown() {
-    console.log('offMarqueeKeysDown');
+  private removeCyListeners() {
+    this._g.cy.off('tapstart', this.onTapStartFn);
+    this._g.cy.off('tapend', this.onTapEndFn);
     this._g.cy.autounselectify(false);
   }
 
   private onTapEnd(ev) {
-    console.log('tapEndedFn');
-
     this.rect2 = ev.position;
     // check whether corners of rectangle is undefined
     // abort shortcut zoom if one corner is undefined
     if (!this.rect1 || !this.rect2) {
-      console.log('tapEndedFn no rect !');
-
-      this.offMarqueeKeysDown();
+      this.removeCyListeners();
       return;
     }
     //Reoder rectangle positions
@@ -117,8 +106,7 @@ export class MarqueeZoomService {
     const bb = this._g.cy.elements().boundingBox();
     if ((this.rect1.x > bb.x2) || (this.rect2.x < bb.x1) || (this.rect1.y > bb.y2) || (this.rect2.y < bb.y1)) {
 
-      this.offMarqueeKeysDown();
-      console.log('tapEndedFn no intersection with bb of cy canvas !');
+      this.removeCyListeners();
       return;
     }
 
@@ -132,25 +120,21 @@ export class MarqueeZoomService {
     this._g.cy.animate({
       panBy: { x: diff_x, y: diff_y },
       zoom: zoomLevel,
-      duration: 500,
+      duration: this.ANIM_DURATION,
       complete: function () {
-        this.offMarqueeKeysDown();
-
+        this.removeCyListeners();
       }.bind(this)
     });
   }
 
   private onTapStart(ev) {
-    console.log('tapStartedFn');
     if (this.areCtrlShiftKeysDown) {
-      console.log('tapStartedFn ctrlShiftKeyDown == true');
       this.rect1 = ev.position;
       this.rect2 = null;
     }
   }
 
   private changeCursor(isSetZoomMode: boolean) {
-    console.log('change Cursor ', isSetZoomMode);
     this.changeClassFn(isSetZoomMode);
   }
 
