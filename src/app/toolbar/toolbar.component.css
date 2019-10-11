@@ -1,14 +1,11 @@
-#toolbar-container {
-  height: 2.5vh;
+img {
   opacity: 0.7;
 }
 
-#toolbar-container:hover {
+img:hover {
   opacity: 1;
 }
 
-
 .toolbar-element {
   cursor: pointer;
-  height: 2.4vh;
 }

@@ -519,10 +519,10 @@ export class CytoscapeService {
 
   showHideTimebar(isChecked: boolean) {
     if (!isChecked) {
-      $('#cy').css('height', '92vh');
+      $('#cy').css('height', '90vh');
       $('#timebar').hide();
     } else {
-      $('#cy').css('height', '79vh');
+      $('#cy').css('height', '75vh');
       $('#timebar').show();
     }
     this._timebarService.showHideTimebar(isChecked);

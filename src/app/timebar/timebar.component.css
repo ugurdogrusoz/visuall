@@ -1,9 +1,9 @@
-#timebar-ctrl-pnl {
+#timebar-ctrl-pnl img {
   opacity: 0.7;
   z-index: 1;
 }
 
-#timebar-ctrl-pnl:hover {
+#timebar-ctrl-pnl img:hover {
   /* if you make it 1 stack order changes */
   opacity: 0.999;
 }

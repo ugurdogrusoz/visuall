@@ -1,5 +1,4 @@
 <div id="timebar" class="d-none">
-  <!--Timeline-->
   <!--Div that will hold the dashboard-->
   <div id="dashboard_div">
     <!--Divs that will hold each control and chart-->
@@ -9,32 +8,32 @@
       <div class="d-flex justify-content-center">
         <div class="mx-1">
           <a href="#" (click)="s.coverAllTimes()" title="Show all range">
-            <img class="img-icon" src="/assets/img/width.svg">
+            <img src="/assets/img/width.svg">
           </a>
         </div>
         <div class="mx-1">
           <a href="#" (click)="s.changeZoom(true)" title="Zoom in">
-            <img class="img-icon" src="/assets/img/add.svg">
+            <img src="/assets/img/add.svg">
           </a>
         </div>
         <div class="mx-1">
           <a href="#" (click)="s.changeZoom(false)" title="Zoom out">
-            <img class="img-icon" src="/assets/img/minus.svg">
+            <img src="/assets/img/minus.svg">
           </a>
         </div>
         <div class="mx-1">
           <a href="#" (click)="s.moveCursor(true)" title="Backward">
-            <img class="img-icon" src="/assets/img/left-arrow.svg">
+            <img src="/assets/img/left-arrow.svg">
           </a>
         </div>
         <div class="mx-1">
           <a href="#" (click)="playTiming()" title="Play / Pause">
-            <img class="img-icon" [src]="currPlayIcon">
+            <img [src]="currPlayIcon">
           </a>
         </div>
         <div class="mx-1">
           <a href="#" (click)="s.moveCursor(false)" title="Forward">
-            <img class="img-icon" src="/assets/img/right-arrow.svg">
+            <img src="/assets/img/right-arrow.svg">
           </a>
         </div>
       </div>

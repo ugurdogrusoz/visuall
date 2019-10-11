@@ -32,19 +32,41 @@ body {
   font-family: 'Arial' !important;
 }
 
+/* ratio of components */
+.navbar {
+  height: 3vh;
+  min-height: 35px;
+}
+
+.toolbar-element {
+  height: 2.5vh;
+  min-height: 25px;
+}
+
 #cy {
-  height: 79vh;
+  height: 75vh;
+}
+
+#chart_div {
+  height: 10vh;
+}
+
+#timebar-ctrl-pnl img{
+  height: 1.5vh;
+  min-height: 15px;
+}
+
+#filter_div {
+  height: 5vh;
+}
+
+#cy {
   margin-right: 2px;
   margin-bottom: 1px;
 }
 
 .zoom-cursor {
-  cursor: url(../src/assets/img/zoom-cursor.svg), pointer!important;
-}
-
-#timeline {
-  height: 15vh;
-  margin-right: 2px;
+  cursor: url(../src/assets/img/zoom-cursor.svg), pointer !important;
 }
 
 .tab-column {
@@ -210,14 +232,6 @@ body {
 .img-sm-icon {
   width: 12px;
   height: 12px;
-}
-
-#chart_div {
-  height: 7vh;
-}
-
-#filter_div {
-  height: 4vh;
 }
 
 .query-input {

@@ -1,4 +1,6 @@
 .navbar{
   padding: 1px;
-  height: 3vh
+}
+#brand-logo{
+  height: 2.5vh
 }
