@@ -7,3 +7,7 @@
   /* if you make it 1 stack order changes */
   opacity: 0.999;
 }
+
+.range-str {
+  z-index: 1;
+}
