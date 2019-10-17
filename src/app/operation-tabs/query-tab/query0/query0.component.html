@@ -24,29 +24,7 @@
   </div>
 </div>
 
-<table class="table table-sm table-hover va-text">
-  <thead *ngIf="results.length > 0">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Actor</th>
-      <th scope="col">Count</th>
-      <th scope="col" [hidden]="isLoadGraph">Graph</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let d of results; let i = index;" (mouseenter)="onMouseEnter(d.id)" (mouseleave)="onMouseExit(d.id)">
-      <th scope="row">{{ i + 1 }}</th>
-      <td>{{ d.name }}</td>
-      <td>{{ d.count }}</td>
-      <td [hidden]="isLoadGraph"><a href="#" class="query-result" (click)="getDataForQueryResult(d.id)"><img
-            class="img-icon" src="../../../assets/img/play-button.svg"></a></td>
-    </tr>
-  </tbody>
-</table>
-<div class="d-flex align-items-center justify-content-center m-1 va-text">
-  <ngb-pagination *ngIf="results.length > 0" (pageChange)="pageChanged($event)" [collectionSize]="resultCnt"
-    [(page)]="currPage" [pageSize]="pageSize" [maxSize]="3" [rotate]="true">
-    <ng-template ngbPaginationPrevious><img class="img-sm-icon" src="/assets/img/left-arrow.svg"></ng-template>
-    <ng-template ngbPaginationNext><img class="img-sm-icon" src="/assets/img/right-arrow.svg"></ng-template>
-  </ngb-pagination>
-</div>
+<app-table-view [results]="results" [isLoadGraph]="isLoadGraph" [isMergeGraph]="isMergeGraph" [txtCol1]="txtCol1"
+  [txtCol2]="txtCol2" [resultCnt]="resultCnt" [currPage]="currPage" [pageSize]="pageSize"
+  (onPageChanged)="pageChanged($event)" (onDataForQueryResult)="getDataForQueryResult($event)">
+</app-table-view>

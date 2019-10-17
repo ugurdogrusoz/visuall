@@ -452,7 +452,10 @@ export class CytoscapeService {
           nextOpacity = C.HIGHLIGHT_OPACITY;
           // eliminate unnecassary animation, it causes blinking
           if (currOpacity != nextOpacity) {
-            this.setOtherElementsOpacity(elements2remain, C.HIGHLIGHT_OPACITY);
+            // blur if there are any remaining
+            if (elements2remain.length > 0) {
+              this.setOtherElementsOpacity(elements2remain, C.HIGHLIGHT_OPACITY);
+            }
           }
         }.bind(this), C.HIGHLIGHT_WAIT_DUR);
       } else {

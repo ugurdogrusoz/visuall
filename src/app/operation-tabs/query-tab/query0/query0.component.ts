@@ -18,14 +18,14 @@ export class Query0Component implements OnInit {
   pageSize: number;
   isLoadGraph: boolean;
   isMergeGraph: boolean;
-  highlighterFn: any;
   resultCnt: number;
+  txtCol1 = 'Actor';
+  txtCol2 = 'Count';
 
   constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
     this.currPage = 1;
     this.isLoadGraph = true;
     this.isMergeGraph = true;
-    this.highlighterFn = this._cyService.highlightNeighbors();
     this.resultCnt = 0;
     this.pageSize = DATA_PAGE_SIZE;
   }
@@ -36,7 +36,7 @@ export class Query0Component implements OnInit {
       defaultDate: new Date(1960, 9, 9, 0, 0, 0),
     };
     let opt2 = {
-      defaultDate: new Date(2000, 9, 9, 0, 0, 0),
+      defaultDate: new Date(2020, 9, 9, 0, 0, 0),
     };
 
     flatpickr('#query0-inp1', opt);
@@ -64,7 +64,7 @@ export class Query0Component implements OnInit {
     this._dbService.runQuery(cql, null, (x) => { this.resultCnt = x.data[0]; }, false);
   }
 
-  pageChanged(newPage:number) {
+  pageChanged(newPage: number) {
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
     let skip = (newPage - 1) * DATA_PAGE_SIZE;
@@ -112,13 +112,5 @@ export class Query0Component implements OnInit {
 
     this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.isMergeGraph), true);
 
-  }
-
-  onMouseEnter(id: number) {
-    this.highlighterFn({ target: this._g.cy.$('#n' + id), type: EV_MOUSE_ON });
-  }
-
-  onMouseExit(id: number) {
-    this.highlighterFn({ target: this._g.cy.$('#n' + id), type: EV_MOUSE_OFF });
   }
 }

@@ -20,6 +20,7 @@ import { QueryTabComponent } from './operation-tabs/query-tab/query-tab.componen
 import { Query0Component } from './operation-tabs/query-tab/query0/query0.component';
 import { GroupTabComponent } from './operation-tabs/group-tab/group-tab.component';
 import { Query1Component } from './operation-tabs/query-tab/query1/query1.component';
+import { TableViewComponent } from './table-view/table-view.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { Query1Component } from './operation-tabs/query-tab/query1/query1.compon
     QueryTabComponent,
     Query0Component,
     GroupTabComponent,
-    Query1Component
+    Query1Component,
+    TableViewComponent
   ],
   imports: [
     BrowserModule,

@@ -7,9 +7,9 @@
       </select>
     </div>
     <div class="d-flex d-inline align-items-center justify-content-center"> made between
-      <input type="text" id="query1-inp0" class="form-control query-input-wide va-small-text m-1">
+      <input type="text" id="{{date1Id}}" class="form-control query-input-wide va-small-text m-1">
       <div>and</div>
-      <input type="text" id="query1-inp1" class="form-control query-input-wide va-small-text m-1">
+      <input type="text" id="{{date2Id}}" class="form-control query-input-wide va-small-text m-1">
     </div>
   </div>
 </div>
@@ -24,20 +24,7 @@
     <label class="form-check-label va-text">Merge</label>
   </div>
 </div>
-<table class="table table-sm table-hover va-text">
-  <thead *ngIf="results.length > 0">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Movie</th>
-      <th scope="col" [hidden]="isLoadGraph">Graph</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let d of results; let i = index;" (mouseenter)="onMouseEnter(d.id)" (mouseleave)="onMouseExit(d.id)">
-      <th scope="row">{{ i + 1 }}</th>
-      <td>{{ d.name }}</td>
-      <td [hidden]="isLoadGraph"><a href="#" class="query-result" (click)="getDataForQueryResult(d.id)"><img
-            class="img-icon" src="../../../assets/img/play-button.svg"></a></td>
-    </tr>
-  </tbody>
-</table>
+<app-table-view [results]="results" [isLoadGraph]="isLoadGraph" [isMergeGraph]="isMergeGraph" [txtCol1]="txtCol1"
+  [txtCol2]="txtCol2" [resultCnt]="resultCnt" [currPage]="currPage" [pageSize]="pageSize"
+  (onPageChanged)="pageChanged($event)" (onDataForQueryResult)="getDataForQueryResult($event)">
+</app-table-view>
