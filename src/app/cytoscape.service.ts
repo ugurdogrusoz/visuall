@@ -148,7 +148,7 @@ export class CytoscapeService {
   }
 
   bindLayoutUtilitiesExtension() {
-    this._g.layoutUtils = this._g.cy.layoutUtilities();
+    this._g.layoutUtils = this._g.cy.layoutUtilities({ desiredAspectRatio: this._g.cy.width() / this._g.cy.height() });
   }
 
   bindNavigatorExtension() {
