@@ -148,6 +148,7 @@ export class CytoscapeService {
   }
 
   bindLayoutUtilitiesExtension() {
+    console.log('cy canvas size: ', this._g.cy.width(), 'x', this._g.cy.height());
     this._g.layoutUtils = this._g.cy.layoutUtilities({ desiredAspectRatio: this._g.cy.width() / this._g.cy.height() });
   }
 
