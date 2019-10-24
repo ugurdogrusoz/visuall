@@ -9,9 +9,12 @@ import { ClassBasedRules, Rule } from './operation-tabs/filter-tab/filtering-typ
 export class DbService {
   // neo4j database using graphene db heroku add-on
   private dbConfig = {
-    url: 'https://hobby-npjcdeakghmjgbkeejdgpocl.dbs.graphenedb.com:24780/db/data/transaction/commit',
-    username: 'app127491101-An69vH',
-    password: 'b.i5WWJaGHdH4h.RLVDXx9PyExkPHDa'
+    url: 'http://ivis.cs.bilkent.edu.tr:7474/db/data/transaction/commit',
+    username: 'neo4j',
+    password: '123'
+    // url: 'https://hobby-npjcdeakghmjgbkeejdgpocl.dbs.graphenedb.com:24780/db/data/transaction/commit',
+    // username: 'app127491101-An69vH',
+    // password: 'b.i5WWJaGHdH4h.RLVDXx9PyExkPHDa'
   };
 
   constructor(private _http: HttpClient, private _g: GlobalVariableService) {
