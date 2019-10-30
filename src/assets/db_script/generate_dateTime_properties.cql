@@ -30,15 +30,25 @@ SET n.begin_datetime = NULL, n.end_datetime = NULL;
 //   // 86400000 is 1 day
 //   set r.begin_datetime = seed, r.end_datetime = seed + 86400000
 
-// assign start and end time to Acted In, Directed,Produced
+// assign start and end time to Directed, Produced
 match (n1) 
 with collect(id(n1)) as node_ids
 unwind node_ids as curr_id
-  match (n:Movie)-[r:ACTED_IN|DIRECTED|PRODUCED]-(n2:Person)
+  match (n:Movie)-[r:DIRECTED|PRODUCED]-(n2:Person)
   where id(n) = curr_id 
   // 31536000000 is 1 year
-  set r.begin_datetime = (n.released - 1970) * 31536000000,
-  r.end_datetime =  (n.released - 1969) * 31536000000
+  set r.begin = (n.released - 1970) * 31536000000,
+  r.end =  (n.released - 1969) * 31536000000
+
+// assign start and end time to Acted In
+match (n1) 
+with collect(id(n1)) as node_ids
+unwind node_ids as curr_id
+  match (n:Movie)-[r:ACTED_IN]-(n2:Person)
+  where id(n) = curr_id 
+  // 31536000000 is 1 year
+  set r.act_begin = (n.released - 1970) * 31536000000,
+  r.act_end =  (n.released - 1969) * 31536000000
 
 // assign start and end time to Wrote
 match (n1) 
@@ -47,8 +57,8 @@ unwind node_ids as curr_id
   match (n:Movie)-[r:WROTE]-(n2:Person)
   where id(n) = curr_id 
   // 31536000000 is 1 year
-  set r.begin_datetime = (n.released - 1970 - (3 + round(RAND() * 7)) ) * 31536000000,
-  r.end_datetime =  (n.released - 1970) * 31536000000
+  set r.occurence_begin = (n.released - 1970 - (3 + round(RAND() * 7)) ) * 31536000000,
+  r.occurence_end =  (n.released - 1970) * 31536000000
 
 // assign start and end time to Reviewed
 match (n1) 
@@ -57,39 +67,40 @@ unwind node_ids as curr_id
   match (n:Movie)-[r:REVIEWED]-(n2:Person)
   where id(n) = curr_id 
   // 31536000000 is 1 year
-  set r.begin_datetime = (n.released - 1970 - (3 + round(RAND() * 7)) ) * 31536000000,
-  r.end_datetime =  (n.released - 1970) * 31536000000
+  set r.begin = (n.released - 1970 - (3 + round(RAND() * 7)) ) * 31536000000,
+  r.end =  (n.released - 1970) * 31536000000
+
+
+// some persons have null born values, set them to a default value
+match (n:Person) where n.born is  null set n.born = 1971;
 
 // assign start and end time to Follows
 match (n:Person)-[r:FOLLOWS]-(n2:Person)
 // 31536000000 is 1 year
-set r.begin_datetime = (n.born - 1970 ) * 31536000000,
-r.end_datetime =  (n.born - 1970 + 3 + round(RAND() * 7) ) * 31536000000
-
-// some persons have null born values, set them to a default value
-match (n:Person) where n.born is  null set n.born = 1971
+set r.begin = (n.born - 1970 ) * 31536000000,
+r.end =  (n.born - 1970 + 3 + round(RAND() * 7) ) * 31536000000
 
 // assign start time to a Person node by born date, +INF (2050) as end time 
 match (n:Person)
-set n.begin_datetime = (n.born - 1970) * 31536000000 +  round(RAND() * 31536000000),
-n.end_datetime = (2050 - 1970) * 31536000000
+set n.start_t = (n.born - 1970) * 31536000000 +  round(RAND() * 31536000000),
+n.end_t = (2050 - 1970) * 31536000000
 
 // assign start time to a Movie node by released date, +INF (2050) as end time 
 match (n:Movie)
-set n.begin_datetime = (n.released - 1970) * 31536000000 +  round(RAND() * 31536000000),
-n.end_datetime = (2050 - 1970) * 31536000000
+set n.begin = (n.released - 1970) * 31536000000 +  round(RAND() * 31536000000),
+n.end = (2050 - 1970) * 31536000000
 
-// assign random ratings
+// assign random ratings with precision .1
 match (n:Movie)
 set n.rating = round(10.0^1 * RAND() * 10)/10.0^1
 
 // bug fix for movie begin 
 match (n:Movie)
-set n.begin_datetime = n.begin_datetime - 31536000000
+set n.begin = n.begin - 31536000000
 // bug fix for reviwed
 match (n1:Person)-[r:REVIEWED]->(n2:Movie)
-set r.begin_datetime = (n2.released - 1970) * 31536000000 + round(RAND() * 3) * 31536000000,
-r.end_datetime = (2050 - 1970) * 31536000000
+set r.begin = (n2.released - 1970) * 31536000000 + round(RAND() * 3) * 31536000000,
+r.end = (2050 - 1970) * 31536000000
 
 // // assign start and end time to a node by covering start and end times of all its edges
 // match (n1) 
