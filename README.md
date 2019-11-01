@@ -10,8 +10,7 @@ Visu*all* is **not** an open source or free software. Please contact [i-Vis Rese
 
 ## Running a local instance
 
-node style-generator.js {model description filename}
-to generate customized application, it changes styles.css and index.html
+`node style-generator.js {model description filename}` to generate customized application, it changes styles.css and index.html
 
 `ng serve` for development and debugging
 
@@ -22,6 +21,8 @@ to generate customized application, it changes styles.css and index.html
 `ng build` to generate a production build 
 
 `ng build --prod` to generate a minified, uglified production build
+
+`node server.js` to start the server
 
 ## Credits
 
@@ -37,25 +38,10 @@ Icons made by [Freepik](http://www.freepik.com),
 
 Third-party libraries:
 [Cytoscape.js](https://github.com/cytoscape/cytoscape.js) and many of its extensions,
-[Backbone](https://github.com/jashkenas/backbone),
-[Bootstrap](https://github.com/twbs/bootstrap),
-[FileSaver.js](https://github.com/eligrey/FileSaver.js),
-[jQuery](https://github.com/jquery/jquery),
-[jquery-expander](https://github.com/kswedberg/jquery-expander),
-[Konva](https://github.com/konvajs/konva),
-[Libxmljs](https://github.com/libxmljs/libxmljs),
-[lodash](https://github.com/lodash/lodash),
-[underscore](https://github.com/jashkenas/underscore),
-[express](https://github.com/expressjs/express),
-[browserify](https://github.com/browserify/browserify),
-[nodemon](https://github.com/remy/nodemon),
-[chroma-js](https://github.com/gka/chroma.js) licensed with [BSD](https://opensource.org/licenses/BSD-3-Clause); 
-[Parallel Shell](https://github.com/darkguy2008/parallelshell),
-[Tippyjs](https://github.com/atomiks/tippyjs) licensed with [MIT](https://opensource.org/licenses/MIT);
-[Mousetrap](https://github.com/ccampbell/mousetrap),
-[Request](https://github.com/request/request) licensed with [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) and
-[Intro.js](https://github.com/usablica/intro.js) licensed with [GNU LGPL](https://www.gnu.org/licenses/lgpl-3.0.html).
+[Angular](https://angular.io/),
+[Google Charts](https://developers.google.com/chart/) and npm dependecies inside package.json file.
 
+For database it uses free and openly available Neo4j movie database. It can be installed using `:play movies` on **Neo4j Browser**
 ## About
 
 Visu*all* is being developed by [i-Vis Research Lab](http://www.cs.bilkent.edu.tr/~ivis/) at Bilkent University.
