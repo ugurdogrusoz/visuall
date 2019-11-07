@@ -82,10 +82,9 @@
   },
   "relations": {
     "ACTED_IN": {
-      "valid_ends": [
-        "person",
-        "movie"
-      ],
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
       "properties": {
         "roles": "list",
         "act_begin": "datetime",
@@ -104,10 +103,9 @@
       }
     },
     "DIRECTED": {
-      "valid_ends": [
-        "person",
-        "movie"
-      ],
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
       "properties": {
         "begin": "datetime",
         "end": "datetime"
@@ -125,10 +123,9 @@
       }
     },
     "PRODUCED": {
-      "valid_ends": [
-        "person",
-        "movie"
-      ],
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
       "properties": {
         "begin": "datetime",
         "end": "datetime"
@@ -146,10 +143,9 @@
       }
     },
     "WROTE": {
-      "valid_ends": [
-        "person",
-        "movie"
-      ],
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
       "properties": {
         "occurence_begin": "datetime",
         "occurence_end": "datetime"
@@ -167,10 +163,9 @@
       }
     },
     "REVIEWED": {
-      "valid_ends": [
-        "person",
-        "movie"
-      ],
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
       "properties": {
         "begin": "datetime",
         "end": "datetime"
@@ -188,10 +183,9 @@
       }
     },
     "FOLLOWS": {
-      "valid_ends": [
-        "person",
-        "movie"
-      ],
+      "source": "Person",
+      "target": "Person",
+      "isBidirectional": false,
       "properties": {
         "begin": "datetime",
         "end": "datetime"

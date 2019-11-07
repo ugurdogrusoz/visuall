@@ -1,0 +1,116 @@
+<!-- current metrics -->
+<div *ngFor="let r of currentMetrics; let i = index;">
+  <div *ngIf="isMetricConditional(r); else unconditional">
+    <span class="va-text">
+      <b>{{r.className}}</b> <span *ngIf="r.rules.length > 0">&nbsp;where:</span>
+    </span>
+    <div *ngFor="let rule of r.rules; let j = index;" class="mx-1 my-2">
+      <div class="row align-items-center no-gutters">
+        <!-- rule body -->
+        <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
+          (click)="ruleOperatorClicked(i, j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
+        <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
+      </div>
+    </div>
+  </div>
+  <ng-template #unconditional>
+    <span class="va-text">
+      <span *ngIf="r.rules[0].propertyOperand == '-'; else unconditional2">
+        count of <b>{{r.className}}</b> </span>
+      <ng-template #unconditional2>
+        <span *ngIf="r.rules[0].propertyType; else unconditional3"> sum of <b>{{r.rules[0].propertyOperand}}</b> from <b>{{r.className}}</b> </span>
+        <ng-template #unconditional3>
+          <span> count of edges of type <b>{{r.rules[0].propertyOperand}}</b> from <b>{{r.className}}</b> </span>
+      </ng-template>
+      </ng-template>
+    </span>
+  </ng-template>
+</div>
+
+
+<div class="panel-heading collapsed" data-toggle="collapse" data-target="#new-statistic-panel" aria-expanded="false">
+  <p class="panel-title accordion-toggle"><b class="va-heading3">New Statistic</b></p>
+</div>
+
+<div id="new-statistic-panel">
+  <div class="form-inline m-2 justify-content-center">
+    <label class="va-heading3">Node / Edge: &nbsp;</label>
+    <select class="custom-select filter-form va-text" [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
+      <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
+      </option>
+    </select>
+    <div class="form-check form-check-inline m-1">
+      <input class="form-check-input" type="checkbox" [(ngModel)]="isConditionalMetric"
+        (change)="changeSelectedClass()">
+      <label class="form-check-label va-text">Is conditional</label>
+    </div>
+  </div>
+
+  <div class="row mx-1 my-3 no-gutters justify-content-center" id="filter-rule-inputs">
+    <div class="col-3 px-1">
+      <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp"
+        (change)="changeSelectedProp()">
+        <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
+      </select>
+    </div>
+
+    <div class="col-3 pr-1" *ngIf="isConditionalMetric">
+      <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey">
+        <option *ngFor="let o of operatorKeys">{{o}}</option>
+      </select>
+    </div>
+
+    <div class="col-5 pr-1" *ngIf="isConditionalMetric">
+      <div [hidden]="isDateProp">
+        <input type="text" title="Value" [(ngModel)]="filterInp"
+          class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
+      </div>
+      <div [hidden]="!isDateProp">
+        <input type="text" id="filter-date-inp0" class="form-control query-input-wide va-small-text">
+      </div>
+    </div>
+
+    <div class="col-1 pr-1 text-center">
+      <a href="#" id="filter-add-rule-btn" title="Add Rule" (click)="onAddRuleClick()">
+        <img src="assets/img/add.svg" height="16px" width="16px" alt="Add Rule">
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="isConditionalMetric" class="text-center borderless mx-1 my-3">
+    <div *ngFor="let r of filteringRules; let i = index;" class="border">
+      <span class="va-text">
+        <b>{{r.className}}</b> <span *ngIf="r.rules.length > 0">&nbsp;where:</span>
+      </span>
+      <div *ngFor="let rule of r.rules; let j = index;" class="mx-1 my-2">
+        <div class="row align-items-center no-gutters">
+          <!-- up, down buttons for the rule -->
+          <div class="col-lg-2 col-sm-1 text-left">
+            <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(i, j, true)" *ngIf="j!=0">
+              <img src="assets/img/up-arrow.svg" height="16px" width="16px" alt="Navigate Up">
+            </a>
+            <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(i, j, false)" *ngIf="j!=0">
+              <img src="assets/img/down-arrow.svg" height="16px" width="16px" alt="Navigate Down">
+            </a>
+          </div>
+          <!-- rule body -->
+          <div class="col-lg-9 col-sm-10 text-left va-text">
+            <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
+              (click)="ruleOperatorClicked(i, j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
+            <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
+          </div>
+          <!-- delete rule button -->
+          <div class="col-1 text-right pr-1">
+            <a href="#" class="delete-rule-link" (click)="deleteFilterRule(i, j)">
+              <img src="assets/img/close.svg" height="16px" width="16px" alt="Delete rule">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRules.length > 0">
+      <input class="btn btn-dark va-text m-2" type="button" value="Add Statistic" (click)="addStat()">
+    </div>
+  </div>
+</div>

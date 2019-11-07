@@ -21,6 +21,7 @@ import { Query0Component } from './operation-tabs/query-tab/query0/query0.compon
 import { GroupTabComponent } from './operation-tabs/group-tab/group-tab.component';
 import { Query1Component } from './operation-tabs/query-tab/query1/query1.component';
 import { TableViewComponent } from './table-view/table-view.component';
+import { TimebarMetricEditorComponent } from './operation-tabs/settings-tab/timebar-metric-editor/timebar-metric-editor.component';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { TableViewComponent } from './table-view/table-view.component';
     Query0Component,
     GroupTabComponent,
     Query1Component,
-    TableViewComponent
+    TableViewComponent,
+    TimebarMetricEditorComponent
   ],
   imports: [
     BrowserModule,
