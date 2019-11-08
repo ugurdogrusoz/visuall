@@ -28,10 +28,10 @@ export class TimebarMetricEditorComponent implements OnInit {
   private isDateProp: boolean;
   private selectedOperatorKey: string;
   private currDatetimes: Date[];
-  private filteringRules: ClassBasedRules[];
+  private filteringRule: ClassBasedRules;
   private filteredTypeCount: number;
   private isConditionalMetric: false;
-  private currentMetrics: ClassBasedRules[];
+  private currMetrics: ClassBasedRules[];
   private readonly NO_OPERATION = 'no_op';
 
   constructor() {
@@ -44,8 +44,8 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.isDateProp = false;
     this.currDatetimes = [new Date()];
     this.filteredTypeCount = 0;
-    this.filteringRules = [];
-    this.currentMetrics = [];
+    this.filteringRule = null;
+    this.currMetrics = [];
   }
 
   ngOnInit() {
@@ -91,7 +91,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       if (this.isConditionalMetric) {
         this.selectedClassProps.push(...Object.keys(properties.edges[txt]));
       } else {
-        this.selectedClassProps.push(...this.getNumberProperties(properties.edges[txt])); 
+        this.selectedClassProps.push(...this.getNumberProperties(properties.edges[txt]));
       }
     }
     this.selectedProp = this.selectedClassProps[0];
@@ -116,7 +116,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.operators = {};
     this.operatorKeys = [];
     this.isDateProp = false;
-    
+
     if (!this.isConditionalMetric) {
       this.operators[this.NO_OPERATION] = this.NO_OPERATION;
       this.operatorKeys.push(this.NO_OPERATION);
@@ -180,24 +180,23 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   private addRule2FilteringRules(r: Rule, isEdge: boolean, className: string) {
-    let idx: number = this.filteringRules.findIndex(x => x.className == className);
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
     }
-    if (idx == -1) {
-      if (this.isConditionalMetric) {
-        this.filteringRules.push({ className: className, rules: [r], isEdge: isEdge });
-      } else {
-        this.currentMetrics.push({ className: className, rules: [r], isEdge: isEdge });
-      }
-    } else {
-      this.filteringRules[idx].rules.push(r);
-    }
-
     if (!this.isConditionalMetric) {
-      this.filteringRules.pop();
+      this.currMetrics.push({ className: className, rules: [r], isEdge: isEdge });
+      this.filteringRule = null;
+    } else {
+      if (!this.filteringRule) {
+        this.filteringRule = { className: className, rules: [r], isEdge: isEdge };
+      } else {
+        if (this.filteringRule.className != className) {
+          console.log('can not add multiple conditionals from different types');
+          return;
+        }
+        this.filteringRule.rules.push(r);
+      }
     }
-    console.log('this.currentMetrics: ', this.currentMetrics.map(x => x.rules[0]));
   }
 
   private getEdgeTypesRelated(nodeType: string): string[] {
@@ -213,11 +212,11 @@ export class TimebarMetricEditorComponent implements OnInit {
     return r;
   }
 
-  private deleteFilterRule(i: number, j: number) {
-    if (this.filteringRules[i].rules.length == 1) {
-      this.filteringRules.splice(i, 1);
+  private deleteFilterRule(j: number) {
+    if (this.filteringRule.rules.length == 1) {
+      this.filteringRule = null;
     } else {
-      this.filteringRules[i].rules.splice(j, 1);
+      this.filteringRule.rules.splice(j, 1);
     }
   }
 
@@ -226,6 +225,36 @@ export class TimebarMetricEditorComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  private deleteMetric(i: number) {
+    this.currMetrics.splice(i, 1);
+  }
+
+  private addStat() {
+    this.currMetrics.push(this.filteringRule);
+    this.filteringRule = null;
+  }
+
+  private changeFilterRuleOrder(j: number, isUp: boolean) {
+    if ((isUp && j == 0) || (!isUp && j == this.filteringRule.rules.length - 1)) {
+      return;
+    }
+    let idx = j + 1;
+    if (isUp) {
+      idx = j - 1;
+    }
+    let tmp = this.filteringRule.rules[j];
+    this.filteringRule.rules[j] = this.filteringRule.rules[idx];
+    this.filteringRule.rules[idx] = tmp;
+  }
+
+  private ruleOperatorClicked(j: number, op: string) {
+    if (op == 'OR') {
+      this.filteringRule.rules[j].ruleOperator = 'AND';
+    } else {
+      this.filteringRule.rules[j].ruleOperator = 'OR';
+    }
   }
 
 }

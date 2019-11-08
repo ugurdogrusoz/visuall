@@ -1,16 +1,15 @@
 <!-- current metrics -->
-<div *ngFor="let r of currentMetrics; let i = index;">
+<div *ngFor="let r of currMetrics; let i = index;">
   <div *ngIf="isMetricConditional(r); else unconditional">
-    <span class="va-text">
-      <b>{{r.className}}</b> <span *ngIf="r.rules.length > 0">&nbsp;where:</span>
-    </span>
-    <div *ngFor="let rule of r.rules; let j = index;" class="mx-1 my-2">
-      <div class="row align-items-center no-gutters">
-        <!-- rule body -->
-        <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
-          (click)="ruleOperatorClicked(i, j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
+    <div class="va-text">
+      <span>count of</span> <b>&nbsp;{{r.className}}</b> <span *ngIf="r.rules.length > 0">&nbsp;where&nbsp;</span>
+      <span *ngFor="let rule of r.rules; let j = index;">
+        <b *ngIf="j!=0">&nbsp;{{rule.ruleOperator}}&nbsp;</b>
         <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
-      </div>
+      </span>
+      <span class="text-right pr-1" (click)="deleteMetric(i)">
+        &nbsp;<img src="assets/img/close.svg" alt="Delete rule">
+      </span>
     </div>
   </div>
   <ng-template #unconditional>
@@ -18,11 +17,15 @@
       <span *ngIf="r.rules[0].propertyOperand == '-'; else unconditional2">
         count of <b>{{r.className}}</b> </span>
       <ng-template #unconditional2>
-        <span *ngIf="r.rules[0].propertyType; else unconditional3"> sum of <b>{{r.rules[0].propertyOperand}}</b> from <b>{{r.className}}</b> </span>
+        <span *ngIf="r.rules[0].propertyType; else unconditional3"> sum of <b>{{r.rules[0].propertyOperand}}</b> from
+          <b>{{r.className}}</b> </span>
         <ng-template #unconditional3>
           <span> count of edges of type <b>{{r.rules[0].propertyOperand}}</b> from <b>{{r.className}}</b> </span>
+        </ng-template>
       </ng-template>
-      </ng-template>
+    </span>
+    <span class="text-right pr-1" (click)="deleteMetric(i)">
+      &nbsp;<img src="assets/img/close.svg" alt="Delete rule">
     </span>
   </ng-template>
 </div>
@@ -72,44 +75,44 @@
 
     <div class="col-1 pr-1 text-center">
       <a href="#" id="filter-add-rule-btn" title="Add Rule" (click)="onAddRuleClick()">
-        <img src="assets/img/add.svg" height="16px" width="16px" alt="Add Rule">
+        <img src="assets/img/add.svg" alt="Add Rule">
       </a>
     </div>
   </div>
 
   <div *ngIf="isConditionalMetric" class="text-center borderless mx-1 my-3">
-    <div *ngFor="let r of filteringRules; let i = index;" class="border">
+    <div *ngIf="filteringRule" class="border">
       <span class="va-text">
-        <b>{{r.className}}</b> <span *ngIf="r.rules.length > 0">&nbsp;where:</span>
+        <b>{{filteringRule.className}}</b> <span *ngIf="filteringRule.rules.length > 0">&nbsp;where:</span>
       </span>
-      <div *ngFor="let rule of r.rules; let j = index;" class="mx-1 my-2">
+      <div *ngFor="let rule of filteringRule.rules; let j = index;" class="mx-1 my-2">
         <div class="row align-items-center no-gutters">
           <!-- up, down buttons for the rule -->
           <div class="col-lg-2 col-sm-1 text-left">
-            <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(i, j, true)" *ngIf="j!=0">
-              <img src="assets/img/up-arrow.svg" height="16px" width="16px" alt="Navigate Up">
+            <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
+              <img src="assets/img/up-arrow.svg" alt="Navigate Up">
             </a>
-            <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(i, j, false)" *ngIf="j!=0">
-              <img src="assets/img/down-arrow.svg" height="16px" width="16px" alt="Navigate Down">
+            <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(j, false)" *ngIf="j!=0">
+              <img src="assets/img/down-arrow.svg" alt="Navigate Down">
             </a>
           </div>
           <!-- rule body -->
           <div class="col-lg-9 col-sm-10 text-left va-text">
             <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
-              (click)="ruleOperatorClicked(i, j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
+              (click)="ruleOperatorClicked(j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
             <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
           </div>
           <!-- delete rule button -->
           <div class="col-1 text-right pr-1">
-            <a href="#" class="delete-rule-link" (click)="deleteFilterRule(i, j)">
-              <img src="assets/img/close.svg" height="16px" width="16px" alt="Delete rule">
+            <a href="#" class="delete-rule-link" (click)="deleteFilterRule(j)">
+              <img src="assets/img/close.svg" alt="Delete rule">
             </a>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRules.length > 0">
+    <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
       <input class="btn btn-dark va-text m-2" type="button" value="Add Statistic" (click)="addStat()">
     </div>
   </div>
