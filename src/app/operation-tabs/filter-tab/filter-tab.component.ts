@@ -9,7 +9,7 @@ import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import flatpickr from 'flatpickr';
-import { ClassOption, ClassBasedRules, Rule } from './filtering-types.js';
+import { iClassOption, iClassBasedRules, iRule } from './filtering-types.js';
 
 @Component({
   selector: 'app-filter-tab',
@@ -19,7 +19,7 @@ import { ClassOption, ClassBasedRules, Rule } from './filtering-types.js';
 export class FilterTabComponent implements OnInit {
   nodeClasses: Set<string>;
   edgeClasses: Set<string>;
-  classOptions: ClassOption[];
+  classOptions: iClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
   selectedProp: string;
@@ -30,7 +30,7 @@ export class FilterTabComponent implements OnInit {
   isDateProp: boolean;
   selectedOperatorKey: string;
   currDatetimes: Date[];
-  filteringRules: ClassBasedRules[];
+  filteringRules: iClassBasedRules[];
   filteredTypeCount: number;
   isFilterOnDb: boolean;
   isMergeQueryResults: boolean;
@@ -147,7 +147,7 @@ export class FilterTabComponent implements OnInit {
       return;
 
     const isEdge = this.edgeClasses.has(className);
-    const rule: Rule = {
+    const rule: iRule = {
       propertyOperand: attribute,
       propertyType: this.attributeType,
       rawInput: value,
@@ -158,7 +158,7 @@ export class FilterTabComponent implements OnInit {
     this.addRule2FilteringRules(rule, isEdge, className);
   }
 
-  addRule2FilteringRules(r: Rule, isEdge: boolean, className: string) {
+  addRule2FilteringRules(r: iRule, isEdge: boolean, className: string) {
     let idx: number = this.filteringRules.findIndex(x => x.className == className);
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
@@ -191,7 +191,7 @@ export class FilterTabComponent implements OnInit {
     this.filteringRules[i].rules[idx] = tmp;
   }
 
-  filterByRule(rule: Rule, ele) {
+  filterByRule(rule: iRule, ele) {
     const attr = rule.propertyOperand;
     const op = rule.operator;
     const ruleVal = rule.inputOperand;

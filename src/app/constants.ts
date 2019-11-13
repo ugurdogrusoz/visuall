@@ -83,6 +83,21 @@ export const LIST_OPERATORS = {
   'in': 'In'
 };
 
+export const NEO4J_2_JS_NUMBER_OPERATORS = {
+  '=': '===',
+  '<>': '!==',
+  '<': '<',
+  '>': '>',
+  '<=': '<=',
+  '>=': '>='
+};
+
+export const NEO4J_2_JS_STR_OPERATORS = {
+  'Contains': 'includes',
+  'Starts with': 'startsWith',
+  'Ends with': 'endsWith'
+};
+
 export const TIME_UNITS = {
   'century': 3153600000000,
   'decade': 315360000000,

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from './global-variable.service';
-import { ClassBasedRules, Rule } from './operation-tabs/filter-tab/filtering-types';
+import { iClassBasedRules, iRule } from './operation-tabs/filter-tab/filtering-types';
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +50,7 @@ export class DbService {
 
   }
 
-  runFilteringQuery2(rules: ClassBasedRules[], cb) {
+  runFilteringQuery2(rules: iClassBasedRules[], cb) {
     let query = '';
     for (let i = 0; i < rules.length; i++) {
       query += this.getMatchWhereClause(rules[i], i);
@@ -97,7 +97,7 @@ export class DbService {
     return { columns: response.results[0].columns, data: response.results[0].data.map(x => x.row) };
   }
 
-  private getMatchWhereClause(rule: ClassBasedRules, idx: number) {
+  private getMatchWhereClause(rule: iClassBasedRules, idx: number) {
     const className = rule.className;
     let matchClause: string;
     let varName = 'x' + idx;
@@ -123,7 +123,7 @@ export class DbService {
     return matchClause + 'WHERE ' + whereClauseItems.join(' ') + "\n";
   }
 
-  private generateWhereClauseItem2(rule: Rule, varName: string) {
+  private generateWhereClauseItem2(rule: iRule, varName: string) {
     let inputOp = '';
     if (rule.propertyType == 'string' || rule.propertyType == 'list') {
       inputOp = `'${rule.rawInput}'`;

@@ -4,6 +4,7 @@ import * as $ from 'jquery';
 import { debounce, MIN_DATE, MAX_DATE, isClose, TIME_UNITS, MONTHS, SHORT_MONTHS, CSS_SM_TEXT_SIZE, CSS_FONT_NAME } from './constants';
 import { GlobalVariableService } from './global-variable.service';
 import ModelDescription from '../model_description.json';
+import { iTimebarUnitData, iTimebarItem, iTimebarMetric } from './operation-tabs/filter-tab/filtering-types';
 
 declare var google: any;
 
@@ -72,12 +73,6 @@ export class TimebarService {
     this.bindCommands();
     this.unbindEventListeners();
     this.bindEventListeners();
-    // this.shownMetrics = [{ incrementFn: (x) => x.isBegin && x.id[0] === 'n', decrementFn: (x) => !x.isBegin && x.id[0] === 'n', name: '# of nodes' },
-    // { incrementFn: (x) => x.isBegin && x.id[0] === 'e', decrementFn: (x) => !x.isBegin && x.id[0] === 'e', name: '# of edges' },
-    // { incrementFn: (x) => x.isBegin, decrementFn: (x) => !x.isBegin, name: '# of nodes + # of edges' }];
-    this.shownMetrics = [{ incrementFn: (x) => x.id[0] === 'n', decrementFn: (x) => false, name: '# of nodes' },
-    { incrementFn: (x) => x.id[0] === 'e', decrementFn: (x) => false, name: '# of edges' },
-    { incrementFn: (x) => true, decrementFn: (x) => false, name: '# of nodes + # of edges' }];
   }
 
   setRefreshFlag(b: boolean) {
@@ -97,19 +92,19 @@ export class TimebarService {
     window.removeEventListener('resize', this.windowResizer);
   }
 
-  getTimeRange(ele: { data: object, classes: string[] }): any[] {
-    ele.classes = ele.classes.map(x => x.toLowerCase());
+  getTimeRange(cyElem): any[] {
+    let classes = cyElem.classes().map(x => x.toLowerCase());
 
     if (!ModelDescription.timebarDataMapping) {
       return [this.defaultBeginDate, this.defaultEndDate];
     }
     for (let c in ModelDescription.timebarDataMapping) {
-      const idx = ele.classes.findIndex(x => x == c.toLowerCase());
+      const idx = classes.findIndex(x => x == c.toLowerCase());
       if (idx != -1) {
         const p1 = ModelDescription.timebarDataMapping[c][this.beginPropertyName];
         const p2 = ModelDescription.timebarDataMapping[c][this.endPropertyName];
-        const v1 = ele.data[p1];
-        const v2 = ele.data[p2];
+        const v1 = cyElem.data()[p1];
+        const v2 = cyElem.data()[p2];
         if (v1 && v2) {
           return [v1, v2];
         }
@@ -126,15 +121,16 @@ export class TimebarService {
     if (!this._g.isTimebarEnabled) {
       return;
     }
-    const eles = this._g.cy.$().map(x => { return { data: x.data(), classes: x.classes() } });
+    const eles = this._g.cy.$().map(x => x);
+    // const eles = this._g.cy.$().map(x => { return { data: x.data(), classes: x.classes() } });
     let times: iTimebarUnitData[] = [];
     this.items = [];
 
     for (let i = 0; i < eles.length; i++) {
       const [d1, d2] = this.getTimeRange(eles[i]);
-      times.push({ isBegin: true, d: d1, id: eles[i].data.id });
-      times.push({ isBegin: false, d: d2, id: eles[i].data.id });
-      this.items.push({ start: d1, end: d2, id: eles[i].data.id });
+      times.push({ isBegin: true, d: d1, id: eles[i].id() });
+      times.push({ isBegin: false, d: d2, id: eles[i].id() });
+      this.items.push({ start: d1, end: d2, cyElem: eles[i] });
     }
     if (times.length < 1) {
       return;
@@ -192,7 +188,7 @@ export class TimebarService {
             'enableInteractivity': false,
             'chartArea': controlPaddings,
             'legend': 'none',
-            'hAxis': { textStyle:  this.textStyle},
+            'hAxis': { textStyle: this.textStyle },
             'vAxis': {
               'textPosition': 'none',
               'gridlines': { 'color': 'none' }
@@ -211,7 +207,7 @@ export class TimebarService {
         'legend': { textStyle: this.textStyle },
         'tooltip': { isHtml: true },
         // get text size of va-small-text
-        'hAxis': { textStyle: this.textStyle, 'textPosition': 'in'},
+        'hAxis': { textStyle: this.textStyle, 'textPosition': 'in' },
         'vAxis': { textStyle: this.textStyle },
         'chartArea': chartPaddings,
         // 'animation':{
@@ -303,6 +299,10 @@ export class TimebarService {
       console.log('there is no data to render chart');
       return;
     }
+    if (!this.shownMetrics || this.shownMetrics.length < 1) {
+      console.log('there is no metric to render chart');
+      return;
+    }
     $('#timebar').removeClass('d-none');
     this.prepareData3();
     this.controlWrapper.draw();
@@ -311,7 +311,7 @@ export class TimebarService {
   getVisibleRange() {
     let visibleItems = this._g.cy.filter(function (e) {
       return e.visible();
-    }).map(x => { return { data: x.data(), classes: x.classes() } });
+    }).map(x => x );
 
     let max = MIN_DATE;
     let min = MAX_DATE;
@@ -872,33 +872,14 @@ export class TimebarService {
       eles = this.items.filter(x => x.start <= end && x.end >= start);
     }
     let cnts = new Array(this.shownMetrics.length).fill(0);
-
     for (let i = 0; i < this.shownMetrics.length; i++) {
       let m = this.shownMetrics[i];
       for (let j = 0; j < eles.length; j++) {
-        if (m.incrementFn(eles[j])) {
-          cnts[i]++;
-        }
+        cnts[i] += m.incrementFn(eles[j].cyElem);
       }
     }
     return cnts;
   }
 }
 
-interface iTimebarMetric {
-  incrementFn: (x: any) => boolean;
-  decrementFn: (x: any) => boolean;
-  name: string;
-}
 
-interface iTimebarUnitData {
-  isBegin: boolean;
-  d: number;
-  id: string;
-}
-
-interface iTimebarItem {
-  start: number;
-  end: number;
-  id: string;
-}

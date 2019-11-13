@@ -1,52 +1,38 @@
 <!-- current metrics -->
-<div *ngFor="let r of currMetrics; let i = index;">
-  <div *ngIf="isMetricConditional(r); else unconditional">
-    <div class="va-text">
-      <span>count of</span> <b>&nbsp;{{r.className}}</b> <span *ngIf="r.rules.length > 0">&nbsp;where&nbsp;</span>
-      <span *ngFor="let rule of r.rules; let j = index;">
-        <b *ngIf="j!=0">&nbsp;{{rule.ruleOperator}}&nbsp;</b>
-        <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
-      </span>
-      <span class="text-right pr-1" (click)="deleteMetric(i)">
-        &nbsp;<img src="assets/img/close.svg" alt="Delete rule">
-      </span>
+<div *ngFor="let r of currMetrics; let i = index;" class="border rounded va-text m-1 p-1">
+  <div>
+    <b>{{r.name}}</b>
+    <a href="#" class="delete-rule-link text-right" (click)="deleteMetric(i)">
+      &nbsp;<img src="assets/img/close.svg" height="16px" width="16px" alt="Delete metric">
+    </a>
+  </div>
+  <div *ngFor="let rule of r.rules; let j = index;" class="mx-1 my-2">
+    <div class="row align-items-center no-gutters">
+      <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"> {{rule.ruleOperator}} </a>
+      count/sum of <b>&nbsp;{{rule.className}}</b>
+      <b *ngIf="rule.propertyOperand && rule.propertyOperand !== NOT_SELECTED">&rarr;{{rule.propertyOperand}}
+        <span *ngIf="rule.operator && rule.operator !== NOT_SELECTED"> {{rule.operator}} {{rule.inputOperand}}</span>
+      </b>
     </div>
   </div>
-  <ng-template #unconditional>
-    <span class="va-text">
-      <span *ngIf="r.rules[0].propertyOperand == '-'; else unconditional2">
-        count of <b>{{r.className}}</b> </span>
-      <ng-template #unconditional2>
-        <span *ngIf="r.rules[0].propertyType; else unconditional3"> sum of <b>{{r.rules[0].propertyOperand}}</b> from
-          <b>{{r.className}}</b> </span>
-        <ng-template #unconditional3>
-          <span> count of edges of type <b>{{r.rules[0].propertyOperand}}</b> from <b>{{r.className}}</b> </span>
-        </ng-template>
-      </ng-template>
-    </span>
-    <span class="text-right pr-1" (click)="deleteMetric(i)">
-      &nbsp;<img src="assets/img/close.svg" alt="Delete rule">
-    </span>
-  </ng-template>
 </div>
 
-
-<div class="panel-heading collapsed" data-toggle="collapse" data-target="#new-statistic-panel" aria-expanded="false">
+<div class="panel-heading collapsed px-1" data-toggle="collapse" data-target="#new-statistic-panel"
+  aria-expanded="false">
   <p class="panel-title accordion-toggle"><b class="va-heading3">New Statistic</b></p>
 </div>
 
 <div id="new-statistic-panel">
   <div class="form-inline m-2 justify-content-center">
-    <label class="va-heading3">Node / Edge: &nbsp;</label>
+    <label class="va-heading3">Name:&nbsp;</label>
+    <input type="text" title="Name" [(ngModel)]="currMetricName"
+      class="form-control filter-form filter-input va-small-text">
+
+    <label class="va-heading3">&nbsp;Type:&nbsp;</label>
     <select class="custom-select filter-form va-text" [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
       <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
       </option>
     </select>
-    <div class="form-check form-check-inline m-1">
-      <input class="form-check-input" type="checkbox" [(ngModel)]="isConditionalMetric"
-        (change)="changeSelectedClass()">
-      <label class="form-check-label va-text">Is conditional</label>
-    </div>
   </div>
 
   <div class="row mx-1 my-3 no-gutters justify-content-center" id="filter-rule-inputs">
@@ -57,13 +43,13 @@
       </select>
     </div>
 
-    <div class="col-3 pr-1" *ngIf="isConditionalMetric">
+    <div class="col-3 pr-1">
       <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey">
-        <option *ngFor="let o of operatorKeys">{{o}}</option>
+        <option *ngFor="let o of operatorKeys" [value]="o">{{o}}</option>
       </select>
     </div>
 
-    <div class="col-5 pr-1" *ngIf="isConditionalMetric">
+    <div class="col-5 pr-1">
       <div [hidden]="isDateProp">
         <input type="text" title="Value" [(ngModel)]="filterInp"
           class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
@@ -80,12 +66,12 @@
     </div>
   </div>
 
-  <div *ngIf="isConditionalMetric" class="text-center borderless mx-1 my-3">
+  <div class="text-center borderless mx-1 my-3">
     <div *ngIf="filteringRule" class="border">
       <span class="va-text">
-        <b>{{filteringRule.className}}</b> <span *ngIf="filteringRule.rules.length > 0">&nbsp;where:</span>
+        <b>{{filteringRule.name}}</b>
       </span>
-      <div *ngFor="let rule of filteringRule.rules; let j = index;" class="mx-1 my-2">
+      <div *ngFor="let r of filteringRule.rules; let j = index;" class="mx-1 my-2">
         <div class="row align-items-center no-gutters">
           <!-- up, down buttons for the rule -->
           <div class="col-lg-2 col-sm-1 text-left">
@@ -99,8 +85,12 @@
           <!-- rule body -->
           <div class="col-lg-9 col-sm-10 text-left va-text">
             <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
-              (click)="ruleOperatorClicked(j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
-            <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
+              (click)="ruleOperatorClicked(j, r.ruleOperator)">{{r.ruleOperator}}</a>
+
+            <b>{{r.className}}</b>
+            <b *ngIf="r.propertyOperand && r.propertyOperand !== NOT_SELECTED">&rarr;{{r.propertyOperand}}
+              <span *ngIf="r.operator && r.operator !== NOT_SELECTED"> {{r.operator}} {{r.inputOperand}}</span>
+            </b>
           </div>
           <!-- delete rule button -->
           <div class="col-1 text-right pr-1">
