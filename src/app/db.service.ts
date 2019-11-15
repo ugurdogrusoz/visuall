@@ -14,8 +14,8 @@ export class DbService {
 
   runQuery(query, params, cb, isGraphResponse = true) {
     const url = config.database.url;
-    const username = config.database.url;
-    const password = config.database.url;
+    const username = config.database.username;
+    const password = config.database.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
     console.log(query);
     const requestBody = {
