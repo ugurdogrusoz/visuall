@@ -2,20 +2,28 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from './global-variable.service';
 import { iClassBasedRules, iRule } from './operation-tabs/filter-tab/filtering-types';
-import config from 'visuall-config.json';
+// import config from 'visuall-config.json';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DbService {
   
+  private dbConfig = {
+    url: 'http://ivis.cs.bilkent.edu.tr:3001/db/data/transaction/commit',
+    username: 'neo4j',
+    password: '123'
+    // url: 'https://hobby-npjcdeakghmjgbkeejdgpocl.dbs.graphenedb.com:24780/db/data/transaction/commit',
+    // username: 'app127491101-An69vH',
+    // password: 'b.i5WWJaGHdH4h.RLVDXx9PyExkPHDa'
+  };
   constructor(private _http: HttpClient, private _g: GlobalVariableService) {
    }
 
   runQuery(query, params, cb, isGraphResponse = true) {
-    const url = config.database.url;
-    const username = config.database.username;
-    const password = config.database.password;
+    const url = this.dbConfig.url;
+    const username = this.dbConfig.username;
+    const password = this.dbConfig.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
     console.log(query);
     const requestBody = {
