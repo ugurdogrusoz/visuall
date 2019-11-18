@@ -33,9 +33,10 @@ export class TimebarMetricEditorComponent implements OnInit {
   private currMetrics: iTimebarMetric[];
   private currMetricName: string;
   private readonly NO_OPERATION = 'no_op';
-  private readonly NOT_SELECTED = '───';
+  private readonly NOT_SELECTED = '─────────────';
   private readonly NODES_CLASS = '─── Nodes ───';
   private readonly EDGES_CLASS = '─── Edges ───';
+  private isAClassSelectedForMetric = false;
 
   constructor(private _timeBarService: TimebarService) {
     this.nodeClasses = new Set([]);
@@ -135,7 +136,7 @@ export class TimebarMetricEditorComponent implements OnInit {
         defaultDate: new Date(),
       };
       flatpickr('#filter-date-inp0', opt);
-    } 
+    }
   }
 
   private addOperators(op) {
@@ -185,8 +186,10 @@ export class TimebarMetricEditorComponent implements OnInit {
       }
       this.filteringRule = { rules: [r], name: this.currMetricName, incrementFn: null };
     } else {
+      this.filteringRule.name = this.currMetricName;
       this.filteringRule.rules.push(r);
     }
+    this.isAClassSelectedForMetric = true;
   }
 
   private getEdgeTypesRelated(nodeType: string): string[] {
@@ -205,6 +208,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   private deleteFilterRule(j: number) {
     if (this.filteringRule.rules.length == 1) {
       this.filteringRule = null;
+      this.isAClassSelectedForMetric = false;
     } else {
       this.filteringRule.rules.splice(j, 1);
     }
@@ -216,7 +220,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   private addStat() {
-    console.log('this.filteringRule: ', this.filteringRule);
+    this.isAClassSelectedForMetric = false;
     this.currMetrics.push(this.filteringRule);
     this.setFnsForMetrics();
     this.refreshTimebar();
@@ -247,71 +251,67 @@ export class TimebarMetricEditorComponent implements OnInit {
   private setFnsForMetrics() {
     for (let m of this.currMetrics) {
       let fnStr = '';
-      if (this.isCountMetric(m)) {
-        let condition = '';
-        let classCondition = '';
-        let propertyCondition = '';
-        let ruleCnt = 0;
-        for (let r of m.rules) {
-          // apply class condition
-          if (r.className.toLowerCase() == this.EDGES_CLASS.toLowerCase()) {
-            classCondition = ` x.id()[0] === 'e' `;
-          } else if (r.className.toLowerCase() == this.NODES_CLASS.toLowerCase()) {
-            classCondition = ` x.id()[0] === 'n' `;
-          } else if (r.className.toLowerCase() == this.NOT_SELECTED.toLowerCase()) {
-            classCondition = ``;
-          } else {
-            classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${r.className.toLowerCase()}') `;
-          }
-          // apply property condition
-          if (!r.propertyOperand || r.propertyOperand == this.NOT_SELECTED) {
-            propertyCondition = '';
-          } else if (r.operator && r.inputOperand) {
-            // propertyCondition = `x.data().${r.propertyOperand} ${r.operator} ${r.inputOperand}`;
-            propertyCondition = this.getJsExpressionForCountMetricRule(r);
-          } else {
-            propertyCondition = `x.data().${r.propertyOperand}`;
-          }
-          // construct condition
-          if (classCondition.length < 1 && propertyCondition.length < 1) {
-            condition = '(true)';
-          } else if (classCondition.length < 1) {
-            condition = `(${propertyCondition})`;
-          } else if (propertyCondition.length < 1) {
-            condition = `(${classCondition})`;
-          } else {
-            condition = `(${classCondition} && ${propertyCondition})`;
-          }
-          ruleCnt++;
-          // if the first condition
-          if (ruleCnt == 1) {
-            fnStr += `if(${condition}`
-          }
-          // if greater than first 
-          if (ruleCnt > 1) {
-            fnStr += `&& ${condition}`
-          }
-          // if the last condition
-          if (ruleCnt == m.rules.length) {
-            fnStr += `) return 1; else return 0;`
-          }
-        }
-      } else {
-        const r = m.rules[0];
-        if (r.propertyType == 'edge') {
-          let s = r.propertyOperand.toUpperCase();
-          fnStr = `if(x.classes().map(x => x.toLowerCase()).includes('${r.className.toLowerCase()}')) return x.connectedEdges('.${s}').length; else return 0;`
+      let condition = '';
+      let classCondition = '';
+      let propertyCondition = '';
+      let ruleCnt = 0;
+      for (let r of m.rules) {
+        // apply class condition
+        if (r.className.toLowerCase() == this.EDGES_CLASS.toLowerCase()) {
+          classCondition = ` x.id()[0] === 'e' `;
+        } else if (r.className.toLowerCase() == this.NODES_CLASS.toLowerCase()) {
+          classCondition = ` x.id()[0] === 'n' `;
+        } else if (r.className.toLowerCase() == this.NOT_SELECTED.toLowerCase()) {
+          classCondition = ``;
         } else {
-          fnStr = `if(x.classes().map(x => x.toLowerCase()).includes('${r.className.toLowerCase()}')) return x.data().${r.propertyOperand}; else return 0;`
+          classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${r.className.toLowerCase()}') `;
+        }
+        // apply property condition
+        if (!r.propertyOperand || r.propertyOperand == this.NOT_SELECTED) {
+          propertyCondition = '';
+        } else if (r.operator && r.inputOperand) {
+          propertyCondition = this.getJsExpressionForMetricRule(r);
+        }
+        // construct condition
+        if (classCondition.length < 1 && propertyCondition.length < 1) {
+          condition = '(true)';
+        } else if (classCondition.length < 1) {
+          condition = `(${propertyCondition})`;
+        } else if (propertyCondition.length < 1) {
+          condition = `(${classCondition})`;
+        } else {
+          condition = `(${classCondition} && ${propertyCondition})`;
+        }
+        ruleCnt++;
+        // if the first condition
+        if (ruleCnt == 1) {
+          fnStr += `if(${condition}`
+        }
+        // if greater than first 
+        if (ruleCnt > 1) {
+          fnStr += `&& ${condition}`
         }
       }
+      const idxOfSumRule = this.getIdxOfSumRule(m);
+      if (idxOfSumRule == -1) {
+        fnStr += `) return 1;`
+      } else {
+        const r = m.rules[idxOfSumRule];
+        if (r.propertyType == 'edge') {
+          let s = r.propertyOperand.toUpperCase();
+          fnStr += `) return x.connectedEdges('.${s}').length;`
+        } else {
+          fnStr += `) return x.data().${r.propertyOperand};`
+        }
+      }
+      fnStr += ' else return 0;'
       console.log('fnStr: ', fnStr);
       m.incrementFn = new Function('x', fnStr) as (x: any) => number;
     }
     this.refreshTimebar();
   }
 
-  private getJsExpressionForCountMetricRule(r: iMetricCondition) {
+  private getJsExpressionForMetricRule(r: iMetricCondition) {
     if (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'datetime' || r.propertyType == 'edge') {
       let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
       if (r.propertyType == 'datetime') {
@@ -334,20 +334,17 @@ export class TimebarMetricEditorComponent implements OnInit {
     }
   }
 
-  private isCountMetric(m: iTimebarMetric) {
-    // if there are multiple rules in a metric, it can not be a sum metric
-    // NOT IT CAN: sum of all nodes 
-    if (m.rules.length > 1) {
-      return true;
-    }
+  // if there is 1 sum rule it is a Sum metric (otherwise count metric)
+  private getIdxOfSumRule(m: iTimebarMetric) {
+    let i = 0;
+    for (let r of m.rules) {
+      if ((!r.operator) && (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'edge')) {
+        return i;
+      }
 
-    // there should be only 1 rule
-    let r = m.rules[0];
-    // it is a sum property if propertyOperand does not exists and propertyType is a number
-    if ((!r.operator) && (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'edge')) {
-      return false;
+      i++;
     }
-    return true;
+    return -1;
   }
 
   private refreshTimebar() {
