@@ -108,9 +108,12 @@ export class TimebarService {
         if (v1 && v2) {
           return [v1, v2];
         }
-        // if there is only 1, use the same as begin and end
-        else if ((v1 && !v2) || (!v1 && v2)) {
-          return [v1 || v2, v1 || v2]
+        else if (v1 && !v2) {
+          return [v1, this.defaultEndDate];
+        } else if (!v1 && v2) {
+          return [this.defaultBeginDate, v2];
+        } else {
+          return [this.defaultBeginDate, this.defaultEndDate];
         }
       }
     }
@@ -240,7 +243,12 @@ export class TimebarService {
     for (let c in ModelDescription.timebarDataMapping) {
       const p1 = ModelDescription.timebarDataMapping[c][this.beginPropertyName];
       const p2 = ModelDescription.timebarDataMapping[c][this.endPropertyName];
-      propNamesSelector += `[^${p1}][^${p2}]`
+      if (p1) {
+        propNamesSelector += `[^${p1}]`
+      }
+      if (p2) {
+        propNamesSelector += `[^${p2}]`
+      }
       let selector = '';
       if (this.graphInclusionType == 0) {
         // overlaps
@@ -311,7 +319,7 @@ export class TimebarService {
   getVisibleRange() {
     let visibleItems = this._g.cy.filter(function (e) {
       return e.visible();
-    }).map(x => x );
+    }).map(x => x);
 
     let max = MIN_DATE;
     let min = MAX_DATE;
