@@ -252,13 +252,28 @@ export class TimebarService {
       let selector = '';
       if (this.graphInclusionType == 0) {
         // overlaps
-        selector = `[${p1} <= ${end}][${p2} >= ${start}]`;
+        if (p1) {
+          selector += `[${p1} <= ${end}]`;
+        }
+        if (p2) {
+          selector += `[${p2} >= ${start}]`;
+        }
       } else if (this.graphInclusionType == 1) {
         // completely contains the object's lifetime
-        selector = `[${p1} >= ${start}][${p2} <= ${end}]`;
+        if (p1) {
+          selector += `[${p1} >= ${start}]`;
+        }
+        if (p2) {
+          selector += `[${p2} <= ${end}]`;
+        }
       } else if (this.graphInclusionType == 2) {
         // completely contained by the object's lifetime
-        selector = `[${p1} <= ${start}][${p2} >= ${end}]`;
+        if (p1) {
+          selector += `[${p1} <= ${start}]`;
+        }
+        if (p2) {
+          selector += `[${p2} >= ${end}]`;
+        }
       }
       elems = elems.union(selector);
     }
