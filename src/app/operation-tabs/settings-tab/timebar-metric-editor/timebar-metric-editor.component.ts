@@ -31,15 +31,18 @@ export class TimebarMetricEditorComponent implements OnInit {
   private filteringRule: iTimebarMetric;
   private filteredTypeCount: number;
   private currMetrics: iTimebarMetric[];
-  private currMetricName: string;
+  private currMetricName: string = 'untitled';
   private readonly NO_OPERATION = 'no_op';
-  private readonly NOT_SELECTED = '─────────────';
-  private readonly NODES_CLASS = '─── Nodes ───';
-  private readonly EDGES_CLASS = '─── Edges ───';
+  private readonly ANY_CLASS = 'Any Object';
+  private readonly NOT_SELECTED = '───';
+  private readonly NODES_CLASS = 'Any Node';
+  private readonly EDGES_CLASS = 'Any Edge';
   private isAClassSelectedForMetric = false;
   private editingIdx = -1;
   private newStatBtnTxt = 'Add Statistic';
   private isHideEditing = true;
+  private isAddingNew = false;
+  private isGenericTypeSelected = true;
 
   constructor(private _timeBarService: TimebarService) {
     this.nodeClasses = new Set([]);
@@ -54,7 +57,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.filteringRule = null;
     this.currMetrics = [{ incrementFn: (x) => { if (x.id()[0] === 'n') return 1; return 0 }, name: '# of nodes', className: this.NODES_CLASS, rules: [] },
     { incrementFn: (x) => { if (x.id()[0] === 'e') return 1; return 0 }, name: '# of edges', className: this.EDGES_CLASS, rules: [] },
-    { incrementFn: (x) => { return 1; }, name: '# of nodes + # of edges', className: this.NOT_SELECTED, rules: [] }];
+    { incrementFn: (x) => { return 1; }, name: '# of nodes + # of edges', className: this.ANY_CLASS, rules: [] }];
 
     this.refreshTimebar();
   }
@@ -65,7 +68,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     };
     flatpickr('#filter-date-inp0', opt);
 
-    this.classOptions.push({ text: this.NOT_SELECTED, isDisabled: false });
+    this.classOptions.push({ text: this.ANY_CLASS, isDisabled: false });
     this.classOptions.push({ text: this.NODES_CLASS, isDisabled: false });
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
@@ -86,7 +89,7 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   private clearInput() {
     this.filteringRule = null;
-    this.currMetricName = '';
+    this.currMetricName = 'untitled';
     this.filterInp = '';
     this.newStatBtnTxt = 'Add Statistic';
     this.editingIdx = -1;
@@ -105,8 +108,12 @@ export class TimebarMetricEditorComponent implements OnInit {
     if (isNodeClassSelected) {
       this.selectedClassProps.push(...Object.keys(properties.nodes[txt]));
       this.selectedClassProps.push(...this.getEdgeTypesRelated(txt));
+      this.isGenericTypeSelected = false;
     } else if (isEdgeClassSelected) {
       this.selectedClassProps.push(...Object.keys(properties.edges[txt]));
+      this.isGenericTypeSelected = false;
+    } else {
+      this.isGenericTypeSelected = true;
     }
     this.selectedProp = null;
     this.selectedOperatorKey = null;
@@ -247,22 +254,44 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.clearInput();
       this.newStatBtnTxt = 'Add Statictic';
     } else {
-      for (let m of this.currMetrics) {
-        m.isEditing = false;
-      }
+      this.clearEditingOnRules();
       this.isHideEditing = false;
+      this.isAddingNew = false;
       this.editingIdx = i;
       this.currMetrics[i].isEditing = true;
       this.filteringRule = this.currMetrics[i];
       this.currMetricName = this.currMetrics[i].name;
       this.selectedClass = this.currMetrics[i].className;
+      this.changeSelectedClass();
       this.isAClassSelectedForMetric = true;
-      this.newStatBtnTxt = 'Update Statictic';
+      this.newStatBtnTxt = 'Update Statistic';
     }
+  }
+
+  private newMetricClick() {
+    this.isHideEditing = !this.isHideEditing;
+    this.isAddingNew = !this.isAddingNew;
+    if (this.isAddingNew) {
+      this.isHideEditing = false;
+    }
+    if (!this.isHideEditing) {
+      this.clearInput();
+    }
+    this.clearEditingOnRules();
+  }
+
+  private clearEditingOnRules() {
+    for (let m of this.currMetrics) {
+      m.isEditing = false;
+    }
+    this.editingIdx = -1;
   }
 
   private addStat() {
     this.isAClassSelectedForMetric = false;
+    if (!this.currMetricName || this.currMetricName.length < 2) {
+      this.currMetricName = 'untitled';
+    }
     this.filteringRule.name = this.currMetricName;
     if (this.editingIdx != -1) {
       this.currMetrics[this.editingIdx] = this.filteringRule;
@@ -325,7 +354,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       classCondition = ` x.id()[0] === 'e' `;
     } else if (m.className.toLowerCase() == this.NODES_CLASS.toLowerCase()) {
       classCondition = ` x.id()[0] === 'n' `;
-    } else if (m.className.toLowerCase() == this.NOT_SELECTED.toLowerCase()) {
+    } else if (m.className.toLowerCase() == this.ANY_CLASS.toLowerCase()) {
       classCondition = ``;
     } else {
       classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;

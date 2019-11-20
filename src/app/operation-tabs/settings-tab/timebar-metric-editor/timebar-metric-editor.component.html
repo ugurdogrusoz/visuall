@@ -1,6 +1,6 @@
 <div class="panel-heading collapsed px-1" data-toggle="collapse" data-target="#new-statistic-panel"
   aria-expanded="false">
-  <p class="panel-title accordion-toggle"><b class="va-heading3">Configure statistics:</b></p>
+  <p class="panel-title accordion-toggle"><b class="va-heading3">Configure statistics</b></p>
 </div>
 
 <div id="new-statistic-panel" class="collapse">
@@ -10,17 +10,13 @@
     <div *ngFor="let r of currMetrics; let i = index;" class="border rounded va-text m-1 p-1"
       [ngClass]="{'timebar-metric-editing': r.isEditing}">
       <div class="text-center">
-        <b (click)="editMetric(i)" class="timebar-metric-name">{{r.name}}</b>
-        <a href="#" class="delete-rule-link text-right pull-right" (click)="deleteMetric(i)">
-          &nbsp;<img src="assets/img/close.svg" height="16px" width="16px" alt="Delete metric">
-        </a>
+        <b (click)="editMetric(i)" class="timebar-metric-name">{{r.name}}</b>&nbsp;
+        <img src="assets/img/close.svg" (click)="deleteMetric(i)" alt="Delete metric">
       </div>
     </div>
-    <div class="va-text m-1 p-1">
-      <div class="text-center">
-        <a href="#" class="pull-right">
-          <img src="assets/img/add.svg" height="18px" width="18px" alt="New metric" (click)="isHideEditing = !isHideEditing">
-        </a>
+    <div class="border rounded va-text m-1 p-1" [ngClass]="{'timebar-metric-editing': isAddingNew}">
+      <div class="text-center" (click)="newMetricClick()">
+        <b class="timebar-metric-name">untitled</b>&nbsp;<img src="assets/img/add.svg" alt="New metric">
       </div>
     </div>
   </div>
@@ -43,32 +39,30 @@
     <!-- rule input -->
     <div class="row mx-1 my-3 no-gutters justify-content-center" id="filter-rule-inputs">
       <div class="col-3 px-1">
-        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp"
+        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp" [disabled]="isGenericTypeSelected"
           (change)="changeSelectedProp()">
           <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
         </select>
       </div>
 
       <div class="col-3 pr-1">
-        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey">
+        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey" [disabled]="isGenericTypeSelected">
           <option *ngFor="let o of operatorKeys" [value]="o">{{o}}</option>
         </select>
       </div>
 
       <div class="col-5 pr-1">
         <div [hidden]="isDateProp">
-          <input type="text" title="Value" [(ngModel)]="filterInp"
+          <input type="text" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected"
             class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
         </div>
         <div [hidden]="!isDateProp">
-          <input type="text" id="filter-date-inp0" class="form-control query-input-wide va-small-text">
+          <input type="text" id="filter-date-inp0" [disabled]="isGenericTypeSelected" class="form-control query-input-wide va-small-text">
         </div>
       </div>
 
       <div class="col-1 pr-1 text-center">
-        <a href="#" id="filter-add-rule-btn" title="Add Rule" (click)="onAddRuleClick()">
-          <img src="assets/img/add.svg" alt="Add Rule">
-        </a>
+        <img src="assets/img/add.svg" alt="Add Rule" (click)="onAddRuleClick()">
       </div>
     </div>
 
