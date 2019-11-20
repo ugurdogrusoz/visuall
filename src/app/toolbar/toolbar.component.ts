@@ -101,10 +101,10 @@ export class ToolbarComponent implements OnInit {
 
   highlightSearch() {
     const q = this.generateCyQueryForStrSearch(this.searchTxt);
-
     let e1 = this.findInListProps(this.searchTxt);
     let e2 = this._g.cy.$(q);
-    let options = { eles: e1.union(e2), option: HIGHLIGHT_TYPE };
+    let e3 = this.searchNumberProps(this.searchTxt);
+    let options = { eles: e1.union(e2).union(e3), option: HIGHLIGHT_TYPE };
     this._g.viewUtils.highlight(options);
   }
 
@@ -141,6 +141,21 @@ export class ToolbarComponent implements OnInit {
       }
       return false;
     });
+  }
+
+  searchNumberProps(txt: string) {
+    let n = Number(txt);
+    if (!n) {
+      return this._g.cy.collection();
+    }
+    const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['int', 'float']);
+    let cyQuery = '';
+    for (let name of Array.from(propNames)) {
+      cyQuery += `[${name} = ${n}],`
+    }
+    // delete last
+    cyQuery = cyQuery.substr(0, cyQuery.length - 1);
+    return this._g.cy.$(cyQuery);
   }
 
   highlightSelected() { this._cyService.highlightSelected(); }
