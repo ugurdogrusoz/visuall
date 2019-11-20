@@ -3,3 +3,11 @@ img{
   height: 16px;
   cursor: pointer;
 }
+
+.timebar-metric-name {
+  cursor: pointer;
+}
+
+.timebar-metric-editing {
+  background: #eaeaea;
+}

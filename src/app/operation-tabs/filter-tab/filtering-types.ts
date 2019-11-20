@@ -25,11 +25,12 @@ export interface iTimebarMetric {
   incrementFn: (x: any) => number;
   rules: iMetricCondition[];
   name: string;
+  className: string;
+  isEdge?: boolean;
+  isEditing?: boolean;
 }
 
 export interface iMetricCondition {
-  className: string;
-  isEdge?: boolean;
   propertyOperand?: string;
   propertyType?: string;
   operator?: string;

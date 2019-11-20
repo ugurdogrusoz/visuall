@@ -1,116 +1,117 @@
-<!-- current metrics -->
-<div *ngFor="let r of currMetrics; let i = index;" class="border rounded va-text m-1 p-1">
-  <div>
-    <div class="text-center">
-      <b>{{r.name}}</b>
-      <a href="#" class="delete-rule-link text-right pull-right" (click)="deleteMetric(i)">
-        &nbsp;<img src="assets/img/close.svg" height="16px" width="16px" alt="Delete metric">
-      </a>
-    </div>
-    <div>
-      <span *ngIf="getIdxOfSumRule(r) == -1; else aSumMetric">count of</span>
-      <ng-template #aSumMetric>sum of</ng-template>
-    </div>
-  </div>
-  <div *ngFor="let rule of r.rules; let j = index;" class="mx-1 my-2">
-    <div class="row align-items-center no-gutters">
-      <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"> {{rule.ruleOperator}} </a>
-      <b>&nbsp;{{rule.className}}</b>
-      <b *ngIf="rule.propertyOperand && rule.propertyOperand !== NOT_SELECTED">&rarr;{{rule.propertyOperand}}
-        <span *ngIf="rule.operator && rule.operator !== NOT_SELECTED"> {{rule.operator}} {{rule.inputOperand}}</span>
-      </b>
-    </div>
-  </div>
-</div>
-
 <div class="panel-heading collapsed px-1" data-toggle="collapse" data-target="#new-statistic-panel"
   aria-expanded="false">
-  <p class="panel-title accordion-toggle"><b class="va-heading3">New Statistic</b></p>
+  <p class="panel-title accordion-toggle"><b class="va-heading3">Configure statistics:</b></p>
 </div>
 
-<div id="new-statistic-panel">
-  <div class="form-inline m-2 justify-content-center">
-    <label class="va-heading3">Name:&nbsp;</label>
-    <input type="text" title="Name" [(ngModel)]="currMetricName"
-      class="form-control filter-form filter-input va-small-text">
+<div id="new-statistic-panel" class="collapse">
 
-    <label class="va-heading3">&nbsp;Type:&nbsp;</label>
-    <select [disabled]="isAClassSelectedForMetric" class="custom-select filter-form va-text" [(ngModel)]="selectedClass"
-      (change)="changeSelectedClass()">
-      <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
-      </option>
-    </select>
+  <div class="d-flex flex-wrap">
+    <!-- current metrics -->
+    <div *ngFor="let r of currMetrics; let i = index;" class="border rounded va-text m-1 p-1"
+      [ngClass]="{'timebar-metric-editing': r.isEditing}">
+      <div class="text-center">
+        <b (click)="editMetric(i)" class="timebar-metric-name">{{r.name}}</b>
+        <a href="#" class="delete-rule-link text-right pull-right" (click)="deleteMetric(i)">
+          &nbsp;<img src="assets/img/close.svg" height="16px" width="16px" alt="Delete metric">
+        </a>
+      </div>
+    </div>
+    <div class="va-text m-1 p-1">
+      <div class="text-center">
+        <a href="#" class="pull-right">
+          <img src="assets/img/add.svg" height="18px" width="18px" alt="New metric" (click)="isHideEditing = !isHideEditing">
+        </a>
+      </div>
+    </div>
   </div>
+  <!-- editing div (input and current filter) -->
+  <div [ngClass]="{'collapse': isHideEditing}">
+    <!-- name and type input -->
+    <div class="form-inline m-2 justify-content-center">
+      <label class="va-heading3">Name:&nbsp;</label>
+      <input type="text" title="Name" [(ngModel)]="currMetricName"
+        class="form-control filter-form filter-input va-small-text">
 
-  <div class="row mx-1 my-3 no-gutters justify-content-center" id="filter-rule-inputs">
-    <div class="col-3 px-1">
-      <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp"
-        (change)="changeSelectedProp()">
-        <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
+      <label class="va-heading3">&nbsp;Type:&nbsp;</label>
+      <select [disabled]="isAClassSelectedForMetric" class="custom-select filter-form va-text"
+        [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
+        <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
+        </option>
       </select>
     </div>
 
-    <div class="col-3 pr-1">
-      <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey">
-        <option *ngFor="let o of operatorKeys" [value]="o">{{o}}</option>
-      </select>
-    </div>
-
-    <div class="col-5 pr-1">
-      <div [hidden]="isDateProp">
-        <input type="text" title="Value" [(ngModel)]="filterInp"
-          class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
+    <!-- rule input -->
+    <div class="row mx-1 my-3 no-gutters justify-content-center" id="filter-rule-inputs">
+      <div class="col-3 px-1">
+        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp"
+          (change)="changeSelectedProp()">
+          <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
+        </select>
       </div>
-      <div [hidden]="!isDateProp">
-        <input type="text" id="filter-date-inp0" class="form-control query-input-wide va-small-text">
+
+      <div class="col-3 pr-1">
+        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey">
+          <option *ngFor="let o of operatorKeys" [value]="o">{{o}}</option>
+        </select>
+      </div>
+
+      <div class="col-5 pr-1">
+        <div [hidden]="isDateProp">
+          <input type="text" title="Value" [(ngModel)]="filterInp"
+            class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
+        </div>
+        <div [hidden]="!isDateProp">
+          <input type="text" id="filter-date-inp0" class="form-control query-input-wide va-small-text">
+        </div>
+      </div>
+
+      <div class="col-1 pr-1 text-center">
+        <a href="#" id="filter-add-rule-btn" title="Add Rule" (click)="onAddRuleClick()">
+          <img src="assets/img/add.svg" alt="Add Rule">
+        </a>
       </div>
     </div>
 
-    <div class="col-1 pr-1 text-center">
-      <a href="#" id="filter-add-rule-btn" title="Add Rule" (click)="onAddRuleClick()">
-        <img src="assets/img/add.svg" alt="Add Rule">
-      </a>
-    </div>
-  </div>
+    <!-- create/edit rule -->
+    <div class="text-center borderless mx-1 my-3">
+      <div *ngIf="filteringRule" class="border">
+        <span class="va-text">
+          Bring <b>{{filteringRule.className}}</b> where:
+        </span>
+        <div *ngFor="let r of filteringRule.rules; let j = index;" class="mx-1 my-2">
+          <div class="row align-items-center no-gutters">
+            <!-- up, down buttons for the rule -->
+            <div class="col-lg-2 col-sm-1 text-left">
+              <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
+                <img src="assets/img/up-arrow.svg" alt="Navigate Up">
+              </a>
+              <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(j, false)" *ngIf="j!=0">
+                <img src="assets/img/down-arrow.svg" alt="Navigate Down">
+              </a>
+            </div>
+            <!-- rule body -->
+            <div class="col-lg-9 col-sm-10 text-left va-text">
+              <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
+                (click)="ruleOperatorClicked(j, r.ruleOperator)">{{r.ruleOperator}}</a>
 
-  <div class="text-center borderless mx-1 my-3">
-    <div *ngIf="filteringRule" class="border">
-      <span class="va-text">
-        <b>{{filteringRule.name}}</b>
-      </span>
-      <div *ngFor="let r of filteringRule.rules; let j = index;" class="mx-1 my-2">
-        <div class="row align-items-center no-gutters">
-          <!-- up, down buttons for the rule -->
-          <div class="col-lg-2 col-sm-1 text-left">
-            <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
-              <img src="assets/img/up-arrow.svg" alt="Navigate Up">
-            </a>
-            <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(j, false)" *ngIf="j!=0">
-              <img src="assets/img/down-arrow.svg" alt="Navigate Down">
-            </a>
-          </div>
-          <!-- rule body -->
-          <div class="col-lg-9 col-sm-10 text-left va-text">
-            <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
-              (click)="ruleOperatorClicked(j, r.ruleOperator)">{{r.ruleOperator}}</a>
-
-            <b>{{r.className}}</b>
-            <b *ngIf="r.propertyOperand && r.propertyOperand !== NOT_SELECTED">&rarr;{{r.propertyOperand}}
-              <span *ngIf="r.operator && r.operator !== NOT_SELECTED"> {{r.operator}} {{r.inputOperand}}</span>
-            </b>
-          </div>
-          <!-- delete rule button -->
-          <div class="col-1 text-right pr-1">
-            <a href="#" class="delete-rule-link" title="Delete rule" (click)="deleteFilterRule(j)">
-              <img src="assets/img/close.svg" alt="Delete rule">
-            </a>
+              <span *ngIf="r.propertyOperand && r.propertyOperand !== NOT_SELECTED">
+                <b>{{r.propertyOperand}}</b>
+                <span *ngIf="r.operator && r.operator !== NOT_SELECTED"> {{r.operator}} <b>{{r.inputOperand}}</b></span>
+              </span>
+            </div>
+            <!-- delete rule button -->
+            <div class="col-1 text-right pr-1">
+              <a href="#" class="delete-rule-link" title="Delete rule" (click)="deleteFilterRule(j)">
+                <img src="assets/img/close.svg" alt="Delete rule">
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
-      <input class="btn btn-dark va-text m-2" type="button" value="Add Statistic" (click)="addStat()">
+      <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
+        <input class="btn btn-dark va-text m-2" type="button" [value]="newStatBtnTxt" (click)="addStat()">
+      </div>
     </div>
   </div>
 </div>

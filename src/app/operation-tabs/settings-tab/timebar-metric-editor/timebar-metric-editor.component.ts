@@ -3,7 +3,7 @@ import properties from '../../../../assets/generated/properties.json';
 import ModelDescription from '../../../../model_description.json';
 import { iClassOption, iTimebarMetric, iMetricCondition } from '../../filter-tab/filtering-types.js';
 import {
-  NUMBER_OPERATORS, TEXT_OPERATORS, LIST_OPERATORS, compareUsingOperator, findTypeOfAttribute, FILTER_CLASS_HIDE, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS
+  NUMBER_OPERATORS, TEXT_OPERATORS, LIST_OPERATORS, findTypeOfAttribute, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS
 } from '../../../constants';
 import flatpickr from 'flatpickr';
 import { TimebarService } from '../../../timebar.service';
@@ -37,6 +37,9 @@ export class TimebarMetricEditorComponent implements OnInit {
   private readonly NODES_CLASS = '─── Nodes ───';
   private readonly EDGES_CLASS = '─── Edges ───';
   private isAClassSelectedForMetric = false;
+  private editingIdx = -1;
+  private newStatBtnTxt = 'Add Statistic';
+  private isHideEditing = true;
 
   constructor(private _timeBarService: TimebarService) {
     this.nodeClasses = new Set([]);
@@ -49,9 +52,9 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.currDatetimes = [new Date()];
     this.filteredTypeCount = 0;
     this.filteringRule = null;
-    this.currMetrics = [{ incrementFn: (x) => { if (x.id()[0] === 'n') return 1; return 0 }, name: '# of nodes', rules: [{ className: this.NODES_CLASS }] },
-    { incrementFn: (x) => { if (x.id()[0] === 'e') return 1; return 0 }, name: '# of edges', rules: [{ className: this.EDGES_CLASS }] },
-    { incrementFn: (x) => { return 1; }, name: '# of nodes + # of edges', rules: [{ className: this.NOT_SELECTED }] }];
+    this.currMetrics = [{ incrementFn: (x) => { if (x.id()[0] === 'n') return 1; return 0 }, name: '# of nodes', className: this.NODES_CLASS, rules: [] },
+    { incrementFn: (x) => { if (x.id()[0] === 'e') return 1; return 0 }, name: '# of edges', className: this.EDGES_CLASS, rules: [] },
+    { incrementFn: (x) => { return 1; }, name: '# of nodes + # of edges', className: this.NOT_SELECTED, rules: [] }];
 
     this.refreshTimebar();
   }
@@ -78,7 +81,17 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.classOptions.push({ text: key, isDisabled: false });
     }
 
+    this.clearInput();
+  }
+
+  private clearInput() {
+    this.filteringRule = null;
+    this.currMetricName = '';
+    this.filterInp = '';
+    this.newStatBtnTxt = 'Add Statistic';
+    this.editingIdx = -1;
     this.selectedClass = this.classOptions[0].text;
+    this.isAClassSelectedForMetric = false;
     this.changeSelectedClass();
   }
 
@@ -164,8 +177,6 @@ export class TimebarMetricEditorComponent implements OnInit {
 
     const isEdge = this.edgeClasses.has(className);
     const rule: iMetricCondition = {
-      isEdge: isEdge,
-      className: className,
       propertyOperand: attribute,
       propertyType: this.attributeType,
       rawInput: value,
@@ -184,7 +195,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       if (!this.currMetricName) {
         this.currMetricName = '';
       }
-      this.filteringRule = { rules: [r], name: this.currMetricName, incrementFn: null };
+      this.filteringRule = { rules: [r], name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: className };
     } else {
       this.filteringRule.name = this.currMetricName;
       this.filteringRule.rules.push(r);
@@ -208,23 +219,60 @@ export class TimebarMetricEditorComponent implements OnInit {
   private deleteFilterRule(j: number) {
     if (this.filteringRule.rules.length == 1) {
       this.filteringRule = null;
-      this.isAClassSelectedForMetric = false;
+      if (this.editingIdx == -1) {
+        this.isAClassSelectedForMetric = false;
+      }
     } else {
       this.filteringRule.rules.splice(j, 1);
     }
   }
 
   private deleteMetric(i: number) {
+    if (this.currMetrics.length < 2) {
+      return;
+    }
     this.currMetrics.splice(i, 1);
+    if (this.editingIdx == i) {
+      this.clearInput();
+    }
     this.refreshTimebar();
+  }
+
+  private editMetric(i: number) {
+
+    if (this.currMetrics[i].isEditing) {
+      this.isHideEditing = true;
+      this.editingIdx = -1;
+      this.currMetrics[i].isEditing = false;
+      this.clearInput();
+      this.newStatBtnTxt = 'Add Statictic';
+    } else {
+      for (let m of this.currMetrics) {
+        m.isEditing = false;
+      }
+      this.isHideEditing = false;
+      this.editingIdx = i;
+      this.currMetrics[i].isEditing = true;
+      this.filteringRule = this.currMetrics[i];
+      this.currMetricName = this.currMetrics[i].name;
+      this.selectedClass = this.currMetrics[i].className;
+      this.isAClassSelectedForMetric = true;
+      this.newStatBtnTxt = 'Update Statictic';
+    }
   }
 
   private addStat() {
     this.isAClassSelectedForMetric = false;
-    this.currMetrics.push(this.filteringRule);
+    this.filteringRule.name = this.currMetricName;
+    if (this.editingIdx != -1) {
+      this.currMetrics[this.editingIdx] = this.filteringRule;
+      this.currMetrics[this.editingIdx].isEditing = false;
+    } else {
+      this.currMetrics.push(this.filteringRule);
+    }
     this.setFnsForMetrics();
     this.refreshTimebar();
-    this.filteringRule = null;
+    this.clearInput();
   }
 
   private changeFilterRuleOrder(j: number, isUp: boolean) {
@@ -250,65 +298,63 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   private setFnsForMetrics() {
     for (let m of this.currMetrics) {
-      let fnStr = '';
-      let condition = '';
-      let classCondition = '';
-      let propertyCondition = '';
-      let ruleCnt = 0;
-      for (let r of m.rules) {
-        // apply class condition
-        if (r.className.toLowerCase() == this.EDGES_CLASS.toLowerCase()) {
-          classCondition = ` x.id()[0] === 'e' `;
-        } else if (r.className.toLowerCase() == this.NODES_CLASS.toLowerCase()) {
-          classCondition = ` x.id()[0] === 'n' `;
-        } else if (r.className.toLowerCase() == this.NOT_SELECTED.toLowerCase()) {
-          classCondition = ``;
-        } else {
-          classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${r.className.toLowerCase()}') `;
-        }
-        // apply property condition
-        if (!r.propertyOperand || r.propertyOperand == this.NOT_SELECTED) {
-          propertyCondition = '';
-        } else if (r.operator && r.inputOperand) {
-          propertyCondition = this.getJsExpressionForMetricRule(r);
-        }
-        // construct condition
-        if (classCondition.length < 1 && propertyCondition.length < 1) {
-          condition = '(true)';
-        } else if (classCondition.length < 1) {
-          condition = `(${propertyCondition})`;
-        } else if (propertyCondition.length < 1) {
-          condition = `(${classCondition})`;
-        } else {
-          condition = `(${classCondition} && ${propertyCondition})`;
-        }
-        ruleCnt++;
-        // if the first condition
-        if (ruleCnt == 1) {
-          fnStr += `if(${condition}`
-        }
-        // if greater than first 
-        if (ruleCnt > 1) {
-          fnStr += `&& ${condition}`
-        }
-      }
+      let fnStr = this.getBoolExpressionFromMetric(m);
       const idxOfSumRule = this.getIdxOfSumRule(m);
       if (idxOfSumRule == -1) {
-        fnStr += `) return 1;`
+        fnStr += `return 1;`
       } else {
         const r = m.rules[idxOfSumRule];
         if (r.propertyType == 'edge') {
           let s = r.propertyOperand.toUpperCase();
-          fnStr += `) return x.connectedEdges('.${s}').length;`
+          fnStr += `return x.connectedEdges('.${s}').length;`
         } else {
-          fnStr += `) return x.data().${r.propertyOperand};`
+          fnStr += `return x.data().${r.propertyOperand};`
         }
       }
-      fnStr += ' else return 0;'
+      fnStr += ' return 0;'
       console.log('fnStr: ', fnStr);
       m.incrementFn = new Function('x', fnStr) as (x: any) => number;
     }
     this.refreshTimebar();
+  }
+
+  private getBoolExpressionFromMetric(m: iTimebarMetric): string {
+    let classCondition = '';
+    // apply class condition
+    if (m.className.toLowerCase() == this.EDGES_CLASS.toLowerCase()) {
+      classCondition = ` x.id()[0] === 'e' `;
+    } else if (m.className.toLowerCase() == this.NODES_CLASS.toLowerCase()) {
+      classCondition = ` x.id()[0] === 'n' `;
+    } else if (m.className.toLowerCase() == this.NOT_SELECTED.toLowerCase()) {
+      classCondition = ``;
+    } else {
+      classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;
+    }
+    if (classCondition.length < 1) {
+      return 'if (true)';
+    }
+    let propertyCondition = '';
+    for (let [i, r] of m.rules.entries()) {
+      let boolExp = '';
+      // apply property condition
+      if (!r.propertyOperand || r.propertyOperand == this.NOT_SELECTED) {
+        boolExp = '';
+      } else if (r.operator && r.inputOperand) {
+        boolExp = this.getJsExpressionForMetricRule(r);
+      }
+      if (i > 0) {
+        if (r.ruleOperator == 'OR') {
+          propertyCondition += ' || ';
+        } else {
+          propertyCondition += ' && ';
+        }
+      }
+      propertyCondition += boolExp;
+    }
+    if (propertyCondition.length < 1) {
+      return `if (${classCondition})`;
+    }
+    return `if ( (${classCondition}) && (${propertyCondition}))`;
   }
 
   private getJsExpressionForMetricRule(r: iMetricCondition) {
@@ -341,7 +387,6 @@ export class TimebarMetricEditorComponent implements OnInit {
       if ((!r.operator) && (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'edge')) {
         return i;
       }
-
       i++;
     }
     return -1;
