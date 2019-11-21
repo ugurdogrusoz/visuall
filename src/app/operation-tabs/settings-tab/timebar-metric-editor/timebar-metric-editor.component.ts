@@ -17,32 +17,32 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   private nodeClasses: Set<string>;
   private edgeClasses: Set<string>;
-  private classOptions: iClassOption[];
-  private selectedClassProps: string[];
-  private selectedClass: string;
-  private selectedProp: string;
-  private filterInp: string;
+  classOptions: iClassOption[];
+  selectedClassProps: string[];
+  selectedClass: string;
+  selectedProp: string;
+  filterInp: string;
   private operators: any;
   private attributeType: string;
-  private operatorKeys: string[];
-  private isDateProp: boolean;
-  private selectedOperatorKey: string;
+  operatorKeys: string[];
+  isDateProp: boolean;
+  selectedOperatorKey: string;
   private currDatetimes: Date[];
-  private filteringRule: iTimebarMetric;
+  filteringRule: iTimebarMetric;
   private filteredTypeCount: number;
-  private currMetrics: iTimebarMetric[];
-  private currMetricName: string = 'untitled';
+  currMetrics: iTimebarMetric[];
+  currMetricName: string = 'untitled';
   private readonly NO_OPERATION = 'no_op';
   private readonly ANY_CLASS = 'Any Object';
   private readonly NOT_SELECTED = '───';
   private readonly NODES_CLASS = 'Any Node';
   private readonly EDGES_CLASS = 'Any Edge';
-  private isAClassSelectedForMetric = false;
+  isAClassSelectedForMetric = false;
   private editingIdx = -1;
   private newStatBtnTxt = 'Add Statistic';
-  private isHideEditing = true;
-  private isAddingNew = false;
-  private isGenericTypeSelected = true;
+  isHideEditing = true;
+  isAddingNew = false;
+  isGenericTypeSelected = true;
 
   constructor(private _timeBarService: TimebarService) {
     this.nodeClasses = new Set([]);
@@ -98,7 +98,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.changeSelectedClass();
   }
 
-  private changeSelectedClass() {
+  changeSelectedClass() {
     const txt = this.selectedClass;
     let isNodeClassSelected: boolean = properties.nodes.hasOwnProperty(txt);
     let isEdgeClassSelected: boolean = properties.edges.hasOwnProperty(txt);
@@ -130,7 +130,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     return r;
   }
 
-  private changeSelectedProp() {
+  changeSelectedProp() {
     let attrType = findTypeOfAttribute(this.selectedProp, properties.nodes, properties.edges);
     if (this.edgeClasses.has(this.selectedProp)) {
       attrType = 'edge';
@@ -166,7 +166,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     }
   }
 
-  private onAddRuleClick() {
+  onAddRuleClick() {
     const logicOperator = 'OR';
     const className = this.selectedClass;
     const attribute = this.selectedProp;
@@ -268,7 +268,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     }
   }
 
-  private newMetricClick() {
+  newMetricClick() {
     this.isHideEditing = !this.isHideEditing;
     this.isAddingNew = !this.isAddingNew;
     if (this.isAddingNew) {
