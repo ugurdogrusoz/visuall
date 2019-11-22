@@ -1,6 +1,6 @@
 <div class="panel-heading collapsed px-1" data-toggle="collapse" data-target="#new-statistic-panel"
   aria-expanded="false">
-  <p class="panel-title accordion-toggle"><b class="va-heading3">Configure statistics</b></p>
+  <p class="panel-title accordion-toggle"><b class="va-heading3">Configure Statistics</b></p>
 </div>
 
 <div id="new-statistic-panel" class="collapse">
@@ -39,14 +39,15 @@
     <!-- rule input -->
     <div class="row mx-1 my-3 no-gutters justify-content-center" id="filter-rule-inputs">
       <div class="col-3 px-1">
-        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp" [disabled]="isGenericTypeSelected"
-          (change)="changeSelectedProp()">
+        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp"
+          [disabled]="isGenericTypeSelected" (change)="changeSelectedProp()">
           <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
         </select>
       </div>
 
       <div class="col-3 pr-1">
-        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey" [disabled]="isGenericTypeSelected">
+        <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey"
+          [disabled]="isGenericTypeSelected">
           <option *ngFor="let o of operatorKeys" [value]="o">{{o}}</option>
         </select>
       </div>
@@ -57,7 +58,8 @@
             class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
         </div>
         <div [hidden]="!isDateProp">
-          <input type="text" id="filter-date-inp0" [disabled]="isGenericTypeSelected" class="form-control query-input-wide va-small-text">
+          <input type="text" id="filter-date-inp0" [disabled]="isGenericTypeSelected"
+            class="form-control query-input-wide va-small-text">
         </div>
       </div>
 
@@ -68,12 +70,15 @@
 
     <!-- create/edit rule -->
     <div class="text-center borderless mx-1 my-3">
-      <div *ngIf="filteringRule" class="border">
-        <span class="va-text">
-          Bring <b>{{filteringRule.className}}</b> where:
-        </span>
+      <div *ngIf="filteringRule" class="border va-text">
+        <span *ngIf="!isSumMetric">Count</span>
+        <span *ngIf="isSumMetric">Sum</span>
+        <b>&nbsp;{{filteringRule.className}}&nbsp;</b>
+        <b *ngIf="isSumMetric">{{filteringRule.rules[0].propertyOperand}} </b>
+        <span
+          *ngIf="(!isSumMetric && filteringRule.rules.length > 0) || (isSumMetric && filteringRule.rules.length > 1)">&nbsp;where:</span>
         <div *ngFor="let r of filteringRule.rules; let j = index;" class="mx-1 my-2">
-          <div class="row align-items-center no-gutters">
+          <div class="row align-items-center no-gutters" *ngIf="!isSumRule(r)">
             <!-- up, down buttons for the rule -->
             <div class="col-lg-2 col-sm-1 text-left">
               <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
@@ -85,10 +90,10 @@
             </div>
             <!-- rule body -->
             <div class="col-lg-9 col-sm-10 text-left va-text">
-              <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
+              <a href="#" class="logic-op-link text-center mx-1"
+                *ngIf="(isSumMetric && j > 1) || (!isSumMetric && j > 0)"
                 (click)="ruleOperatorClicked(j, r.ruleOperator)">{{r.ruleOperator}}</a>
-
-              <span *ngIf="r.propertyOperand && r.propertyOperand !== NOT_SELECTED">
+              <span>
                 <b>{{r.propertyOperand}}</b>
                 <span *ngIf="r.operator && r.operator !== NOT_SELECTED"> {{r.operator}} <b>{{r.inputOperand}}</b></span>
               </span>

@@ -43,6 +43,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   isHideEditing = true;
   isAddingNew = false;
   isGenericTypeSelected = true;
+  isSumMetric = false;
 
   constructor(private _timeBarService: TimebarService) {
     this.nodeClasses = new Set([]);
@@ -96,6 +97,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.selectedClass = this.classOptions[0].text;
     this.isAClassSelectedForMetric = false;
     this.changeSelectedClass();
+    this.isSumMetric = false;
   }
 
   changeSelectedClass() {
@@ -202,12 +204,16 @@ export class TimebarMetricEditorComponent implements OnInit {
       if (!this.currMetricName) {
         this.currMetricName = '';
       }
-      this.filteringRule = { rules: [r], name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: className };
+      this.filteringRule = { rules: [], name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: className };
     } else {
       this.filteringRule.name = this.currMetricName;
+    }
+    if (r.propertyOperand && r.propertyOperand.length > 0 && r.propertyOperand != this.NOT_SELECTED) {
       this.filteringRule.rules.push(r);
     }
+    this.putSumRuleAtStart(this.filteringRule);
     this.isAClassSelectedForMetric = true;
+    this.isSumMetric = this.getIdxOfSumRule(this.filteringRule) > -1;
   }
 
   private getEdgeTypesRelated(nodeType: string): string[] {
@@ -232,6 +238,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     } else {
       this.filteringRule.rules.splice(j, 1);
     }
+    this.isSumMetric = this.getIdxOfSumRule(this.filteringRule) > -1;
   }
 
   private deleteMetric(i: number) {
@@ -265,6 +272,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.changeSelectedClass();
       this.isAClassSelectedForMetric = true;
       this.newStatBtnTxt = 'Update Statistic';
+      this.isSumMetric = this.getIdxOfSumRule(this.filteringRule) > -1;
     }
   }
 
@@ -296,6 +304,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     if (this.editingIdx != -1) {
       this.currMetrics[this.editingIdx] = this.filteringRule;
       this.currMetrics[this.editingIdx].isEditing = false;
+      this.isHideEditing = true;
     } else {
       this.currMetrics.push(this.filteringRule);
     }
@@ -311,7 +320,12 @@ export class TimebarMetricEditorComponent implements OnInit {
     let idx = j + 1;
     if (isUp) {
       idx = j - 1;
+      // sum rule must stay at top
+      if (this.isSumRule(this.filteringRule.rules[idx])) {
+        return;
+      }
     }
+
     let tmp = this.filteringRule.rules[j];
     this.filteringRule.rules[j] = this.filteringRule.rules[idx];
     this.filteringRule.rules[idx] = tmp;
@@ -355,23 +369,20 @@ export class TimebarMetricEditorComponent implements OnInit {
     } else if (m.className.toLowerCase() == this.NODES_CLASS.toLowerCase()) {
       classCondition = ` x.id()[0] === 'n' `;
     } else if (m.className.toLowerCase() == this.ANY_CLASS.toLowerCase()) {
-      classCondition = ``;
+      classCondition = ` true `;
     } else {
       classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;
     }
-    if (classCondition.length < 1) {
-      return 'if (true)';
-    }
+
     let propertyCondition = '';
+    let prevBoolExp = '';
     for (let [i, r] of m.rules.entries()) {
       let boolExp = '';
       // apply property condition
-      if (!r.propertyOperand || r.propertyOperand == this.NOT_SELECTED) {
-        boolExp = '';
-      } else if (r.operator && r.inputOperand) {
+      if (r.operator && r.inputOperand) {
         boolExp = this.getJsExpressionForMetricRule(r);
       }
-      if (i > 0) {
+      if (i > 0 && prevBoolExp.length > 0) {
         if (r.ruleOperator == 'OR') {
           propertyCondition += ' || ';
         } else {
@@ -379,6 +390,7 @@ export class TimebarMetricEditorComponent implements OnInit {
         }
       }
       propertyCondition += boolExp;
+      prevBoolExp = boolExp;
     }
     if (propertyCondition.length < 1) {
       return `if (${classCondition})`;
@@ -413,12 +425,26 @@ export class TimebarMetricEditorComponent implements OnInit {
   private getIdxOfSumRule(m: iTimebarMetric) {
     let i = 0;
     for (let r of m.rules) {
-      if ((!r.operator) && (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'edge')) {
+      if (this.isSumRule(r)) {
         return i;
       }
       i++;
     }
     return -1;
+  }
+
+  private isSumRule(r: iMetricCondition): boolean {
+    return (!r.operator) && (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'edge');
+  }
+
+  private putSumRuleAtStart(m: iTimebarMetric) {
+    const idx = this.getIdxOfSumRule(m);
+    if (idx < 1) {
+      return;
+    }
+    const tmp = m.rules[idx];
+    m.rules[idx] = m.rules[0];
+    m.rules[0] = tmp;
   }
 
   private refreshTimebar() {
