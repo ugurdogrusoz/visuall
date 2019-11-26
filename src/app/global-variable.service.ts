@@ -13,7 +13,8 @@ export class GlobalVariableService {
   isIgnoreCaseInText: boolean;
   isTimebarEnabled: boolean;
   isAutoIncrementalLayoutOnChange: boolean;
-
+  setLoadingStatus: (boolean) => void;
+  
   constructor() {
     this.isIgnoreCaseInText = false;
     this.isTimebarEnabled = true;

@@ -13,7 +13,8 @@ export class CytoscapeComponent implements OnInit {
 
   constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
   cyClass = false;
-
+  isLoading = true;
+  
   ngOnInit() {
     this._cyService.initCy(document.getElementById('cy'));
     this._timebarService.init();

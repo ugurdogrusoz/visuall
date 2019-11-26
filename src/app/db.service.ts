@@ -25,6 +25,7 @@ export class DbService {
     const password = this.dbConfig.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
     console.log(query);
+    this._g.setLoadingStatus(true);
     const requestBody = {
       'statements': [{
         'statement': query,
@@ -39,13 +40,15 @@ export class DbService {
         'Authorization': 'Basic ' + btoa(username + ':' + password)
       }
     }).subscribe((data) => {
+      this._g.setLoadingStatus(false);
+
       if (isGraphResponse) {
         cb(this.extractGraphFromQueryResponse(data));
       } else {
         cb(this.extractTableFromQueryResponse(data));
       }
     },
-      (err) => { console.log('err db.service line 34: ', err) });
+      (err) => { this._g.setLoadingStatus(true); console.log('err db.service line 34: ', err) });
 
   }
 
