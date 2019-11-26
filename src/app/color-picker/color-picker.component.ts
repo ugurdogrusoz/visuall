@@ -1,10 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as AColorPicker from 'a-color-picker';
 
 @Component({
   selector: 'app-color-picker',
   templateUrl: './color-picker.component.html',
+  encapsulation: ViewEncapsulation.None,
   styleUrls: ['./color-picker.component.css']
 })
 export class ColorPickerComponent implements OnInit {
@@ -20,7 +21,7 @@ export class ColorPickerComponent implements OnInit {
   open(ev: MouseEvent, content) {
     ev.preventDefault();
     // style="width: 232px; height: 363px;"
-    this._modalService.open(content, { size: 'sm' }).result.then((result) => {
+    this._modalService.open(content, { windowClass: 'picker-window' }).result.then((result) => {
       this.onColorSelected.emit(this.currColor);
     }, (reason) => {
       this.onColorSelected.emit(this.currColor);
