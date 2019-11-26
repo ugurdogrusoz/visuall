@@ -437,6 +437,9 @@ export class TimebarMetricEditorComponent implements OnInit {
   // if there is 1 sum rule it is a Sum metric (otherwise count metric)
   private getIdxOfSumRule(m: iTimebarMetric) {
     let i = 0;
+    if (!m) {
+      return -1;
+    }
     for (let r of m.rules) {
       if (this.isSumRule(r)) {
         return i;
