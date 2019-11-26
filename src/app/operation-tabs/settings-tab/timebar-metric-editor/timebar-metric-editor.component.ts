@@ -32,6 +32,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   private filteredTypeCount: number;
   currMetrics: iTimebarMetric[];
   currMetricName: string = 'untitled';
+  currMetricColor: string = null;
   private readonly NO_OPERATION = 'no_op';
   private readonly ANY_CLASS = 'Any Object';
   private readonly NOT_SELECTED = '───';
@@ -56,9 +57,9 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.currDatetimes = [new Date()];
     this.filteredTypeCount = 0;
     this.filteringRule = null;
-    this.currMetrics = [{ incrementFn: (x) => { if (x.id()[0] === 'n') return 1; return 0 }, name: '# of nodes', className: this.NODES_CLASS, rules: [] },
-    { incrementFn: (x) => { if (x.id()[0] === 'e') return 1; return 0 }, name: '# of edges', className: this.EDGES_CLASS, rules: [] },
-    { incrementFn: (x) => { return 1; }, name: '# of nodes + # of edges', className: this.ANY_CLASS, rules: [] }];
+    this.currMetrics = [{ incrementFn: (x) => { if (x.id()[0] === 'n') return 1; return 0 }, name: '# of nodes', className: this.NODES_CLASS, rules: [], color: '#3366cc' },
+    { incrementFn: (x) => { if (x.id()[0] === 'e') return 1; return 0 }, name: '# of edges', className: this.EDGES_CLASS, rules: [], color: '#dc3912' },
+    { incrementFn: (x) => { return 1; }, name: '# of nodes + # of edges', className: this.ANY_CLASS, rules: [], color: '#ff9900' }];
 
     this.refreshTimebar();
   }
@@ -91,6 +92,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   private clearInput() {
     this.filteringRule = null;
     this.currMetricName = 'untitled';
+    this.currMetricColor = this.getRandomColor();
     this.filterInp = '';
     this.newStatBtnTxt = 'Add Statistic';
     this.editingIdx = -1;
@@ -98,6 +100,15 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.isAClassSelectedForMetric = false;
     this.changeSelectedClass();
     this.isSumMetric = false;
+  }
+
+  private getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
   }
 
   changeSelectedClass() {
@@ -204,9 +215,10 @@ export class TimebarMetricEditorComponent implements OnInit {
       if (!this.currMetricName) {
         this.currMetricName = '';
       }
-      this.filteringRule = { rules: [], name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: className };
+      this.filteringRule = { rules: [], name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: className, color: this.currMetricColor };
     } else {
       this.filteringRule.name = this.currMetricName;
+      this.filteringRule.color = this.currMetricColor;
     }
     if (r.propertyOperand && r.propertyOperand.length > 0 && r.propertyOperand != this.NOT_SELECTED) {
       this.filteringRule.rules.push(r);
@@ -268,6 +280,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.currMetrics[i].isEditing = true;
       this.filteringRule = this.currMetrics[i];
       this.currMetricName = this.currMetrics[i].name;
+      this.currMetricColor = this.currMetrics[i].color;
       this.selectedClass = this.currMetrics[i].className;
       this.changeSelectedClass();
       this.isAClassSelectedForMetric = true;
@@ -301,6 +314,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.currMetricName = 'untitled';
     }
     this.filteringRule.name = this.currMetricName;
+    this.filteringRule.color = this.currMetricColor;
     if (this.editingIdx != -1) {
       this.currMetrics[this.editingIdx] = this.filteringRule;
       this.currMetrics[this.editingIdx].isEditing = false;
@@ -358,7 +372,6 @@ export class TimebarMetricEditorComponent implements OnInit {
       console.log('fnStr: ', fnStr);
       m.incrementFn = new Function('x', fnStr) as (x: any) => number;
     }
-    this.refreshTimebar();
   }
 
   private getBoolExpressionFromMetric(m: iTimebarMetric): string {
@@ -449,7 +462,13 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   private refreshTimebar() {
     this._timeBarService.shownMetrics = this.currMetrics;
+    this._timeBarService.setColors();
     this._timeBarService.renderChart();
+  }
+
+  colorSelected(c: string) {
+    console.log('color: ', c);
+    this.currMetricColor = c;
   }
 
 }

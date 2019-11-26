@@ -1,0 +1,9 @@
+<ng-template #content>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="picker" acp-show-hsl="no" acp-palette-editable></div>
+    </div>
+  </div>
+</ng-template>
+
+<input type="color" class="m-1" [(ngModel)]="currColor" (click)="open($event, content)">

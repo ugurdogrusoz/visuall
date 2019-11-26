@@ -46,7 +46,6 @@ export class TimebarService {
   private setStatsRangeStrFn: () => void;
   private setGraphRangeStrFn: () => void;
   private GRAPH_RANGE_RATIO = 0.33;
-  private dataColors = ['#3366cc', '#dc3912', '#ff9900'];
   private isRefreshChart = false;
   private ignoreEndNodesForEdgeInclusion: boolean = true;
   private textStyle: any;
@@ -188,6 +187,7 @@ export class TimebarService {
           // 'minRangeSize': '864000000',
           'chartType': 'LineChart',
           'chartOptions': {
+            'colors': this.shownMetrics.map(x => x.color),
             'enableInteractivity': false,
             'chartArea': controlPaddings,
             'legend': 'none',
@@ -213,6 +213,7 @@ export class TimebarService {
         'hAxis': { textStyle: this.textStyle, 'textPosition': 'in' },
         'vAxis': { textStyle: this.textStyle },
         'chartArea': chartPaddings,
+        'colors': this.shownMetrics.map(x => x.color)
         // 'animation':{
         //   duration: 350,
         //   easing: 'out',
@@ -234,6 +235,20 @@ export class TimebarService {
     this.controlWrapper.draw();
     const fn = debounce(this.rangeChange, 500, false);
     google.visualization.events.addListener(this.controlWrapper, 'statechange', fn.bind(this));
+  }
+
+  setColors() {
+    if (!this.chartWrapper || !this.controlWrapper) {
+      return;
+    }
+    let colors = this.shownMetrics.map(x => x.color);
+    for (let i = 0; i < colors.length; i++) {
+      if (!colors[i]) {
+        colors[i] = '#000000';
+      }
+    }
+    this.chartWrapper.setOption('colors', colors);
+    this.controlWrapper.setOption('ui.chartOptions.colors', colors);
   }
 
   getTimeFilteredGraphElems(start: number, end: number) {
@@ -458,7 +473,7 @@ export class TimebarService {
     let i = 0;
     for (let cnt of cnts) {
       r.push(cnt);
-      r.push(`<div style="border:2px solid ${this.dataColors[i++]};">${s} <b>${cnt}</b></div>`);
+      r.push(`<div style="border:2px solid ${this.shownMetrics[i++].color};">${s} <b>${cnt}</b></div>`);
     }
     return r;
   }

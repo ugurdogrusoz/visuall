@@ -28,6 +28,7 @@ export interface iTimebarMetric {
   className: string;
   isEdge?: boolean;
   isEditing?: boolean;
+  color?: string;
 }
 
 export interface iMetricCondition {

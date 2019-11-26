@@ -22,6 +22,7 @@ import { GroupTabComponent } from './operation-tabs/group-tab/group-tab.componen
 import { Query1Component } from './operation-tabs/query-tab/query1/query1.component';
 import { TableViewComponent } from './table-view/table-view.component';
 import { TimebarMetricEditorComponent } from './operation-tabs/settings-tab/timebar-metric-editor/timebar-metric-editor.component';
+import { ColorPickerComponent } from './color-picker/color-picker.component';
 
 
 @NgModule({
@@ -43,7 +44,8 @@ import { TimebarMetricEditorComponent } from './operation-tabs/settings-tab/time
     GroupTabComponent,
     Query1Component,
     TableViewComponent,
-    TimebarMetricEditorComponent
+    TimebarMetricEditorComponent,
+    ColorPickerComponent
   ],
   imports: [
     BrowserModule,

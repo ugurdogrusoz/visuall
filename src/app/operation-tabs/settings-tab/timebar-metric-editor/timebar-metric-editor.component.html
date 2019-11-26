@@ -10,7 +10,7 @@
     <div *ngFor="let r of currMetrics; let i = index;" class="border rounded va-text m-1 p-1"
       [ngClass]="{'timebar-metric-editing': r.isEditing}">
       <div class="text-center">
-        <b (click)="editMetric(i)" class="timebar-metric-name">{{r.name}}</b>&nbsp;
+        <span (click)="editMetric(i)" class="timebar-metric-name">{{r.name}}</span>&nbsp;
         <img src="assets/img/close.svg" (click)="deleteMetric(i)" alt="Delete metric">
       </div>
     </div>
@@ -26,7 +26,9 @@
     <div class="form-inline m-2 justify-content-center">
       <label class="va-heading3">Name:&nbsp;</label>
       <input type="text" title="Name" [(ngModel)]="currMetricName"
-        class="form-control filter-form filter-input va-small-text">
+        class="form-control filter-form filter-input va-small-text m-1">
+
+      <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="currMetricColor"></app-color-picker>
 
       <label class="va-heading3">&nbsp;Type:&nbsp;</label>
       <select [disabled]="isAClassSelectedForMetric" class="custom-select filter-form va-text"
