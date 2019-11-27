@@ -33,6 +33,7 @@ body {
 }
 
 /* ratio of components */
+
 .navbar {
   min-height: 35px;
 }
@@ -50,7 +51,7 @@ body {
   height: 9vh;
 }
 
-#timebar-ctrl-pnl img{
+#timebar-ctrl-pnl img {
   height: 1.5vh;
   min-height: 15px;
 }

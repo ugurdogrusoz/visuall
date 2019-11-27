@@ -36,7 +36,10 @@ export class SettingsTabComponent implements OnInit {
         text: 'Show overview window', isEnable: true, actuator: this._cyService, fn: 'navigatorCheckBoxClicked'
       },
       {
-        text: 'Show edge labels', isEnable: true, actuator: this._cyService, fn: 'showHideEdgeLabelCheckBoxClicked'
+        text: 'Show edge labels', isEnable: true, actuator: this._cyService, fn: 'showHideEdgeLabelCheckBoxClicked', isElemStyleSetting: true
+      },
+      {
+        text: 'Fit Labels to Nodes', isEnable: false, actuator: this._cyService, fn: 'fitNodeLabelsCheckBoxClicked', isElemStyleSetting: true
       },
       {
         text: 'Ignore case in text operations', isEnable: false, actuator: this, fn: 'ignoreCaseSettingFn'
@@ -54,6 +57,16 @@ export class SettingsTabComponent implements OnInit {
     this.compoundPadding = '5%';
     this.timebarGraphInclusionTypes = ['overlaps', 'contains', 'contained by'];
     this.timebarStatsInclusionTypes = ['all', 'begin', 'middle', 'end'];
+    this._cyService.applyElementStyleSettings = this.applyElementStyleSettings.bind(this);
+  }
+
+  applyElementStyleSettings() {
+    let allSettings = [...this.generalBoolSettings, ...this.timebarBoolSettings];
+    for (let setting of allSettings) {
+      if (setting.isElemStyleSetting) {
+        this.onBoolSettingsChanged(setting);
+      }
+    }
   }
 
   onBoolSettingsChanged(setting: iBoolSetting) {
@@ -105,4 +118,5 @@ interface iBoolSetting {
   text: string;
   actuator: any;
   fn: string;
+  isElemStyleSetting?: boolean;
 }

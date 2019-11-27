@@ -318,6 +318,13 @@
       "style": {
         "label": ""
       }
+    },
+    {
+      "selector": "node.fitlabel",
+      "style": {
+        "text-wrap": "ellipsis",
+        "text-max-width": "100px"
+      }
     }
   ]
 }

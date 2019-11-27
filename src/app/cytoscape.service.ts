@@ -20,7 +20,8 @@ import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 export class CytoscapeService {
   cyNavi: any;
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
-
+  applyElementStyleSettings: () => void;
+  
   constructor(private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
   }
 
@@ -385,6 +386,9 @@ export class CytoscapeService {
       this._g.performLayout(!isIncremental || wasEmpty);
     }
     this.highlightElems(isIncremental, elemIds);
+    if (this.applyElementStyleSettings) {
+      this.applyElementStyleSettings();
+    }
   }
 
   highlightElems(isIncremental: boolean, elemIds: string[]) {
@@ -423,10 +427,16 @@ export class CytoscapeService {
   }
 
   showHideEdgeLabelCheckBoxClicked(isChecked: boolean) {
+    this._g.cy.edges().removeClass('nolabel');
     if (!isChecked) {
       this._g.cy.edges().addClass('nolabel');
-    } else {
-      this._g.cy.edges().removeClass('nolabel');
+    }
+  }
+
+  fitNodeLabelsCheckBoxClicked(isChecked: boolean) {
+    this._g.cy.nodes().removeClass('fitlabel');
+    if (isChecked) {
+      this._g.cy.nodes().addClass('fitlabel');
     }
   }
 
