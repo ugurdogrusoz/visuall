@@ -335,7 +335,7 @@ export class CytoscapeService {
     $(navSelector).css('left', widthCy + leftCy - widthNavigator - offset);
   }
 
-  loadElementsFromDatabase(data, isIncremental) {
+  loadElementsFromDatabase(data, isIncremental: boolean) {
     if (!data || !data.nodes || !data.edges) {
       console.error('Empty response from database!');
       return;
@@ -391,6 +391,8 @@ export class CytoscapeService {
     if (!isIncremental) {
       return;
     }
+    // remove all existing hightlights before hightlighting new elements
+    this._g.viewUtils.removeHighlights();
     let ele2highlight = this._g.cy.collection();
     const cnt = elemIds.length;
     for (let i = 0; i < cnt; i++) {
