@@ -362,8 +362,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       } else {
         const r = m.rules[idxOfSumRule];
         if (r.propertyType == 'edge') {
-          let s = r.propertyOperand.toUpperCase();
-          fnStr += `return x.connectedEdges('.${s}').length;`
+          fnStr += `return x.connectedEdges('.${r.propertyOperand}').length;`
         } else {
           fnStr += `return x.data().${r.propertyOperand};`
         }
@@ -418,7 +417,7 @@ export class TimebarMetricEditorComponent implements OnInit {
         return `x.data().${r.propertyOperand} ${op} ${r.rawInput}`;
       }
       if (r.propertyType == 'edge') {
-        return `x.connectedEdges('.${r.propertyOperand.toUpperCase()}').length ${op} ${r.inputOperand}`;
+        return `x.connectedEdges('.${r.propertyOperand}').length ${op} ${r.inputOperand}`;
       }
       return `x.data().${r.propertyOperand} ${op} ${r.inputOperand}`;
     }
