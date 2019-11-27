@@ -8,11 +8,12 @@
     <div class="col-md-9 col-sm-8">
       <app-cytoscape></app-cytoscape>
       <app-timebar></app-timebar>
+      <div class="spinner-border loading-div" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
     </div>
 
-    <div class="spinner-border loading-div" *ngIf="isLoading" role="status">
-      <span class="sr-only">Loading...</span>
-    </div>
+    
 
     <div class="col-md-3 col-sm-4" id="edit-column">
       <app-operation-tabs></app-operation-tabs>
