@@ -1,4 +1,4 @@
-img{
+img {
   width: 16px;
   height: 16px;
   cursor: pointer;
@@ -10,4 +10,8 @@ img{
 
 .timebar-metric-editing {
   background: #eaeaea;
+}
+
+.name-inp {
+  padding: 1%;
 }
