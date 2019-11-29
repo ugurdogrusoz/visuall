@@ -1,15 +1,15 @@
 # Visu*all* Developer Guide
 
-This guide details how a custom application can be built using Visu*all*.
+This guide details how a custom application can be built using Visu*all*. We assume the reader has already gone over [User Guide](UG.md), and in each of the following sections, we describe how to customize various parts of a Visu*all* based visual analysis tool.
 
-## Customizing Data Model
+## Data Model
 
-## Customizing Look & Feel
+## Look & Feel
 
-## Customizing Menus
+## Menus
 
-## Customizing Context Menus
+## Context Menus
 
-## Customizing Query Tab
+## Query Tab
 
-## Customizing Default Settings
+## Default Settings
