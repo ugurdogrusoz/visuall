@@ -24,6 +24,14 @@ Visu*all* is **not** an open source or free software. Please contact [i-Vis Rese
 
 `node server.js` to start the server
 
+## User Guide
+
+A User Guide for the sample application of Visu*all* can be found [here](UG.md). An application based on Visu*all* could naturally base their User Guide on this guide.
+
+## Developer Guide
+
+A Developer Guide that details how a custom application can be built using  Visu*all* can be found [here](DG.md).
+
 ## Credits
 
 Icons made by [Freepik](http://www.freepik.com), 
