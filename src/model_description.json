@@ -237,8 +237,8 @@
       "end_datetime": "end"
     }
   },
-  "generalStyles": [
-    {
+  "finiteSetPropertyMapping": {},
+  "generalStyles": [{
       "selector": ".hidden",
       "style": {
         "display": "none"
@@ -312,8 +312,7 @@
       }
     }
   ],
-  "overwriteStyles": [
-    {
+  "overwriteStyles": [{
       "selector": "edge.nolabel",
       "style": {
         "label": ""

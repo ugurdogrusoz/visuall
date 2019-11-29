@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce } from '../../constants';
 import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
+import ModelDescription from 'src/model_description.json';
 
 @Component({
   selector: 'app-object-tab',
@@ -88,7 +89,7 @@ export class ObjectTabComponent implements OnInit {
         this.selectedItemProps.push({ key: renderedKey, val: renderedValue });
         continue;
       }
-
+      renderedValue = this.getMappedProperty(this.selectedClasses, key, renderedValue);
       this.selectedItemProps.push({ key: renderedKey, val: renderedValue });
     }
   }
@@ -183,4 +184,19 @@ export class ObjectTabComponent implements OnInit {
     }
     return null;
   }
+
+  getMappedProperty(className: string, propertyName: string, propertyValue: string): string {
+    let classes = Object.keys(ModelDescription.finiteSetPropertyMapping);
+    let c = classes.find(x => x == className);
+    if (!c) {
+      return propertyValue;
+    }
+
+    let mapping = ModelDescription.finiteSetPropertyMapping[c][propertyName];
+    if (!mapping) {
+      return propertyValue;
+    }
+    return ModelDescription.finiteSetPropertyMapping[c][propertyName][propertyValue];
+  }
+
 }
