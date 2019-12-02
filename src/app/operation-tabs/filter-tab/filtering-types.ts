@@ -9,6 +9,10 @@ export interface iClassBasedRules {
   isEdge: boolean;
 }
 
+export enum PropertyCategory {
+  other = 0, date = 1, finiteSet = 2
+}
+
 export interface iRule {
   propertyOperand: string;
   propertyType: string;
@@ -38,6 +42,7 @@ export interface iMetricCondition {
   inputOperand?: string;
   ruleOperator?: string;
   rawInput?: string;
+  category: PropertyCategory;
 }
 
 export interface iTimebarUnitData {

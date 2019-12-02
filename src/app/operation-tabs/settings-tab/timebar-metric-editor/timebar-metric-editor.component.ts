@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import ModelDescription from '../../../../model_description.json';
-import { iClassOption, iTimebarMetric, iMetricCondition } from '../../filter-tab/filtering-types.js';
+import { iClassOption, iTimebarMetric, iMetricCondition, PropertyCategory } from '../../filter-tab/filtering-types.js';
 import {
-  NUMBER_OPERATORS, TEXT_OPERATORS, LIST_OPERATORS, findTypeOfAttribute, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS
+  NUMBER_OPERATORS, TEXT_OPERATORS, LIST_OPERATORS, findTypeOfAttribute, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS, ENUM_OPERATORS
 } from '../../../constants';
 import flatpickr from 'flatpickr';
 import { TimebarService } from '../../../timebar.service';
@@ -25,7 +25,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   private operators: any;
   private attributeType: string;
   operatorKeys: string[];
-  isDateProp: boolean;
+  selectedPropertyCategory: PropertyCategory;
   selectedOperatorKey: string;
   private currDatetimes: Date[];
   filteringRule: iTimebarMetric;
@@ -45,6 +45,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   isAddingNew = false;
   isGenericTypeSelected = true;
   isSumMetric = false;
+  finiteSetPropertyMap: any = null;
 
   constructor(private _timeBarService: TimebarService) {
     this.nodeClasses = new Set([]);
@@ -53,7 +54,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.operators = {};
     this.operatorKeys = [];
     this.selectedClassProps = [];
-    this.isDateProp = false;
+    this.selectedPropertyCategory = PropertyCategory.other;
     this.currDatetimes = [new Date()];
     this.filteredTypeCount = 0;
     this.filteringRule = null;
@@ -151,20 +152,23 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.attributeType = attrType;
     this.operators = {};
     this.operatorKeys = [];
-    this.isDateProp = false;
+    this.selectedPropertyCategory = this.getPropertyCategory();
 
     this.operators[this.NO_OPERATION] = this.NO_OPERATION;
     this.operatorKeys.push(this.NOT_SELECTED);
-
+    if (!attrType) {
+      return;
+    }
     if (attrType == 'string') {
       this.addOperators(TEXT_OPERATORS);
     } else if (attrType == 'float' || attrType == 'int' || attrType == 'edge') {
       this.addOperators(NUMBER_OPERATORS);
     } else if (attrType == 'list') {
       this.addOperators(LIST_OPERATORS);
+    } else if (attrType.startsWith('enum')) {
+      this.addOperators(ENUM_OPERATORS);
     } else if (attrType == 'datetime') {
       this.addOperators(NUMBER_OPERATORS);
-      this.isDateProp = true;
       let opt = {
         defaultDate: new Date(),
       };
@@ -184,27 +188,48 @@ export class TimebarMetricEditorComponent implements OnInit {
     const className = this.selectedClass;
     const attribute = this.selectedProp;
     let value: any = this.filterInp;
+    let rawValue: any = this.filterInp;
+    let category: PropertyCategory = PropertyCategory.other;
 
     let operator = this.operators[this.selectedOperatorKey];
     const attributeType = this.attributeType;
     if (attributeType == 'datetime') {
       value = document.querySelector('#filter-date-inp0')['_flatpickr'].selectedDates[0].getTime();
+      rawValue = value;
+      category = PropertyCategory.date;
     } else if (attributeType == 'int') {
       value = parseInt(value);
     } else if (attributeType == 'float') {
       value = parseFloat(value);
+    } else if (attributeType && attributeType.startsWith('enum')) {
+      rawValue = this.finiteSetPropertyMap[value];
+      category = PropertyCategory.finiteSet;
     }
 
     const isEdge = this.edgeClasses.has(className);
     const rule: iMetricCondition = {
       propertyOperand: attribute,
       propertyType: this.attributeType,
-      rawInput: value,
+      rawInput: rawValue,
       inputOperand: value,
       ruleOperator: logicOperator,
       operator: operator,
+      category: category
     };
     this.addRule2FilteringRules(rule, isEdge, className);
+  }
+
+  private getPropertyCategory(): PropertyCategory {
+    let m = ModelDescription.finiteSetPropertyMapping;
+    this.finiteSetPropertyMap = null;
+    if (m && m[this.selectedClass] && m[this.selectedClass][this.selectedProp]) {
+      this.finiteSetPropertyMap = m[this.selectedClass][this.selectedProp];
+      return PropertyCategory.finiteSet;
+    }
+    if (this.attributeType == 'datetime') {
+      return PropertyCategory.date;
+    }
+    return PropertyCategory.other;
   }
 
   private addRule2FilteringRules(r: iMetricCondition, isEdge: boolean, className: string) {
@@ -431,6 +456,14 @@ export class TimebarMetricEditorComponent implements OnInit {
     if (r.propertyType == 'list') {
       return `x.data().${r.propertyOperand}.includes('${r.inputOperand}')`;
     }
+    if (r.propertyType.startsWith('enum')) {
+      let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
+      if (r.propertyType.endsWith('string')) {
+        return `x.data().${r.propertyOperand} ${op} '${r.inputOperand}'`;
+      } else {
+        return `x.data().${r.propertyOperand} ${op} ${r.inputOperand}`;
+      }
+    }
   }
 
   // if there is 1 sum rule it is a Sum metric (otherwise count metric)
@@ -469,7 +502,6 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   colorSelected(c: string) {
-    console.log('color: ', c);
     this.currMetricColor = c;
   }
 

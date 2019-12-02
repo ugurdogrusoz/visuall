@@ -25,8 +25,7 @@
     <!-- name and type input -->
     <div class="form-inline m-1 justify-content-center">
       <label class="va-heading3">Name:&nbsp;</label>
-      <input type="text" title="Name" [(ngModel)]="currMetricName"
-        class="form-control name-inp my-1 va-small-text">
+      <input type="text" title="Name" [(ngModel)]="currMetricName" class="form-control name-inp my-1 va-small-text">
 
       <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="currMetricColor"></app-color-picker>
 
@@ -55,13 +54,18 @@
       </div>
 
       <div class="col-5 pr-1">
-        <div [hidden]="isDateProp">
+        <div [hidden]="selectedPropertyCategory != 0">
           <input type="text" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected"
             class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
         </div>
-        <div [hidden]="!isDateProp">
+        <div [hidden]="selectedPropertyCategory != 1">
           <input type="text" id="filter-date-inp0" [disabled]="isGenericTypeSelected"
-            class="form-control query-input-wide va-small-text">
+            class="form-control va-small-text">
+        </div>
+        <div [hidden]="selectedPropertyCategory != 2">
+          <select class="custom-select filter-form va-small-text" [(ngModel)]="filterInp">
+            <option *ngFor="let p of finiteSetPropertyMap | keyvalue" [value]="p.key">{{p.value}}</option>
+          </select>
         </div>
       </div>
 
@@ -97,7 +101,9 @@
                 (click)="ruleOperatorClicked(j, r.ruleOperator)">{{r.ruleOperator}}</a>
               <span>
                 <b>{{r.propertyOperand}}</b>
-                <span *ngIf="r.operator && r.operator !== NOT_SELECTED"> {{r.operator}} <b>{{r.inputOperand}}</b></span>
+                <span *ngIf="r.operator && r.operator !== NOT_SELECTED"> {{r.operator}}
+                  <b *ngIf="r.category != 2">{{r.inputOperand}}</b>
+                  <b *ngIf="r.category == 2">{{r.rawInput}}</b></span>
               </span>
             </div>
             <!-- delete rule button -->

@@ -73,6 +73,12 @@ export const NUMBER_OPERATORS = {
   '\u2264': '<=',
   '\u2265': '>='
 };
+
+export const ENUM_OPERATORS = {
+  '=': '=',
+  '\u2260': '<>'
+};
+
 export const TEXT_OPERATORS = {
   'equal to': '=',
   'contains': 'Contains',
@@ -191,7 +197,7 @@ export function isClose(a1: number, a2: number, margin = 1000) {
   return Math.abs(a1 - a2) < margin;
 }
 
-export function findTypeOfAttribute(attribute, nodeProps, edgeProps) {
+export function findTypeOfAttribute(attribute, nodeProps, edgeProps): string {
 
   for (const nodeClass in nodeProps) {
     if (nodeProps[nodeClass].hasOwnProperty(attribute))

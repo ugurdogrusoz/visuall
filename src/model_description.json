@@ -61,7 +61,7 @@
         "tagline": "string",
         "released": "int",
         "rating": "float",
-        "genre": "string",
+        "genre": "enum,string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -237,7 +237,18 @@
       "end_datetime": "end"
     }
   },
-  "finiteSetPropertyMapping": {},
+  "finiteSetPropertyMapping": {
+    "Movie": {
+      "genre": {
+        "Comedy": "Comedy",
+        "Adventure": "Adventure",
+        "Thriller": "Thriller",
+        "Crime": "Crime",
+        "Action": "Action",
+        "Drama": "Drama"
+      }
+    }
+  },
   "generalStyles": [{
       "selector": ".hidden",
       "style": {

@@ -11,7 +11,7 @@
       "tagline": "string",
       "released": "int",
       "rating": "float",
-      "genre": "string",
+      "genre": "enum,string",
       "begin": "datetime",
       "end": "datetime"
     }
