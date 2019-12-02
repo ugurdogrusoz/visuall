@@ -36,6 +36,12 @@ export class ContextMenuService {
         content: 'Delete Selected',
         coreAsWell: true,
         onClickFunction: this.deleteSelected.bind(this)
+      },
+      {
+        id: 'selectObjectsOfThisType',
+        content: 'Select Objects of This Type',
+        selector: 'node,edge',
+        onClickFunction: this.selectAllThisType.bind(this)
       }
     ];
   }
@@ -53,5 +59,16 @@ export class ContextMenuService {
   deleteSelected() { this._cyService.deleteSelected(false); }
 
   performLayout() { this._g.performLayout(false, true); }
+
+  selectAllThisType(event) {
+    const ele = event.target || event.cyTarget;
+    if (!ele) {
+      return;
+    }
+    const classes = ele.className();
+    for (let c of classes) {
+      this._g.cy.$('.' + c).select();
+    }
+  }
 
 }
