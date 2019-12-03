@@ -1,4 +1,4 @@
-<div class="panel-heading collapsed px-1" data-toggle="collapse" data-target="#new-statistic-panel"
+<div class="subpanel-heading collapsed px-1" data-toggle="collapse" data-target="#new-statistic-panel"
   aria-expanded="false">
   <p class="panel-title accordion-toggle"><b class="va-heading3">Configure Statistics</b></p>
 </div>
@@ -7,8 +7,9 @@
 
   <div class="d-flex flex-wrap">
     <!-- current metrics -->
-    <div *ngFor="let r of currMetrics; let i = index;" class="border rounded va-text m-1 p-1"
-      [ngClass]="{'timebar-metric-editing': r.isEditing}">
+    <div *ngFor="let r of currMetrics; let i = index;" class="rounded va-text m-1 p-1"
+      [ngClass]="{'border': !r.isEditing}" [style.border]="r.isEditing ? '1px solid' + r.color : ''"
+      [style.background-color]="r.isEditing ? r.color + '80' : r.color + 'B4'">
       <div class="text-center">
         <span (click)="editMetric(i)" class="timebar-metric-name">{{r.name}}</span>&nbsp;
         <img src="assets/img/close.svg" (click)="deleteMetric(i)" alt="Delete metric">
@@ -16,7 +17,7 @@
     </div>
     <div class="border rounded va-text m-1 p-1" [ngClass]="{'timebar-metric-editing': isAddingNew}">
       <div class="text-center" (click)="newMetricClick()">
-        <b class="timebar-metric-name">untitled</b>&nbsp;<img src="assets/img/add.svg" alt="New metric">
+        <b class="timebar-metric-name">new</b>&nbsp;<img src="assets/img/add.svg" alt="New metric">
       </div>
     </div>
   </div>
@@ -24,13 +25,12 @@
   <div [ngClass]="{'collapse': isHideEditing}">
     <!-- name and type input -->
     <div class="form-inline m-1 justify-content-center">
-      <label class="va-heading3">Name:&nbsp;</label>
-      <input type="text" title="Name" [(ngModel)]="currMetricName" class="form-control name-inp my-1 va-small-text">
+      <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
+        [(ngModel)]="currMetricName" class="form-control name-inp my-1 va-small-text">
 
       <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="currMetricColor"></app-color-picker>
 
-      <label class="va-heading3">&nbsp;Type:&nbsp;</label>
-      <select [disabled]="isAClassSelectedForMetric" class="custom-select filter-form va-text"
+      <select title="Type" [disabled]="isAClassSelectedForMetric" class="custom-select filter-form va-text"
         [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
         <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
         </option>

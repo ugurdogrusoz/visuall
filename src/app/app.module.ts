@@ -23,7 +23,7 @@ import { Query1Component } from './operation-tabs/query-tab/query1/query1.compon
 import { TableViewComponent } from './table-view/table-view.component';
 import { TimebarMetricEditorComponent } from './operation-tabs/settings-tab/timebar-metric-editor/timebar-metric-editor.component';
 import { ColorPickerComponent } from './color-picker/color-picker.component';
-
+import { AutoSizeInputModule } from 'ngx-autosize-input';
 
 @NgModule({
   declarations: [
@@ -51,7 +51,8 @@ import { ColorPickerComponent } from './color-picker/color-picker.component';
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    NgbModule
+    NgbModule,
+    AutoSizeInputModule
   ],
   providers: [],
   bootstrap: [AppComponent],

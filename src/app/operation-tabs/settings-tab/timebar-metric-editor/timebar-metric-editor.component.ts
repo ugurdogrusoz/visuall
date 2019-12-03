@@ -31,7 +31,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   filteringRule: iTimebarMetric;
   private filteredTypeCount: number;
   currMetrics: iTimebarMetric[];
-  currMetricName: string = 'untitled';
+  currMetricName: string = 'new';
   currMetricColor: string = null;
   private readonly NO_OPERATION = 'no_op';
   private readonly ANY_CLASS = 'Any Object';
@@ -65,6 +65,13 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.refreshTimebar();
   }
 
+  getStyleForMetric(m: iTimebarMetric) {
+    if (m.isEditing) {
+      return { 'background-color': '#eaeaea' };
+    }
+    return { 'background-color': `rgba(${m.color.slice(1, 3)}, ${m.color.slice(3, 5)}, ${m.color.slice(5, 7)}, 0.5)` }
+  }
+
   ngOnInit() {
     let opt = {
       defaultDate: new Date(),
@@ -92,7 +99,7 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   private clearInput() {
     this.filteringRule = null;
-    this.currMetricName = 'untitled';
+    this.currMetricName = 'new';
     this.currMetricColor = this.getRandomColor();
     this.filterInp = '';
     this.newStatBtnTxt = 'Add Statistic';
@@ -336,17 +343,18 @@ export class TimebarMetricEditorComponent implements OnInit {
   private addStat() {
     this.isAClassSelectedForMetric = false;
     if (!this.currMetricName || this.currMetricName.length < 2) {
-      this.currMetricName = 'untitled';
+      this.currMetricName = 'new';
     }
     this.filteringRule.name = this.currMetricName;
     this.filteringRule.color = this.currMetricColor;
     if (this.editingIdx != -1) {
       this.currMetrics[this.editingIdx] = this.filteringRule;
       this.currMetrics[this.editingIdx].isEditing = false;
-      this.isHideEditing = true;
     } else {
       this.currMetrics.push(this.filteringRule);
     }
+    this.isHideEditing = true;
+
     this.setFnsForMetrics();
     this.refreshTimebar();
     this.clearInput();

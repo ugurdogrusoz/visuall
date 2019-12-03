@@ -40,6 +40,7 @@
     "express": "^4.17.1",
     "flatpickr": "^4.6.3",
     "jquery": "^3.4.1",
+    "ngx-autosize-input": "^2.3.6",
     "path": "^0.12.7",
     "popper.js": "^1.16.0",
     "rxjs": "~6.5.3",

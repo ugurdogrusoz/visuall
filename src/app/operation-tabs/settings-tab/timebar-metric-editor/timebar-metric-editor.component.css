@@ -10,8 +10,10 @@ img {
 
 .timebar-metric-editing {
   background: #eaeaea;
+  border: solid 1px black;
 }
 
 .name-inp {
   padding: 1%;
+  width: min-content;
 }
