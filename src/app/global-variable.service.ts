@@ -13,6 +13,7 @@ export class GlobalVariableService {
   isIgnoreCaseInText: boolean;
   isTimebarEnabled: boolean;
   isAutoIncrementalLayoutOnChange: boolean;
+  isSelectOnMerge: boolean;
   setLoadingStatus: (boolean) => void;
   
   constructor() {
@@ -20,6 +21,7 @@ export class GlobalVariableService {
     this.isTimebarEnabled = true;
     this.hiddenClasses = new Set([]);
     this.isAutoIncrementalLayoutOnChange = true;
+    this.isSelectOnMerge = true;
   }
 
   runLayout() {

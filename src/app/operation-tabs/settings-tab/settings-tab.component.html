@@ -10,6 +10,18 @@
         <label class="form-check-label va-text">{{setting.text}}</label>
       </div>
     </div>
+    <!-- Show query results using -->
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text">Show query results using &nbsp;</label>
+        <div class="form-check-inline va-text" *ngFor="let str of mergedElemIndicator; let i = index;">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" (click)="mergedElemIndicatorChanged(i)" name="optradio3"
+              [checked]="i==0">{{str}}
+          </label>
+        </div>
+      </div>
+    </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
         <label class="form-check-label va-text">Highlight width</label>

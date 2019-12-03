@@ -406,7 +406,11 @@ export class CytoscapeService {
       eles: ele2highlight,
       option: C.HIGHLIGHT_TYPE_MERGE
     };
-    this._g.viewUtils.highlight(options);
+    if (this._g.isSelectOnMerge) {
+      ele2highlight.select();
+    } else {
+      this._g.viewUtils.highlight(options);
+    }
   }
 
   createCyNode(node, id) {

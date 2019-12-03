@@ -20,6 +20,7 @@ export class SettingsTabComponent implements OnInit {
   compoundPadding: string;
   timebarGraphInclusionTypes: string[];
   timebarStatsInclusionTypes: string[];
+  mergedElemIndicator: string[];
 
   constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _g: GlobalVariableService) {
   }
@@ -43,7 +44,7 @@ export class SettingsTabComponent implements OnInit {
       },
       {
         text: 'Ignore case in text operations', isEnable: false, actuator: this, fn: 'ignoreCaseSettingFn'
-      },
+      }
     ];
 
     this.timebarBoolSettings = [
@@ -57,7 +58,12 @@ export class SettingsTabComponent implements OnInit {
     this.compoundPadding = '5%';
     this.timebarGraphInclusionTypes = ['overlaps', 'contains', 'contained by'];
     this.timebarStatsInclusionTypes = ['all', 'begin', 'middle', 'end'];
+    this.mergedElemIndicator = ['Selection', 'Highlight'];
     this._cyService.applyElementStyleSettings = this.applyElementStyleSettings.bind(this);
+  }
+
+  mergedElemIndicatorChanged(i: number) {
+    this._g.isSelectOnMerge = (i == 0);
   }
 
   applyElementStyleSettings() {
