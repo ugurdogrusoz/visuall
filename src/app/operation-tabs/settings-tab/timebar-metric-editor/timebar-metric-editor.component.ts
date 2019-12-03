@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import ModelDescription from '../../../../model_description.json';
-import { iClassOption, iTimebarMetric, iMetricCondition, PropertyCategory } from '../../filter-tab/filtering-types.js';
-import {
-  NUMBER_OPERATORS, TEXT_OPERATORS, LIST_OPERATORS, findTypeOfAttribute, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS, ENUM_OPERATORS
-} from '../../../constants';
+import { iClassOption, iTimebarMetric, iMetricCondition } from '../../filter-tab/filtering-types.js';
+import { NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS } from '../../../constants';
 import flatpickr from 'flatpickr';
 import { TimebarService } from '../../../timebar.service';
+import { PropertyRuleComponent } from 'src/app/property-rule/property-rule.component.js';
 
 @Component({
   selector: 'app-timebar-metric-editor',
@@ -20,20 +19,12 @@ export class TimebarMetricEditorComponent implements OnInit {
   classOptions: iClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
-  selectedProp: string;
-  filterInp: string;
-  private operators: any;
-  private attributeType: string;
-  operatorKeys: string[];
-  selectedPropertyCategory: PropertyCategory;
-  selectedOperatorKey: string;
   private currDatetimes: Date[];
   filteringRule: iTimebarMetric;
   private filteredTypeCount: number;
   currMetrics: iTimebarMetric[];
   currMetricName: string = 'new';
   currMetricColor: string = null;
-  private readonly NO_OPERATION = 'no_op';
   private readonly ANY_CLASS = 'Any Object';
   private readonly NOT_SELECTED = '───';
   private readonly NODES_CLASS = 'Any Node';
@@ -45,16 +36,13 @@ export class TimebarMetricEditorComponent implements OnInit {
   isAddingNew = false;
   isGenericTypeSelected = true;
   isSumMetric = false;
-  finiteSetPropertyMap: any = null;
+  @ViewChild('ruleComp', { static: false }) ruleComp: PropertyRuleComponent;
 
   constructor(private _timeBarService: TimebarService) {
     this.nodeClasses = new Set([]);
     this.edgeClasses = new Set([]);
     this.classOptions = [];
-    this.operators = {};
-    this.operatorKeys = [];
     this.selectedClassProps = [];
-    this.selectedPropertyCategory = PropertyCategory.other;
     this.currDatetimes = [new Date()];
     this.filteredTypeCount = 0;
     this.filteringRule = null;
@@ -95,13 +83,15 @@ export class TimebarMetricEditorComponent implements OnInit {
     }
 
     this.clearInput();
+    if (this.ruleComp) {
+      this.ruleComp.propertiesChanged(this.selectedClassProps, this.isGenericTypeSelected, this.selectedClass);
+    }
   }
 
   private clearInput() {
     this.filteringRule = null;
     this.currMetricName = 'new';
     this.currMetricColor = this.getRandomColor();
-    this.filterInp = '';
     this.newStatBtnTxt = 'Add Statistic';
     this.editingIdx = -1;
     this.selectedClass = this.classOptions[0].text;
@@ -136,110 +126,14 @@ export class TimebarMetricEditorComponent implements OnInit {
     } else {
       this.isGenericTypeSelected = true;
     }
-    this.selectedProp = null;
-    this.selectedOperatorKey = null;
-    this.changeSelectedProp();
-  }
-
-  private getNumberProperties(obj): string[] {
-    let r: string[] = [];
-    for (let k of Object.keys(obj)) {
-      if (obj[k] == 'int' || obj[k] == 'float') {
-        r.push(k);
-      }
-    }
-    return r;
-  }
-
-  changeSelectedProp() {
-    let attrType = findTypeOfAttribute(this.selectedProp, properties.nodes, properties.edges);
-    if (this.edgeClasses.has(this.selectedProp)) {
-      attrType = 'edge';
-    }
-    this.attributeType = attrType;
-    this.operators = {};
-    this.operatorKeys = [];
-    this.selectedPropertyCategory = this.getPropertyCategory();
-
-    this.operators[this.NO_OPERATION] = this.NO_OPERATION;
-    this.operatorKeys.push(this.NOT_SELECTED);
-    if (!attrType) {
-      return;
-    }
-    if (attrType == 'string') {
-      this.addOperators(TEXT_OPERATORS);
-    } else if (attrType == 'float' || attrType == 'int' || attrType == 'edge') {
-      this.addOperators(NUMBER_OPERATORS);
-    } else if (attrType == 'list') {
-      this.addOperators(LIST_OPERATORS);
-    } else if (attrType.startsWith('enum')) {
-      this.addOperators(ENUM_OPERATORS);
-    } else if (attrType == 'datetime') {
-      this.addOperators(NUMBER_OPERATORS);
-      let opt = {
-        defaultDate: new Date(),
-      };
-      flatpickr('#filter-date-inp0', opt);
+    if (this.ruleComp) {
+      this.ruleComp.propertiesChanged(this.selectedClassProps, this.isGenericTypeSelected, this.selectedClass);
     }
   }
 
-  private addOperators(op) {
-    for (let [k, v] of Object.entries(op)) {
-      this.operators[k] = v;
-      this.operatorKeys.push(k);
-    }
-  }
+  addRule2FilteringRules(r: iMetricCondition) {
+    const isEdge = this.edgeClasses.has(this.selectedClass);
 
-  onAddRuleClick() {
-    const logicOperator = 'OR';
-    const className = this.selectedClass;
-    const attribute = this.selectedProp;
-    let value: any = this.filterInp;
-    let rawValue: any = this.filterInp;
-    let category: PropertyCategory = PropertyCategory.other;
-
-    let operator = this.operators[this.selectedOperatorKey];
-    const attributeType = this.attributeType;
-    if (attributeType == 'datetime') {
-      value = document.querySelector('#filter-date-inp0')['_flatpickr'].selectedDates[0].getTime();
-      rawValue = value;
-      category = PropertyCategory.date;
-    } else if (attributeType == 'int') {
-      value = parseInt(value);
-    } else if (attributeType == 'float') {
-      value = parseFloat(value);
-    } else if (attributeType && attributeType.startsWith('enum')) {
-      rawValue = this.finiteSetPropertyMap[value];
-      category = PropertyCategory.finiteSet;
-    }
-
-    const isEdge = this.edgeClasses.has(className);
-    const rule: iMetricCondition = {
-      propertyOperand: attribute,
-      propertyType: this.attributeType,
-      rawInput: rawValue,
-      inputOperand: value,
-      ruleOperator: logicOperator,
-      operator: operator,
-      category: category
-    };
-    this.addRule2FilteringRules(rule, isEdge, className);
-  }
-
-  private getPropertyCategory(): PropertyCategory {
-    let m = ModelDescription.finiteSetPropertyMapping;
-    this.finiteSetPropertyMap = null;
-    if (m && m[this.selectedClass] && m[this.selectedClass][this.selectedProp]) {
-      this.finiteSetPropertyMap = m[this.selectedClass][this.selectedProp];
-      return PropertyCategory.finiteSet;
-    }
-    if (this.attributeType == 'datetime') {
-      return PropertyCategory.date;
-    }
-    return PropertyCategory.other;
-  }
-
-  private addRule2FilteringRules(r: iMetricCondition, isEdge: boolean, className: string) {
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
     }
@@ -247,7 +141,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       if (!this.currMetricName) {
         this.currMetricName = '';
       }
-      this.filteringRule = { rules: [], name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: className, color: this.currMetricColor };
+      this.filteringRule = { rules: [], name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: this.selectedClass, color: this.currMetricColor };
     } else {
       this.filteringRule.name = this.currMetricName;
       this.filteringRule.color = this.currMetricColor;
@@ -273,7 +167,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     return r;
   }
 
-  private deleteFilterRule(j: number) {
+  deleteFilterRule(j: number) {
     if (this.filteringRule.rules.length == 1) {
       this.filteringRule = null;
       if (this.editingIdx == -1) {
@@ -285,7 +179,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.isSumMetric = this.getIdxOfSumRule(this.filteringRule) > -1;
   }
 
-  private deleteMetric(i: number) {
+  deleteMetric(i: number) {
     if (this.currMetrics.length < 2) {
       return;
     }
@@ -296,7 +190,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.refreshTimebar();
   }
 
-  private editMetric(i: number) {
+  editMetric(i: number) {
 
     if (this.currMetrics[i].isEditing) {
       this.isHideEditing = true;
@@ -340,7 +234,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.editingIdx = -1;
   }
 
-  private addStat() {
+  addStat() {
     this.isAClassSelectedForMetric = false;
     if (!this.currMetricName || this.currMetricName.length < 2) {
       this.currMetricName = 'new';
@@ -360,7 +254,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.clearInput();
   }
 
-  private changeFilterRuleOrder(j: number, isUp: boolean) {
+  changeFilterRuleOrder(j: number, isUp: boolean) {
     if ((isUp && j == 0) || (!isUp && j == this.filteringRule.rules.length - 1)) {
       return;
     }
@@ -378,7 +272,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.filteringRule.rules[idx] = tmp;
   }
 
-  private ruleOperatorClicked(j: number, op: string) {
+  ruleOperatorClicked(j: number, op: string) {
     if (op == 'OR') {
       this.filteringRule.rules[j].ruleOperator = 'AND';
     } else {

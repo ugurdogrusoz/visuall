@@ -1,0 +1,34 @@
+<div class="row m-1 no-gutters justify-content-center" id="filter-rule-inputs">
+  <div class="col-3 px-1">
+    <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp"
+      [disabled]="isGenericTypeSelected" (change)="changeSelectedProp()">
+      <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
+    </select>
+  </div>
+
+  <div class="col-3 pr-1">
+    <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey"
+      [disabled]="isGenericTypeSelected">
+      <option *ngFor="let o of operatorKeys" [value]="o">{{o}}</option>
+    </select>
+  </div>
+
+  <div class="col-5 pr-1">
+    <div [hidden]="selectedPropertyCategory != 0">
+      <input type="text" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected"
+        class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
+    </div>
+    <div [hidden]="selectedPropertyCategory != 1">
+      <input type="text" id="filter-date-inp0" [disabled]="isGenericTypeSelected" class="form-control va-small-text">
+    </div>
+    <div [hidden]="selectedPropertyCategory != 2">
+      <select class="custom-select filter-form va-small-text" [(ngModel)]="filterInp">
+        <option *ngFor="let p of finiteSetPropertyMap | keyvalue" [value]="p.key">{{p.value}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-1 pr-1 text-center">
+    <img src="assets/img/add.svg" alt="Add Rule" (click)="onAddRuleClick()">
+  </div>
+</div>
