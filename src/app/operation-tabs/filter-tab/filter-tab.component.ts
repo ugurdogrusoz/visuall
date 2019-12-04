@@ -24,7 +24,6 @@ export class FilterTabComponent implements OnInit {
   selectedClassProps: string[];
   selectedClass: string;
   attributeType: string;
-  operatorKeys: string[];
   isDateProp: boolean;
   currDatetimes: Date[];
   filteringRules: iClassBasedRules[];
@@ -39,7 +38,6 @@ export class FilterTabComponent implements OnInit {
     this.nodeClasses = new Set([]);
     this.edgeClasses = new Set([]);
     this.classOptions = [];
-    this.operatorKeys = [];
     this.selectedClassProps = [];
     this.isDateProp = false;
     this.currDatetimes = [new Date()];
@@ -202,7 +200,7 @@ export class FilterTabComponent implements OnInit {
     }
 
     const mergeContent = this.isMergeQueryResults && this._g.cy.elements().length > 0;
-    this._dbService.runFilteringQuery2(this.filteringRules, (response) => this._cyService.loadElementsFromDatabase(response, mergeContent));
+    this._dbService.runFilteringQuery(this.filteringRules, (response) => this._cyService.loadElementsFromDatabase(response, mergeContent));
   }
 
   runFiltering() {
