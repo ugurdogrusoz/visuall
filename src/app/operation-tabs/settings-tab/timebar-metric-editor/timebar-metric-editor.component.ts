@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import ModelDescription from '../../../../model_description.json';
-import { iClassOption, iTimebarMetric, iMetricCondition } from '../../filter-tab/filtering-types.js';
-import { NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS } from '../../../constants';
+import { iClassOption, iTimebarMetric, iRule, iRuleSync } from '../../filter-tab/filtering-types.js';
+import { NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS, GENERIC_TYPE } from '../../../constants';
 import flatpickr from 'flatpickr';
 import { TimebarService } from '../../../timebar.service';
-import { PropertyRuleComponent } from 'src/app/property-rule/property-rule.component.js';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-timebar-metric-editor',
@@ -14,8 +14,6 @@ import { PropertyRuleComponent } from 'src/app/property-rule/property-rule.compo
 })
 export class TimebarMetricEditorComponent implements OnInit {
 
-  private nodeClasses: Set<string>;
-  private edgeClasses: Set<string>;
   classOptions: iClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
@@ -25,10 +23,6 @@ export class TimebarMetricEditorComponent implements OnInit {
   currMetrics: iTimebarMetric[];
   currMetricName: string = 'new';
   currMetricColor: string = null;
-  private readonly ANY_CLASS = 'Any Object';
-  private readonly NOT_SELECTED = '───';
-  private readonly NODES_CLASS = 'Any Node';
-  private readonly EDGES_CLASS = 'Any Edge';
   isAClassSelectedForMetric = false;
   private editingIdx = -1;
   private newStatBtnTxt = 'Add Statistic';
@@ -36,19 +30,17 @@ export class TimebarMetricEditorComponent implements OnInit {
   isAddingNew = false;
   isGenericTypeSelected = true;
   isSumMetric = false;
-  @ViewChild('ruleComp', { static: false }) ruleComp: PropertyRuleComponent;
+  currProperties: Subject<iRuleSync> = new Subject();
 
   constructor(private _timeBarService: TimebarService) {
-    this.nodeClasses = new Set([]);
-    this.edgeClasses = new Set([]);
     this.classOptions = [];
     this.selectedClassProps = [];
     this.currDatetimes = [new Date()];
     this.filteredTypeCount = 0;
     this.filteringRule = null;
-    this.currMetrics = [{ incrementFn: (x) => { if (x.id()[0] === 'n') return 1; return 0 }, name: '# of nodes', className: this.NODES_CLASS, rules: [], color: '#3366cc' },
-    { incrementFn: (x) => { if (x.id()[0] === 'e') return 1; return 0 }, name: '# of edges', className: this.EDGES_CLASS, rules: [], color: '#dc3912' },
-    { incrementFn: (x) => { return 1; }, name: '# of nodes + # of edges', className: this.ANY_CLASS, rules: [], color: '#ff9900' }];
+    this.currMetrics = [{ incrementFn: (x) => { if (x.id()[0] === 'n') return 1; return 0 }, name: '# of nodes', className: GENERIC_TYPE.NODES_CLASS, rules: [], color: '#3366cc' },
+    { incrementFn: (x) => { if (x.id()[0] === 'e') return 1; return 0 }, name: '# of edges', className: GENERIC_TYPE.EDGES_CLASS, rules: [], color: '#dc3912' },
+    { incrementFn: (x) => { return 1; }, name: '# of nodes + # of edges', className: GENERIC_TYPE.ANY_CLASS, rules: [], color: '#ff9900' }];
 
     this.refreshTimebar();
   }
@@ -66,26 +58,20 @@ export class TimebarMetricEditorComponent implements OnInit {
     };
     flatpickr('#filter-date-inp0', opt);
 
-    this.classOptions.push({ text: this.ANY_CLASS, isDisabled: false });
-    this.classOptions.push({ text: this.NODES_CLASS, isDisabled: false });
+    this.classOptions.push({ text: GENERIC_TYPE.ANY_CLASS, isDisabled: false });
+    this.classOptions.push({ text: GENERIC_TYPE.NODES_CLASS, isDisabled: false });
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
-      this.nodeClasses.add(key);
       if (this.selectedClassProps.length == 0) {
         this.selectedClassProps = Object.keys(properties.nodes[key]);
       }
     }
 
-    this.classOptions.push({ text: this.EDGES_CLASS, isDisabled: false });
+    this.classOptions.push({ text: GENERIC_TYPE.EDGES_CLASS, isDisabled: false });
     for (const key in properties.edges) {
-      this.edgeClasses.add(key);
       this.classOptions.push({ text: key, isDisabled: false });
     }
-
     this.clearInput();
-    if (this.ruleComp) {
-      this.ruleComp.propertiesChanged(this.selectedClassProps, this.isGenericTypeSelected, this.selectedClass);
-    }
   }
 
   private clearInput() {
@@ -114,7 +100,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     let isNodeClassSelected: boolean = properties.nodes.hasOwnProperty(txt);
     let isEdgeClassSelected: boolean = properties.edges.hasOwnProperty(txt);
     this.selectedClassProps.length = 0;
-    this.selectedClassProps.push(this.NOT_SELECTED);
+    this.selectedClassProps.push(GENERIC_TYPE.NOT_SELECTED);
 
     if (isNodeClassSelected) {
       this.selectedClassProps.push(...Object.keys(properties.nodes[txt]));
@@ -126,13 +112,15 @@ export class TimebarMetricEditorComponent implements OnInit {
     } else {
       this.isGenericTypeSelected = true;
     }
-    if (this.ruleComp) {
-      this.ruleComp.propertiesChanged(this.selectedClassProps, this.isGenericTypeSelected, this.selectedClass);
-    }
+    // update properties component on the call stack later
+    setTimeout(() => {
+      this.currProperties.next({ properties: this.selectedClassProps, isGenericTypeSelected: false, selectedClass: this.selectedClass });
+    }, 0);
   }
 
-  addRule2FilteringRules(r: iMetricCondition) {
-    const isEdge = this.edgeClasses.has(this.selectedClass);
+  addRule2FilteringRules(r: iRule) {
+    const isEdge = properties.edges.hasOwnProperty(this.selectedClass);
+
 
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
@@ -146,7 +134,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.filteringRule.name = this.currMetricName;
       this.filteringRule.color = this.currMetricColor;
     }
-    if (r.propertyOperand && r.propertyOperand.length > 0 && r.propertyOperand != this.NOT_SELECTED) {
+    if (r.propertyOperand && r.propertyOperand.length > 0 && r.propertyOperand != GENERIC_TYPE.NOT_SELECTED) {
       this.filteringRule.rules.push(r);
     }
     this.putSumRuleAtStart(this.filteringRule);
@@ -303,11 +291,11 @@ export class TimebarMetricEditorComponent implements OnInit {
   private getBoolExpressionFromMetric(m: iTimebarMetric): string {
     let classCondition = '';
     // apply class condition
-    if (m.className.toLowerCase() == this.EDGES_CLASS.toLowerCase()) {
+    if (m.className.toLowerCase() == GENERIC_TYPE.EDGES_CLASS.toLowerCase()) {
       classCondition = ` x.id()[0] === 'e' `;
-    } else if (m.className.toLowerCase() == this.NODES_CLASS.toLowerCase()) {
+    } else if (m.className.toLowerCase() == GENERIC_TYPE.NODES_CLASS.toLowerCase()) {
       classCondition = ` x.id()[0] === 'n' `;
-    } else if (m.className.toLowerCase() == this.ANY_CLASS.toLowerCase()) {
+    } else if (m.className.toLowerCase() == GENERIC_TYPE.ANY_CLASS.toLowerCase()) {
       classCondition = ` true `;
     } else {
       classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;
@@ -337,7 +325,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     return `if ( (${classCondition}) && (${propertyCondition}))`;
   }
 
-  private getJsExpressionForMetricRule(r: iMetricCondition) {
+  private getJsExpressionForMetricRule(r: iRule) {
     if (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'datetime' || r.propertyType == 'edge') {
       let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
       if (r.propertyType == 'datetime') {
@@ -383,7 +371,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     return -1;
   }
 
-  private isSumRule(r: iMetricCondition): boolean {
+  private isSumRule(r: iRule): boolean {
     return (!r.operator) && (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'edge');
   }
 

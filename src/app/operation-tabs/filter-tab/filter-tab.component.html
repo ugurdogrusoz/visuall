@@ -26,36 +26,9 @@
         </select>
       </div>
 
-      <div class="row mx-1 my-3 no-gutters justify-content-center" id="filter-rule-inputs">
-        <div class="col-3 px-1">
-          <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp"
-            (change)="changeSelectedProp()">
-            <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
-          </select>
-        </div>
-
-        <div class="col-3 pr-1">
-          <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey">
-            <option *ngFor="let o of operatorKeys">{{o}}</option>
-          </select>
-        </div>
-
-        <div class="col-5 pr-1">
-          <div [hidden]="isDateProp">
-            <input type="text" title="Value" [(ngModel)]="filterInp"
-              class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
-          </div>
-          <div [hidden]="!isDateProp">
-            <input type="text" id="filter-date-inp0" class="form-control query-input-wide va-small-text">
-          </div>
-        </div>
-
-        <div class="col-1 pr-1 text-center">
-          <a href="#" id="filter-add-rule-btn" title="Add Rule" (click)="onAddRuleClick()">
-            <img src="assets/img/add.svg" height="16px" width="16px" alt="Add Rule">
-          </a>
-        </div>
-      </div>
+      <!-- rule input -->
+      <app-property-rule (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties">
+      </app-property-rule>
 
       <div class="text-center borderless mx-1 my-3">
         <div>

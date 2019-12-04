@@ -1,10 +1,10 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { findTypeOfAttribute, TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS } from '../constants';
 import flatpickr from 'flatpickr';
-
-import { PropertyCategory, iMetricCondition, iTimebarMetric } from '../operation-tabs/filter-tab/filtering-types';
+import { PropertyCategory, iRule, iRuleSync } from '../operation-tabs/filter-tab/filtering-types';
 import properties from '../../assets/generated/properties.json';
 import ModelDescription from '../../model_description.json';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-property-rule',
@@ -26,11 +26,15 @@ export class PropertyRuleComponent implements OnInit {
   filterInp: string;
   finiteSetPropertyMap: any = null;
   selectedClass: string;
-  @Output() onRuleReady = new EventEmitter<iMetricCondition>();
+  @Input() propertyChanged: Subject<iRuleSync>;
+  @Output() onRuleReady = new EventEmitter<iRule>();
 
   constructor() { }
 
   ngOnInit() {
+    this.propertyChanged.subscribe(v => {
+      this.propertiesChanged(v.properties, v.isGenericTypeSelected, v.selectedClass);
+    });
   }
 
   propertiesChanged(properties: string[], isGenericTypeSelected: boolean, selectedClass: string) {
@@ -97,7 +101,7 @@ export class PropertyRuleComponent implements OnInit {
       category = PropertyCategory.finiteSet;
     }
 
-    const rule: iMetricCondition = {
+    const rule: iRule = {
       propertyOperand: attribute,
       propertyType: this.attributeType,
       rawInput: rawValue,

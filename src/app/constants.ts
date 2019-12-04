@@ -27,6 +27,13 @@ export const EXPAND_COLLAPSE_CUE_SIZE = 12;
 export const CSS_SM_TEXT_SIZE = 11;
 export const CSS_FONT_NAME = 'Arial';
 
+export const GENERIC_TYPE = {
+  ANY_CLASS: 'Any Object',
+  NOT_SELECTED: '───',
+  NODES_CLASS: 'Any Node',
+  EDGES_CLASS: 'Any Edge'
+};
+
 export const HIGHLIGHTED_NODE_1 = {
   'border-color': '#0B9BCD',  //blue
   'border-width': 4.5

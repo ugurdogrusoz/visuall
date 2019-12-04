@@ -38,7 +38,8 @@
     </div>
 
     <!-- rule input -->
-    <app-property-rule #ruleComp (onRuleReady)="addRule2FilteringRules($event)"></app-property-rule>
+    <app-property-rule (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties">
+    </app-property-rule>
 
     <!-- create/edit rule -->
     <div class="text-center borderless mx-1 my-3">

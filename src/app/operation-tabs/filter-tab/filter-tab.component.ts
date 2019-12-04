@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
-import {
-  NUMBER_OPERATORS, TEXT_OPERATORS, LIST_OPERATORS, compareUsingOperator, findTypeOfAttribute, FILTER_CLASS_HIDE
-} from '../../constants';
+import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE } from '../../constants';
 import * as $ from 'jquery';
 import { DbService } from '../../db.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import flatpickr from 'flatpickr';
-import { iClassOption, iClassBasedRules, iRule } from './filtering-types.js';
+import { iClassOption, iClassBasedRules, iRule, iRuleSync } from './filtering-types.js';
+import { Subject } from 'rxjs';
+import ModelDescription from '../../../model_description.json';
 
 @Component({
   selector: 'app-filter-tab',
@@ -17,23 +17,21 @@ import { iClassOption, iClassBasedRules, iRule } from './filtering-types.js';
   styleUrls: ['./filter-tab.component.css']
 })
 export class FilterTabComponent implements OnInit {
+
   nodeClasses: Set<string>;
   edgeClasses: Set<string>;
   classOptions: iClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
-  selectedProp: string;
-  filterInp: string;
-  operators: any;
   attributeType: string;
   operatorKeys: string[];
   isDateProp: boolean;
-  selectedOperatorKey: string;
   currDatetimes: Date[];
   filteringRules: iClassBasedRules[];
   filteredTypeCount: number;
   isFilterOnDb: boolean;
   isMergeQueryResults: boolean;
+  currProperties: Subject<iRuleSync> = new Subject();
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService) {
     this.isFilterOnDb = true;
@@ -41,7 +39,6 @@ export class FilterTabComponent implements OnInit {
     this.nodeClasses = new Set([]);
     this.edgeClasses = new Set([]);
     this.classOptions = [];
-    this.operators = {};
     this.operatorKeys = [];
     this.selectedClassProps = [];
     this.isDateProp = false;
@@ -56,7 +53,8 @@ export class FilterTabComponent implements OnInit {
     };
     flatpickr('#filter-date-inp0', opt);
 
-    this.classOptions.push({ text: '─── Nodes ───', isDisabled: true });
+    this.classOptions.push({ text: GENERIC_TYPE.ANY_CLASS, isDisabled: false });
+    this.classOptions.push({ text: GENERIC_TYPE.NODES_CLASS, isDisabled: false });
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
       this.nodeClasses.add(key);
@@ -65,7 +63,7 @@ export class FilterTabComponent implements OnInit {
       }
     }
 
-    this.classOptions.push({ text: '─── Edges ───', isDisabled: true });
+    this.classOptions.push({ text: GENERIC_TYPE.EDGES_CLASS, isDisabled: false });
     for (const key in properties.edges) {
       this.edgeClasses.add(key);
       this.classOptions.push({ text: key, isDisabled: false });
@@ -86,85 +84,48 @@ export class FilterTabComponent implements OnInit {
   changeSelectedClass() {
     const txt = this.selectedClass;
     let isNodeClassSelected: boolean = properties.nodes.hasOwnProperty(txt);
+    let isEdgeClassSelected: boolean = properties.edges.hasOwnProperty(txt);
+    this.selectedClassProps.length = 0;
+    this.selectedClassProps.push(GENERIC_TYPE.NOT_SELECTED);
+    let isGeneric = false;
     if (isNodeClassSelected) {
-      this.selectedClassProps = Object.keys(properties.nodes[txt]);
+      this.selectedClassProps.push(...Object.keys(properties.nodes[txt]));
+      this.selectedClassProps.push(...this.getEdgeTypesRelated(txt));
+      isGeneric = false;
+    } else if (isEdgeClassSelected) {
+      this.selectedClassProps.push(...Object.keys(properties.edges[txt]));
+      isGeneric = false;
     } else {
-      this.selectedClassProps = Object.keys(properties.edges[txt]);
+      isGeneric = true;
     }
-    this.selectedProp = this.selectedClassProps[0];
-    this.changeSelectedProp();
+    // update properties component on the call stack later
+    setTimeout(() => {
+      this.currProperties.next({ properties: this.selectedClassProps, isGenericTypeSelected: isGeneric, selectedClass: this.selectedClass });
+    }, 0);
   }
 
-  changeSelectedProp() {
-    let attrType = findTypeOfAttribute(this.selectedProp, properties.nodes, properties.edges);
-    this.attributeType = attrType;
+  private getEdgeTypesRelated(nodeType: string): string[] {
+    let r: string[] = [];
 
-    this.operators = {};
-    this.operatorKeys = [];
-    this.isDateProp = false;
-
-    if (attrType == 'string') {
-      this.addOperators(TEXT_OPERATORS);
-    } else if (attrType == 'float' || attrType == 'int') {
-      this.addOperators(NUMBER_OPERATORS);
-    } else if (attrType == 'list') {
-      this.addOperators(LIST_OPERATORS);
-    } else if (attrType == 'datetime') {
-      this.addOperators(NUMBER_OPERATORS);
-      this.isDateProp = true;
-      let opt = {
-        defaultDate: new Date(),
-      };
-      flatpickr('#filter-date-inp0', opt);
+    const txt = this.selectedClass.toLowerCase();
+    for (let k of Object.keys(ModelDescription.relations)) {
+      const v = ModelDescription.relations[k];
+      if (v.source.toLowerCase() == txt || v.target.toLowerCase() == txt) {
+        r.push(k);
+      }
     }
-    this.selectedOperatorKey = this.operatorKeys[0];
+    return r;
   }
 
-  addOperators(op) {
-    for (let [k, v] of Object.entries(op)) {
-      this.operators[k] = v;
-      this.operatorKeys.push(k);
-    }
-  }
+  addRule2FilteringRules(r: iRule) {
+    const isEdge = this.edgeClasses.has(this.selectedClass);
 
-  onAddRuleClick() {
-    const logicOperator = 'OR';
-    const className = this.selectedClass;
-    const attribute = this.selectedProp;
-    let value: any = this.filterInp;
-
-    let operator = this.operators[this.selectedOperatorKey];
-    const attributeType = this.attributeType;
-    if (attributeType == 'datetime') {
-      value = document.querySelector('#filter-date-inp0')['_flatpickr'].selectedDates[0].getTime();
-    } else if (attributeType == 'int') {
-      value = parseInt(value);
-    } else if (attributeType == 'float') {
-      value = parseFloat(value);
-    }
-
-    if (!logicOperator || !className || !attribute || value === undefined || !operator)
-      return;
-
-    const isEdge = this.edgeClasses.has(className);
-    const rule: iRule = {
-      propertyOperand: attribute,
-      propertyType: this.attributeType,
-      rawInput: value,
-      inputOperand: value,
-      ruleOperator: logicOperator,
-      operator: operator,
-    };
-    this.addRule2FilteringRules(rule, isEdge, className);
-  }
-
-  addRule2FilteringRules(r: iRule, isEdge: boolean, className: string) {
-    let idx: number = this.filteringRules.findIndex(x => x.className == className);
+    let idx: number = this.filteringRules.findIndex(x => x.className == this.selectedClass);
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
     }
     if (idx == -1) {
-      this.filteringRules.push({ className: className, rules: [r], isEdge: isEdge });
+      this.filteringRules.push({ className: this.selectedClass, rules: [r], isEdge: isEdge });
     } else {
       this.filteringRules[idx].rules.push(r);
     }

@@ -113,10 +113,6 @@ body {
   vertical-align: sub;
 }
 
-#filter-rule-inputs {
-  margin-bottom: 2%;
-}
-
 .logic-op-link {
   display: inline-block;
   border: 1px solid;
