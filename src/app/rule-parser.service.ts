@@ -36,7 +36,7 @@ export class RuleParserService {
 
     let whereClauseItems = [];
     for (let i = 0; i < rules.length; i++) {
-      whereClauseItems.push(this.getConditio4Rule(rules[i], varName));
+      whereClauseItems.push(this.getCondition4Rule(rules[i], varName));
       if (i < rules.length - 1) {
         whereClauseItems.push(rules[i + 1].ruleOperator);
       }
@@ -45,10 +45,9 @@ export class RuleParserService {
     return matchClause + 'WHERE ' + whereClauseItems.join(' ') + "\n";
   }
 
-  private getConditio4Rule(rule: iRule, varName: string) {
-    console.log('getConditio4Rule: ', rule);
+  private getCondition4Rule(rule: iRule, varName: string) {
     let inputOp = '';
-    if (rule.propertyType == 'string' || rule.propertyType == 'list') {
+    if (rule.propertyType == 'string' || rule.propertyType == 'list' || rule.propertyType.startsWith('enum')) {
       inputOp = `'${rule.rawInput}'`;
     } else {
       inputOp = '' + rule.rawInput;
@@ -60,9 +59,7 @@ export class RuleParserService {
         return `( size((${varName})-[:${rule.propertyOperand}]-()) > 0 )`;
       }
       return `( size((${varName})-[:${rule.propertyOperand}]-()) ${rule.operator} ${rule.inputOperand} )`;
-
-    }
-    else {
+    } else {
       if (rule.propertyType == 'string' && this._g.isIgnoreCaseInText) {
         return `(LOWER(${varName}.${rule.propertyOperand}) ${rule.operator} LOWER(${inputOp}))`;
       }
