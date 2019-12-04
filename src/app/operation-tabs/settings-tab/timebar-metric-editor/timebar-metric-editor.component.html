@@ -5,19 +5,19 @@
 
 <div id="new-statistic-panel" class="collapse">
 
-  <div class="d-flex flex-wrap">
+  <div class="d-flex flex-wrap justify-content-center">
     <!-- current metrics -->
     <div *ngFor="let r of currMetrics; let i = index;" class="rounded va-text m-1 p-1"
-      [ngClass]="{'border': !r.isEditing}" [style.border]="r.isEditing ? '1px solid' + r.color : ''"
-      [style.background-color]="r.isEditing ? r.color + '80' : r.color + 'B4'">
+      [style.border]="r.isEditing ? '1.5px solid #555555':'1.5px solid #dee2e6'"
+      [style.background-color]="r.color + 'B4'">
       <div class="text-center">
         <span (click)="editMetric(i)" class="timebar-metric-name">{{r.name}}</span>&nbsp;
-        <img src="assets/img/close.svg" (click)="deleteMetric(i)" alt="Delete metric">
+        <img src="assets/img/close.svg" (click)="deleteMetric(i)" title="Delete metric">
       </div>
     </div>
     <div class="border rounded va-text m-1 p-1" [ngClass]="{'timebar-metric-editing': isAddingNew}">
-      <div class="text-center" (click)="newMetricClick()">
-        <b class="timebar-metric-name">new</b>&nbsp;<img src="assets/img/add.svg" alt="New metric">
+      <div title="New metric" class="text-center" (click)="newMetricClick()">
+        <b class="timebar-metric-name" >new</b>&nbsp;<img src="assets/img/add.svg">
       </div>
     </div>
   </div>
