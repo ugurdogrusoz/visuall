@@ -1,6 +1,6 @@
 <div class="subpanel-heading collapsed px-1" data-toggle="collapse" data-target="#new-statistic-panel"
   aria-expanded="false">
-  <p class="panel-title accordion-toggle"><b class="va-heading3">Configure Statistics</b></p>
+  <p class="panel-title accordion-toggle"><span class="va-heading3">Configure Statistics</span></p>
 </div>
 
 <div id="new-statistic-panel" class="collapse">
@@ -8,14 +8,14 @@
   <div class="d-flex flex-wrap justify-content-center">
     <!-- current metrics -->
     <div *ngFor="let r of currMetrics; let i = index;" class="rounded va-text m-1 p-1"
-      [style.border]="r.isEditing ? '1.5px solid #555555':'1.5px solid #dee2e6'"
+      [style.border]="r.isEditing ? '2px solid #888888':'2px solid #dee2e6'"
       [style.background-color]="r.color + 'B4'">
       <div class="text-center">
         <span (click)="editMetric(i)" class="timebar-metric-name">{{r.name}}</span>&nbsp;
         <img src="assets/img/close.svg" (click)="deleteMetric(i)" title="Delete metric">
       </div>
     </div>
-    <div class="border rounded va-text m-1 p-1" [ngClass]="{'timebar-metric-editing': isAddingNew}">
+    <div class="rounded va-text m-1 p-1" [style.border]="isAddingNew ? '2px solid #888888':'2px solid #dee2e6'">
       <div title="New metric" class="text-center" (click)="newMetricClick()">
         <b class="timebar-metric-name" >new</b>&nbsp;<img src="assets/img/add.svg">
       </div>
