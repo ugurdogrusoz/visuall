@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { iClassBasedRules, iRule } from './operation-tabs/filter-tab/filtering-types';
 import { GlobalVariableService } from './global-variable.service';
+import { GENERIC_TYPE } from './constants';
 
 @Injectable({
   providedIn: 'root'
@@ -20,14 +21,21 @@ export class RuleParserService {
   }
 
   private getCql4Rules(rule: iClassBasedRules, idx: number) {
-    const className = rule.className;
+    let isGenericType = false;
+    if (rule.className == GENERIC_TYPE.ANY_CLASS || rule.className == GENERIC_TYPE.EDGES_CLASS || rule.className == GENERIC_TYPE.NODES_CLASS) {
+      isGenericType = true;
+    }
+    let classFilter = ':' + rule.className;
+    if (isGenericType) {
+      classFilter = '';
+    }
     let matchClause: string;
     let varName = 'x' + idx;
     if (rule.isEdge) {
-      matchClause = `OPTIONAL MATCH (${varName}_l)-[${varName}:${className}]-(${varName}_r)\n`;
+      matchClause = `OPTIONAL MATCH (${varName}_l)-[${varName}${classFilter}]-(${varName}_r)\n`;
     }
     else {
-      matchClause = `OPTIONAL MATCH (${varName}:${className})\n`;
+      matchClause = `OPTIONAL MATCH (${varName}${classFilter})\n`;
     }
 
     const rules = rule.rules;
@@ -46,6 +54,9 @@ export class RuleParserService {
   }
 
   private getCondition4Rule(rule: iRule, varName: string) {
+    if (!rule.propertyOperand) {
+      return '(TRUE)';
+    }
     let inputOp = '';
     if (rule.propertyType == 'string' || rule.propertyType == 'list' || rule.propertyType.startsWith('enum')) {
       inputOp = `'${rule.rawInput}'`;
