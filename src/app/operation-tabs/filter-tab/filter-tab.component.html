@@ -80,4 +80,9 @@
       </div>
     </div>
   </div>
+
+  <div class="panel m-1">
+    <app-table-view [params]="tableInput" (onPageChanged)="pageChanged($event)"
+      (onDataForQueryResult)="getDataForQueryResult($event)"> </app-table-view>
+  </div>
 </div>

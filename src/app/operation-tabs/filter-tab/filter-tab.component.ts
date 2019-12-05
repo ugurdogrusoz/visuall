@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
-import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE } from '../../constants';
+import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE, DATA_PAGE_SIZE } from '../../constants';
 import * as $ from 'jquery';
 import { DbService } from '../../db.service';
 import { CytoscapeService } from '../../cytoscape.service';
@@ -10,6 +10,8 @@ import flatpickr from 'flatpickr';
 import { iClassOption, iClassBasedRules, iRule, iRuleSync } from './filtering-types.js';
 import { Subject } from 'rxjs';
 import ModelDescription from '../../../model_description.json';
+import { iTableViewInput } from 'src/app/table-view/table-view-types.js';
+import { RuleParserService } from 'src/app/rule-parser.service.js';
 
 @Component({
   selector: 'app-filter-tab',
@@ -31,8 +33,9 @@ export class FilterTabComponent implements OnInit {
   isFilterOnDb: boolean;
   isMergeQueryResults: boolean;
   currProperties: Subject<iRuleSync> = new Subject();
+  tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true };
 
-  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService) {
+  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _ruleParser: RuleParserService) {
     this.isFilterOnDb = true;
     this.isMergeQueryResults = true;
     this.nodeClasses = new Set([]);
@@ -198,9 +201,32 @@ export class FilterTabComponent implements OnInit {
       console.log('there is no filteringRule');
       return;
     }
+    const skip = (this.tableInput.currPage - 1) * DATA_PAGE_SIZE;
+    const limit = this.tableInput.pageSize;
+    const isMerge = this.isMergeQueryResults && this._g.cy.elements().length > 0;
 
-    const mergeContent = this.isMergeQueryResults && this._g.cy.elements().length > 0;
-    this._dbService.runFilteringQuery(this.filteringRules, (response) => this._cyService.loadElementsFromDatabase(response, mergeContent));
+    this.loadGraph(skip, limit, isMerge);
+    this.loadTable(skip, limit);
+  }
+
+  private loadGraph(skip: number, limit: number, isMerge: boolean) {
+    const cql = this._ruleParser.rule2cql(this.filteringRules, skip, limit);
+    this._dbService.runQuery(cql, null, (response) => this._cyService.loadElementsFromDatabase(response, isMerge));
+  }
+
+  private loadTable(skip: number, limit: number) {
+    const cql = this._ruleParser.rule2cql(this.filteringRules, skip, limit, true);
+    this._dbService.runQuery(cql, null, (response) => this.fillTable(response), false);
+  }
+
+  private fillTable(data) {
+    this.tableInput.results = [];
+    this.tableInput.columns = Object.keys(data.data[0][1]);
+
+    for (let i = 0; i < data.data.length; i++) {
+      this.tableInput.results.push([data.data[i][0], ...Object.values(data.data[i][1])]);
+    }
+    debugger;
   }
 
   runFiltering() {
@@ -229,6 +255,20 @@ export class FilterTabComponent implements OnInit {
     }
     // this.appManager.visibilityChanged();
     this._timebarService.cyElemListChanged();
+  }
+
+  pageChanged(newPage: number) {
+    const skip = (newPage - 1) * DATA_PAGE_SIZE;
+    const limit = this.tableInput.pageSize;
+    const isMerge = this.isMergeQueryResults && this._g.cy.elements().length > 0;
+
+    this.loadGraph(skip, limit, isMerge);
+    this.loadTable(skip, limit);
+  }
+
+  getDataForQueryResult(id: number) {
+    let cql = `MATCH (n) WHERE ID(n) = ${id} RETURN nodes(p), relationships(p)`;
+    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 
 }

@@ -11,12 +11,12 @@ export class RuleParserService {
   constructor(private _g: GlobalVariableService) { }
 
   // methods for conversion to CQL
-  rule2cql(rules: iClassBasedRules[]) {
+  rule2cql(rules: iClassBasedRules[], skip: number, limit: number, isTableForm: boolean = false) {
     let query = '';
     for (let i = 0; i < rules.length; i++) {
       query += this.getCql4Rules(rules[i], i);
     }
-    query += this.generateFinalQueryBlock(rules.map(x => x.isEdge));
+    query += this.generateFinalQueryBlock(rules.map(x => x.isEdge), skip, limit, isTableForm);
     return query;
   }
 
@@ -54,7 +54,7 @@ export class RuleParserService {
   }
 
   private getCondition4Rule(rule: iRule, varName: string) {
-    if (!rule.propertyOperand) {
+    if (!rule.propertyOperand || rule.propertyOperand == GENERIC_TYPE.NOT_SELECTED) {
       return '(TRUE)';
     }
     let inputOp = '';
@@ -78,7 +78,7 @@ export class RuleParserService {
     }
   }
 
-  private generateFinalQueryBlock(isEdgeArr: boolean[]) {
+  private generateFinalQueryBlock(isEdgeArr: boolean[], skip: number, limit: number, isTableForm: boolean = false) {
     let s = 'WITH (';
     for (let i = 0; i < isEdgeArr.length; i++) {
       if (isEdgeArr[i]) {
@@ -89,9 +89,12 @@ export class RuleParserService {
     }
     s = s.substr(0, s.length - 2);
     s += ') AS nodeList';
-    s += `\nMATCH p=(n1)-[*0..1]-(n2)
-    WHERE (n1 in nodeList) and (n2 in nodeList)
-    RETURN nodes(p), relationships(p)`;
+    s += `\nMATCH p=(n1)-[*0..1]-(n2) WHERE (n1 in nodeList) and (n2 in nodeList) `
+    if (isTableForm) {
+      s += `UNWIND nodes(p) as aNode RETURN ID(aNode), aNode  SKIP ${skip} LIMIT ${limit}`;
+    } else {
+      s += `RETURN nodes(p), relationships(p) SKIP ${skip} LIMIT ${limit}`;
+    }
     return s;
   }
   // end of methods for conversion to CQL

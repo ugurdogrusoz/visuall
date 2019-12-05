@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from './global-variable.service';
-import { iClassBasedRules, iRule } from './operation-tabs/filter-tab/filtering-types';
 import { AppConfigService } from './app-config.service';
-import { RuleParserService } from './rule-parser.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +14,7 @@ export class DbService {
     password: '123'
   };
 
-  constructor(private _http: HttpClient, private _g: GlobalVariableService, private _appConfigService: AppConfigService, private _ruleParser: RuleParserService) {
+  constructor(private _http: HttpClient, private _g: GlobalVariableService, private _appConfigService: AppConfigService) {
     this._appConfigService.getConfig().subscribe(x => { this.dbConfig = x['database'] }, error => console.log('getConfig err: ', error));
   }
 
@@ -51,11 +49,6 @@ export class DbService {
     },
       (err) => { this._g.setLoadingStatus(true); console.log('err db.service line 34: ', err) });
 
-  }
-
-  runFilteringQuery(rules: iClassBasedRules[], cb) {
-    const cql = this._ruleParser.rule2cql(rules);
-    this.runQuery(cql, null, cb);
   }
 
   private extractGraphFromQueryResponse(response) {
