@@ -1,9 +1,10 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { DATA_PAGE_SIZE, EV_MOUSE_ON, EV_MOUSE_OFF } from '../../../constants';
+import { DATA_PAGE_SIZE } from '../../../constants';
 import { DbService } from '../../../db.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
+import { iTableViewInput } from 'src/app/table-view/table-view-types';
 
 @Component({
   selector: 'app-query1',
@@ -13,32 +14,22 @@ import flatpickr from 'flatpickr';
 export class Query1Component implements OnInit, AfterViewInit {
 
   selectedGenre: string;
-  results: any[];
   movieGenres: string[];
-  currPage: number;
-  pageSize: number;
-  isLoadGraph: boolean;
-  isMergeGraph: boolean;
-  txtCol1 = 'Movie';
-  txtCol2 = false;
-  resultCnt = 0;
+  tableInput: iTableViewInput = { columns: ['Movie'], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true };
+
   date1Id = 'query1-inp0';
   date2Id = 'query1-inp1';
 
   constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
-    this.currPage = 1;
-    this.isLoadGraph = true;
-    this.isMergeGraph = true;
     this.movieGenres = [];
-    this.pageSize = DATA_PAGE_SIZE;
   }
 
   ngOnInit() {
 
     this.selectedGenre = 'Action';
     let genres = `MATCH (m:Movie{})return distinct m.genre  `;
-    this._dbService.runQuery(genres, null, (x) => this.fillGenres(x), false);
-    this.results = [];
+    setTimeout(() => { this._dbService.runQuery(genres, null, (x) => this.fillGenres(x), false); }, 0);
+    this.tableInput.results = [];
   }
 
   ngAfterViewInit(): void {
@@ -57,7 +48,7 @@ export class Query1Component implements OnInit, AfterViewInit {
   prepareQuery() {
     let date1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0];
     let date2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0];
-    let skip = (this.currPage - 1) * DATA_PAGE_SIZE;
+    let skip = (this.tableInput.currPage - 1) * DATA_PAGE_SIZE;
     let d1 = flatpickr.formatDate(date1, 'Y-M-D').substring(0, 4);
     let d2 = flatpickr.formatDate(date2, 'Y-M-D').substring(0, 4);
 
@@ -70,7 +61,7 @@ export class Query1Component implements OnInit, AfterViewInit {
     let cql = ` MATCH (m:Movie {genre:'${this.selectedGenre}'})
     WHERE m.released> ${d1} AND m.released < ${d2}  
     RETURN DISTINCT COUNT(*)`;
-    this._dbService.runQuery(cql, null, (x) => { this.resultCnt = x.data[0]; }, false);
+    this._dbService.runQuery(cql, null, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
   }
 
   loadTable(d1: string, d2: string, skip: number) {
@@ -82,7 +73,7 @@ export class Query1Component implements OnInit, AfterViewInit {
   }
 
   loadGraph(d1: string, d2: string, skip: number) {
-    if (!this.isLoadGraph) {
+    if (!this.tableInput.isLoadGraph) {
       return;
     }
     let cql = `MATCH (m:Movie {genre:'${this.selectedGenre}'})<-[r:ACTED_IN]-(a:Person)
@@ -91,7 +82,7 @@ export class Query1Component implements OnInit, AfterViewInit {
     RETURN  m, edges
     ORDER BY m.title DESC SKIP ${skip} LIMIT ${DATA_PAGE_SIZE}`;
 
-    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.isMergeGraph), true);
+    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 
   pageChanged(newPage: number) {
@@ -106,9 +97,9 @@ export class Query1Component implements OnInit, AfterViewInit {
   }
 
   fillTable(data) {
-    this.results = [];
+    this.tableInput.results = [];
     for (let i = 0; i < data.data.length; i++) {
-      this.results.push({ id: data.data[i][0], name: data.data[i][1] });
+      this.tableInput.results.push(data.data[i]);
     }
   }
 
@@ -131,6 +122,6 @@ export class Query1Component implements OnInit, AfterViewInit {
      AND m.released > ${d1} AND m.released < ${d2}
      RETURN nodes(p), relationships(p)`;
 
-    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.isMergeGraph), true);
+    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 }

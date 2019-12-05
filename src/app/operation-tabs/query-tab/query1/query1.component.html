@@ -16,15 +16,14 @@
 <div class="d-flex align-items-center justify-content-center m-1">
   <input class="btn btn-dark va-text m-2 center" type="button" (click)="prepareQuery()" value="Execute">
   <div class="custom-control custom-checkbox m-1">
-    <input type="checkbox" class="form-check-input" [(ngModel)]="isLoadGraph" />
+    <input type="checkbox" class="form-check-input" [(ngModel)]="tableInput.isLoadGraph" />
     <label class="form-check-label va-text">Graph</label>
   </div>
   <div class="form-check form-check-inline m-1">
-    <input type="checkbox" class="form-check-input" [(ngModel)]="isMergeGraph" />
+    <input type="checkbox" class="form-check-input" [(ngModel)]="tableInput.isMergeGraph" />
     <label class="form-check-label va-text">Merge</label>
   </div>
 </div>
-<app-table-view [results]="results" [isLoadGraph]="isLoadGraph" [isMergeGraph]="isMergeGraph" [txtCol1]="txtCol1"
-  [txtCol2]="txtCol2" [resultCnt]="resultCnt" [currPage]="currPage" [pageSize]="pageSize"
-  (onPageChanged)="pageChanged($event)" (onDataForQueryResult)="getDataForQueryResult($event)">
+<app-table-view [params]="tableInput" (onPageChanged)="pageChanged($event)"
+  (onDataForQueryResult)="getDataForQueryResult($event)">
 </app-table-view>

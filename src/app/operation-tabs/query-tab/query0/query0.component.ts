@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { DATA_PAGE_SIZE, EV_MOUSE_ON, EV_MOUSE_OFF } from '../../../constants';
+import { DATA_PAGE_SIZE } from '../../../constants';
 import { DbService } from '../../../db.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
+import { iTableViewInput } from 'src/app/table-view/table-view-types';
 
 
 @Component({
@@ -13,21 +14,10 @@ import flatpickr from 'flatpickr';
 })
 export class Query0Component implements OnInit {
   movieCnt: number;
-  results: any[];
-  currPage: number;
-  pageSize: number;
-  isLoadGraph: boolean;
-  isMergeGraph: boolean;
-  resultCnt: number;
-  txtCol1 = 'Actor';
-  txtCol2 = 'Count';
+
+  tableInput: iTableViewInput = { columns: ['Actor', 'Count'], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true };
 
   constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
-    this.currPage = 1;
-    this.isLoadGraph = true;
-    this.isMergeGraph = true;
-    this.resultCnt = 0;
-    this.pageSize = DATA_PAGE_SIZE;
   }
 
   ngOnInit() {
@@ -41,14 +31,13 @@ export class Query0Component implements OnInit {
 
     flatpickr('#query0-inp1', opt);
     flatpickr('#query0-inp2', opt2);
-    this.results = [];
   }
 
   prepareQuery() {
 
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
-    let skip = (this.currPage - 1) * DATA_PAGE_SIZE;
+    let skip = (this.tableInput.currPage - 1) * DATA_PAGE_SIZE;
 
     this.getCountOfData(d1, d2);
     this.loadTable(d1, d2, skip);
@@ -61,7 +50,7 @@ export class Query0Component implements OnInit {
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${this.movieCnt}
     RETURN DISTINCT COUNT(*)`;
-    this._dbService.runQuery(cql, null, (x) => { this.resultCnt = x.data[0]; }, false);
+    this._dbService.runQuery(cql, null, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
   }
 
   pageChanged(newPage: number) {
@@ -84,7 +73,7 @@ export class Query0Component implements OnInit {
   }
 
   loadGraph(d1: number, d2: number, skip: number) {
-    if (!this.isLoadGraph) {
+    if (!this.tableInput.isLoadGraph) {
       return;
     }
     let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
@@ -92,13 +81,13 @@ export class Query0Component implements OnInit {
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
       WHERE degree >= ${this.movieCnt}
       RETURN n, edges ORDER BY degree DESC SKIP ${skip} LIMIT ${DATA_PAGE_SIZE}`;
-    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.isMergeGraph), true);
+    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 
   fillTable(data) {
-    this.results = [];
+    this.tableInput.results = [];
     for (let i = 0; i < data.data.length; i++) {
-      this.results.push({ id: data.data[i][0], name: data.data[i][1], count: data.data[i][2] });
+      this.tableInput.results.push(data.data[i]);
     }
   }
 
@@ -110,7 +99,7 @@ export class Query0Component implements OnInit {
       `MATCH p=(n:Person)-[r:ACTED_IN]->(:Movie) WHERE ID(n) = ${id} AND r.act_begin >= ${d1} AND r.act_end <= ${d2}
     RETURN nodes(p), relationships(p)`;
 
-    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.isMergeGraph), true);
+    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
 
   }
 }

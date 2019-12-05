@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF } from '../constants';
+import { iTableViewInput } from './table-view-types';
 
 @Component({
   selector: 'app-table-view',
@@ -11,14 +12,7 @@ import { EV_MOUSE_ON, EV_MOUSE_OFF } from '../constants';
 export class TableViewComponent implements OnInit {
 
   private highlighterFn: (ev: any) => void;
-  @Input() results: any[];
-  @Input() isLoadGraph: boolean;
-  @Input() isMergeGraph: boolean;
-  @Input() txtCol1: string;
-  @Input() txtCol2: string;
-  @Input() resultCnt: number;
-  @Input() currPage: number;
-  @Input() pageSize: number;
+  @Input() params: iTableViewInput;
   @Output() onPageChanged = new EventEmitter<number>();
   @Output() onDataForQueryResult = new EventEmitter<number>();
 
@@ -42,6 +36,10 @@ export class TableViewComponent implements OnInit {
 
   private pageChanged(newPage: number) {
     this.onPageChanged.emit(newPage);
+  }
+
+  private isNumber(v: any) {
+    return typeof v === 'number';
   }
 
 }
