@@ -13,6 +13,10 @@ export enum PropertyCategory {
   other = 0, date = 1, finiteSet = 2
 }
 
+export enum CqlType {
+  std = 0, table = 1, count = 2
+}
+
 export interface iRule {
   propertyOperand?: string;
   propertyType?: string;

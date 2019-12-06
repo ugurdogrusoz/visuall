@@ -7,10 +7,10 @@ import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import flatpickr from 'flatpickr';
-import { iClassOption, iClassBasedRules, iRule, iRuleSync } from './filtering-types.js';
+import { iClassOption, iClassBasedRules, iRule, iRuleSync, CqlType } from './filtering-types.js';
 import { Subject } from 'rxjs';
 import ModelDescription from '../../../model_description.json';
-import { iTableViewInput } from 'src/app/table-view/table-view-types.js';
+import { iTableViewInput, iTableData, TableDataType } from 'src/app/table-view/table-view-types.js';
 import { RuleParserService } from 'src/app/rule-parser.service.js';
 
 @Component({
@@ -28,16 +28,16 @@ export class FilterTabComponent implements OnInit {
   attributeType: string;
   isDateProp: boolean;
   currDatetimes: Date[];
-  filteringRules: iClassBasedRules[];
+  filteringRule: iClassBasedRules;
   filteredTypeCount: number;
   isFilterOnDb: boolean;
-  isMergeQueryResults: boolean;
   currProperties: Subject<iRuleSync> = new Subject();
   tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true };
+  isClassTypeLocked: boolean;
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _ruleParser: RuleParserService) {
     this.isFilterOnDb = true;
-    this.isMergeQueryResults = true;
+    this.tableInput.isMergeGraph = true;
     this.nodeClasses = new Set([]);
     this.edgeClasses = new Set([]);
     this.classOptions = [];
@@ -45,7 +45,7 @@ export class FilterTabComponent implements OnInit {
     this.isDateProp = false;
     this.currDatetimes = [new Date()];
     this.filteredTypeCount = 0;
-    this.filteringRules = [];
+    this.filteringRule = null;
   }
 
   ngOnInit() {
@@ -54,8 +54,6 @@ export class FilterTabComponent implements OnInit {
     };
     flatpickr('#filter-date-inp0', opt);
 
-    this.classOptions.push({ text: GENERIC_TYPE.ANY_CLASS, isDisabled: false });
-    this.classOptions.push({ text: GENERIC_TYPE.NODES_CLASS, isDisabled: false });
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
       this.nodeClasses.add(key);
@@ -64,21 +62,20 @@ export class FilterTabComponent implements OnInit {
       }
     }
 
-    this.classOptions.push({ text: GENERIC_TYPE.EDGES_CLASS, isDisabled: false });
     for (const key in properties.edges) {
       this.edgeClasses.add(key);
       this.classOptions.push({ text: key, isDisabled: false });
     }
 
-    this.selectedClass = this.classOptions[1].text;
+    this.selectedClass = this.classOptions[0].text;
     this.changeSelectedClass();
   }
 
-  ruleOperatorClicked(i: number, j: number, op: string) {
+  ruleOperatorClicked(j: number, op: string) {
     if (op == 'OR') {
-      this.filteringRules[i].rules[j].ruleOperator = 'AND';
+      this.filteringRule.rules[j].ruleOperator = 'AND';
     } else {
-      this.filteringRules[i].rules[j].ruleOperator = 'OR';
+      this.filteringRule.rules[j].ruleOperator = 'OR';
     }
   }
 
@@ -121,36 +118,37 @@ export class FilterTabComponent implements OnInit {
   addRule2FilteringRules(r: iRule) {
     const isEdge = this.edgeClasses.has(this.selectedClass);
 
-    let idx: number = this.filteringRules.findIndex(x => x.className == this.selectedClass);
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
     }
-    if (idx == -1) {
-      this.filteringRules.push({ className: this.selectedClass, rules: [r], isEdge: isEdge });
+    if (!this.filteringRule) {
+      this.filteringRule = { className: this.selectedClass, rules: [r], isEdge: isEdge };
     } else {
-      this.filteringRules[idx].rules.push(r);
+      this.filteringRule.rules.push(r);
+    }
+    this.isClassTypeLocked = true;
+  }
+
+  deleteFilterRule(j: number) {
+    if (this.filteringRule.rules.length == 1) {
+      this.filteringRule = null;
+      this.isClassTypeLocked = false;
+    } else {
+      this.filteringRule.rules.splice(j, 1);
     }
   }
 
-  deleteFilterRule(i: number, j: number) {
-    if (this.filteringRules[i].rules.length == 1) {
-      this.filteringRules.splice(i, 1);
-    } else {
-      this.filteringRules[i].rules.splice(j, 1);
-    }
-  }
-
-  changeFilterRuleOrder(i: number, j: number, isUp: boolean) {
-    if ((isUp && j == 0) || (!isUp && j == this.filteringRules[i].rules.length - 1)) {
+  changeFilterRuleOrder(j: number, isUp: boolean) {
+    if ((isUp && j == 0) || (!isUp && j == this.filteringRule.rules.length - 1)) {
       return;
     }
     let idx = j + 1;
     if (isUp) {
       idx = j - 1;
     }
-    let tmp = this.filteringRules[i].rules[j];
-    this.filteringRules[i].rules[j] = this.filteringRules[i].rules[idx];
-    this.filteringRules[i].rules[idx] = tmp;
+    let tmp = this.filteringRule.rules[j];
+    this.filteringRule.rules[j] = this.filteringRule.rules[idx];
+    this.filteringRule.rules[idx] = tmp;
   }
 
   filterByRule(rule: iRule, ele) {
@@ -171,24 +169,22 @@ export class FilterTabComponent implements OnInit {
     this._g.viewUtils.hide(this._g.cy.$());
 
     let filteredElems = this._g.cy.collection();
-    for (let classBasedRules of this.filteringRules) {
-      let allClassElems = this._g.cy.$('.' + classBasedRules.className);
-      let filteredClassElems = this._g.cy.collection();
-      for (let i = 0; i < classBasedRules.rules.length; i++) {
-        const rule = classBasedRules.rules[i];
-        if (i == 0) {
-          filteredClassElems = allClassElems.filter(ele => { return this.filterByRule(rule, ele) });
-          continue;
-        }
-        if (rule.ruleOperator == 'OR') {
-          filteredClassElems.merge(allClassElems.filter(ele => { return this.filterByRule(rule, ele) }));
-        } else if (rule.ruleOperator == 'AND') {
-          filteredClassElems = filteredClassElems.filter(ele => { return this.filterByRule(rule, ele) });
-        }
+    let allClassElems = this._g.cy.$('.' + this.filteringRule.className);
+    let filteredClassElems = this._g.cy.collection();
+    for (let i = 0; i < this.filteringRule.rules.length; i++) {
+      const rule = this.filteringRule.rules[i];
+      if (i == 0) {
+        filteredClassElems = allClassElems.filter(ele => { return this.filterByRule(rule, ele) });
+        continue;
       }
-      // always merge elements from different classes
-      filteredElems.merge(filteredClassElems);
+      if (rule.ruleOperator == 'OR') {
+        filteredClassElems.merge(allClassElems.filter(ele => { return this.filterByRule(rule, ele) }));
+      } else if (rule.ruleOperator == 'AND') {
+        filteredClassElems = filteredClassElems.filter(ele => { return this.filterByRule(rule, ele) });
+      }
     }
+    // always merge elements from different classes
+    filteredElems.merge(filteredClassElems);
 
     filteredElems.merge(filteredElems.connectedNodes());
     this._g.viewUtils.show(filteredElems);
@@ -197,26 +193,35 @@ export class FilterTabComponent implements OnInit {
   }
 
   runFilteringOnDatabase() {
-    if ($.isEmptyObject(this.filteringRules)) {
+    if ($.isEmptyObject(this.filteringRule)) {
       console.log('there is no filteringRule');
       return;
     }
     const skip = (this.tableInput.currPage - 1) * DATA_PAGE_SIZE;
     const limit = this.tableInput.pageSize;
-    const isMerge = this.isMergeQueryResults && this._g.cy.elements().length > 0;
+    const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
 
+    this.getCountOfData();
     this.loadGraph(skip, limit, isMerge);
     this.loadTable(skip, limit);
   }
 
   private loadGraph(skip: number, limit: number, isMerge: boolean) {
-    const cql = this._ruleParser.rule2cql(this.filteringRules, skip, limit);
+    if (!this.tableInput.isLoadGraph) {
+      return;
+    }
+    const cql = this._ruleParser.rule2cql(this.filteringRule, skip, limit, CqlType.std);
     this._dbService.runQuery(cql, null, (response) => this._cyService.loadElementsFromDatabase(response, isMerge));
   }
 
   private loadTable(skip: number, limit: number) {
-    const cql = this._ruleParser.rule2cql(this.filteringRules, skip, limit, true);
+    const cql = this._ruleParser.rule2cql(this.filteringRule, skip, limit, CqlType.table);
     this._dbService.runQuery(cql, null, (response) => this.fillTable(response), false);
+  }
+
+  private getCountOfData() {
+    const cql = this._ruleParser.rule2cql(this.filteringRule, 0, -1, CqlType.count);
+    this._dbService.runQuery(cql, null, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
   }
 
   private fillTable(data) {
@@ -224,9 +229,34 @@ export class FilterTabComponent implements OnInit {
     this.tableInput.columns = Object.keys(data.data[0][1]);
 
     for (let i = 0; i < data.data.length; i++) {
-      this.tableInput.results.push([data.data[i][0], ...Object.values(data.data[i][1])]);
+      let d: iTableData[] = [{ val: data.data[i][0], type: TableDataType.number }];
+
+      for (let [k, v] of Object.entries(data.data[i][1])) {
+        d.push(this.rawData2TableData(k, v));
+      }
+      this.tableInput.results.push(d)
     }
-    debugger;
+  }
+
+  private rawData2TableData(key: string, val: any): iTableData {
+    let t = '';
+    let cName = this.filteringRule.className;
+    if (this.filteringRule.isEdge) {
+      t = properties.edges[cName][key];
+    } else {
+      t = properties.nodes[cName][key];
+    }
+    if (t.startsWith('enum')) {
+      return { val: ModelDescription.finiteSetPropertyMapping[cName][key][val], type: TableDataType.enum };
+    } else if (t == 'string' || t == 'list') {
+      return { val: val, type: TableDataType.string };
+    } else if (t == 'datetime') {
+      return { val: val, type: TableDataType.datetime };
+    } else if (t == 'float' || t == 'int') {
+      return { val: val, type: TableDataType.number };
+    } else {
+      return { val: 'see rawData2TableData function', type: TableDataType.string };
+    }
   }
 
   runFiltering() {
@@ -260,14 +290,14 @@ export class FilterTabComponent implements OnInit {
   pageChanged(newPage: number) {
     const skip = (newPage - 1) * DATA_PAGE_SIZE;
     const limit = this.tableInput.pageSize;
-    const isMerge = this.isMergeQueryResults && this._g.cy.elements().length > 0;
+    const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
 
     this.loadGraph(skip, limit, isMerge);
     this.loadTable(skip, limit);
   }
 
   getDataForQueryResult(id: number) {
-    let cql = `MATCH (n) WHERE ID(n) = ${id} RETURN nodes(p), relationships(p)`;
+    let cql = `MATCH p=(n)-[]-() WHERE ID(n) = ${id} RETURN nodes(p), relationships(p)`;
     this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 

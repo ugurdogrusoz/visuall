@@ -20,7 +20,8 @@
     <div id="rule-elements" class="collapse">
       <div class="form-inline m-2 justify-content-center">
         <label class="va-heading3">Node / Edge: &nbsp;</label>
-        <select class="custom-select filter-form va-text" [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
+        <select class="custom-select filter-form va-text" [disabled]="isClassTypeLocked" [(ngModel)]="selectedClass"
+          (change)="changeSelectedClass()">
           <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
           </option>
         </select>
@@ -32,30 +33,30 @@
 
       <div class="text-center borderless mx-1 my-3">
         <div>
-          <div *ngFor="let r of filteringRules; let i = index;" class="border">
+          <div *ngIf="filteringRule" class="border">
             <span class="va-text">
-              Bring <b>{{r.className}}</b> where:
+              Bring <b>{{filteringRule.className}}</b> where:
             </span>
-            <div *ngFor="let rule of r.rules; let j = index;" class="mx-1 my-2">
+            <div *ngFor="let rule of filteringRule.rules; let j = index;" class="mx-1 my-2">
               <div class="row align-items-center no-gutters">
                 <!-- up, down buttons for the rule -->
                 <div class="col-lg-2 col-sm-1 text-left">
-                  <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(i, j, true)" *ngIf="j!=0">
+                  <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
                     <img src="assets/img/up-arrow.svg" height="16px" width="16px" alt="Navigate Up">
                   </a>
-                  <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(i, j, false)" *ngIf="j!=0">
+                  <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(j, false)" *ngIf="j!=0">
                     <img src="assets/img/down-arrow.svg" height="16px" width="16px" alt="Navigate Down">
                   </a>
                 </div>
                 <!-- rule body -->
                 <div class="col-lg-9 col-sm-10 text-left va-text">
                   <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
-                    (click)="ruleOperatorClicked(i, j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
+                    (click)="ruleOperatorClicked(j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
                   <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
                 </div>
                 <!-- delete rule button -->
                 <div class="col-1 text-right pr-1">
-                  <a href="#" class="delete-rule-link" (click)="deleteFilterRule(i, j)">
+                  <a href="#" class="delete-rule-link" (click)="deleteFilterRule(j)">
                     <img src="assets/img/close.svg" height="16px" width="16px" alt="Delete rule">
                   </a>
                 </div>
@@ -64,15 +65,20 @@
           </div>
         </div>
 
-        <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRules.length > 0">
+        <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
           <input class="btn btn-dark va-text m-2" type="button" value="Execute" (click)="runFiltering()">
 
           <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input" [(ngModel)]="isFilterOnDb" />
             <label class="form-check-label va-text">Database</label>
           </div>
+          <div class="custom-control custom-checkbox m-1">
+            <input type="checkbox" class="form-check-input" [(ngModel)]="tableInput.isLoadGraph"
+              [disabled]="!isFilterOnDb" />
+            <label class="form-check-label va-text">Graph</label>
+          </div>
           <div class="form-check form-check-inline m-1">
-            <input type="checkbox" class="form-check-input" [(ngModel)]="isMergeQueryResults"
+            <input type="checkbox" class="form-check-input" [(ngModel)]="tableInput.isMergeGraph"
               [disabled]="!isFilterOnDb" />
             <label class="form-check-label va-text">Merge</label>
           </div>

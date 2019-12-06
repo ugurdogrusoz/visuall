@@ -4,7 +4,7 @@ import { DbService } from '../../../db.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
-import { iTableViewInput } from 'src/app/table-view/table-view-types';
+import { iTableViewInput, TableDataType } from 'src/app/table-view/table-view-types';
 
 @Component({
   selector: 'app-query1',
@@ -99,7 +99,8 @@ export class Query1Component implements OnInit, AfterViewInit {
   fillTable(data) {
     this.tableInput.results = [];
     for (let i = 0; i < data.data.length; i++) {
-      this.tableInput.results.push(data.data[i]);
+      const d = data.data[i];
+      this.tableInput.results.push([{ type: TableDataType.number, val: d[0] }, { type: TableDataType.string, val: d[1] }]);
     }
   }
 
