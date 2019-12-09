@@ -76,7 +76,7 @@ export class RuleParserService {
       }
       return `( size((x)-[:${rule.propertyOperand}]-()) ${rule.operator} ${rule.inputOperand} )`;
     } else {
-      if (rule.propertyType == 'string' && this._g.isIgnoreCaseInText) {
+      if (rule.propertyType == 'string' && this._g.userPrefs.isIgnoreCaseInText) {
         return `(LOWER(x.${rule.propertyOperand}) ${rule.operator} LOWER(${inputOp}))`;
       }
       return `(x.${rule.propertyOperand} ${rule.operator} ${inputOp})`;

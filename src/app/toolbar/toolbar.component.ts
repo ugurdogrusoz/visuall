@@ -112,7 +112,7 @@ export class ToolbarComponent implements OnInit {
     const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['string']);
     let cyQuery = '';
     let caseInsensitive = '';
-    if (this._g.isIgnoreCaseInText) {
+    if (this._g.userPrefs.isIgnoreCaseInText) {
       caseInsensitive = '@'
     }
     for (let name of Array.from(propNames)) {

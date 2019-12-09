@@ -380,7 +380,7 @@ export class CytoscapeService {
       }
       this._g.layoutUtils.placeNewNodes(collection);
     }
-    if (!isIncremental && this._g.isTimebarEnabled) {
+    if (!isIncremental && this._g.userPrefs.isTimebarEnabled) {
       this._timebarService.setRefreshFlag(true);
     } else {
       this._g.performLayout(!isIncremental || wasEmpty);
@@ -406,7 +406,7 @@ export class CytoscapeService {
       eles: ele2highlight,
       option: C.HIGHLIGHT_TYPE_MERGE
     };
-    if (this._g.isSelectOnMerge) {
+    if (this._g.userPrefs.isSelectOnMerge) {
       ele2highlight.select();
     } else {
       this._g.viewUtils.highlight(options);

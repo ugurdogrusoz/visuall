@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { DATA_PAGE_SIZE } from '../../../constants';
 import { DbService } from '../../../db.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
@@ -15,7 +14,7 @@ export class Query1Component implements OnInit, AfterViewInit {
 
   selectedGenre: string;
   movieGenres: string[];
-  tableInput: iTableViewInput = { columns: ['Movie'], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  tableInput: iTableViewInput = { columns: ['Movie'], results: [], resultCnt: 0, currPage: 1, pageSize: this._g.userPrefs.dataPageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
 
   date1Id = 'query1-inp0';
   date2Id = 'query1-inp1';
@@ -48,7 +47,7 @@ export class Query1Component implements OnInit, AfterViewInit {
   prepareQuery() {
     let date1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0];
     let date2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0];
-    let skip = (this.tableInput.currPage - 1) * DATA_PAGE_SIZE;
+    let skip = (this.tableInput.currPage - 1) * this._g.userPrefs.dataPageSize;
     let d1 = flatpickr.formatDate(date1, 'Y-M-D').substring(0, 4);
     let d2 = flatpickr.formatDate(date2, 'Y-M-D').substring(0, 4);
 
@@ -68,7 +67,7 @@ export class Query1Component implements OnInit, AfterViewInit {
     let cql = ` MATCH (m:Movie {genre:'${this.selectedGenre}'})
     WHERE m.released > ${d1} AND m.released < ${d2}  
     RETURN DISTINCT ID(m) as id, m.title
-    ORDER BY m.title DESC SKIP ${skip} LIMIT ${DATA_PAGE_SIZE}`;
+    ORDER BY m.title DESC SKIP ${skip} LIMIT ${this._g.userPrefs.dataPageSize}`;
     this._dbService.runQuery(cql, null, (x) => this.fillTable(x), false);
   }
 
@@ -80,7 +79,7 @@ export class Query1Component implements OnInit, AfterViewInit {
     WHERE m.released > ${d1} AND m.released < ${d2}  
     WITH m, COLLECT(r) as edges
     RETURN  m, edges
-    ORDER BY m.title DESC SKIP ${skip} LIMIT ${DATA_PAGE_SIZE}`;
+    ORDER BY m.title DESC SKIP ${skip} LIMIT ${this._g.userPrefs.dataPageSize}`;
 
     this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
@@ -88,7 +87,7 @@ export class Query1Component implements OnInit, AfterViewInit {
   pageChanged(newPage: number) {
     let date1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0];
     let date2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0];
-    let skip = (newPage - 1) * DATA_PAGE_SIZE;
+    let skip = (newPage - 1) * this._g.userPrefs.dataPageSize;
     let d1 = flatpickr.formatDate(date1, 'Y-M-D').substring(0, 4);
     let d2 = flatpickr.formatDate(date2, 'Y-M-D').substring(0, 4);
 
@@ -98,6 +97,7 @@ export class Query1Component implements OnInit, AfterViewInit {
 
   fillTable(data) {
     this.tableInput.results = [];
+    this.tableInput.pageSize = this._g.userPrefs.dataPageSize;
     for (let i = 0; i < data.data.length; i++) {
       const d = data.data[i];
       this.tableInput.results.push([{ type: TableDataType.number, val: d[0] }, { type: TableDataType.string, val: d[1] }]);

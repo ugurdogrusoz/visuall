@@ -2,8 +2,6 @@ export const HIGHLIGHT_OPACITY = 0.3;
 // it is more reasonable to make HIGHLIGHT_ANIM_DUR * 2 < HIGHLIGHT_WAIT_DUR
 export const HIGHLIGHT_ANIM_DUR = 400;
 export const HIGHLIGHT_WAIT_DUR = 1500;
-export const DATA_PAGE_SIZE = 15;
-
 export const EV_MOUSE_ON = 'mouseover';
 export const EV_MOUSE_OFF = 'mouseout';
 export const DATE_PROP_START = 'start_time';
@@ -22,6 +20,8 @@ export const HIGHLIGHT_TYPE = 'highlighted3';
 export const HIGHLIGHT_TYPE_MERGE = 'highlighted';
 export const MAX_HIGHTLIGHT_WIDTH = 20;
 export const MIN_HIGHTLIGHT_WIDTH = 1;
+export const MAX_DATA_PAGE_SIZE = 10000;
+export const MIN_DATA_PAGE_SIZE = 1;
 export const EXPAND_COLLAPSE_CUE_SIZE = 12;
 
 export const CSS_SM_TEXT_SIZE = 11;

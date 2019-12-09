@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
-import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE, DATA_PAGE_SIZE } from '../../constants';
+import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE } from '../../constants';
 import * as $ from 'jquery';
 import { DbService } from '../../db.service';
 import { CytoscapeService } from '../../cytoscape.service';
@@ -32,7 +32,7 @@ export class FilterTabComponent implements OnInit {
   filteredTypeCount: number;
   isFilterOnDb: boolean;
   currProperties: Subject<iRuleSync> = new Subject();
-  tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: this._g.userPrefs.dataPageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
   isClassTypeLocked: boolean;
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _ruleParser: RuleParserService) {
@@ -156,7 +156,7 @@ export class FilterTabComponent implements OnInit {
     const op = rule.operator;
     const ruleVal = rule.inputOperand;
     const eleVal = ele.data(attr);
-    if (rule.propertyType === 'string' && this._g.isIgnoreCaseInText) {
+    if (rule.propertyType === 'string' && this._g.userPrefs.isIgnoreCaseInText) {
       return compareUsingOperator(eleVal.toLowerCase(), ruleVal.toLowerCase(), op);
     }
     if (rule.propertyType == 'datetime') {
@@ -197,7 +197,8 @@ export class FilterTabComponent implements OnInit {
       console.log('there is no filteringRule');
       return;
     }
-    const skip = (this.tableInput.currPage - 1) * DATA_PAGE_SIZE;
+    this.tableInput.pageSize = this._g.userPrefs.dataPageSize;
+    const skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
     const limit = this.tableInput.pageSize;
     const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
 
@@ -291,7 +292,8 @@ export class FilterTabComponent implements OnInit {
   }
 
   pageChanged(newPage: number) {
-    const skip = (newPage - 1) * DATA_PAGE_SIZE;
+    this.tableInput.pageSize = this._g.userPrefs.dataPageSize;
+    const skip = (newPage - 1) * this.tableInput.pageSize;
     const limit = this.tableInput.pageSize;
     const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
 

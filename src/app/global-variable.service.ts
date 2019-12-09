@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { iUserPref } from './user-preference';
 
 @Injectable({
   providedIn: 'root'
@@ -10,18 +11,11 @@ export class GlobalVariableService {
   layout: any;
   expandCollapseApi: any;
   hiddenClasses: Set<string>;
-  isIgnoreCaseInText: boolean;
-  isTimebarEnabled: boolean;
-  isAutoIncrementalLayoutOnChange: boolean;
-  isSelectOnMerge: boolean;
+  userPrefs: iUserPref = { isIgnoreCaseInText: false, isTimebarEnabled: true, isAutoIncrementalLayoutOnChange: true, isSelectOnMerge: true, dataPageSize: 30 };
   setLoadingStatus: (boolean) => void;
-  
+
   constructor() {
-    this.isIgnoreCaseInText = false;
-    this.isTimebarEnabled = true;
     this.hiddenClasses = new Set([]);
-    this.isAutoIncrementalLayoutOnChange = true;
-    this.isSelectOnMerge = true;
   }
 
   runLayout() {
@@ -29,7 +23,7 @@ export class GlobalVariableService {
   }
 
   performLayout(isRandomize: boolean, isDirectCommand: boolean = false) {
-    if (!this.isAutoIncrementalLayoutOnChange && !isRandomize && !isDirectCommand) {
+    if (!this.userPrefs.isAutoIncrementalLayoutOnChange && !isRandomize && !isDirectCommand) {
       this.cy.fit();
       return;
     }

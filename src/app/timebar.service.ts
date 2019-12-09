@@ -120,7 +120,7 @@ export class TimebarService {
   }
 
   cyElemListChanged() {
-    if (!this._g.isTimebarEnabled) {
+    if (!this._g.userPrefs.isTimebarEnabled) {
       return;
     }
     const eles = this._g.cy.$().map(x => x);
@@ -837,7 +837,7 @@ export class TimebarService {
   }
 
   showHideTimebar(isActive: boolean) {
-    this._g.isTimebarEnabled = isActive;
+    this._g.userPrefs.isTimebarEnabled = isActive;
 
     if (isActive) {
       this.bindEventListeners();

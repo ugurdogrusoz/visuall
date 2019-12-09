@@ -24,6 +24,15 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
+        <label class="form-check-label va-text">Query result limit</label>
+        <div class="mx-1">
+          <input type="number" max="10000" min="1" (keydown.enter)="dataPageSizeChanged()" [(ngModel)]="dataPageSize"
+            class="form-control inp-3-char va-text">
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
         <label class="form-check-label va-text">Highlight width</label>
         <div class="mx-1">
           <input type="number" max="20" min="2" (keydown.enter)="changeHighlightOptions()" [(ngModel)]="highlightWidth"

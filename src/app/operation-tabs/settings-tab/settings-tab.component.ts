@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CytoscapeService } from '../../cytoscape.service';
 import { TimebarService } from '../../timebar.service';
 import { GlobalVariableService } from '../../global-variable.service';
-import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH } from '../../constants';
+import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, MAX_DATA_PAGE_SIZE, MIN_DATA_PAGE_SIZE } from '../../constants';
 import stylesheet from '../../../assets/generated/stylesheet.json';
 
 @Component({
@@ -18,6 +18,7 @@ export class SettingsTabComponent implements OnInit {
   timebarPlayingSpeed: number;
   timebarZoomingStep: number;
   compoundPadding: string;
+  dataPageSize: number;
   timebarGraphInclusionTypes: string[];
   timebarStatsInclusionTypes: string[];
   mergedElemIndicator: string[];
@@ -59,11 +60,12 @@ export class SettingsTabComponent implements OnInit {
     this.timebarGraphInclusionTypes = ['overlaps', 'contains', 'contained by'];
     this.timebarStatsInclusionTypes = ['all', 'begin', 'middle', 'end'];
     this.mergedElemIndicator = ['Selection', 'Highlight'];
+    this.dataPageSize = this._g.userPrefs.dataPageSize;
     this._cyService.applyElementStyleSettings = this.applyElementStyleSettings.bind(this);
   }
 
   mergedElemIndicatorChanged(i: number) {
-    this._g.isSelectOnMerge = (i == 0);
+    this._g.userPrefs.isSelectOnMerge = (i == 0);
   }
 
   applyElementStyleSettings() {
@@ -79,9 +81,9 @@ export class SettingsTabComponent implements OnInit {
     setting.actuator[setting.fn](setting.isEnable);
   }
 
-  ignoreCaseSettingFn(isEnable: boolean) { this._g.isIgnoreCaseInText = isEnable; }
+  ignoreCaseSettingFn(isEnable: boolean) { this._g.userPrefs.isIgnoreCaseInText = isEnable; }
 
-  autoIncrementalLayoutSettingFn(isEnable: boolean) { this._g.isAutoIncrementalLayoutOnChange = isEnable; }
+  autoIncrementalLayoutSettingFn(isEnable: boolean) { this._g.userPrefs.isAutoIncrementalLayoutOnChange = isEnable; }
 
   changeHighlightOptions() {
     if (this.highlightWidth < MIN_HIGHTLIGHT_WIDTH) {
@@ -117,6 +119,17 @@ export class SettingsTabComponent implements OnInit {
   timebarStatsInclusionTypeChanged(i: number) {
     this._timebarService.changeStatsInclusionType(i);
   }
+
+  dataPageSizeChanged() {
+    if (this.dataPageSize > MAX_DATA_PAGE_SIZE) {
+      this.dataPageSize = MAX_DATA_PAGE_SIZE;
+    }
+    if (this.dataPageSize < MIN_DATA_PAGE_SIZE) {
+      this.dataPageSize = MIN_DATA_PAGE_SIZE;
+    }
+    this._g.userPrefs.dataPageSize = this.dataPageSize;
+  }
+
 }
 
 interface iBoolSetting {
