@@ -32,7 +32,7 @@ export class FilterTabComponent implements OnInit {
   filteredTypeCount: number;
   isFilterOnDb: boolean;
   currProperties: Subject<iRuleSync> = new Subject();
-  tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true };
+  tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
   isClassTypeLocked: boolean;
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _ruleParser: RuleParserService) {
@@ -227,7 +227,7 @@ export class FilterTabComponent implements OnInit {
   private fillTable(data) {
     this.tableInput.results = [];
     this.tableInput.columns = Object.keys(data.data[0][1]);
-
+    this.tableInput.isNodeData = !this.filteringRule.isEdge;
     for (let i = 0; i < data.data.length; i++) {
       let d: iTableData[] = [{ val: data.data[i][0], type: TableDataType.number }];
 

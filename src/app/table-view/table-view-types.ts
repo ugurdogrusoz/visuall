@@ -17,4 +17,5 @@ export interface iTableViewInput {
   currPage: number;
   pageSize: number;
   resultCnt: number;
+  isNodeData: boolean;
 }

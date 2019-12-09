@@ -15,7 +15,7 @@ import { iTableViewInput, TableDataType } from 'src/app/table-view/table-view-ty
 export class Query0Component implements OnInit {
   movieCnt: number;
 
-  tableInput: iTableViewInput = { columns: ['Actor', 'Count'], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true };
+  tableInput: iTableViewInput = { columns: ['Actor', 'Count'], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
 
   constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
   }

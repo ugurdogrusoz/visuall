@@ -27,11 +27,19 @@ export class TableViewComponent implements OnInit {
   }
 
   private onMouseEnter(id: number) {
-    this.highlighterFn({ target: this._g.cy.$('#n' + id), type: EV_MOUSE_ON });
+    let target = this._g.cy.$('#n' + id);
+    if (!this.params.isNodeData) {
+      target = this._g.cy.$('#e' + id);
+    }
+    this.highlighterFn({ target: target, type: EV_MOUSE_ON });
   }
 
   private onMouseExit(id: number) {
-    this.highlighterFn({ target: this._g.cy.$('#n' + id), type: EV_MOUSE_OFF });
+    let target = this._g.cy.$('#n' + id);
+    if (!this.params.isNodeData) {
+      target = this._g.cy.$('#e' + id);
+    }
+    this.highlighterFn({ target: target, type: EV_MOUSE_OFF });
   }
 
   private pageChanged(newPage: number) {

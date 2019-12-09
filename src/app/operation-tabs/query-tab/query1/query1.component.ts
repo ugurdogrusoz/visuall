@@ -15,7 +15,7 @@ export class Query1Component implements OnInit, AfterViewInit {
 
   selectedGenre: string;
   movieGenres: string[];
-  tableInput: iTableViewInput = { columns: ['Movie'], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true };
+  tableInput: iTableViewInput = { columns: ['Movie'], results: [], resultCnt: 0, currPage: 1, pageSize: DATA_PAGE_SIZE, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
 
   date1Id = 'query1-inp0';
   date2Id = 'query1-inp1';
