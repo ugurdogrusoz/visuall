@@ -226,6 +226,9 @@ export class FilterTabComponent implements OnInit {
 
   private fillTable(data) {
     this.tableInput.results = [];
+    if (!data.data[0][1]) {
+      return;
+    }
     this.tableInput.columns = Object.keys(data.data[0][1]);
     this.tableInput.isNodeData = !this.filteringRule.isEdge;
     for (let i = 0; i < data.data.length; i++) {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { iClassBasedRules, iRule, CqlType } from './operation-tabs/filter-tab/filtering-types';
 import { GlobalVariableService } from './global-variable.service';
 import { GENERIC_TYPE } from './constants';
+import ModelDescription from '../model_description.json';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,14 @@ export class RuleParserService {
     }
     let matchClause: string;
     if (rule.isEdge) {
-      matchClause = `OPTIONAL MATCH (x_l)-[x${classFilter}]-(x_r)\n`;
+      let s = ModelDescription.relations[rule.className].source;
+      let t = ModelDescription.relations[rule.className].target;
+      let conn = '>';
+      let isBidirectional = ModelDescription.relations[rule.className].isBidirectional;
+      if (isBidirectional) {
+        conn = '';
+      }
+      matchClause = `OPTIONAL MATCH (:${s})-[x${classFilter}]-${conn}(:${t})\n`;
     }
     else {
       matchClause = `OPTIONAL MATCH (x${classFilter})\n`;
