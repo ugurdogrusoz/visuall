@@ -1,10 +1,12 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { findTypeOfAttribute, TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS } from '../constants';
+import { findTypeOfAttribute, TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber } from '../constants';
 import flatpickr from 'flatpickr';
 import { PropertyCategory, iRule, iRuleSync } from '../operation-tabs/filter-tab/filtering-types';
 import properties from '../../assets/generated/properties.json';
 import ModelDescription from '../../model_description.json';
 import { Subject } from 'rxjs';
+import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-property-rule',
@@ -26,10 +28,12 @@ export class PropertyRuleComponent implements OnInit {
   filterInp: string;
   finiteSetPropertyMap: any = null;
   selectedClass: string;
+  currInpType: string = 'text';
   @Input() propertyChanged: Subject<iRuleSync>;
+  @Input() isStrict: boolean;
   @Output() onRuleReady = new EventEmitter<iRule>();
 
-  constructor() { }
+  constructor(private _modalService: NgbModal) { }
 
   ngOnInit() {
     this.propertyChanged.subscribe(v => {
@@ -63,11 +67,14 @@ export class PropertyRuleComponent implements OnInit {
       return;
     }
     if (attrType == 'string') {
+      this.currInpType = 'text';
       this.addOperators(TEXT_OPERATORS);
     } else if (attrType == 'float' || attrType == 'int' || attrType == 'edge') {
+      this.currInpType = 'number';
       this.addOperators(NUMBER_OPERATORS);
     } else if (attrType == 'list') {
       this.addOperators(LIST_OPERATORS);
+      this.currInpType = 'text';
     } else if (attrType.startsWith('enum')) {
       this.addOperators(ENUM_OPERATORS);
     } else if (attrType == 'datetime') {
@@ -110,6 +117,11 @@ export class PropertyRuleComponent implements OnInit {
       operator: operator,
       category: category
     };
+    const isOk = this.isStrictlyValid(rule);
+    if (this.isStrict && !isOk) {
+      this._modalService.open(ErrorModalComponent);
+      return;
+    }
     this.onRuleReady.emit(rule);
   }
 
@@ -131,6 +143,29 @@ export class PropertyRuleComponent implements OnInit {
       return PropertyCategory.date;
     }
     return PropertyCategory.other;
+  }
+
+  private isStrictlyValid(rule: iRule) {
+    const p = rule.propertyOperand;
+    // property not selected, so only a class is selected 
+    if (p == null || p == GENERIC_TYPE.NOT_SELECTED) {
+      return true;
+    }
+    const op = rule.operator;
+    // property is selected so an operator must be selected
+    if (!op) {
+      return false;
+    }
+    const inp = rule.inputOperand;
+    // property, operator are selected so an input must be provided
+    if (!inp) {
+      return false;
+    }
+    const t = rule.propertyType;
+    if ((t == 'datetime' || t == 'float' || t == 'int') && !isNumber(inp)) {
+      return false;
+    }
+    return true;
   }
 
 }

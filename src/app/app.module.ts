@@ -25,6 +25,7 @@ import { TimebarMetricEditorComponent } from './operation-tabs/settings-tab/time
 import { ColorPickerComponent } from './color-picker/color-picker.component';
 import { AutoSizeInputModule } from 'ngx-autosize-input';
 import { PropertyRuleComponent } from './property-rule/property-rule.component';
+import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { PropertyRuleComponent } from './property-rule/property-rule.component';
     TableViewComponent,
     TimebarMetricEditorComponent,
     ColorPickerComponent,
-    PropertyRuleComponent
+    PropertyRuleComponent,
+    ErrorModalComponent
   ],
   imports: [
     BrowserModule,
@@ -58,6 +60,6 @@ import { PropertyRuleComponent } from './property-rule/property-rule.component';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [SaveAsPngModalComponent, QuickHelpModalComponent, AboutModalComponent]
+  entryComponents: [SaveAsPngModalComponent, QuickHelpModalComponent, AboutModalComponent, ErrorModalComponent]
 })
 export class AppModule { }

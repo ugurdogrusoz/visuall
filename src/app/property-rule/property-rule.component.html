@@ -15,7 +15,7 @@
 
   <div class="col-5 pr-1">
     <div [hidden]="selectedPropertyCategory != 0">
-      <input type="text" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected"
+      <input [type]="currInpType" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected"
         class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
     </div>
     <div [hidden]="selectedPropertyCategory != 1">

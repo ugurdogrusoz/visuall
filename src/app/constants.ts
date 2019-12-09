@@ -276,3 +276,7 @@ export function compareUsingOperator(a: any, b: any, op: string) {
       return false;
   }
 }
+
+export function isNumber(value: string | number): boolean {
+  return ((value != null) && !isNaN(Number(value.toString())));
+}
