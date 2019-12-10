@@ -29,7 +29,6 @@ export class FilterTabComponent implements OnInit {
   isDateProp: boolean;
   currDatetimes: Date[];
   filteringRule: iClassBasedRules;
-  filteredTypeCount: number;
   isFilterOnDb: boolean;
   currProperties: Subject<iRuleSync> = new Subject();
   tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: this._g.userPrefs.dataPageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
@@ -44,8 +43,6 @@ export class FilterTabComponent implements OnInit {
     this.selectedClassProps = [];
     this.isDateProp = false;
     this.currDatetimes = [new Date()];
-    this.filteredTypeCount = 0;
-    this.filteringRule = null;
   }
 
   ngOnInit() {
@@ -67,8 +64,7 @@ export class FilterTabComponent implements OnInit {
       this.classOptions.push({ text: key, isDisabled: false });
     }
 
-    this.selectedClass = this.classOptions[0].text;
-    this.changeSelectedClass();
+    this.resetRule();
   }
 
   ruleOperatorClicked(j: number, op: string) {
@@ -306,5 +302,12 @@ export class FilterTabComponent implements OnInit {
     this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 
+  resetRule() {
+    this.filteringRule = null;
+    this.tableInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: this._g.userPrefs.dataPageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+    this.isClassTypeLocked = false;
+    this.selectedClass = this.classOptions[0].text;
+    this.changeSelectedClass();
+  }
 }
 

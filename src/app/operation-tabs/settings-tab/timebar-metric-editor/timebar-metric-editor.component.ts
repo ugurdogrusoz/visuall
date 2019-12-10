@@ -19,7 +19,6 @@ export class TimebarMetricEditorComponent implements OnInit {
   selectedClass: string;
   private currDatetimes: Date[];
   filteringRule: iTimebarMetric;
-  private filteredTypeCount: number;
   currMetrics: iTimebarMetric[];
   currMetricName: string = 'new';
   currMetricColor: string = null;
@@ -36,7 +35,6 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.classOptions = [];
     this.selectedClassProps = [];
     this.currDatetimes = [new Date()];
-    this.filteredTypeCount = 0;
     this.filteringRule = null;
     this.currMetrics = [{ incrementFn: (x) => { if (x.id()[0] === 'n') return 1; return 0 }, name: '# of nodes', className: GENERIC_TYPE.NODES_CLASS, rules: [], color: '#3366cc' },
     { incrementFn: (x) => { if (x.id()[0] === 'e') return 1; return 0 }, name: '# of edges', className: GENERIC_TYPE.EDGES_CLASS, rules: [], color: '#dc3912' },

@@ -25,6 +25,9 @@
           <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
           </option>
         </select>
+        <a href="#" class="mx-1" (click)="resetRule()" title="Reset rule">
+          <img src="assets/img/refresh.svg" height="16px" width="16px">
+        </a>
       </div>
 
       <!-- rule input -->
@@ -41,7 +44,7 @@
               <div class="row align-items-center no-gutters">
                 <!-- up, down buttons for the rule -->
                 <div class="col-lg-2 col-sm-1 text-left">
-                  <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
+                  <a href="#" class="mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
                     <img src="assets/img/up-arrow.svg" height="16px" width="16px" alt="Navigate Up">
                   </a>
                   <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(j, false)" *ngIf="j!=0">
