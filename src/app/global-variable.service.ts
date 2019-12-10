@@ -13,7 +13,8 @@ export class GlobalVariableService {
   hiddenClasses: Set<string>;
   userPrefs: iUserPref = { isIgnoreCaseInText: false, isTimebarEnabled: true, isAutoIncrementalLayoutOnChange: true, isSelectOnMerge: true, dataPageSize: 30 };
   setLoadingStatus: (boolean) => void;
-
+  isSelectFromLoad: boolean = false;
+  
   constructor() {
     this.hiddenClasses = new Set([]);
   }

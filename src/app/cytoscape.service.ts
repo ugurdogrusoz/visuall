@@ -407,6 +407,7 @@ export class CytoscapeService {
       option: C.HIGHLIGHT_TYPE_MERGE
     };
     if (this._g.userPrefs.isSelectOnMerge) {
+      this._g.isSelectFromLoad = true;
       ele2highlight.select();
     } else {
       this._g.viewUtils.highlight(options);

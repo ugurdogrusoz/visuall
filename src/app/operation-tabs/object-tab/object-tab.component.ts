@@ -39,7 +39,12 @@ export class ObjectTabComponent implements OnInit {
 
   showObjectProps(event) {
     if (event.type == 'select') {
-      this.onTabChanged.emit(0);
+      // do not change tab if selection is originated from load
+      if (this._g.isSelectFromLoad && this._g.userPrefs.isSelectOnMerge) {
+        this._g.isSelectFromLoad = false;
+      } else {
+        this.onTabChanged.emit(0);
+      }
     }
     const selectedItems = this._g.cy.$(':selected');
     let props, classNames;

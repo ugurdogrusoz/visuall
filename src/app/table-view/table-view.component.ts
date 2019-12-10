@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF } from '../constants';
-import { iTableViewInput } from './table-view-types';
+import { iTableViewInput, iTableData } from './table-view-types';
 
 @Component({
   selector: 'app-table-view',
@@ -12,21 +12,33 @@ import { iTableViewInput } from './table-view-types';
 export class TableViewComponent implements OnInit {
 
   private highlighterFn: (ev: any) => void;
+  // column index is also a column
+  columnLimit: number = 3;
+  isDraggable: boolean = false;
   @Input() params: iTableViewInput;
   @Output() onPageChanged = new EventEmitter<number>();
   @Output() onDataForQueryResult = new EventEmitter<number>();
-
+  @ViewChild('content', { static: false }) divContent: ElementRef;
+  
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
 
   ngOnInit() {
     this.highlighterFn = this._cyService.highlightNeighbors();
   }
 
-  private getDataForQueryResult(id: number) {
+  showAllTable() {
+    this.isDraggable = !this.isDraggable;
+    if (!this.isDraggable) {
+      debugger;
+      this.divContent.nativeElement.resetPosition();
+    }
+  }
+
+  getDataForQueryResult(id: number) {
     this.onDataForQueryResult.emit(id);
   }
 
-  private onMouseEnter(id: number) {
+  onMouseEnter(id: number) {
     let target = this._g.cy.$('#n' + id);
     if (!this.params.isNodeData) {
       target = this._g.cy.$('#e' + id);
@@ -34,7 +46,7 @@ export class TableViewComponent implements OnInit {
     this.highlighterFn({ target: target, type: EV_MOUSE_ON });
   }
 
-  private onMouseExit(id: number) {
+  onMouseExit(id: number) {
     let target = this._g.cy.$('#n' + id);
     if (!this.params.isNodeData) {
       target = this._g.cy.$('#e' + id);
@@ -42,12 +54,13 @@ export class TableViewComponent implements OnInit {
     this.highlighterFn({ target: target, type: EV_MOUSE_OFF });
   }
 
-  private pageChanged(newPage: number) {
+  pageChanged(newPage: number) {
     this.onPageChanged.emit(newPage);
   }
 
-  private isNumber(v: any) {
+  isNumber(v: any) {
     return typeof v === 'number';
   }
+
 
 }

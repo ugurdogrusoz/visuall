@@ -1,0 +1,6 @@
+.draggable-content {
+  z-index: 1001 !important;
+  cursor: move;
+  position: absolute;
+  background: #FFFFFFD9;
+}

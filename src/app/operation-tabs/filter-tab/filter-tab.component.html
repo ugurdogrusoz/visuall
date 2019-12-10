@@ -31,7 +31,8 @@
       </div>
 
       <!-- rule input -->
-      <app-property-rule (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties" [isStrict]="true">
+      <app-property-rule (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties"
+        [isStrict]="true">
       </app-property-rule>
 
       <div class="text-center borderless mx-1 my-3">
@@ -59,7 +60,7 @@
                 </div>
                 <!-- delete rule button -->
                 <div class="col-1 text-right pr-1">
-                  <a href="#" class="delete-rule-link" (click)="deleteFilterRule(j)">
+                  <a href="#" (click)="deleteFilterRule(j)">
                     <img src="assets/img/close.svg" height="16px" width="16px" alt="Delete rule">
                   </a>
                 </div>
