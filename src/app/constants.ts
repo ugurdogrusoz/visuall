@@ -23,6 +23,8 @@ export const MIN_HIGHTLIGHT_WIDTH = 1;
 export const MAX_DATA_PAGE_SIZE = 10000;
 export const MIN_DATA_PAGE_SIZE = 1;
 export const EXPAND_COLLAPSE_CUE_SIZE = 12;
+export const MAX_TABLE_COLUMN_COUNT = 100;
+export const MIN_TABLE_COLUMN_COUNT = 1;
 
 export const CSS_SM_TEXT_SIZE = 11;
 export const CSS_FONT_NAME = 'Arial';

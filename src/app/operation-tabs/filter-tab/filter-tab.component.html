@@ -25,7 +25,7 @@
           <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
           </option>
         </select>
-        <a href="#" class="mx-1" (click)="resetRule()" title="Reset rule">
+        <a href="#" class="mx-2" (click)="resetRule()" title="Reset rule">
           <img src="assets/img/refresh.svg" height="16px" width="16px">
         </a>
       </div>
@@ -70,7 +70,7 @@
         </div>
 
         <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
-          <input class="btn btn-dark va-text m-2" type="button" value="Execute" (click)="runFiltering()">
+          <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runFiltering()">
 
           <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input" [(ngModel)]="isFilterOnDb" />
@@ -81,7 +81,7 @@
               [disabled]="!isFilterOnDb" />
             <label class="form-check-label va-text">Graph</label>
           </div>
-          <div class="form-check form-check-inline m-1">
+          <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input" [(ngModel)]="tableInput.isMergeGraph"
               [disabled]="!isFilterOnDb" />
             <label class="form-check-label va-text">Merge</label>
@@ -89,10 +89,8 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="panel m-1">
     <app-table-view [params]="tableInput" (onPageChanged)="pageChanged($event)"
       (onDataForQueryResult)="getDataForQueryResult($event)"> </app-table-view>
   </div>
+
 </div>

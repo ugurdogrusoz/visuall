@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { iUserPref } from './user-preference';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +12,13 @@ export class GlobalVariableService {
   layout: any;
   expandCollapseApi: any;
   hiddenClasses: Set<string>;
-  userPrefs: iUserPref = { isIgnoreCaseInText: false, isTimebarEnabled: true, isAutoIncrementalLayoutOnChange: true, isSelectOnMerge: true, dataPageSize: 30 };
+  userPrefs: iUserPref = {
+    isIgnoreCaseInText: new BehaviorSubject<boolean>(false), isTimebarEnabled: new BehaviorSubject<boolean>(false), isAutoIncrementalLayoutOnChange: new BehaviorSubject<boolean>(true),
+    isSelectOnMerge: new BehaviorSubject<boolean>(true), dataPageSize: new BehaviorSubject<number>(30), tableColumnLimit: new BehaviorSubject<number>(3)
+  };
   setLoadingStatus: (boolean) => void;
   isSelectFromLoad: boolean = false;
-  
+
   constructor() {
     this.hiddenClasses = new Set([]);
   }

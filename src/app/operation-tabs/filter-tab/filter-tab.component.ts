@@ -31,7 +31,7 @@ export class FilterTabComponent implements OnInit {
   filteringRule: iClassBasedRules;
   isFilterOnDb: boolean;
   currProperties: Subject<iRuleSync> = new Subject();
-  tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: this._g.userPrefs.dataPageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
   isClassTypeLocked: boolean;
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _ruleParser: RuleParserService) {
@@ -46,6 +46,7 @@ export class FilterTabComponent implements OnInit {
   }
 
   ngOnInit() {
+    this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
     let opt = {
       defaultDate: new Date(),
     };
@@ -193,7 +194,6 @@ export class FilterTabComponent implements OnInit {
       console.log('there is no filteringRule');
       return;
     }
-    this.tableInput.pageSize = this._g.userPrefs.dataPageSize;
     const skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
     const limit = this.tableInput.pageSize;
     const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
@@ -288,7 +288,6 @@ export class FilterTabComponent implements OnInit {
   }
 
   pageChanged(newPage: number) {
-    this.tableInput.pageSize = this._g.userPrefs.dataPageSize;
     const skip = (newPage - 1) * this.tableInput.pageSize;
     const limit = this.tableInput.pageSize;
     const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
@@ -304,7 +303,7 @@ export class FilterTabComponent implements OnInit {
 
   resetRule() {
     this.filteringRule = null;
-    this.tableInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: this._g.userPrefs.dataPageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+    this.tableInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
     this.isClassTypeLocked = false;
     this.selectedClass = this.classOptions[0].text;
     this.changeSelectedClass();

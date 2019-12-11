@@ -1,7 +1,10 @@
+import { BehaviorSubject } from 'rxjs';
+
 export interface iUserPref {
-  isIgnoreCaseInText: boolean;
-  isTimebarEnabled: boolean;
-  isAutoIncrementalLayoutOnChange: boolean;
-  isSelectOnMerge: boolean;
-  dataPageSize: number;
+  isIgnoreCaseInText: BehaviorSubject<boolean>;
+  isTimebarEnabled: BehaviorSubject<boolean>;
+  isAutoIncrementalLayoutOnChange: BehaviorSubject<boolean>;
+  isSelectOnMerge: BehaviorSubject<boolean>;
+  dataPageSize: BehaviorSubject<number>;
+  tableColumnLimit: BehaviorSubject<number>;
 }

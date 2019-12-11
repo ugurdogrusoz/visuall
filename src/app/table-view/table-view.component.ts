@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild }
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF } from '../constants';
-import { iTableViewInput, iTableData } from './table-view-types';
+import { iTableViewInput } from './table-view-types';
 
 @Component({
   selector: 'app-table-view',
@@ -13,25 +13,18 @@ export class TableViewComponent implements OnInit {
 
   private highlighterFn: (ev: any) => void;
   // column index is also a column
-  columnLimit: number = 3;
+  columnLimit: number;
   isDraggable: boolean = false;
   @Input() params: iTableViewInput;
   @Output() onPageChanged = new EventEmitter<number>();
   @Output() onDataForQueryResult = new EventEmitter<number>();
   @ViewChild('content', { static: false }) divContent: ElementRef;
-  
+
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
 
   ngOnInit() {
     this.highlighterFn = this._cyService.highlightNeighbors();
-  }
-
-  showAllTable() {
-    this.isDraggable = !this.isDraggable;
-    if (!this.isDraggable) {
-      debugger;
-      this.divContent.nativeElement.resetPosition();
-    }
+    this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; });
   }
 
   getDataForQueryResult(id: number) {
@@ -61,6 +54,4 @@ export class TableViewComponent implements OnInit {
   isNumber(v: any) {
     return typeof v === 'number';
   }
-
-
 }

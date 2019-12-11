@@ -2,5 +2,19 @@
   z-index: 1001 !important;
   cursor: move;
   position: absolute;
-  background: #FFFFFFD9;
+  background: rgba(255, 255, 255, 0.95);
+  white-space: pre-wrap;
+  top: 0px;
+  left: -250px;
+  border: 2px solid #555555;
+  border-radius: 5px;
+}
+
+img {
+  width: 16px;
+  height: 16px;
+}
+
+td {
+  max-width: 200px;
 }

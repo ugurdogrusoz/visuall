@@ -14,7 +14,7 @@ import { iTableViewInput, TableDataType } from 'src/app/table-view/table-view-ty
 export class Query0Component implements OnInit {
   movieCnt: number;
 
-  tableInput: iTableViewInput = { columns: ['Actor', 'Count'], results: [], resultCnt: 0, currPage: 1, pageSize: this._g.userPrefs.dataPageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  tableInput: iTableViewInput = { columns: ['Actor', 'Count'], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
 
   constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
   }
@@ -30,13 +30,14 @@ export class Query0Component implements OnInit {
 
     flatpickr('#query0-inp1', opt);
     flatpickr('#query0-inp2', opt2);
+    this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
   }
 
   prepareQuery() {
 
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
-    let skip = (this.tableInput.currPage - 1) * this._g.userPrefs.dataPageSize;
+    let skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
 
     this.getCountOfData(d1, d2);
     this.loadTable(d1, d2, skip);
@@ -55,7 +56,7 @@ export class Query0Component implements OnInit {
   pageChanged(newPage: number) {
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
-    let skip = (newPage - 1) * this._g.userPrefs.dataPageSize;
+    let skip = (newPage - 1) * this.tableInput.pageSize;
 
     this.loadTable(d1, d2, skip);
     this.loadGraph(d1, d2, skip);
@@ -67,7 +68,7 @@ export class Query0Component implements OnInit {
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${this.movieCnt}
     RETURN DISTINCT ID(n) as id, n.name as Actor, degree as Count 
-    ORDER BY degree DESC SKIP ${skip} LIMIT ${this._g.userPrefs.dataPageSize}`;
+    ORDER BY degree DESC SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
     this._dbService.runQuery(cql, null, (x) => this.fillTable(x), false);
   }
 
@@ -79,13 +80,12 @@ export class Query0Component implements OnInit {
       WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
       WHERE degree >= ${this.movieCnt}
-      RETURN n, edges ORDER BY degree DESC SKIP ${skip} LIMIT ${this._g.userPrefs.dataPageSize}`;
+      RETURN n, edges ORDER BY degree DESC SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
     this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 
   fillTable(data) {
     this.tableInput.results = [];
-    this.tableInput.pageSize = this._g.userPrefs.dataPageSize;
     for (let i = 0; i < data.data.length; i++) {
       const d = data.data[i];
       this.tableInput.results.push([{ type: TableDataType.number, val: d[0] }, { type: TableDataType.string, val: d[1] }, { type: TableDataType.number, val: d[2] }]);

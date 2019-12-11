@@ -837,7 +837,7 @@ export class TimebarService {
   }
 
   showHideTimebar(isActive: boolean) {
-    this._g.userPrefs.isTimebarEnabled = isActive;
+    this._g.userPrefs.isTimebarEnabled.next(isActive);
 
     if (isActive) {
       this.bindEventListeners();
