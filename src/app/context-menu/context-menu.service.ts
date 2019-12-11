@@ -7,7 +7,7 @@ import { DbService } from '../db.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
 import { ContextMenuCustomizationService } from './context-menu-customization.service';
-
+import properties from '../../assets/generated/properties.json';
 
 @Injectable({
   providedIn: 'root'
@@ -67,7 +67,9 @@ export class ContextMenuService {
     }
     const classes = ele.className();
     for (let c of classes) {
-      this._g.cy.$('.' + c).select();
+      if (properties.nodes[c] || properties.edges[c]) {
+        this._g.cy.$('.' + c).select();
+      }
     }
   }
 
