@@ -10,7 +10,7 @@ Visu*all* uses [Cytoscape.js](https://js.cytoscape.org/) and many of [its extens
 
 ## Menubar
 
-Menubar contains many different, file, editing, view, highlight and layout operations. The File menu allows one to save the current map to disk and load it back when needed. It also allows you to save the current map as a static PNG image. In addition, the Edit menu allows the user to delete selected map objects from the map. The view menu contains operations to manage complexity of the map by *temporarily* hiding selected map objects and showing them back when needed. Notice that this is different from deletion, which deletes the map objects from the Cytoscape.js model, and hence the client. Below you will find: an original map with certain objects selected (left), after selected objects are hidden using "View > Hide Selected" (middle), and when all map content in the client is shown with "View > Show All".
+Menubar contains many different, file, editing, view, highlight and layout operations. The File menu allows one to save the current map to disk and load it back when needed. It also allows you to save the current map as a static PNG image. In addition, the Edit menu allows the user to delete selected map objects from the map. The view menu contains operations to manage complexity of the map by *temporarily* hiding selected map objects and showing them back when needed. Notice that this is different from deletion, which deletes the map objects from the Cytoscape.js model, and hence the client. Below you will find: an original map with certain objects selected (left), after selected objects are hidden using `View > Hide Selected` (middle), and when all map content in the client is shown with `View > Show All`.
 
 <p align="center">
   <img src="image/hide-show-1.png" height="160"/>&emsp;&emsp;
@@ -59,7 +59,45 @@ Visu*all* allows nesting of maps through groups or clusters. One way to group mo
 
 ## Filtering
 
+### Filtering by type
 
+One important way to reduce complexity of a drawing is to filter out certain types of objects or relationships from your map. Visu*all* facilitates this by providing a button per graph object. Below is an example where a map is shown with all node and edge types (left) and the same map after "ACTED_IN" edge was filtered out (right).
+
+<p align="center">
+  <img src="image/filter-by-type-before.png" height="180"/>&emsp;&emsp;
+  <img src="image/filter-by-type-after.png" height="180"/>
+</p>
+
+### Filtering by rule
+
+Often times, the user will like to filter the content available in the database or in the client side by some rules. Visu*all* facilitates this by letting the user to put together some rules via relational and logical operators.
+
+First the user chooses an object type followed by a property of that object type, a relational operator and a value. For instance, if we are interested in movies whose rating is greater than 8, we should choose the object type `Movie`, choose the property `rating`, select `>` and input `8` as the value. Then, upon clicking the `+` sign, the rules is added as shown below.
+
+<p align="center">
+  <img src="image/filter-by-rule-example-1.png" width="220"/>
+</p>
+
+In case the chosen object type is a node, the user may also choose an incident edge type on that particular node type. For instance, when the object type is `Person`, along with the properties of `Person` objects such as name, compatible edge types such as `ACTED_IN` will be listed to construct a rule. When an edge type is chosen for a selected node type, the rules will be based on edge count (degree of that node type for that particular edge type). As an example, if we're interested in all persons who acted in more than 5 movies, then we first choose the edge type as `Person`. Then, since the rule is to depend on degree of `Person` nodes on `ACTED_IN` edges, we selected `ACTED_IN` from the dropdown menu. Finally we select `>` as the logical operator, `5` as the value, and hit the `+` sign to add the rule as shown below with an example.
+
+<p align="center">
+  <img src="image/filter-by-rule-example-2.png" width="220"/>
+</p>
+
+One can combine rules that belong to the same object type through logical operators as well. For instance, if we are interested in movies with rating at least 8 *and* released during or after 2000, we can put together a rule composed of both components as follows. Notice here that the logical operation between multiple rule components is `OR` by default but could be changed to `AND` by clicking on it and vice versa.
+
+<p align="center">
+  <img src="image/filter-by-rule-example-3.png" width="220"/>
+</p>
+
+
+Before we actually run and obtain the result of the rule, we have some options we might consider changing:
+
+- Database: When this is enabled, the rule is applied to the objects in the database as opposed to the objects currently in the browser, the client side as model by a Cytoscape.js graph.
+
+- Graph: When this is checked, the query result is shown in the graph drawing canvas. In case we think the result might be too big to display at once in the canvas, however, we could check this off and get the results as a table. The results in the table then can be gradually displayed in the canvas by clicking on the corresponding "Graph" icon.
+
+- Merge: When this option is enabled, the graph currently in the canvas stays and results are *merged* into it, without avoiding any duplication. In other words, if the movie "The Matrix" was already in the graph and the query result contain this movie, we do not redundantly displayed the query result as a separate node to better enable the user to *connect the dots* in a sense.
 
 ## Querying
 
