@@ -23,7 +23,7 @@ The highlight menu aims to draw attention to certain map objects (e.g. a group o
 The user may use this menu to highlight map objects that contain a specified substring in their labels or other properties (numbers are converted to strings before such a search is applied). All highlights made so far could be removed from the map using `Remove Highlights` in this menu. Below is the result of searching "Neo" in a sample map.
 
 <p align="center">
-  <img src="image/search-example.png" width="360" title="Result of search for Neo in a sample map highlighted in yellow"/>
+  <img src="image/search-example.png" width="400" title="Result of search for Neo in a sample map highlighted in yellow"/>
 </p>
 
 The layout operations may be used to either "tidy up" the layout of the current map using `Layout > Perform Layout`. This operation takes current locations of map objects into account and performs an *incremental layout* by optimizing their geometric distances to be in line with their graph theoretic distances. However, if you think that you're not happy with the current layout and would like a new one to be calculated *from sctratch*, they you should perform `Layout > Recalculate Layout`. Notice that an incremental layout is applied on some interactive operations where the result of a query is *merged* into the current map instead of replacing it. When, however, the result of an operation is to *replace* the current map content, layout is recalculated from scratch. Below is the same movie network laid out randomly (left), and automatically by Visuall (right).
@@ -35,6 +35,14 @@ The layout operations may be used to either "tidy up" the layout of the current 
 
 A quick help is available under the Help menu to quickly enumerate some gestures to manipulate the drawings in the canvas.
 
+### Context menus
+
+Visu*all* has some context dependant operations per node and edge type as well as for the map. To enable the context menu of a specific map object, simply right click on that object. For instance, when you click on a movie, you'll be presented with a set of operations that are specific to movies such as "Use Movie Poster", which brings and uses the poster of the associated movie in the map from a public web service. To pop up the graph menu, right-click on the canvas, where there is no node or edge.
+
+<p align="center">
+  <img src="image/context-menu-example.png" width="240"/>
+</p>
+
 ## Toolbar
 
 A toolbar is available right under the menubar to lists some frequently needed operations grouped in the same manner as the menu.
@@ -44,7 +52,7 @@ A toolbar is available right under the menubar to lists some frequently needed o
 Each node and edge has a set of properties (property-value pairs) as defined in the associated model description file of the Visu*all* application. If you click on a graph object (a node or an edge) to select it, any current selection will be lifted and the graph object that you clicked on will be selected. As a graph object is selected, its properties are shown on the right panel under the "Object" tab. Below is a map where a movie was selected and is being inspected in the Object tab in the right panel.
 
 <p align="center">
-  <img src="image/object-inspector-example.png" width="400" title="When a map object is selected, its properties are shown in the Object tab in the right panel"/>
+  <img src="image/object-inspector-example.png" width="420" title="When a map object is selected, its properties are shown in the Object tab in the right panel"/>
 </p>
 
 Other objects may be added to current selection using the Shift + click. On multiple object selection, Visu*all* determines any common properties of such objects, and displays only those common properties.
@@ -54,18 +62,20 @@ Other objects may be added to current selection using the Shift + click. On mult
 Visu*all* allows nesting of maps through groups or clusters. One way to group movies and persons involved is the [Markov clustering algorithm](https://js.cytoscape.org/#eles.markovClustering) available in Cytoscape.js. This algorithm pays attention only to the connectivity of the nodes ignoring any domain specific information. The alternative grouping mechanism available in Visu*all* is grouping by director. Here a director and the movies directed by this director are grouped together into a *compound* or *parent* node. However, if a movie is directed by multiple people, we leave the movie outside any such group (e.g. the movie "The Matrix" in the example below). Below is an example where a sample movie network is not grouped (left) and grouped by director (right).
 
 <p align="center">
-  <img src="image/group-by-director-example.png" width="400" title="The movies and people involved were grouped by director"/>
+  <img src="image/group-by-director-example.png" width="420" title="The movies and people involved were grouped by director"/>
 </p>
 
 ## Filtering
 
 ### Filtering by type
 
-One important way to reduce complexity of a drawing is to filter out certain types of objects or relationships from your map. Visu*all* facilitates this by providing a button per graph object. Below is an example where a map is shown with all node and edge types (left) and the same map after `ACTED_IN` edge was filtered out (right).
+One important way to reduce complexity of a drawing is to filter out certain types of objects or relationships from your map. Visu*all* facilitates this by providing a button per graph object. Below is an example where a map is shown with all node and edge types (top) and the same map after `ACTED_IN` edge was filtered out (bottom).
 
 <p align="center">
-  <img src="image/filter-by-type-before.png" height="190"/>&emsp;&emsp;
-  <img src="image/filter-by-type-after.png" height="190"/>
+  <img src="image/filter-by-type-before.png" height="220"/>
+</p>
+<p align="center">
+  <img src="image/filter-by-type-after.png" height="220"/>
 </p>
 
 ### Filtering by rule
@@ -75,19 +85,19 @@ Often times, the user will like to filter the content available in the database 
 First, the user chooses an object type, followed by a property of that object type, a relational operator, and a value. For instance, if we are interested in movies whose rating is greater than 8, we should choose the object type `Movie`, choose the property `rating`, select >, and input 8 as the value. Then, upon clicking the + icon, the rule is added as shown below.
 
 <p align="center">
-  <img src="image/filter-by-rule-example-1.png" width="260"/>
+  <img src="image/filter-by-rule-example-1.png" width="270"/>
 </p>
 
 In case the chosen object type is a node, the user may also choose an incident edge type on that particular node type. For instance, when the object type is `Person`, along with the properties of `Person` objects such as name, compatible edge types such as `ACTED_IN` will be listed to construct a rule. When an edge type is chosen for a selected node type, the rules will be based on edge count (degree of that node type for that particular edge type). As an example, if we're interested in all persons who acted in more than 5 movies, then we first choose the edge type as `Person`. Then, since the rule is to depend on degree of `Person` nodes, on `ACTED_IN` edges, we select `ACTED_IN` from the dropdown menu. Finally, we select > as the logical operator, 5 as the value, and hit the + sign to add the rule as shown below.
 
 <p align="center">
-  <img src="image/filter-by-rule-example-2.png" width="260"/>
+  <img src="image/filter-by-rule-example-2.png" width="270"/>
 </p>
 
 One can combine rules that belong to the same object type through logical operators as well. For instance, if we are interested in movies with rating at least 8 *and* released after 2000, we can put together a rule composed of both components as follows. Notice here that the logical operator between multiple rule components is `OR` by default, but could be changed to `AND` by clicking on it.
 
 <p align="center">
-  <img src="image/filter-by-rule-example-3.png" width="260"/>
+  <img src="image/filter-by-rule-example-3.png" width="270"/>
 </p>
 
 
@@ -100,13 +110,13 @@ Before we actually run and obtain the result of the rule, we have some options w
     For the above example rule for movies with rating greater than 8 and released after 2000, when `Graph` is disabled, the result will look as a table:
 
     <p align="center">
-        <img src="image/filter-by-rule-table-1.png" width="260"/>
+        <img src="image/filter-by-rule-table-1.png" width="270"/>
     </p>
 
     Assuming the user decided to display the first 3 of 4 movies in this query result by clicking on the associated icon in those rows, the canvas will display these 3 movies and people involved as follows:
 
     <p align="center">
-        <img src="image/filter-by-rule-table-2.png" width="540"/>
+        <img src="image/filter-by-rule-table-2.png" width="600"/>
     </p>
 
     Also notice that when the user hovers the graph icon in the table, the corresponding movie and people involved will be emphasized by ghosting the remaining map objects (movie titled "The Da Vinci Code" is emphasized in the above example as described).
@@ -125,7 +135,7 @@ In any case, the results are also displayed as a table to enable faster inspecti
 Below is an example query for finding all actors who played in at least 3 movies between speficific dates from 1960 to 2020.
 
 <p align="center">
-    <img src="image/query-example.png" width="540"/>
+    <img src="image/query-example.png" width="600"/>
 </p>
 
 ## Timebar
