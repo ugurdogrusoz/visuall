@@ -23,7 +23,7 @@ The highlight menu aims to draw attention to certain map objects (e.g. a group o
 The user may use this menu to highlight map objects that contain a specified substring in their labels or other properties (numbers are converted to strings before such a search is applied). All highlights made so far could be removed from the map using `Remove Highlights` in this menu. Below is the result of searching "Neo" in a sample map.
 
 <p align="center">
-  <img src="image/search-example.png" width="400" title="Result of search for Neo in a sample map highlighted in yellow"/>
+  <img src="image/search-example.png" width="420" title="Result of search for Neo in a sample map highlighted in yellow"/>
 </p>
 
 The layout operations may be used to either "tidy up" the layout of the current map using `Layout > Perform Layout`. This operation takes current locations of map objects into account and performs an *incremental layout* by optimizing their geometric distances to be in line with their graph theoretic distances. However, if you think that you're not happy with the current layout and would like a new one to be calculated *from sctratch*, they you should perform `Layout > Recalculate Layout`. Notice that an incremental layout is applied on some interactive operations where the result of a query is *merged* into the current map instead of replacing it. When, however, the result of an operation is to *replace* the current map content, layout is recalculated from scratch. Below is the same movie network laid out randomly (left), and automatically by Visuall (right).
@@ -144,7 +144,51 @@ The timebar located below the graph drawing canvas is used to:
 - filter nodes and edges based on their lifetimes
 - show statistics for specified time ranges
 
+In other words, it shows the situation of the network in a particular datetime range.
 
+Here we assume that each graph object (node or edge) has a *lifetime* associated with it, which is expressed as an ordered pair [b,e] of begin and end datetimes, respectively, with b,e &#8712; (-&#8734;,+&#8734;). Datetimes are expressed and stored in the database as [this Unix standard in milliseconds](https://currentmillis.com/).
+
+The kind of queries / questions we would like to be able to answer via such a timebar include:
+- In a graph about movies, actors, etc. we would like to analyze movies filmed during a certain time period (e.g. 1980s).
+- In a graph about football clubs and players, etc. we would like to know all those players who were actively playing football during a certain time period (e.g. in season 2017-2018).
+
+First, let's define our terminology:
+- **Global range** contains all nodes and edges’ lifetimes going from the minimum begin datetime of a graph object to the maximum end datetime of a graph object. These values are defined programmatically by the developer in a so-called model description file.
+
+- **Stats range** is the range for displaying pre-configured statistics about our graph objects. This is typically a narrower range than the global range. 
+
+- **Graph range**, on the other hand, is a constant proportion of the stats range and determines what gets displayed in the graph drawing canvas. 
+
+In below example, ...
+
+<p align="center">
+    <img src="image/timebar-ranges.png" width="420"/>
+</p>
+
+### Unit time
+Depending on the length of the stats range, we determine a *unit time* (e.g. hour or month) and display the time and the corresponding statistics in increments of that unit time. For instance, if the stats range is March 1, 2019 11am to March 2, 2019, 2pm then the unit time is hours by default. However, if the user zooms in to see more refined situation, then the unit would be gradually adjusted to be first minutes, and then seconds if needed. Options for unit time could be as follows: *century*, *decade*, *year*, *quarter* (3 months), *month*, *week*, *day*, *hour*, *minute*, *second*, and *millisecond*. The unit time is also to be used to collect statistics during the current stats range displayed as line and bar charts. Notice that a unit time is to include the beginning of that unit but exclude the end of that unit time. For instance, if the unit time is a year, then each year is to be formed as [12:00:00AM in 1/1/1980,12:00:00AM in 1/1/1981), [12:00:00AM in 1/1/1981, 12:00:00AM in 1/1/1982), and so on.
+
+In the above example current unit time is a year. Hence, each stat to be shown (# of nodes, edges, and nodes + edges) is calculated and displayed for each year.
+
+### Stat(s) to display
+We display a certain value corresponding to the properties of nodes and/or edges as a line chart for the entire stats range and a bar chart for the graph range at each specific time unit within the range. This could be as general as the size of the network (the sum of the number of nodes and edges) at that particular time unit or could be specific to the application such as number of movies currently being filmed. So, if the unit time is a month and say during January 2019 (starting from the beginning of the month until the end of the month), 100 nodes and 150 edges existed (see below the criteria for including/excluding a node/edge in a time unit) and is displayed, then the value for this month should be 100+150=250. 
+
+### Timebar controls
+Controls located in the middle of the timebar may be used to change/set the graph/stat range.
+
+- <img src="../src/assets/img/width.svg" width="16"/> sets the stats range to be the same as the global range.
+
+- <img src="../src/assets/img/add.svg" width="16"/> zooms in to (shrinks) the stats and graph range.
+
+- <img src="../src/assets/img/minus.svg" width="16"/> zooms out to (expands) the stats and graph range.
+
+- <img src="../src/assets/img/left-arrow.svg" width="16"/> steps backward and moves the the stats and graph range back in time.
+
+- <img src="../src/assets/img/play-button.svg" width="16"/> starts an animation to move the stats and graph range forward in time.
+
+- <img src="../src/assets/img/pause-symbol.svg" width="16"/> pauses the ongoing animation to stop movement of the stats and graph range forward in time.
+
+- <img src="../src/assets/img/right-arrow.svg" width="16"/> steps forward and moves the the stats and graph range forward in time.
 
 ## Settings
 
@@ -176,26 +220,34 @@ General properties of the map displayed as well as various options on filtering,
 
 ### Timebar settings
 
-The timebar content and style may be configured through this section as follows:
+General properties of the timebar may be configured through the Settings tab in the right panel. 
+- **Show timebar**: The user might opt to hide the timebar completely by unchecking this option.
 
-- **Show timebar**:
+- **Hide disconnected nodes on animation**: When checked, disconnected nodes that typically clutter the map will be hidden.
 
-- **Hide disconnected nodes on animation**:
+- **Animation step**: Determines how quickly the move forward and backward buttons should move the graph and stats ranges.
 
-- **Animation step**:
+- **Animation speed**: Determines how quickly the graph and stats ranges should move forward in time during animation (play).
 
-- **Animation speed**:
+- **Zoom sensitivity**: Determines how fast the graph and stats ranges should be expanded or shrunk during zoom out and in operations.
 
-- **Zoom sensitivity**:
+- **Graph inclusion type**: Determines the criteria for a graph object to be included in the drawing canvas for the current graph range. A graph object will be shown in the drawing canvas only if the current graph range:
+    - *overlaps*: overlaps
+    - *contains*: completely contains
+    - *contained by*: is completely contained by
 
-- **Graph inclusion type**:
-overlaps
-contains
-contained by
+    the object's life.
 
-- **Statistics inclusion type**:
-all
-begin
-middle
-end
+- **Statistics inclusion type**: We collect stats for each graph object with respect to the current unit time. Each graph object either contributes to exactly one unit time or to all unit times that its lifetime overlaps with depending on a user specified option stats inclusion type as follows. The graph object contributes
+    - *begin*: only to the very first unit time
+    - *end*: only to the very last unit time it overlaps with
+    - *middle*: only to the very middle unit time (the unit time which is most central)
+    - *all*: to all unit times
+
+    it overlaps with.
+
 - **Configure Statistics**:
+
+The value(s) to display in line/bar charts are customizable under the Settings tab in section named "Configure Stats".
+
+The user may define which type of objects are to contribute to the statistics and under what conditions/rules with the provided interface. You may choose a proper name for your stat and assign a desired color (in case you don't like the automatically assigned one).
