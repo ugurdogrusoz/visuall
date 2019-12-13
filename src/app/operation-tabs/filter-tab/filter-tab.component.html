@@ -71,10 +71,7 @@
 
         <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
           <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runFiltering()">
-          <a href="#" *ngIf="tableInput.results.length > 0" class="m-1">
-            <img [src]="isTableDraggable ? 'assets/img/minimize.svg' : 'assets/img/maximize.svg'"
-              (click)="changeTableState()" [title]="isTableDraggable ? 'Minimize table' : 'Maximize table'">
-          </a>
+
           <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input" [(ngModel)]="isFilterOnDb" />
             <label class="form-check-label va-text">Database</label>
@@ -89,6 +86,10 @@
               [disabled]="!isFilterOnDb" />
             <label class="form-check-label va-text">Merge</label>
           </div>
+          <a href="#" *ngIf="tableInput.results.length > 0" class="m-1">
+            <img [src]="isTableDraggable ? 'assets/img/minimize.svg' : 'assets/img/maximize.svg'"
+              (click)="changeTableState()" [title]="isTableDraggable ? 'Minimize table' : 'Maximize table'">
+          </a>
         </div>
       </div>
     </div>

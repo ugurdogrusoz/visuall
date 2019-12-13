@@ -22,7 +22,6 @@ export class TableViewComponent implements OnInit {
   @Input() changeState: Subject<boolean>;
   @Output() onPageChanged = new EventEmitter<number>();
   @Output() onDataForQueryResult = new EventEmitter<number>();
-  @ViewChild('content', { static: false }) divContent: ElementRef;
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
 
@@ -67,7 +66,7 @@ export class TableViewComponent implements OnInit {
   resetPosition(isDraggable: boolean) {
     this.isDraggable = isDraggable;
     if (this.isDraggable) {
-      this.position = { x: -100, y: -250 };
+      this.position = { x: -130, y: 0 };
     } else {
       this.position = { x: 0, y: 0 };
     }

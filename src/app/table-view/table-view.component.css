@@ -16,11 +16,3 @@ img {
 td {
   max-width: 200px;
 }
-
-a{
-  pointer-events: auto;
-}
-
-#asd{
-  pointer-events: none;
-}
