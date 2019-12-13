@@ -155,7 +155,7 @@ export class FilterTabComponent implements OnInit {
     const op = rule.operator;
     const ruleVal = rule.inputOperand;
     const eleVal = ele.data(attr);
-    if (rule.propertyType === 'string' && this._g.userPrefs.isIgnoreCaseInText) {
+    if (rule.propertyType === 'string' && this._g.userPrefs.isIgnoreCaseInText.getValue()) {
       return compareUsingOperator(eleVal.toLowerCase(), ruleVal.toLowerCase(), op);
     }
     if (rule.propertyType == 'datetime') {

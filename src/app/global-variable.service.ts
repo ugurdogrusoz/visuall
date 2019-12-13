@@ -28,7 +28,7 @@ export class GlobalVariableService {
   }
 
   performLayout(isRandomize: boolean, isDirectCommand: boolean = false) {
-    if (!this.userPrefs.isAutoIncrementalLayoutOnChange && !isRandomize && !isDirectCommand) {
+    if (!this.userPrefs.isAutoIncrementalLayoutOnChange.getValue() && !isRandomize && !isDirectCommand) {
       this.cy.fit();
       return;
     }
