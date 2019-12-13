@@ -120,7 +120,7 @@ export class TimebarService {
   }
 
   cyElemListChanged() {
-    if (!this._g.userPrefs.isTimebarEnabled) {
+    if (!this._g.userPrefs.isTimebarEnabled.getValue()) {
       return;
     }
     const eles = this._g.cy.$().map(x => x);

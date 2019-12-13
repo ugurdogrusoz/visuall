@@ -40,7 +40,7 @@ export class ObjectTabComponent implements OnInit {
   showObjectProps(event) {
     if (event.type == 'select') {
       // do not change tab if selection is originated from load
-      if (this._g.isSelectFromLoad && this._g.userPrefs.isSelectOnMerge) {
+      if (this._g.isSelectFromLoad && this._g.userPrefs.isSelectOnMerge.getValue()) {
         this._g.isSelectFromLoad = false;
       } else {
         this.onTabChanged.emit(0);

@@ -33,6 +33,8 @@ export class FilterTabComponent implements OnInit {
   currProperties: Subject<iRuleSync> = new Subject();
   tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
   isClassTypeLocked: boolean;
+  isTableDraggable: boolean = false;
+  currTableState: Subject<boolean> = new Subject();
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _ruleParser: RuleParserService) {
     this.isFilterOnDb = true;
@@ -153,7 +155,7 @@ export class FilterTabComponent implements OnInit {
     const op = rule.operator;
     const ruleVal = rule.inputOperand;
     const eleVal = ele.data(attr);
-    if (rule.propertyType === 'string' && this._g.userPrefs.isIgnoreCaseInText) {
+    if (rule.propertyType === 'string' && this._g.userPrefs.isIgnoreCaseInText.getValue()) {
       return compareUsingOperator(eleVal.toLowerCase(), ruleVal.toLowerCase(), op);
     }
     if (rule.propertyType == 'datetime') {
@@ -307,6 +309,11 @@ export class FilterTabComponent implements OnInit {
     this.isClassTypeLocked = false;
     this.selectedClass = this.classOptions[0].text;
     this.changeSelectedClass();
+  }
+
+  changeTableState() {
+    this.isTableDraggable = !this.isTableDraggable;
+    this.currTableState.next(this.isTableDraggable);
   }
 }
 

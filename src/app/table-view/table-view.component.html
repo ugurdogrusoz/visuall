@@ -1,17 +1,17 @@
-<div #content="ngDraggable" [ngDraggable]="isDraggable" ngResizable
+<div [ngDraggable]="isDraggable" [position]="position"
   [ngClass]="{'draggable-content': isDraggable, 'drag-block': isDraggable}">
   <div class="table-responsive-sm">
     <table class="table table-sm table-hover va-text">
       <thead *ngIf="params.results.length > 0">
         <tr>
           <th scope="col">
-            <a href="#" (click)="isDraggable = !isDraggable; content.resetPosition();">...</a>
+            #
           </th>
           <th scope="col" *ngFor="let col of params.columns; let i = index;"><span
               *ngIf="isDraggable || (i <= columnLimit-1)">{{col}}</span>
           </th>
           <th scope="col" [hidden]="params.isLoadGraph">
-            <img src="assets/img/graph.svg" title="Load Graph">
+            <img src="assets/img/graph.svg" title="Load graph">
           </th>
         </tr>
       </thead>
@@ -27,7 +27,7 @@
             </span>
           </td>
           <td [hidden]="params.isLoadGraph"><a href="#" class="query-result"
-              (click)="getDataForQueryResult(r[0].val)"><img class="img-icon" src="../assets/img/play-button.svg"></a>
+              (click)="getDataForQueryResult(r[0].val)"><img class="img-icon" title="Load graph" src="../assets/img/play-button.svg"></a>
           </td>
         </tr>
       </tbody>
