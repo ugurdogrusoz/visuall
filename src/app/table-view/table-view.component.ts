@@ -3,6 +3,8 @@ import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF } from '../constants';
 import { iTableViewInput } from './table-view-types';
+import { IPosition } from 'angular2-draggable';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-table-view',
@@ -15,7 +17,9 @@ export class TableViewComponent implements OnInit {
   // column index is also a column
   columnLimit: number;
   isDraggable: boolean = false;
+  position: IPosition = { x: 0, y: 0 };
   @Input() params: iTableViewInput;
+  @Input() changeState: Subject<boolean>;
   @Output() onPageChanged = new EventEmitter<number>();
   @Output() onDataForQueryResult = new EventEmitter<number>();
   @ViewChild('content', { static: false }) divContent: ElementRef;
@@ -25,6 +29,11 @@ export class TableViewComponent implements OnInit {
   ngOnInit() {
     this.highlighterFn = this._cyService.highlightNeighbors();
     this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; });
+    this.position.x = 0;
+    this.position.y = 0;
+    if (this.changeState) {
+      this.changeState.subscribe({ next: (isDraggable) => { this.resetPosition(isDraggable); }, error: (x) => { console.log('error in changeState.subscribe', x); } });
+    }
   }
 
   getDataForQueryResult(id: number) {
@@ -54,4 +63,14 @@ export class TableViewComponent implements OnInit {
   isNumber(v: any) {
     return typeof v === 'number';
   }
+
+  resetPosition(isDraggable: boolean) {
+    this.isDraggable = isDraggable;
+    if (this.isDraggable) {
+      this.position = { x: -100, y: -250 };
+    } else {
+      this.position = { x: 0, y: 0 };
+    }
+  }
+
 }

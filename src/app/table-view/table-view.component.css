@@ -4,8 +4,6 @@
   position: absolute;
   background: rgba(255, 255, 255, 0.90);
   white-space: pre-wrap;
-  top: 50px;
-  left: -250px;
   border: 2px solid #555555;
   border-radius: 5px;
 }
@@ -17,4 +15,12 @@ img {
 
 td {
   max-width: 200px;
+}
+
+a{
+  pointer-events: auto;
+}
+
+#asd{
+  pointer-events: none;
 }

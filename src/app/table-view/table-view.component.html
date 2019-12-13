@@ -1,11 +1,11 @@
-<div #content="ngDraggable" [ngDraggable]="isDraggable" ngResizable
+<div [ngDraggable]="isDraggable" [position]="position"
   [ngClass]="{'draggable-content': isDraggable, 'drag-block': isDraggable}">
   <div class="table-responsive-sm">
-    <table class="table table-sm table-hover va-text">
+    <table class="table table-sm table-hover va-text" id="asd">
       <thead *ngIf="params.results.length > 0">
         <tr>
           <th scope="col">
-            <a href="#" (click)="isDraggable = !isDraggable; content.resetPosition();">...</a>
+            #
           </th>
           <th scope="col" *ngFor="let col of params.columns; let i = index;"><span
               *ngIf="isDraggable || (i <= columnLimit-1)">{{col}}</span>

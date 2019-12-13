@@ -26,7 +26,7 @@
           </option>
         </select>
         <a href="#" class="mx-2" (click)="resetRule()" title="Reset rule">
-          <img src="assets/img/refresh.svg" height="16px" width="16px">
+          <img src="assets/img/refresh.svg">
         </a>
       </div>
 
@@ -46,10 +46,10 @@
                 <!-- up, down buttons for the rule -->
                 <div class="col-lg-2 col-sm-1 text-left">
                   <a href="#" class="mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
-                    <img src="assets/img/up-arrow.svg" height="16px" width="16px" alt="Navigate Up">
+                    <img src="assets/img/up-arrow.svg" title="Navigate Up">
                   </a>
                   <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(j, false)" *ngIf="j!=0">
-                    <img src="assets/img/down-arrow.svg" height="16px" width="16px" alt="Navigate Down">
+                    <img src="assets/img/down-arrow.svg" title="Navigate Down">
                   </a>
                 </div>
                 <!-- rule body -->
@@ -61,7 +61,7 @@
                 <!-- delete rule button -->
                 <div class="col-1 text-right pr-1">
                   <a href="#" (click)="deleteFilterRule(j)">
-                    <img src="assets/img/close.svg" height="16px" width="16px" alt="Delete rule">
+                    <img src="assets/img/close.svg" title="Delete rule">
                   </a>
                 </div>
               </div>
@@ -71,7 +71,10 @@
 
         <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
           <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runFiltering()">
-
+          <a href="#" *ngIf="tableInput.results.length > 0" class="m-1">
+            <img [src]="isTableDraggable ? 'assets/img/minimize.svg' : 'assets/img/maximize.svg'"
+              (click)="changeTableState()" [title]="isTableDraggable ? 'Minimize table' : 'Maximize table'">
+          </a>
           <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input" [(ngModel)]="isFilterOnDb" />
             <label class="form-check-label va-text">Database</label>
@@ -89,7 +92,7 @@
         </div>
       </div>
     </div>
-    <app-table-view [params]="tableInput" (onPageChanged)="pageChanged($event)"
+    <app-table-view [params]="tableInput" [changeState]="currTableState" (onPageChanged)="pageChanged($event)"
       (onDataForQueryResult)="getDataForQueryResult($event)"> </app-table-view>
   </div>
 
