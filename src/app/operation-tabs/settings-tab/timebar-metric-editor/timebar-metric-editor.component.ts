@@ -229,7 +229,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.currMetrics.push(this.filteringRule);
     }
     this.isHideEditing = true;
-
+    this.isAddingNew = false;
     this.setFnsForMetrics();
     this.refreshTimebar();
     this.clearInput();
