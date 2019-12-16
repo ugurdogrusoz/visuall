@@ -19,7 +19,7 @@
         class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
     </div>
     <div [hidden]="selectedPropertyCategory != 1">
-      <input type="text" id="filter-date-inp0" [disabled]="isGenericTypeSelected" class="form-control va-small-text">
+      <input type="text" #dateInp [disabled]="isGenericTypeSelected" class="form-control va-small-text">
     </div>
     <div [hidden]="selectedPropertyCategory != 2">
       <select class="custom-select filter-form va-small-text" [(ngModel)]="filterInp">

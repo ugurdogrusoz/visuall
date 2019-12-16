@@ -6,7 +6,6 @@ import { DbService } from '../../db.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
-import flatpickr from 'flatpickr';
 import { iClassOption, iClassBasedRules, iRule, iRuleSync, CqlType } from './filtering-types.js';
 import { Subject } from 'rxjs';
 import ModelDescription from '../../../model_description.json';
@@ -49,11 +48,7 @@ export class FilterTabComponent implements OnInit {
 
   ngOnInit() {
     this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
-    let opt = {
-      defaultDate: new Date(),
-    };
-    flatpickr('#filter-date-inp0', opt);
-
+    
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
       this.nodeClasses.add(key);
