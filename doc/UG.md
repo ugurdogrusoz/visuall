@@ -23,7 +23,7 @@ The highlight menu aims to draw attention to certain map objects (e.g. a group o
 The user may use this menu to highlight map objects that contain a specified substring in their labels or other properties (numbers are converted to strings before such a search is applied). All highlights made so far could be removed from the map using `Remove Highlights` in this menu. Below is the result of searching "Neo" in a sample map.
 
 <p align="center">
-  <img src="image/search-example.png" width="360" title="Result of search for Neo in a sample map highlighted in yellow"/>
+  <img src="image/search-example.png" width="420" title="Result of search for Neo in a sample map highlighted in yellow"/>
 </p>
 
 The layout operations may be used to either "tidy up" the layout of the current map using `Layout > Perform Layout`. This operation takes current locations of map objects into account and performs an *incremental layout* by optimizing their geometric distances to be in line with their graph theoretic distances. However, if you think that you're not happy with the current layout and would like a new one to be calculated *from sctratch*, they you should perform `Layout > Recalculate Layout`. Notice that an incremental layout is applied on some interactive operations where the result of a query is *merged* into the current map instead of replacing it. When, however, the result of an operation is to *replace* the current map content, layout is recalculated from scratch. Below is the same movie network laid out randomly (left), and automatically by Visuall (right).
@@ -35,6 +35,14 @@ The layout operations may be used to either "tidy up" the layout of the current 
 
 A quick help is available under the Help menu to quickly enumerate some gestures to manipulate the drawings in the canvas.
 
+### Context menus
+
+Visu*all* has some context dependant operations per node and edge type as well as for the map. To enable the context menu of a specific map object, simply right click on that object. For instance, when you click on a movie, you'll be presented with a set of operations that are specific to movies such as "Use Movie Poster", which brings and uses the poster of the associated movie in the map from a public web service. To pop up the graph menu, right-click on the canvas, where there is no node or edge.
+
+<p align="center">
+  <img src="image/context-menu-example.png" width="240"/>
+</p>
+
 ## Toolbar
 
 A toolbar is available right under the menubar to lists some frequently needed operations grouped in the same manner as the menu.
@@ -44,7 +52,7 @@ A toolbar is available right under the menubar to lists some frequently needed o
 Each node and edge has a set of properties (property-value pairs) as defined in the associated model description file of the Visu*all* application. If you click on a graph object (a node or an edge) to select it, any current selection will be lifted and the graph object that you clicked on will be selected. As a graph object is selected, its properties are shown on the right panel under the "Object" tab. Below is a map where a movie was selected and is being inspected in the Object tab in the right panel.
 
 <p align="center">
-  <img src="image/object-inspector-example.png" width="400" title="When a map object is selected, its properties are shown in the Object tab in the right panel"/>
+  <img src="image/object-inspector-example.png" width="420" title="When a map object is selected, its properties are shown in the Object tab in the right panel"/>
 </p>
 
 Other objects may be added to current selection using the Shift + click. On multiple object selection, Visu*all* determines any common properties of such objects, and displays only those common properties.
@@ -54,18 +62,20 @@ Other objects may be added to current selection using the Shift + click. On mult
 Visu*all* allows nesting of maps through groups or clusters. One way to group movies and persons involved is the [Markov clustering algorithm](https://js.cytoscape.org/#eles.markovClustering) available in Cytoscape.js. This algorithm pays attention only to the connectivity of the nodes ignoring any domain specific information. The alternative grouping mechanism available in Visu*all* is grouping by director. Here a director and the movies directed by this director are grouped together into a *compound* or *parent* node. However, if a movie is directed by multiple people, we leave the movie outside any such group (e.g. the movie "The Matrix" in the example below). Below is an example where a sample movie network is not grouped (left) and grouped by director (right).
 
 <p align="center">
-  <img src="image/group-by-director-example.png" width="400" title="The movies and people involved were grouped by director"/>
+  <img src="image/group-by-director-example.png" width="420" title="The movies and people involved were grouped by director"/>
 </p>
 
 ## Filtering
 
 ### Filtering by type
 
-One important way to reduce complexity of a drawing is to filter out certain types of objects or relationships from your map. Visu*all* facilitates this by providing a button per graph object. Below is an example where a map is shown with all node and edge types (left) and the same map after `ACTED_IN` edge was filtered out (right).
+One important way to reduce complexity of a drawing is to filter out certain types of objects or relationships from your map. Visu*all* facilitates this by providing a button per graph object. Below is an example where a map is shown with all node and edge types (top) and the same map after `ACTED_IN` edge was filtered out (bottom).
 
 <p align="center">
-  <img src="image/filter-by-type-before.png" height="190"/>&emsp;&emsp;
-  <img src="image/filter-by-type-after.png" height="190"/>
+  <img src="image/filter-by-type-before.png" height="220"/>
+</p>
+<p align="center">
+  <img src="image/filter-by-type-after.png" height="220"/>
 </p>
 
 ### Filtering by rule
@@ -75,19 +85,19 @@ Often times, the user will like to filter the content available in the database 
 First, the user chooses an object type, followed by a property of that object type, a relational operator, and a value. For instance, if we are interested in movies whose rating is greater than 8, we should choose the object type `Movie`, choose the property `rating`, select >, and input 8 as the value. Then, upon clicking the + icon, the rule is added as shown below.
 
 <p align="center">
-  <img src="image/filter-by-rule-example-1.png" width="260"/>
+  <img src="image/filter-by-rule-example-1.png" width="270"/>
 </p>
 
 In case the chosen object type is a node, the user may also choose an incident edge type on that particular node type. For instance, when the object type is `Person`, along with the properties of `Person` objects such as name, compatible edge types such as `ACTED_IN` will be listed to construct a rule. When an edge type is chosen for a selected node type, the rules will be based on edge count (degree of that node type for that particular edge type). As an example, if we're interested in all persons who acted in more than 5 movies, then we first choose the edge type as `Person`. Then, since the rule is to depend on degree of `Person` nodes, on `ACTED_IN` edges, we select `ACTED_IN` from the dropdown menu. Finally, we select > as the logical operator, 5 as the value, and hit the + sign to add the rule as shown below.
 
 <p align="center">
-  <img src="image/filter-by-rule-example-2.png" width="260"/>
+  <img src="image/filter-by-rule-example-2.png" width="270"/>
 </p>
 
 One can combine rules that belong to the same object type through logical operators as well. For instance, if we are interested in movies with rating at least 8 *and* released after 2000, we can put together a rule composed of both components as follows. Notice here that the logical operator between multiple rule components is `OR` by default, but could be changed to `AND` by clicking on it.
 
 <p align="center">
-  <img src="image/filter-by-rule-example-3.png" width="260"/>
+  <img src="image/filter-by-rule-example-3.png" width="270"/>
 </p>
 
 
@@ -100,13 +110,13 @@ Before we actually run and obtain the result of the rule, we have some options w
     For the above example rule for movies with rating greater than 8 and released after 2000, when `Graph` is disabled, the result will look as a table:
 
     <p align="center">
-        <img src="image/filter-by-rule-table-1.png" width="260"/>
+        <img src="image/filter-by-rule-table-1.png" width="270"/>
     </p>
 
     Assuming the user decided to display the first 3 of 4 movies in this query result by clicking on the associated icon in those rows, the canvas will display these 3 movies and people involved as follows:
 
     <p align="center">
-        <img src="image/filter-by-rule-table-2.png" width="540"/>
+        <img src="image/filter-by-rule-table-2.png" width="600"/>
     </p>
 
     Also notice that when the user hovers the graph icon in the table, the corresponding movie and people involved will be emphasized by ghosting the remaining map objects (movie titled "The Da Vinci Code" is emphasized in the above example as described).
@@ -125,7 +135,7 @@ In any case, the results are also displayed as a table to enable faster inspecti
 Below is an example query for finding all actors who played in at least 3 movies between speficific dates from 1960 to 2020.
 
 <p align="center">
-    <img src="image/query-example.png" width="540"/>
+    <img src="image/query-example.png" width="600"/>
 </p>
 
 ## Timebar
@@ -134,7 +144,51 @@ The timebar located below the graph drawing canvas is used to:
 - filter nodes and edges based on their lifetimes
 - show statistics for specified time ranges
 
+In other words, it shows the situation of the network in a particular datetime range.
 
+Here we assume that each graph object (node or edge) has a *lifetime* associated with it, which is expressed as an ordered pair [b,e] of begin and end datetimes, respectively, with b,e &#8712; (-&#8734;,+&#8734;). Datetimes are expressed and stored in the database as [this Unix standard in milliseconds](https://currentmillis.com/).
+
+The kind of queries / questions we would like to be able to answer via such a timebar include:
+- In a graph about movies, actors, etc. we would like to analyze movies filmed during a certain time period (e.g. 1980s).
+- In a graph about football clubs and players, etc. we would like to know all those players who were actively playing football during a certain time period (e.g. in season 2017-2018).
+
+First, let's define our terminology:
+- **Global range** contains all nodes and edges’ lifetimes going from the minimum begin datetime of a graph object to the maximum end datetime of a graph object. These values are defined programmatically by the developer in a so-called model description file.
+
+- **Stats range** is the range for displaying pre-configured statistics about our graph objects. This is typically a narrower range than the global range. 
+
+- **Graph range**, on the other hand, is a constant proportion of the stats range and determines what gets displayed in the graph drawing canvas. 
+
+In below example, ...
+
+<p align="center">
+    <img src="image/timebar-ranges.png" width="420"/>
+</p>
+
+### Unit time
+Depending on the length of the stats range, we determine a *unit time* (e.g. hour or month) and display the time and the corresponding statistics in increments of that unit time. For instance, if the stats range is March 1, 2019 11am to March 2, 2019, 2pm then the unit time is hours by default. However, if the user zooms in to see more refined situation, then the unit would be gradually adjusted to be first minutes, and then seconds if needed. Options for unit time could be as follows: *century*, *decade*, *year*, *quarter* (3 months), *month*, *week*, *day*, *hour*, *minute*, *second*, and *millisecond*. The unit time is also to be used to collect statistics during the current stats range displayed as line and bar charts. Notice that a unit time is to include the beginning of that unit but exclude the end of that unit time. For instance, if the unit time is a year, then each year is to be formed as [12:00:00AM in 1/1/1980,12:00:00AM in 1/1/1981), [12:00:00AM in 1/1/1981, 12:00:00AM in 1/1/1982), and so on.
+
+In the above example current unit time is a year. Hence, each stat to be shown (# of nodes, edges, and nodes + edges) is calculated and displayed for each year.
+
+### Stat(s) to display
+We display a certain value corresponding to the properties of nodes and/or edges as a line chart for the entire stats range and a bar chart for the graph range at each specific time unit within the range. This could be as general as the size of the network (the sum of the number of nodes and edges) at that particular time unit or could be specific to the application such as number of movies currently being filmed. So, if the unit time is a month and say during January 2019 (starting from the beginning of the month until the end of the month), 100 nodes and 150 edges existed (see below the criteria for including/excluding a node/edge in a time unit) and is displayed, then the value for this month should be 100+150=250. 
+
+### Timebar controls
+Controls located in the middle of the timebar may be used to change/set the graph/stat range.
+
+- <img src="../src/assets/img/width.svg" width="16"/> sets the stats range to be the same as the global range.
+
+- <img src="../src/assets/img/add.svg" width="16"/> zooms in to (shrinks) the stats and graph range.
+
+- <img src="../src/assets/img/minus.svg" width="16"/> zooms out to (expands) the stats and graph range.
+
+- <img src="../src/assets/img/left-arrow.svg" width="16"/> steps backward and moves the the stats and graph range back in time.
+
+- <img src="../src/assets/img/play-button.svg" width="16"/> starts an animation to move the stats and graph range forward in time.
+
+- <img src="../src/assets/img/pause-symbol.svg" width="16"/> pauses the ongoing animation to stop movement of the stats and graph range forward in time.
+
+- <img src="../src/assets/img/right-arrow.svg" width="16"/> steps forward and moves the the stats and graph range forward in time.
 
 ## Settings
 
@@ -166,26 +220,34 @@ General properties of the map displayed as well as various options on filtering,
 
 ### Timebar settings
 
-The timebar content and style may be configured through this section as follows:
+General properties of the timebar may be configured through the Settings tab in the right panel. 
+- **Show timebar**: The user might opt to hide the timebar completely by unchecking this option.
 
-- **Show timebar**:
+- **Hide disconnected nodes on animation**: When checked, disconnected nodes that typically clutter the map will be hidden.
 
-- **Hide disconnected nodes on animation**:
+- **Animation step**: Determines how quickly the move forward and backward buttons should move the graph and stats ranges.
 
-- **Animation step**:
+- **Animation speed**: Determines how quickly the graph and stats ranges should move forward in time during animation (play).
 
-- **Animation speed**:
+- **Zoom sensitivity**: Determines how fast the graph and stats ranges should be expanded or shrunk during zoom out and in operations.
 
-- **Zoom sensitivity**:
+- **Graph inclusion type**: Determines the criteria for a graph object to be included in the drawing canvas for the current graph range. A graph object will be shown in the drawing canvas only if the current graph range:
+    - *overlaps*: overlaps
+    - *contains*: completely contains
+    - *contained by*: is completely contained by
 
-- **Graph inclusion type**:
-overlaps
-contains
-contained by
+    the object's life.
 
-- **Statistics inclusion type**:
-all
-begin
-middle
-end
+- **Statistics inclusion type**: We collect stats for each graph object with respect to the current unit time. Each graph object either contributes to exactly one unit time or to all unit times that its lifetime overlaps with depending on a user specified option stats inclusion type as follows. The graph object contributes
+    - *begin*: only to the very first unit time
+    - *end*: only to the very last unit time it overlaps with
+    - *middle*: only to the very middle unit time (the unit time which is most central)
+    - *all*: to all unit times
+
+    it overlaps with.
+
 - **Configure Statistics**:
+
+The value(s) to display in line/bar charts are customizable under the Settings tab in section named "Configure Stats".
+
+The user may define which type of objects are to contribute to the statistics and under what conditions/rules with the provided interface. You may choose a proper name for your stat and assign a desired color (in case you don't like the automatically assigned one).
