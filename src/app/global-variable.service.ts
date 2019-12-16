@@ -13,7 +13,7 @@ export class GlobalVariableService {
   expandCollapseApi: any;
   hiddenClasses: Set<string>;
   userPrefs: iUserPref = {
-    isIgnoreCaseInText: new BehaviorSubject<boolean>(false), isTimebarEnabled: new BehaviorSubject<boolean>(false), isAutoIncrementalLayoutOnChange: new BehaviorSubject<boolean>(true),
+    isIgnoreCaseInText: new BehaviorSubject<boolean>(false), isTimebarEnabled: new BehaviorSubject<boolean>(true), isAutoIncrementalLayoutOnChange: new BehaviorSubject<boolean>(true),
     isSelectOnMerge: new BehaviorSubject<boolean>(true), dataPageSize: new BehaviorSubject<number>(30), tableColumnLimit: new BehaviorSubject<number>(3)
   };
   setLoadingStatus: (boolean) => void;
