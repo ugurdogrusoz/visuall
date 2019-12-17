@@ -40,7 +40,7 @@ A quick help is available under the Help menu to quickly enumerate some gestures
 Visu*all* has some context dependant operations per node and edge type as well as for the map. To enable the context menu of a specific map object, simply right click on that object. For instance, when you click on a movie, you'll be presented with a set of operations that are specific to movies such as "Use Movie Poster", which brings and uses the poster of the associated movie in the map from a public web service. To pop up the graph menu, right-click on the canvas, where there is no node or edge.
 
 <p align="center">
-  <img src="image/context-menu-example.png" width="240"/>
+  <img src="image/context-menu-example.png" width="280"/>
 </p>
 
 ## Toolbar
@@ -52,7 +52,7 @@ A toolbar is available right under the menubar to lists some frequently needed o
 Each node and edge has a set of properties (property-value pairs) as defined in the associated model description file of the Visu*all* application. If you click on a graph object (a node or an edge) to select it, any current selection will be lifted and the graph object that you clicked on will be selected. As a graph object is selected, its properties are shown on the right panel under the "Object" tab. Below is a map where a movie was selected and is being inspected in the Object tab in the right panel.
 
 <p align="center">
-  <img src="image/object-inspector-example.png" width="420" title="When a map object is selected, its properties are shown in the Object tab in the right panel"/>
+  <img src="image/object-inspector-example.png" width="460" title="When a map object is selected, its properties are shown in the Object tab in the right panel"/>
 </p>
 
 Other objects may be added to current selection using the Shift + click. On multiple object selection, Visu*all* determines any common properties of such objects, and displays only those common properties.
@@ -72,10 +72,10 @@ Visu*all* allows nesting of maps through groups or clusters. One way to group mo
 One important way to reduce complexity of a drawing is to filter out certain types of objects or relationships from your map. Visu*all* facilitates this by providing a button per graph object. Below is an example where a map is shown with all node and edge types (top) and the same map after `ACTED_IN` edge was filtered out (bottom).
 
 <p align="center">
-  <img src="image/filter-by-type-before.png" height="220"/>
+  <img src="image/filter-by-type-before.png" height="280"/>
 </p>
 <p align="center">
-  <img src="image/filter-by-type-after.png" height="220"/>
+  <img src="image/filter-by-type-after.png" height="280"/>
 </p>
 
 ### Filtering by rule
@@ -113,18 +113,20 @@ Before we actually run and obtain the result of the rule, we have some options w
         <img src="image/filter-by-rule-table-1.png" width="270"/>
     </p>
 
-    Assuming the user decided to display the first 3 of 4 movies in this query result by clicking on the associated icon in those rows, the canvas will display these 3 movies and people involved as follows:
+    Assuming the user decided to display only some of the movies in this query result by clicking on the associated icon in those rows, the canvas will display these movies and people involved as follows:
 
     <p align="center">
         <img src="image/filter-by-rule-table-2.png" width="600"/>
     </p>
 
-    Also notice that when the user hovers the graph icon in the table, the corresponding movie and people involved will be emphasized by ghosting the remaining map objects (movie titled "The Da Vinci Code" is emphasized in the above example as described).
+    Also notice that when the user hovers the graph icon in the table, the corresponding movie and people involved will be emphasized by ghosting the remaining map objects (movie titled "RescueDawn" is emphasized in the above example as described).
 
 
 - **Merge**: When this option is enabled, the graph currently in the canvas stays and the result is *merged* into it, without avoiding duplication. For example, if the movie "The Matrix" was already in the graph and the query result contains this movie, we do not redundantly display "The Matrix" movie as a separate node. This should better enable the user to *connect the dots* between objects under analysis.
 
 The user may change the limit for number of objects to be displayed at once (in the table or in the graph) from the Settings tab in the right panel using the option titled "Query result limit".
+
+- <img src="../src/assets/img/maximize.svg" width="16"/> / <img src="../src/assets/img/minimize.svg" width="16"/>: When the user clicks this button the table is maximized or expanded, and can be moved around. It becomes easier to see the full contents this way. Clicking the icon at the same location again minimizes or docks the table back to the panel.
 
 ## Querying
 
