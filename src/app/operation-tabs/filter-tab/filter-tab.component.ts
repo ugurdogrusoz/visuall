@@ -6,7 +6,6 @@ import { DbService } from '../../db.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
-import flatpickr from 'flatpickr';
 import { iClassOption, iClassBasedRules, iRule, iRuleSync, CqlType } from './filtering-types.js';
 import { Subject } from 'rxjs';
 import ModelDescription from '../../../model_description.json';
@@ -49,11 +48,7 @@ export class FilterTabComponent implements OnInit {
 
   ngOnInit() {
     this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
-    let opt = {
-      defaultDate: new Date(),
-    };
-    flatpickr('#filter-date-inp0', opt);
-
+    
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
       this.nodeClasses.add(key);
@@ -228,13 +223,36 @@ export class FilterTabComponent implements OnInit {
     if (!data.data[0][1]) {
       return;
     }
-    this.tableInput.columns = Object.keys(data.data[0][1]);
-    this.tableInput.isNodeData = !this.filteringRule.isEdge;
-    for (let i = 0; i < data.data.length; i++) {
-      let d: iTableData[] = [{ val: data.data[i][0], type: TableDataType.number }];
 
+    this.tableInput.isNodeData = !this.filteringRule.isEdge;
+    let keySet = new Set<string>();
+
+    for (let i = 0; i < data.data.length; i++) {
       for (let [k, v] of Object.entries(data.data[i][1])) {
-        d.push(this.rawData2TableData(k, v));
+        keySet.add(k);
+      }
+    }
+
+    this.tableInput.columns = [...keySet];
+
+    for (let i = 0; i < data.data.length; i++) {
+      // first column is ID
+      let d: iTableData[] = [{ val: data.data[i][0], type: TableDataType.string }];
+      // j is column index
+      let j = 0;
+      for (let [k, v] of Object.entries(data.data[i][1])) {
+        let idx = this.tableInput.columns.indexOf(k);
+        if (idx > -1) {
+          d[idx + 1] = this.rawData2TableData(k, v);
+        } else {
+          d[j] = { val: '', type: TableDataType.string };
+        }
+        j++;
+      }
+      for (j = 0; j < d.length; j++) {
+        if (!d[j]) {
+          d[j] = { val: '', type: TableDataType.string };
+        }
       }
       this.tableInput.results.push(d)
     }

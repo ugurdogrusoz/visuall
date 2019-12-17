@@ -118,13 +118,13 @@ export class TimebarService {
     }
     return [this.defaultBeginDate, this.defaultEndDate];
   }
-
+  /** when element added/removed or show/hide occurs call this
+   */
   cyElemListChanged() {
     if (!this._g.userPrefs.isTimebarEnabled.getValue()) {
       return;
     }
-    const eles = this._g.cy.$().map(x => x);
-    // const eles = this._g.cy.$().map(x => { return { data: x.data(), classes: x.classes() } });
+    const eles = this._g.cy.$().not(':hidden, :transparent').map(x => x);
     let times: iTimebarUnitData[] = [];
     this.items = [];
 

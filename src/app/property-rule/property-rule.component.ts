@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { findTypeOfAttribute, TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber } from '../constants';
 import flatpickr from 'flatpickr';
 import { PropertyCategory, iRule, iRuleSync } from '../operation-tabs/filter-tab/filtering-types';
@@ -32,6 +32,7 @@ export class PropertyRuleComponent implements OnInit {
   @Input() propertyChanged: Subject<iRuleSync>;
   @Input() isStrict: boolean;
   @Output() onRuleReady = new EventEmitter<iRule>();
+  @ViewChild('dateInp', { static: false }) dateInp: ElementRef;
 
   constructor(private _modalService: NgbModal) { }
 
@@ -82,7 +83,8 @@ export class PropertyRuleComponent implements OnInit {
       let opt = {
         defaultDate: new Date(),
       };
-      flatpickr('#filter-date-inp0', opt);
+
+      flatpickr(this.dateInp.nativeElement, opt);
     }
   }
 
@@ -94,23 +96,24 @@ export class PropertyRuleComponent implements OnInit {
     let category: PropertyCategory = PropertyCategory.other;
 
     let operator = this.operators[this.selectedOperatorKey];
-    const attributeType = this.attributeType;
-    if (attributeType == 'datetime') {
-      value = document.querySelector('#filter-date-inp0')['_flatpickr'].selectedDates[0].getTime();
+    let atType = this.attributeType;
+    if (atType && atType.startsWith('enum')) {
+      atType = atType.substr(atType.indexOf(',') + 1);
+    }
+
+    if (atType == 'datetime') {
+      value = this.dateInp.nativeElement['_flatpickr'].selectedDates[0].getTime();
       rawValue = value;
       category = PropertyCategory.date;
-    } else if (attributeType == 'int') {
+    } else if (atType == 'int') {
       value = parseInt(value);
-    } else if (attributeType == 'float') {
+    } else if (atType == 'float') {
       value = parseFloat(value);
-    } else if (attributeType && attributeType.startsWith('enum')) {
-      rawValue = this.finiteSetPropertyMap[value];
-      category = PropertyCategory.finiteSet;
     }
 
     const rule: iRule = {
       propertyOperand: attribute,
-      propertyType: this.attributeType,
+      propertyType: atType,
       rawInput: rawValue,
       inputOperand: value,
       ruleOperator: logicOperator,
@@ -153,12 +156,12 @@ export class PropertyRuleComponent implements OnInit {
     }
     const op = rule.operator;
     // property is selected so an operator must be selected
-    if (!op) {
+    if (op === undefined || op === null) {
       return false;
     }
     const inp = rule.inputOperand;
     // property, operator are selected so an input must be provided
-    if (!inp) {
+    if (inp === undefined || inp === null) {
       return false;
     }
     const t = rule.propertyType;

@@ -45,8 +45,6 @@
         "label": "data(name)",
         "color": "#e5ffb5",
         "text-valign": "center",
-        "text-wrap": "wrap",
-        "text-max-width": "58px",
         "font-size": "11px",
         "shape": "ellipse",
         "background-fit": "contain",
@@ -69,8 +67,6 @@
         "label": "data(title)",
         "color": "#ffc5a8",
         "text-valign": "bottom",
-        "text-wrap": "wrap",
-        "text-max-width": "100px",
         "font-size": "9px",
         "background-image": "assets/img/movie-roll.png",
         "shape": "ellipse",
@@ -327,13 +323,6 @@
       "selector": "edge.nolabel",
       "style": {
         "label": ""
-      }
-    },
-    {
-      "selector": "node.fitlabel",
-      "style": {
-        "text-wrap": "ellipsis",
-        "text-max-width": "100px"
       }
     }
   ]

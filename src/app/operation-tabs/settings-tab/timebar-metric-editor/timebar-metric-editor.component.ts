@@ -51,11 +51,6 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    let opt = {
-      defaultDate: new Date(),
-    };
-    flatpickr('#filter-date-inp0', opt);
-
     this.classOptions.push({ text: GENERIC_TYPE.ANY_CLASS, isDisabled: false });
     this.classOptions.push({ text: GENERIC_TYPE.NODES_CLASS, isDisabled: false });
     for (const key in properties.nodes) {
@@ -234,7 +229,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.currMetrics.push(this.filteringRule);
     }
     this.isHideEditing = true;
-
+    this.isAddingNew = false;
     this.setFnsForMetrics();
     this.refreshTimebar();
     this.clearInput();

@@ -18,10 +18,12 @@ export class SaveAsPngModalComponent implements AfterViewChecked {
 
   saveWhole() {
     this._cyService.saveAsPng(true);
+    this.activeModal.dismiss();
   }
 
   saveViewable() {
     this._cyService.saveAsPng(false);
+    this.activeModal.dismiss();
   }
 
 }

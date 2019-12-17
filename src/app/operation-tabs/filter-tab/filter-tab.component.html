@@ -73,20 +73,20 @@
           <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runFiltering()">
 
           <div class="custom-control custom-checkbox m-1">
-            <input type="checkbox" class="form-check-input" [(ngModel)]="isFilterOnDb" />
+            <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isFilterOnDb" />
             <label class="form-check-label va-text">Database</label>
           </div>
           <div class="custom-control custom-checkbox m-1">
-            <input type="checkbox" class="form-check-input" [(ngModel)]="tableInput.isLoadGraph"
+            <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="tableInput.isLoadGraph"
               [disabled]="!isFilterOnDb" />
             <label class="form-check-label va-text">Graph</label>
           </div>
           <div class="custom-control custom-checkbox m-1">
-            <input type="checkbox" class="form-check-input" [(ngModel)]="tableInput.isMergeGraph"
+            <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="tableInput.isMergeGraph"
               [disabled]="!isFilterOnDb" />
             <label class="form-check-label va-text">Merge</label>
           </div>
-          <a href="#" *ngIf="tableInput.results.length > 0" class="m-1">
+          <a href="#" *ngIf="tableInput.results.length > 0" class="mx-3">
             <img [src]="isTableDraggable ? 'assets/img/minimize.svg' : 'assets/img/maximize.svg'"
               (click)="changeTableState()" [title]="isTableDraggable ? 'Minimize table' : 'Maximize table'">
           </a>

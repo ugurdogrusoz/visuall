@@ -18,11 +18,9 @@ Visu*all* is **not** an open source or free software. Please contact [i-Vis Rese
 
 `ng test` for unit tests
 
-`ng build` to generate a production build 
+`ng build` to generate a production build, `ng build --prod` to generate a minified, uglified production build
 
-`ng build --prod` to generate a minified, uglified production build
-
-`node server.js` to start the server
+`ng build` and `ng build --prod` commands generate files inside **dist\ng-visuall** folder. An HTTP server should serve these files. You can use [server.js](server.js) file to run a server with command `node server.js`. 
 
 ## User Guide
 
