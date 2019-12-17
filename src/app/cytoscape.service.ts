@@ -148,7 +148,8 @@ export class CytoscapeService {
     (<any>window).cy = this._g.cy;
   }
 
-  // some styles uses functions, so they can't be added using JSON
+  /** some styles uses functions, so they can't be added using JSON
+   */
   private addOtherStyles() {
     this._g.cy.style().selector('node.fitlabel')
       .style({ 'text-wrap': 'ellipsis', 'text-max-width': function (ele) { return ele.width() + 'px'; } })
