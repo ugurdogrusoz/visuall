@@ -21,7 +21,7 @@ export class CytoscapeService {
   cyNavi: any;
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
   applyElementStyleSettings: () => void;
-  
+
   constructor(private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
   }
 
@@ -585,12 +585,16 @@ export class CytoscapeService {
 
   saveAsPng(isWholeGraph: boolean) {
     const options = { bg: 'white', scale: 3, full: isWholeGraph };
-    const png = this._g.cy.png(options);
-
-    const anchor = document.createElement('a');
-    anchor.download = 'visuall.png';
-    anchor.href = png;
-    anchor.click();
+    const base64png: string = this._g.cy.png(options);
+    // just giving base64 string as link gives error on big images
+    fetch(base64png)
+      .then(res => res.blob())
+      .then(x => {
+        const anchor = document.createElement('a');
+        anchor.download = 'visuall.png';
+        anchor.href = (window.URL).createObjectURL(x);
+        anchor.click();
+      })
   }
 
   deleteSelected(event) {
