@@ -43,7 +43,7 @@ export class SettingsTabComponent implements OnInit {
         text: 'Show edge labels', isEnable: true, actuator: this._cyService, fn: 'showHideEdgeLabelCheckBoxClicked', isElemStyleSetting: true
       },
       {
-        text: 'Fit Labels to Nodes', isEnable: false, actuator: this._cyService, fn: 'fitNodeLabelsCheckBoxClicked', isElemStyleSetting: true
+        text: 'Fit labels to nodes', isEnable: false, actuator: this._cyService, fn: 'fitNodeLabelsCheckBoxClicked', isElemStyleSetting: true
       },
       {
         text: 'Ignore case in text operations', isEnable: up.isIgnoreCaseInText.getValue(), actuator: this, fn: 'ignoreCaseSettingFn'

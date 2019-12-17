@@ -144,8 +144,15 @@ export class CytoscapeService {
     this.bindExpandCollapseExtension();
     this.bindComponentSelector();
     this._marqueeZoomService.init();
-
+    this.addOtherStyles();
     (<any>window).cy = this._g.cy;
+  }
+
+  // some styles uses functions, so they can't be added using JSON
+  private addOtherStyles() {
+    this._g.cy.style().selector('node.fitlabel')
+      .style({ 'text-wrap': 'ellipsis', 'text-max-width': function (ele) { return ele.width() + 'px'; } })
+      .update();
   }
 
   bindLayoutUtilitiesExtension() {
