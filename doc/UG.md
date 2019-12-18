@@ -72,10 +72,10 @@ Visu*all* allows nesting of maps through groups or clusters. One way to group mo
 One important way to reduce complexity of a drawing is to filter out certain types of objects or relationships from your map. Visu*all* facilitates this by providing a button per graph object. Below is an example where a map is shown with all node and edge types (top) and the same map after `ACTED_IN` edge was filtered out (bottom).
 
 <p align="center">
-  <img src="image/filter-by-type-before.png" height="320"/>
+  <img src="image/filter-by-type-before.png" width="580"/>
 </p>
 <p align="center">
-  <img src="image/filter-by-type-after.png" height="320"/>
+  <img src="image/filter-by-type-after.png" width="580"/>
 </p>
 
 ### Filtering by rule
@@ -164,7 +164,7 @@ First, let's define our terminology:
 In below example, three different statistics were configured and is collected for the current graph.
 
 <p align="center">
-    <img src="image/timebar-parts.png" width="640"/>
+    <img src="image/timebar-parts.png" width="720"/>
 </p>
 
 ### Unit time
@@ -257,7 +257,7 @@ The user may define which type of objects are to contribute to the statistics an
 In the example below, the user creates a new statistic to count the number of comedy movies whose rating is greater than 7 as "# highly rated comedies", and assigns green to denote it.
 
 <p align="center">
-    <img src="image/new-timebar-stat-example.png" width="640"/>
+    <img src="image/new-timebar-stat-example.png" width="720"/>
 </p>
 
 An arbitrary number of statistics could be formed and visualized as described.
