@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CytoscapeService } from '../cytoscape.service';
 import { TimebarService } from '../timebar.service';
 import { ContextMenuService } from '../context-menu/context-menu.service';
 import { MarqueeZoomService } from './marquee-zoom.service';
+import { GlobalVariableService } from '../global-variable.service';
 
 @Component({
   selector: 'app-cytoscape',
@@ -11,7 +12,7 @@ import { MarqueeZoomService } from './marquee-zoom.service';
 })
 export class CytoscapeComponent implements OnInit {
 
-  constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
+  constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService, private _timebarService: TimebarService, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
   cyClass = false;
   isLoading = true;
   
@@ -24,6 +25,17 @@ export class CytoscapeComponent implements OnInit {
 
   setClassForCyDiv(b: boolean) {
     this.cyClass = b;
+  }
+
+  @HostListener('document:keydown.delete', ['$event']) deleteHotKeyFn(event: KeyboardEvent) {
+    this._g.cy.remove(':selected');
+  }
+
+  @HostListener('document:keydown.control.a', ['$event']) selectAllHotKeyFn(event: KeyboardEvent) {
+    event.preventDefault();
+    if (event.ctrlKey) {
+      this._g.cy.$().select();
+    }
   }
 
 }
