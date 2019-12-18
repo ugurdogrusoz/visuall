@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { iClassBasedRules, iRule, CqlType } from './operation-tabs/filter-tab/filtering-types';
 import { GlobalVariableService } from './global-variable.service';
 import { GENERIC_TYPE } from './constants';
-import ModelDescription from '../model_description.json';
+import ModelDescription from '../assets/model_description.json';
 
 @Injectable({
   providedIn: 'root'

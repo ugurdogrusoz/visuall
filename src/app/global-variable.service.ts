@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { iUserPref } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import model_description from '../assets/model_description.json'
+import { isPrimitiveType } from './constants';
 
 @Injectable({
   providedIn: 'root'
@@ -12,15 +15,32 @@ export class GlobalVariableService {
   layout: any;
   expandCollapseApi: any;
   hiddenClasses: Set<string>;
-  userPrefs: iUserPref = {
-    isIgnoreCaseInText: new BehaviorSubject<boolean>(false), isTimebarEnabled: new BehaviorSubject<boolean>(true), isAutoIncrementalLayoutOnChange: new BehaviorSubject<boolean>(true),
-    isSelectOnMerge: new BehaviorSubject<boolean>(true), dataPageSize: new BehaviorSubject<number>(30), tableColumnLimit: new BehaviorSubject<number>(3)
-  };
   setLoadingStatus: (boolean) => void;
   isSelectFromLoad: boolean = false;
+  userPrefs: iUserPref = {} as iUserPref;
 
-  constructor() {
+  constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
+    this.setUserPrefs(model_description.userPref, this.userPrefs);
+  }
+
+  private setUserPrefs(obj: any, userPref: any) {
+    if (obj === undefined || obj === null) {
+      return;
+    }
+    for (let k in obj) {
+      let prop = obj[k];
+      if (isPrimitiveType(prop)) {
+        userPref[k] = new BehaviorSubject(prop);
+      } else {
+        userPref[k] = {};
+        this.setUserPrefs(obj[k], userPref[k]);
+      }
+    }
+  }
+
+  public getConfig() {
+    return this._http.get('./assets/visuall-config.json');
   }
 
   runLayout() {

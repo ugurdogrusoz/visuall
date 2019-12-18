@@ -282,3 +282,8 @@ export function compareUsingOperator(a: any, b: any, op: string) {
 export function isNumber(value: string | number): boolean {
   return ((value != null) && !isNaN(Number(value.toString())));
 }
+
+export function isPrimitiveType(o) {
+  const t = typeof o;
+  return t == 'string' || t == 'number' || t == 'boolean';
+}

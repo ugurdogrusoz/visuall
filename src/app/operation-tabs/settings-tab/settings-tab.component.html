@@ -14,10 +14,10 @@
     <div class="card border-0 m-1">
       <div class="form-inline">
         <label class="form-check-label va-text">Show query results using &nbsp;</label>
-        <div class="form-check-inline va-text" *ngFor="let str of mergedElemIndicator; let i = index;">
+        <div class="form-check-inline va-text" *ngFor="let str of mergedElemIndicators; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="mergedElemIndicatorChanged(i)" name="optradio3"
-              [checked]="i==0">{{str}}
+              [checked]="i==mergedElemIndicator">{{str}}
           </label>
         </div>
       </div>
@@ -106,7 +106,7 @@
         <div class="form-check-inline va-text" *ngFor="let str of timebarGraphInclusionTypes; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="timebarGraphInclusionTypeChanged(i)" name="optradio"
-              [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==0">{{str}}
+              [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==graphInclusionType">{{str}}
           </label>
         </div>
       </div>
@@ -117,7 +117,7 @@
         <div class="form-check-inline va-text" *ngFor="let str of timebarStatsInclusionTypes; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="timebarStatsInclusionTypeChanged(i)" name="optradio2"
-              [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==0">{{str}}
+              [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==statsInclusionTypes">{{str}}
           </label>
         </div>
       </div>

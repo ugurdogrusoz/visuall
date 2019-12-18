@@ -388,7 +388,7 @@ export class CytoscapeService {
       }
       this._g.layoutUtils.placeNewNodes(collection);
     }
-    if (!isIncremental && this._g.userPrefs.isTimebarEnabled.getValue()) {
+    if (!isIncremental && this._g.userPrefs.timebar.isEnabled.getValue()) {
       this._timebarService.setRefreshFlag(true);
     } else {
       this._g.performLayout(!isIncremental || wasEmpty);
@@ -414,7 +414,7 @@ export class CytoscapeService {
       eles: ele2highlight,
       option: C.HIGHLIGHT_TYPE_MERGE
     };
-    if (this._g.userPrefs.isSelectOnMerge.getValue()) {
+    if (this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
       this._g.isSelectFromLoad = true;
       ele2highlight.select();
     } else {

@@ -3,7 +3,7 @@ import { findTypeOfAttribute, TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, 
 import flatpickr from 'flatpickr';
 import { PropertyCategory, iRule, iRuleSync } from '../operation-tabs/filter-tab/filtering-types';
 import properties from '../../assets/generated/properties.json';
-import ModelDescription from '../../model_description.json';
+import ModelDescription from '../../assets/model_description.json';
 import { Subject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

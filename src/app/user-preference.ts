@@ -1,10 +1,52 @@
 import { BehaviorSubject } from 'rxjs';
 
 export interface iUserPref {
-  isIgnoreCaseInText: BehaviorSubject<boolean>;
-  isTimebarEnabled: BehaviorSubject<boolean>;
+  // boolean settings
   isAutoIncrementalLayoutOnChange: BehaviorSubject<boolean>;
-  isSelectOnMerge: BehaviorSubject<boolean>;
+  isHighlightOnHover: BehaviorSubject<boolean>;
+  isShowOverviewWindow: BehaviorSubject<boolean>;
+  isShowEdgeLabels: BehaviorSubject<boolean>;
+  isFitLabels2Nodes: BehaviorSubject<boolean>;
+  isHideDisconnectedNodesOnAnim: BehaviorSubject<boolean>;
+  isIgnoreCaseInText: BehaviorSubject<boolean>;
+
+  // numeric settings
   dataPageSize: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;
+  highlightWidth: BehaviorSubject<number>;
+
+  // string settings
+  compoundPadding: BehaviorSubject<string>;
+
+  // multiple choice settings
+  mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
+
+  timebar: {
+    isEnabled: BehaviorSubject<boolean>;
+    graphInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
+    statsInclusionType: BehaviorSubject<TimebarStatsInclusionTypes>;
+    playingStep: BehaviorSubject<number>;
+    playingSpeed: BehaviorSubject<number>;
+    zoomingStep: BehaviorSubject<number>;
+  }
+}
+
+export enum TimebarGraphInclusionTypes {
+  overlaps = 0, contains = 1, contained_by = 2
+}
+
+export enum TimebarStatsInclusionTypes {
+  all = 0, begin = 1, middle = 2, end = 3
+}
+
+export enum MergedElemIndicatorTypes {
+  selection = 0, highlight = 1
+}
+
+export interface iBoolSetting {
+  isEnable: boolean;
+  text: string;
+  actuator: any;
+  fn: string;
+  isElemStyleSetting?: boolean;
 }

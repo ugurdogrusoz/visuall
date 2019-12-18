@@ -8,7 +8,7 @@ import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import { iClassOption, iClassBasedRules, iRule, iRuleSync, CqlType } from './filtering-types.js';
 import { Subject } from 'rxjs';
-import ModelDescription from '../../../model_description.json';
+import ModelDescription from '../../../assets/model_description.json';
 import { iTableViewInput, iTableData, TableDataType } from 'src/app/table-view/table-view-types.js';
 import { RuleParserService } from 'src/app/rule-parser.service.js';
 

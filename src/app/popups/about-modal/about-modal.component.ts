@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ElementRef } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import ModelDescription from '../../../../src/model_description.json';
+import ModelDescription from '../../../assets/model_description.json';
 
 @Component({
   selector: 'app-about-modal',

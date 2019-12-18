@@ -3,7 +3,7 @@ import { GlobalVariableService } from '../../global-variable.service';
 import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce } from '../../constants';
 import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
-import ModelDescription from 'src/model_description.json';
+import ModelDescription from '../../../assets/model_description.json';
 
 @Component({
   selector: 'app-object-tab',
@@ -40,7 +40,7 @@ export class ObjectTabComponent implements OnInit {
   showObjectProps(event) {
     if (event.type == 'select') {
       // do not change tab if selection is originated from load
-      if (this._g.isSelectFromLoad && this._g.userPrefs.isSelectOnMerge.getValue()) {
+      if (this._g.isSelectFromLoad && this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
         this._g.isSelectFromLoad = false;
       } else {
         this.onTabChanged.emit(0);

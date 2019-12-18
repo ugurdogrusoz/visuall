@@ -4,7 +4,7 @@ const css = require('css');
 // Check given inputs for filename
 if (process.argv.length !== 3) {
   console.log(
-      'Give model filename as input: \nnode style-generator.js {filename}');
+    'Give model filename as input: \nnode style-generator.js {filename}');
   return;
 }
 
@@ -21,7 +21,7 @@ function parse_model_description(model) {
   const relations = data['relations'];
 
   let stylesheet = [];
-  let properties = {nodes: {}, edges: {}};
+  let properties = { nodes: {}, edges: {} };
 
   apply_general_styles(data);
 
@@ -36,9 +36,9 @@ function parse_model_description(model) {
   generate_fixed_styles(stylesheet, data['overwriteStyles']);
   // Beautify JSON output with 2 space tabs and write to file
   write_file(
-      'assets/generated/stylesheet.json', JSON.stringify(stylesheet, null, 2));
+    'assets/generated/stylesheet.json', JSON.stringify(stylesheet, null, 2));
   write_file(
-      'assets/generated/properties.json', JSON.stringify(properties, null, 2));
+    'assets/generated/properties.json', JSON.stringify(properties, null, 2));
 }
 
 function apply_general_styles(data) {
@@ -53,7 +53,7 @@ function processCssFile(cssFileName, style) {
   let cssFile = read_file(cssFileName);
 
   let ast = css.parse(cssFile);
-  
+
   for (let [key, val] of Object.entries(style)) {
     for (let [cssKey, cssVal] of Object.entries(val)) {
       updateAST(ast, key, cssKey, cssVal);
@@ -83,7 +83,7 @@ function generate_node_styles(nodes, stylesheet, properties) {
 
   for (let key in nodes) {
     let val = nodes[key];
-    let style = {selector: 'node.' + key, style: {}};
+    let style = { selector: 'node.' + key, style: {} };
 
     for (let style_key in val['style']) {
       if (check.includes(style_key)) {
@@ -106,7 +106,7 @@ function generate_edge_styles(edges, stylesheet, properties) {
 
   for (let key in edges) {
     let val = edges[key];
-    let style = {selector: 'edge.' + key, style: {}};
+    let style = { selector: 'edge.' + key, style: {} };
 
     for (let style_key in val['style']) {
       if (check.includes(style_key)) continue;
@@ -132,19 +132,15 @@ function read_file(filename) {
 function write_file(filename, content) {
   if (typeof filename !== 'string' || typeof content !== 'string') {
     console.log(
-        'Invalid use of function!\nwrite_file(filename:string, content:string)');
+      'Invalid use of function!\nwrite_file(filename:string, content:string)');
     return;
   }
 
-  fs.writeFile(filename, content, function(err) {
+  fs.writeFile(filename, content, function (err) {
     if (err) throw err;
 
     console.log(filename + ' written successfully!');
   });
-}
-
-function escape_special_characters(string) {
-  return string.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
 }
 
 function isImageFilePath(filepath) {
@@ -156,7 +152,6 @@ function encode2Base64(file) {
   // read binary data
   const bitmap = fs.readFileSync(file);
   // convert binary data to base64 encoded string
-  
   return 'data:image/png;base64,' + Buffer.from(bitmap).toString('base64');
 }
 

@@ -8,7 +8,7 @@ import { SaveAsPngModalComponent } from '../popups/save-as-png-modal/save-as-png
 import { AboutModalComponent } from '../popups/about-modal/about-modal.component';
 import { QuickHelpModalComponent } from '../popups/quick-help-modal/quick-help-modal.component';
 import * as $ from 'jquery';
-import ModelDescription from '../../../src/model_description.json';
+import ModelDescription from '../../assets/model_description.json';
 import { NavbarCustomizationService } from './navbar-customization.service';
 import { NavbarDropdown, NavbarAction } from './inavbar';
 

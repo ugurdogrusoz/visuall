@@ -3,7 +3,7 @@ import * as $ from 'jquery';
 
 import { debounce, MIN_DATE, MAX_DATE, isClose, TIME_UNITS, MONTHS, SHORT_MONTHS, CSS_SM_TEXT_SIZE, CSS_FONT_NAME } from './constants';
 import { GlobalVariableService } from './global-variable.service';
-import ModelDescription from '../model_description.json';
+import ModelDescription from '../assets/model_description.json';
 import { iTimebarUnitData, iTimebarItem, iTimebarMetric } from './operation-tabs/filter-tab/filtering-types';
 
 declare var google: any;
@@ -121,7 +121,7 @@ export class TimebarService {
   /** when element added/removed or show/hide occurs call this
    */
   cyElemListChanged() {
-    if (!this._g.userPrefs.isTimebarEnabled.getValue()) {
+    if (!this._g.userPrefs.timebar.isEnabled.getValue()) {
       return;
     }
     const eles = this._g.cy.$().not(':hidden, :transparent').map(x => x);
@@ -837,7 +837,7 @@ export class TimebarService {
   }
 
   showHideTimebar(isActive: boolean) {
-    this._g.userPrefs.isTimebarEnabled.next(isActive);
+    this._g.userPrefs.timebar.isEnabled.next(isActive);
 
     if (isActive) {
       this.bindEventListeners();
