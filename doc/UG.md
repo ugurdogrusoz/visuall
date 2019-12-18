@@ -49,7 +49,7 @@ A toolbar is available right under the menubar to lists some frequently needed o
 
 ## Object Inspection
 
-Each node and edge has a set of properties (property-value pairs) as defined in the associated model description file of the Visu*all* application. If you click on a graph object (a node or an edge) to select it, any current selection will be lifted and the graph object that you clicked on will be selected. As a graph object is selected, its properties are shown on the right panel under the "Object" tab. Below is a map where a movie was selected and is being inspected in the Object tab in the right panel.
+Each node and edge has a set of properties (property-value pairs) as defined in the associated [model description file](../src/model_description.json) of the Visu*all* application. If you click on a graph object (a node or an edge) to select it, any current selection will be lifted and the graph object that you clicked on will be selected. As a graph object is selected, its properties are shown on the right panel under the "Object" tab. Below is a map where a movie was selected and is being inspected in the Object tab in the right panel.
 
 <p align="center">
   <img src="image/object-inspector-example.png" width="460" title="When a map object is selected, its properties are shown in the Object tab in the right panel"/>
@@ -72,10 +72,10 @@ Visu*all* allows nesting of maps through groups or clusters. One way to group mo
 One important way to reduce complexity of a drawing is to filter out certain types of objects or relationships from your map. Visu*all* facilitates this by providing a button per graph object. Below is an example where a map is shown with all node and edge types (top) and the same map after `ACTED_IN` edge was filtered out (bottom).
 
 <p align="center">
-  <img src="image/filter-by-type-before.png" height="280"/>
+  <img src="image/filter-by-type-before.png" height="320"/>
 </p>
 <p align="center">
-  <img src="image/filter-by-type-after.png" height="280"/>
+  <img src="image/filter-by-type-after.png" height="320"/>
 </p>
 
 ### Filtering by rule
@@ -126,18 +126,18 @@ Before we actually run and obtain the result of the rule, we have some options w
 
 The user may change the limit for number of objects to be displayed at once (in the table or in the graph) from the Settings tab in the right panel using the option titled "Query result limit".
 
-- <img src="../src/assets/img/maximize.svg" width="16"/> / <img src="../src/assets/img/minimize.svg" width="16"/>: When the user clicks this button the table is maximized or expanded, and can be moved around. It becomes easier to see the full contents this way. Clicking the icon at the same location again minimizes or docks the table back to the panel.
+- <img src="../src/assets/img/maximize.svg" width="16"/> / <img src="../src/assets/img/minimize.svg" width="16"/>: When the user clicks this button the table is maximized or expanded, and can be moved around. It becomes easier to see the full contents in this state. Clicking the icon at the same location again minimizes or docks the table back to the panel. When in minimized state, the number of columns shown in the table can be configured by the user under Settings ("Maximum number of columns in tables"). 
 
 ## Querying
 
-Filter tab facilitates composition of some useful rules to bring a graph of interest for analysis. However, some specialized queries resulting in more advanced Cypher scripts are needed for most applications. Visu*all* dedicates the Query tab to fulfilling this aim. In our sample application for instance, using the query named "Get actors by movie counts" allows the user to get all actors (and the movies that they played in) who played in at least specified number of movies between the specified time range. The query interface is similar to the filter by rule interface and allows users to choose whether or not the result is to displayed in the graph canvas and whether or not the result should be merged to the current map or replace it.
+Filter tab facilitates composition of some useful rules to bring a graph of interest for analysis. However, some specialized queries resulting in more advanced Cypher scripts are needed for most applications. Visu*all* dedicates the Query tab to fulfilling this aim. In our sample application for instance, using the query named "Get actors by movie counts" allows the user to get all actors (and the movies that they played in) who played in at least specified number of movies during the specified time range. The query interface is similar to the "Filter By Rules" interface and allows users to choose whether or not the result is to displayed in the graph canvas and whether or not the result should be merged to the current map or replace it.
 
 In any case, the results are also displayed as a table to enable faster inspection of graph objects.
 
 Below is an example query for finding all actors who played in at least 3 movies between speficific dates from 1960 to 2020.
 
 <p align="center">
-    <img src="image/query-example.png" width="600"/>
+    <img src="image/query-example.png" width="640"/>
 </p>
 
 ## Timebar
@@ -155,16 +155,16 @@ The kind of queries / questions we would like to be able to answer via such a ti
 - In a graph about football clubs and players, etc. we would like to know all those players who were actively playing football during a certain time period (e.g. in season 2017-2018).
 
 First, let's define our terminology:
-- **Global range** contains all nodes and edges’ lifetimes going from the minimum begin datetime of a graph object to the maximum end datetime of a graph object. These values are defined programmatically by the developer in a so-called model description file.
+- **Global range** contains all nodes and edges’ lifetimes going from the minimum begin datetime of a graph object to the maximum end datetime of a graph object. These values are defined programmatically by the developer in a so-called [model description file](../src/model_description.json).
 
 - **Stats range** is the range for displaying pre-configured statistics about our graph objects. This is typically a narrower range than the global range. 
 
 - **Graph range**, on the other hand, is a constant proportion of the stats range and determines what gets displayed in the graph drawing canvas. 
 
-In below example, ...
+In below example, three different statistics were configured and is collected for the current graph.
 
 <p align="center">
-    <img src="image/timebar-ranges.png" width="420"/>
+    <img src="image/timebar-parts.png" width="640"/>
 </p>
 
 ### Unit time
@@ -173,7 +173,7 @@ Depending on the length of the stats range, we determine a *unit time* (e.g. hou
 In the above example current unit time is a year. Hence, each stat to be shown (# of nodes, edges, and nodes + edges) is calculated and displayed for each year.
 
 ### Stat(s) to display
-We display a certain value corresponding to the properties of nodes and/or edges as a line chart for the entire stats range and a bar chart for the graph range at each specific time unit within the range. This could be as general as the size of the network (the sum of the number of nodes and edges) at that particular time unit or could be specific to the application such as number of movies currently being filmed. So, if the unit time is a month and say during January 2019 (starting from the beginning of the month until the end of the month), 100 nodes and 150 edges existed (see below the criteria for including/excluding a node/edge in a time unit) and is displayed, then the value for this month should be 100+150=250. 
+We display a certain value corresponding to the properties of nodes and/or edges as a line chart for the entire stats range and a bar chart for the graph range at each specific time unit within the range. This could be as general as the size of the network (the sum of the number of nodes and edges) at that particular time unit or could be specific to the application such as number of movies being filmed during a unit time. So, if the unit time is a month and say during January 2019 (starting from the beginning of the month until the end of the month), 100 nodes and 150 edges existed (see below the criteria for including/excluding a node/edge in a time unit) and is displayed, then the value for this month should be 100+150=250. 
 
 ### Timebar controls
 Controls located in the middle of the timebar may be used to change/set the graph/stat range.
@@ -184,13 +184,13 @@ Controls located in the middle of the timebar may be used to change/set the grap
 
 - <img src="../src/assets/img/minus.svg" width="16"/> zooms out to (expands) the stats and graph range.
 
-- <img src="../src/assets/img/left-arrow.svg" width="16"/> steps backward and moves the the stats and graph range back in time.
+- <img src="../src/assets/img/left-arrow.svg" width="16"/> steps backward and moves the stats and graph range back in time.
 
 - <img src="../src/assets/img/play-button.svg" width="16"/> starts an animation to move the stats and graph range forward in time.
 
 - <img src="../src/assets/img/pause-symbol.svg" width="16"/> pauses the ongoing animation to stop movement of the stats and graph range forward in time.
 
-- <img src="../src/assets/img/right-arrow.svg" width="16"/> steps forward and moves the the stats and graph range forward in time.
+- <img src="../src/assets/img/right-arrow.svg" width="16"/> steps forward and moves the stats and graph range forward in time.
 
 ## Settings
 
@@ -206,7 +206,7 @@ General properties of the map displayed as well as various options on filtering,
 
 - **Show edge labels**: Whether or not edge labels (types) should be displayed over edges in the map. If there is up to only a few edge types, the user might not need the labels to differentitate the relation types.
 
-- **Fit labels to nodes**: Whether or not the node labels are to fix the node width. If enabled, longer labels will be truncated with ellipses.
+- **Fit labels to nodes**: Whether or not the node labels are to fit the node width. If enabled, longer labels will be truncated with ellipses.
 
 - **Ignore case in text operations**: When the user searches for map objects with certain string in their labels or property values, whether or not the search is to be performed as case sensitive.
 
@@ -225,7 +225,7 @@ General properties of the map displayed as well as various options on filtering,
 General properties of the timebar may be configured through the Settings tab in the right panel. 
 - **Show timebar**: The user might opt to hide the timebar completely by unchecking this option.
 
-- **Hide disconnected nodes on animation**: When checked, disconnected nodes that typically clutter the map will be hidden.
+- **Hide disconnected nodes on animation**: When checked, disconnected nodes that typically clutter the map will be hidden from the graph.
 
 - **Animation step**: Determines how quickly the move forward and backward buttons should move the graph and stats ranges.
 
@@ -242,7 +242,7 @@ General properties of the timebar may be configured through the Settings tab in 
 
 - **Statistics inclusion type**: We collect stats for each graph object with respect to the current unit time. Each graph object either contributes to exactly one unit time or to all unit times that its lifetime overlaps with depending on a user specified option stats inclusion type as follows. The graph object contributes
     - *begin*: only to the very first unit time
-    - *end*: only to the very last unit time it overlaps with
+    - *end*: only to the very last unit time
     - *middle*: only to the very middle unit time (the unit time which is most central)
     - *all*: to all unit times
 
@@ -253,3 +253,11 @@ General properties of the timebar may be configured through the Settings tab in 
 The value(s) to display in line/bar charts are customizable under the Settings tab in section named "Configure Stats".
 
 The user may define which type of objects are to contribute to the statistics and under what conditions/rules with the provided interface. You may choose a proper name for your stat and assign a desired color (in case you don't like the automatically assigned one).
+
+In the example below, the user creates a new statistic to count the number of comedy movies whose rating is greater than 7 as "# highly rated comedies", and assigns green to denote it.
+
+<p align="center">
+    <img src="image/new-timebar-stat-example.png" width="640"/>
+</p>
+
+An arbitrary number of statistics could be formed and visualized as described.
