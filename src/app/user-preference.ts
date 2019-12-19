@@ -7,7 +7,6 @@ export interface iUserPref {
   isShowOverviewWindow: BehaviorSubject<boolean>;
   isShowEdgeLabels: BehaviorSubject<boolean>;
   isFitLabels2Nodes: BehaviorSubject<boolean>;
-  isHideDisconnectedNodesOnAnim: BehaviorSubject<boolean>;
   isIgnoreCaseInText: BehaviorSubject<boolean>;
 
   // numeric settings
@@ -28,6 +27,7 @@ export interface iUserPref {
     playingStep: BehaviorSubject<number>;
     playingSpeed: BehaviorSubject<number>;
     zoomingStep: BehaviorSubject<number>;
+    isHideDisconnectedNodesOnAnim: BehaviorSubject<boolean>;
   }
 }
 

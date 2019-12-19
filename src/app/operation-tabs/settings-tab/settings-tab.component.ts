@@ -21,59 +21,71 @@ export class SettingsTabComponent implements OnInit {
   compoundPadding: string;
   dataPageSize: number;
   tableColumnLimit: number;
-  timebarGraphInclusionTypes: string[];
-  timebarStatsInclusionTypes: string[];
-  mergedElemIndicators: string[];
+  timebarGraphInclusionTypes: string[] = ['overlaps', 'contains', 'contained by'];
+  timebarStatsInclusionTypes: string[] = ['all', 'begin', 'middle', 'end'];
+  mergedElemIndicators: string[] = ['Selection', 'Highlight'];
   // multiple choice settings
   graphInclusionType: TimebarGraphInclusionTypes;
-  statsInclusionTypes: TimebarStatsInclusionTypes;
+  statsInclusionType: TimebarStatsInclusionTypes;
   mergedElemIndicator: MergedElemIndicatorTypes;
 
   constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _g: GlobalVariableService) {
   }
 
   ngOnInit() {
-    const up = this._g.userPrefs;
     this.generalBoolSettings = [
       {
-        text: 'Perform layout on changes', isEnable: up.isAutoIncrementalLayoutOnChange.getValue(), actuator: this, fn: 'autoIncrementalLayoutSettingFn'
+        text: 'Perform layout on changes', isEnable: false, actuator: this, fn: 'autoIncrementalLayoutSettingFn'
       },
       {
-        text: 'Highlight on hover', isEnable: up.isHighlightOnHover.getValue(), actuator: this._cyService, fn: 'highlighterCheckBoxClicked'
+        text: 'Highlight on hover', isEnable: false, actuator: this._cyService, fn: 'highlighterCheckBoxClicked'
       },
       {
-        text: 'Show overview window', isEnable: up.isShowOverviewWindow.getValue(), actuator: this._cyService, fn: 'navigatorCheckBoxClicked'
+        text: 'Show overview window', isEnable: false, actuator: this._cyService, fn: 'navigatorCheckBoxClicked'
       },
       {
-        text: 'Show edge labels', isEnable: up.isShowEdgeLabels.getValue(), actuator: this._cyService, fn: 'showHideEdgeLabelCheckBoxClicked', isElemStyleSetting: true
+        text: 'Show edge labels', isEnable: false, actuator: this._cyService, fn: 'showHideEdgeLabelCheckBoxClicked', isElemStyleSetting: true
       },
       {
-        text: 'Fit labels to nodes', isEnable: up.isFitLabels2Nodes.getValue(), actuator: this._cyService, fn: 'fitNodeLabelsCheckBoxClicked', isElemStyleSetting: true
+        text: 'Fit labels to nodes', isEnable: false, actuator: this._cyService, fn: 'fitNodeLabelsCheckBoxClicked', isElemStyleSetting: true
       },
       {
-        text: 'Ignore case in text operations', isEnable: up.isIgnoreCaseInText.getValue(), actuator: this, fn: 'ignoreCaseSettingFn'
+        text: 'Ignore case in text operations', isEnable: false, actuator: this, fn: 'ignoreCaseSettingFn'
       }
     ];
 
     this.timebarBoolSettings = [
-      { text: 'Show timebar', isEnable: up.timebar.isEnabled.getValue(), actuator: this._cyService, fn: 'showHideTimebar' },
-      { text: 'Hide disconnected nodes on animation', isEnable: up.isHideDisconnectedNodesOnAnim.getValue(), actuator: this._timebarService, fn: 'setisHideDisconnectedNodes' }];
+      { text: 'Show timebar', isEnable: false, actuator: this._cyService, fn: 'showHideTimebar' },
+      { text: 'Hide disconnected nodes on animation', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes' }];
 
-    this.highlightWidth = up.highlightWidth.getValue();
-    this.timebarPlayingStep = up.timebar.playingStep.getValue();
-    this.timebarZoomingStep = up.timebar.zoomingStep.getValue();
-    this.timebarPlayingSpeed = up.timebar.playingSpeed.getValue();
-    this.compoundPadding = up.compoundPadding.getValue();
-    this.graphInclusionType = up.timebar.graphInclusionType.getValue();
-    this.statsInclusionTypes = up.timebar.statsInclusionType.getValue();
-    this.mergedElemIndicator = up.mergedElemIndicator.getValue();
-    this.dataPageSize = up.dataPageSize.getValue();
-    this.tableColumnLimit = up.tableColumnLimit.getValue();
-
-    this.timebarGraphInclusionTypes = ['overlaps', 'contains', 'contained by'];
-    this.timebarStatsInclusionTypes = ['all', 'begin', 'middle', 'end'];
-    this.mergedElemIndicators = ['Selection', 'Highlight'];
     this._cyService.applyElementStyleSettings = this.applyElementStyleSettings.bind(this);
+    this.subscribe2UserPrefs();
+  }
+
+  private subscribe2UserPrefs() {
+    const up = this._g.userPrefs;
+    up.highlightWidth.subscribe(x => this.highlightWidth = x);
+    up.timebar.playingStep.subscribe(x => this.timebarPlayingStep = x);
+    up.timebar.zoomingStep.subscribe(x => this.timebarZoomingStep = x);
+    up.timebar.playingSpeed.subscribe(x => this.timebarPlayingSpeed = x);
+    up.timebar.graphInclusionType.subscribe(x => this.graphInclusionType = x);
+    up.timebar.statsInclusionType.subscribe(x => this.statsInclusionType = x);
+    up.compoundPadding.subscribe(x => this.compoundPadding = x);
+    up.mergedElemIndicator.subscribe(x => this.mergedElemIndicator = x);
+    up.dataPageSize.subscribe(x => this.dataPageSize = x);
+    up.tableColumnLimit.subscribe(x => this.tableColumnLimit = x);
+
+    // general bool settings
+    up.isAutoIncrementalLayoutOnChange.subscribe(x => this.generalBoolSettings[0].isEnable = x);
+    up.isHighlightOnHover.subscribe(x => this.generalBoolSettings[1].isEnable = x);
+    up.isShowOverviewWindow.subscribe(x => this.generalBoolSettings[2].isEnable = x);
+    up.isShowEdgeLabels.subscribe(x => this.generalBoolSettings[3].isEnable = x);
+    up.isFitLabels2Nodes.subscribe(x => this.generalBoolSettings[4].isEnable = x);
+    up.isIgnoreCaseInText.subscribe(x => this.generalBoolSettings[5].isEnable = x);
+
+    // timebar bool settings
+    up.timebar.isEnabled.subscribe(x => this.timebarBoolSettings[0].isEnable = x);
+    up.timebar.isHideDisconnectedNodesOnAnim.subscribe(x => this.timebarBoolSettings[1].isEnable = x);
   }
 
   mergedElemIndicatorChanged(i: number) {

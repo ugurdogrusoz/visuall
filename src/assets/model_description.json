@@ -331,7 +331,6 @@
     "isShowOverviewWindow": true,
     "isShowEdgeLabels": true,
     "isFitLabels2Nodes": false,
-    "isHideDisconnectedNodesOnAnim": false,
     "isIgnoreCaseInText": false,
 
     "dataPageSize": 30,
@@ -348,7 +347,8 @@
       "playingSpeed": -1350,
       "zoomingStep": 50,
       "graphInclusionType": 0,
-      "statsInclusionType": 0
+      "statsInclusionType": 0,
+      "isHideDisconnectedNodesOnAnim": false
     }
   }
 }

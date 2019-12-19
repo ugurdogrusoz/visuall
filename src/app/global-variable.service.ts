@@ -21,7 +21,10 @@ export class GlobalVariableService {
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
+    // set user preferences staticly (necessary for rendering html initially)
     this.setUserPrefs(model_description.userPref, this.userPrefs);
+    // set user preferences dynamically
+    this._http.get('./assets/model_description.json').subscribe(x => { this.setUserPrefs(x['userPref'], this.userPrefs); });
   }
 
   private setUserPrefs(obj: any, userPref: any) {
@@ -31,9 +34,15 @@ export class GlobalVariableService {
     for (let k in obj) {
       let prop = obj[k];
       if (isPrimitiveType(prop)) {
-        userPref[k] = new BehaviorSubject(prop);
+        if (userPref[k]) {
+          (userPref[k] as BehaviorSubject<any>).next(prop);
+        } else {
+          userPref[k] = new BehaviorSubject(prop);
+        }
       } else {
-        userPref[k] = {};
+        if (!userPref[k]) {
+          userPref[k] = {};
+        }
         this.setUserPrefs(obj[k], userPref[k]);
       }
     }
