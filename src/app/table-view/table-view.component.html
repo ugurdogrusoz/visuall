@@ -10,6 +10,9 @@
           <th scope="col" *ngFor="let col of params.columns; let i = index;"><span
               *ngIf="isDraggable || (i <= columnLimit-1)">{{col}}</span>
           </th>
+          <th scope="col" *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)">
+            <span>...</span>
+          </th>
           <th scope="col" [hidden]="params.isLoadGraph">
             <img src="assets/img/graph.svg" title="Load graph">
           </th>
@@ -26,8 +29,10 @@
               <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
             </span>
           </td>
+          <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span></span></td>
           <td [hidden]="params.isLoadGraph"><a href="#" class="query-result"
-              (click)="getDataForQueryResult(r[0].val)"><img class="img-icon" title="Load graph" src="../assets/img/play-button.svg"></a>
+              (click)="getDataForQueryResult(r[0].val)"><img class="img-icon" title="Load graph"
+                src="../assets/img/play-button.svg"></a>
           </td>
         </tr>
       </tbody>
