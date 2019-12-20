@@ -29,7 +29,7 @@
               <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
             </span>
           </td>
-          <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span></span></td>
+          <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
           <td [hidden]="params.isLoadGraph"><a href="#" class="query-result"
               (click)="getDataForQueryResult(r[0].val)"><img class="img-icon" title="Load graph"
                 src="../assets/img/play-button.svg"></a>
