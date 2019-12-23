@@ -24,7 +24,6 @@ export interface iRule {
   inputOperand?: string;
   ruleOperator?: string;
   rawInput?: string;
-  category: PropertyCategory;
 }
 
 export interface iRuleSync {

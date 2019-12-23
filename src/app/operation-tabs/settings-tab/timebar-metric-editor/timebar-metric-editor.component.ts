@@ -35,9 +35,18 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.selectedClassProps = [];
     this.currDatetimes = [new Date()];
     this.filteringRule = null;
-    this.currMetrics = [{ incrementFn: (x) => { if (x.id()[0] === 'n') return 1; return 0 }, name: '# of nodes', className: GENERIC_TYPE.NODES_CLASS, rules: [], color: '#3366cc' },
-    { incrementFn: (x) => { if (x.id()[0] === 'e') return 1; return 0 }, name: '# of edges', className: GENERIC_TYPE.EDGES_CLASS, rules: [], color: '#dc3912' },
-    { incrementFn: (x) => { return 1; }, name: '# of nodes + # of edges', className: GENERIC_TYPE.ANY_CLASS, rules: [], color: '#ff9900' }];
+    let fnAv = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating < 7 && x.data().rating > 5)) return 1; return 0; };
+    let fnLo = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating < 5)) return 1; return 0; };
+    let fnHi = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating > 7)) return 1; return 0; };
+    const genreRule = { propertyOperand: 'genre', propertyType: 'string', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: 'AND', operator: '=' };
+    let rulesAv: iRule[] = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '>' },
+      { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '<' }];
+    let rulesHi = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '>' }];
+    let rulesLo = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '<' }];
+    this.currMetrics = [
+      { incrementFn: fnLo, name: '# lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
+      { incrementFn: fnAv, name: '# average rated comedies', className: 'Movie', rules: rulesAv, color: '#dc3912' },
+      { incrementFn: fnHi, name: '# highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }];
 
     this.refreshTimebar();
   }

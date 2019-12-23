@@ -117,8 +117,7 @@ export class PropertyRuleComponent implements OnInit {
       rawInput: rawValue,
       inputOperand: value,
       ruleOperator: logicOperator,
-      operator: operator,
-      category: category
+      operator: operator
     };
     const isOk = this.isStrictlyValid(rule);
     if (this.isStrict && !isOk) {
