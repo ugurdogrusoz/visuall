@@ -3,7 +3,7 @@
     "name": "Visu<i>all</i> Sample App",
     "html_header": "Visuall Sample App",
     "icon": "assets/img/logo.png",
-    "version": "1.0.0",
+    "version": "1.0.0 beta",
     "company_name": "i-Vis at Bilkent",
     "company_contact": "ivis@cs.bilkent.edu.tr",
     "timebar_min": -59011466152000,
