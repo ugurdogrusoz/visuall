@@ -333,7 +333,7 @@
     "isFitLabels2Nodes": false,
     "isIgnoreCaseInText": false,
 
-    "dataPageSize": 30,
+    "dataPageSize": 20,
     "tableColumnLimit": 3,
     "highlightWidth": 4.5,
 
