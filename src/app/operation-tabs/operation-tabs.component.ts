@@ -10,7 +10,7 @@ import { GroupTabComponent } from './group-tab/group-tab.component';
 export class OperationTabsComponent implements OnInit {
   currTab: Number;
   navItems: any[];
-  @ViewChild(GroupTabComponent, {static: false})
+  @ViewChild(GroupTabComponent, { static: false })
   private groupComponent: GroupTabComponent;
 
   constructor() {
@@ -33,13 +33,10 @@ export class OperationTabsComponent implements OnInit {
     this.currTab = event;
   }
 
-  setTab(i:number) {
+  setTab(i: number) {
     this.currTab = i;
     if (i == 1) {
       this.groupComponent.componentOpened();
     }
   }
 }
-
-
-

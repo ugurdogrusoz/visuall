@@ -15,7 +15,7 @@ export class CytoscapeComponent implements OnInit {
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService, private _timebarService: TimebarService, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
   cyClass = false;
   isLoading = true;
-  
+
   ngOnInit() {
     this._cyService.initCy(document.getElementById('cy'));
     this._timebarService.init();
@@ -27,11 +27,19 @@ export class CytoscapeComponent implements OnInit {
     this.cyClass = b;
   }
 
-  @HostListener('document:keydown.delete', ['$event']) deleteHotKeyFn(event: KeyboardEvent) {
+  @HostListener('document:keydown.delete', ['$event'])
+  deleteHotKeyFn(event: KeyboardEvent) {
+    if (document.activeElement.tagName == 'INPUT') {
+      return;
+    }
     this._g.cy.remove(':selected');
   }
 
-  @HostListener('document:keydown.control.a', ['$event']) selectAllHotKeyFn(event: KeyboardEvent) {
+  @HostListener('document:keydown.control.a', ['$event'])
+  selectAllHotKeyFn(event: KeyboardEvent) {
+    if (document.activeElement.tagName == 'INPUT') {
+      return;
+    }
     event.preventDefault();
     if (event.ctrlKey) {
       this._g.cy.$().select();
