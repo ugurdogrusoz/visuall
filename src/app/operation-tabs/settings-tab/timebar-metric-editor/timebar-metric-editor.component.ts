@@ -3,7 +3,6 @@ import properties from '../../../../assets/generated/properties.json';
 import ModelDescription from '../../../../assets/model_description.json';
 import { iClassOption, iTimebarMetric, iRule, iRuleSync } from '../../filter-tab/filtering-types.js';
 import { NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS, GENERIC_TYPE } from '../../../constants';
-import flatpickr from 'flatpickr';
 import { TimebarService } from '../../../timebar.service';
 import { Subject } from 'rxjs';
 

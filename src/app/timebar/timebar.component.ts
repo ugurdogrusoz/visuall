@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { TimebarService } from '../timebar.service';
-import { TIME_UNITS } from '../constants';
+import { TIME_UNITS, MIN_DATE, MAX_DATE } from '../constants';
+import flatpickr from 'flatpickr';
 
 @Component({
   selector: 'app-timebar',
@@ -15,8 +16,10 @@ export class TimebarComponent implements OnInit {
   currPlayIcon: string;
   statsRange1Str: string;
   statsRange2Str: string;
-  graphRange1Str: string;
-  graphRange2Str: string;
+  cssLeftDate1: number = 0;
+  cssLeftDate2: number = 0;
+  @ViewChild('dateInp1', { static: false }) dateInp1: ElementRef;
+  @ViewChild('dateInp2', { static: false }) dateInp2: ElementRef;
 
   constructor(timebarService: TimebarService) {
     this.s = timebarService;
@@ -28,6 +31,8 @@ export class TimebarComponent implements OnInit {
     this.currPlayIcon = this.playImg;
     this.s.onStatsChanged(this.setStatsRangeStr.bind(this));
     this.s.onGraphChanged(this.setGraphRangeStr.bind(this));
+    this.cssLeftDate1 = (1 - this.s.GRAPH_RANGE_RATIO) / 2  * 100;
+    this.cssLeftDate2 = (1 + this.s.GRAPH_RANGE_RATIO) / 2  * 100;
   }
 
   playTiming() {
@@ -59,8 +64,24 @@ export class TimebarComponent implements OnInit {
       console.log('rangeMaxDate or rangeMinDate is falsy!');
       return;
     }
-    this.graphRange1Str = this.date2str(d1);
-    this.graphRange2Str = this.date2str(d2);
+    this.setFlatPickrInstance(this.dateInp1, d1, true);
+    this.setFlatPickrInstance(this.dateInp2, d2, false);
+  }
+
+  setFlatPickrInstance(domElem: ElementRef<any>, date: number, isStart: boolean) {
+    let instance = domElem.nativeElement._flatpickr;
+
+    if (instance) {
+      domElem.nativeElement._flatpickr.setDate(date);
+    } else {
+      instance = flatpickr(domElem.nativeElement, { defaultDate: new Date(date), dateFormat: 'M d Y', minDate: MIN_DATE, maxDate: MAX_DATE });
+      instance.setDate(date);
+      if (isStart) {
+        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(selectedDates[0].getTime(), null); this.s.rangeChange(true, false); });
+      } else {
+        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(null, selectedDates[0].getTime()); this.s.rangeChange(true, false); });
+      }
+    }
   }
 
   date2str(d: number): string {
@@ -72,11 +93,11 @@ export class TimebarComponent implements OnInit {
     const isGreaterThanDay = this.s.currTimeUnit >= TIME_UNITS['day'];
     const hasNeedMs = this.s.currTimeUnit < TIME_UNITS['second'];
     if (isGreaterThanDay) {
-      arr.splice(arr.length-1, 1);
+      arr.splice(arr.length - 1, 1);
     }
     s = arr.join(' ');
     if (hasNeedMs) {
-      s += '.' + date.getMilliseconds(); 
+      s += '.' + date.getMilliseconds();
     }
     return s;
   }

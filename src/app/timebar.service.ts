@@ -45,7 +45,7 @@ export class TimebarService {
   private defaultEndDate = 2524597200000; // 2050 
   private setStatsRangeStrFn: () => void;
   private setGraphRangeStrFn: () => void;
-  private GRAPH_RANGE_RATIO = 0.33;
+  GRAPH_RANGE_RATIO = 0.33;
   private isRefreshChart = false;
   private ignoreEndNodesForEdgeInclusion: boolean = true;
   private textStyle: any;
@@ -662,6 +662,15 @@ export class TimebarService {
   }
 
   setChartRange(start: number, end: number) {
+    if (!start || !end) {
+      let [s, e] = this.getChartRange();
+      if (!start) {
+        start = s;
+      }
+      if (!end) {
+        end = e;
+      }
+    }
     // note that chart might show a range which does not contain any data
     // to prevent that data sample count should be like 10
     if (start >= end) {
