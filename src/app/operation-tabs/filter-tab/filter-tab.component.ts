@@ -162,7 +162,6 @@ export class FilterTabComponent implements OnInit {
   runFilteringOnClient() {
     this._g.viewUtils.hide(this._g.cy.$());
 
-    let filteredElems = this._g.cy.collection();
     let allClassElems = this._g.cy.$('.' + this.filteringRule.className);
     let filteredClassElems = this._g.cy.collection();
     for (let i = 0; i < this.filteringRule.rules.length; i++) {
@@ -177,11 +176,9 @@ export class FilterTabComponent implements OnInit {
         filteredClassElems = filteredClassElems.filter(ele => { return this.filterByRule(rule, ele) });
       }
     }
-    // always merge elements from different classes
-    filteredElems.merge(filteredClassElems);
 
-    filteredElems.merge(filteredElems.connectedNodes());
-    this._g.viewUtils.show(filteredElems);
+    filteredClassElems.merge(filteredClassElems.connectedNodes());
+    this._g.viewUtils.show(filteredClassElems);
     this._g.applyClassFiltering();
     this._timebarService.cyElemListChanged();
   }
