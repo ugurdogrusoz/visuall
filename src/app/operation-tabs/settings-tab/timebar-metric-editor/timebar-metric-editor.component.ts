@@ -39,14 +39,11 @@ export class TimebarMetricEditorComponent implements OnInit {
     let fnLo = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating < 5)) return 1; return 0; };
     let fnHi = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating > 7)) return 1; return 0; };
     const genreRule = { propertyOperand: 'genre', propertyType: 'string', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: 'AND', operator: '=' };
-    let rulesAv: iRule[] = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '>' },
-      { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '<' }];
-    let rulesHi = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '>' }];
-    let rulesLo = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '<' }];
+    let rulesHi = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '>=' }];
+    let rulesLo = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '<=' }];
     this.currMetrics = [
-      { incrementFn: fnLo, name: '# lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
-      { incrementFn: fnAv, name: '# average rated comedies', className: 'Movie', rules: rulesAv, color: '#dc3912' },
-      { incrementFn: fnHi, name: '# highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }];
+      { incrementFn: fnLo, name: 'lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
+      { incrementFn: fnHi, name: 'highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }];
 
     this.refreshTimebar();
   }
