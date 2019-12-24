@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { TimebarService } from '../timebar.service';
 import { TIME_UNITS, MIN_DATE, MAX_DATE } from '../constants';
 import flatpickr from 'flatpickr';
+import { Locale } from 'flatpickr/dist/types/locale';
 
 @Component({
   selector: 'app-timebar',
@@ -31,8 +32,8 @@ export class TimebarComponent implements OnInit {
     this.currPlayIcon = this.playImg;
     this.s.onStatsChanged(this.setStatsRangeStr.bind(this));
     this.s.onGraphChanged(this.setGraphRangeStr.bind(this));
-    this.cssLeftDate1 = (1 - this.s.GRAPH_RANGE_RATIO) / 2  * 100;
-    this.cssLeftDate2 = (1 + this.s.GRAPH_RANGE_RATIO) / 2  * 100;
+    this.cssLeftDate1 = (1 - this.s.GRAPH_RANGE_RATIO) / 2 * 100;
+    this.cssLeftDate2 = (1 + this.s.GRAPH_RANGE_RATIO) / 2 * 100;
   }
 
   playTiming() {
@@ -74,7 +75,9 @@ export class TimebarComponent implements OnInit {
     if (instance) {
       domElem.nativeElement._flatpickr.setDate(date);
     } else {
-      instance = flatpickr(domElem.nativeElement, { defaultDate: new Date(date), dateFormat: 'M d Y', minDate: MIN_DATE, maxDate: MAX_DATE });
+      instance = flatpickr(domElem.nativeElement, {
+        defaultDate: new Date(date), minDate: MIN_DATE, maxDate: MAX_DATE, enableTime: true, enableSeconds: true, time_24hr: true, formatDate: this.formatDate.bind(this)
+      });
       instance.setDate(date);
       if (isStart) {
         instance.config.onChange.push((selectedDates) => { this.s.setChartRange(selectedDates[0].getTime(), null); this.s.rangeChange(true, false); });
@@ -84,8 +87,15 @@ export class TimebarComponent implements OnInit {
     }
   }
 
-  date2str(d: number): string {
-    const date = new Date(d);
+  formatDate(date: Date, format: string, locale: Locale): string {
+    return this.date2str(date);
+  }
+
+  date2str(d: number | Date): string {
+    let date = d;
+    if (typeof d == 'number') {
+      date = new Date(d);
+    }
     let s = date.toString();
     let arr = s.split(' ');
     arr.splice(0, 1);
@@ -97,7 +107,7 @@ export class TimebarComponent implements OnInit {
     }
     s = arr.join(' ');
     if (hasNeedMs) {
-      s += '.' + date.getMilliseconds();
+      s += '.' + (date as Date).getMilliseconds();
     }
     return s;
   }

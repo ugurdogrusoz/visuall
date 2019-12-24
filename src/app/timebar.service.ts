@@ -143,7 +143,7 @@ export class TimebarService {
       this.isRefreshChart = false;
     } else {
       this.renderChart();
-      this.setStatsRangeByRatio(true);
+      this.setStatsRangeByRatio();
     }
   }
 
@@ -303,7 +303,6 @@ export class TimebarService {
   }
 
   rangeChange(isSetCursorPos = true, isRandomize = false) {
-    this.setGraphRangeStrFn();
     const [s, e] = this.getChartRange();
     let shownElems = this.getTimeFilteredGraphElems(s, e);
     shownElems = this._g.filterByClass(shownElems);
@@ -329,7 +328,7 @@ export class TimebarService {
     if (this.selectedTimeUnit) {
       this.setTicksForBarChart();
     }
-    this.setStatsRangeByRatio(false);
+    this.setStatsRangeByRatio();
   }
 
   renderChart() {
@@ -392,6 +391,7 @@ export class TimebarService {
     this.putStatDataForRange(rangeEnd, this.statsRange2, this.statsRange2, arr);
 
     this.setStatsRangeStrFn();
+    this.setGraphRangeStrFn();
     this.setTicksForBarChart();
     const data = google.visualization.arrayToDataTable(arr, false); // 'false' means that the first row contains labels, not data.
     this.dashboard.draw(data);
@@ -685,7 +685,6 @@ export class TimebarService {
       }
     });
     this.controlWrapper.draw();
-    this.setGraphRangeStrFn();
     return 0;
   }
 
@@ -752,7 +751,7 @@ export class TimebarService {
     this.rangeChange(true, true);
   }
 
-  setStatsRangeByRatio(isCallGraphRangeStrFn: boolean) {
+  setStatsRangeByRatio() {
     let [s, e] = this.getChartRange();
     let center = (e + s) / 2;
     let diff = e - s;
@@ -781,9 +780,6 @@ export class TimebarService {
       this.setGraphRangeByRatio(s1, s2, true);
     }
     this.renderChart();
-    if (isCallGraphRangeStrFn) {
-      this.setGraphRangeStrFn();
-    }
   }
 
   setGraphRangeByRatio(prevStatsRange1: number, prevStatsRange2: number, isOnMax: boolean) {
