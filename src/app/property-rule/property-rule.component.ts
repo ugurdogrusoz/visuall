@@ -81,7 +81,7 @@ export class PropertyRuleComponent implements OnInit {
     } else if (attrType == 'datetime') {
       this.addOperators(NUMBER_OPERATORS);
       let opt = {
-        defaultDate: new Date(),
+        defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true,
       };
 
       flatpickr(this.dateInp.nativeElement, opt);

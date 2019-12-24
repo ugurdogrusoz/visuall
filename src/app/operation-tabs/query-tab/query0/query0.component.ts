@@ -22,10 +22,10 @@ export class Query0Component implements OnInit {
   ngOnInit() {
     this.movieCnt = 3;
     let opt = {
-      defaultDate: new Date(1960, 9, 9, 0, 0, 0),
+      defaultDate: new Date(1960, 9, 9, 0, 0, 0), enableTime: true, enableSeconds: true, time_24hr: true,
     };
     let opt2 = {
-      defaultDate: new Date(2020, 9, 9, 0, 0, 0),
+      defaultDate: new Date(2020, 9, 9, 0, 0, 0), enableTime: true, enableSeconds: true, time_24hr: true,
     };
 
     flatpickr('#query0-inp1', opt);
