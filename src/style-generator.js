@@ -32,8 +32,6 @@ function parse_model_description(model) {
   generate_node_styles(classes, stylesheet, properties);
   generate_edge_styles(relations, stylesheet, properties);
 
-  // add overwrite styles, these should be written last to overwrite
-  generate_fixed_styles(stylesheet, data['overwriteStyles']);
   // Beautify JSON output with 2 space tabs and write to file
   write_file(
     'assets/generated/stylesheet.json', JSON.stringify(stylesheet, null, 2));

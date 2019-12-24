@@ -154,6 +154,10 @@ export class CytoscapeService {
     this._g.cy.style().selector('node.fitlabel')
       .style({ 'text-wrap': 'ellipsis', 'text-max-width': function (ele) { return ele.width() + 'px'; } })
       .update();
+
+    this._g.cy.style().selector('edge.nolabel')
+      .style({ 'label': '' })
+      .update();
   }
 
   bindLayoutUtilitiesExtension() {

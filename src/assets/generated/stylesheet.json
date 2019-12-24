@@ -183,11 +183,5 @@
       "target-arrow-color": "#f7a67e",
       "text-rotation": "autorotate"
     }
-  },
-  {
-    "selector": "edge.nolabel",
-    "style": {
-      "label": ""
-    }
   }
 ]

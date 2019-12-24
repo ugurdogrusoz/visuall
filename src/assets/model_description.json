@@ -319,12 +319,6 @@
       }
     }
   ],
-  "overwriteStyles": [{
-    "selector": "edge.nolabel",
-    "style": {
-      "label": ""
-    }
-  }],
   "userPref": {
     "isAutoIncrementalLayoutOnChange": true,
     "isHighlightOnHover": false,
