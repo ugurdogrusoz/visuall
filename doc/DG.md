@@ -24,6 +24,15 @@ You can also define style of your nodes. There is *style* field for each class o
 *userPref* section of the file is being used to store user preferences. These values are used inside [settings component in source code](../src/app/operation-tabs/settings-tab/settings-tab.component.ts). If we need to store user specific settings they might be moved to somewhere else.
 
 ## Look & Feel
+By changing [model description file](../src/assets/model_description.json) and executing [style generator file](../src/style-generator.js), you can change how nodes/edges will look like. You might change the labels of nodes and edges. For people, we show *name* of the person as its label. The line `"label": "data(name)",` which is on path *classes>Person>style* inside [model description file](../src/assets/model_description.json) sets label. If we change that line to `"label": "data(born)"`,  it will show birth year of a person as its label. Here, *data* is [a mapper provided by cytoscape](https://js.cytoscape.org/#style/mappers). Each cytoscape element has a *data* function which returns associated data with the element. Below image shows the result of chaning label.
+
+<p align="center">
+    <img src="image/change-label.png" width="800"/>
+</p>
+
+You can change many other styles. `"text-valign"` property sets vertical alignment of labels. `"font-size"` sets font size of labels. `"shape"` sets shape of a node. `"background-image"` sets background image for a node. You can see more details about styles in [cytoscape.js documentation](https://js.cytoscape.org/#style)
+
+You can also change styles of edges. Node and edges have some common style properties like `label` and `width`. A static value might be set for label. Style `"label": "acted in",` sets label a static string "acted in". Edges also have some styles which are not defined for nodes. For example `line-color`, `line-style` are only defined for edges. There are detailed explanations in [cytoscape.js documentation](https://js.cytoscape.org/#style/edge-line). 
 
 ## Menus
 
