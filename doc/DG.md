@@ -3,28 +3,30 @@
 This guide details how a custom application can be built using Visu*all*. We assume the reader has already gone over [User Guide](UG.md), and in each of the following sections, we describe how to customize various parts of a Visu*all* based visual analysis tool.
 
 ## Data Model
-To visualize data, structre of data must be expressed inside [model description file](../src/assets/model_description.json). With command `node style-generator.js /assest/model_description.json`, [style generator file](../src/style-generator.js) reads [model description file](../src/assets/model_description.json). And [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json). These files used in source codes for customization purposes.
 
-[Model description file](../src/assets/model_description.json) file contains *classes* and *relations* sections. *classes* section contains data stuctures of nodes.
-Each *class* corresponds to a node type in graph. *relations* section contains data strcutures of edges. Each *relation* corresponds to an edge type in graph. For the movie dataset there 2 classes of nodes: *Person* and *Movie*. Each *class* have *properties* and *style*. Each *property* has a name and data type. For example *Person* class has 4 properties: name, born, start_t and end_t  
+To visualize data, structre of data must be expressed inside [model description file](../src/assets/model_description.json). With command `node style-generator.js /assest/model_description.json` , [style generator file](../src/style-generator.js) reads [model description file](../src/assets/model_description.json). And [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json). These files used in source codes for customization purposes.
 
-A *property* might have different data types: *string*, *int*, *float*, *datetime* and *enum*. *string*, *float*, *int* are standard types which usually exist in programming languages. *datetime* is actually an integer 
-which represents date in [Unix time stamp in milliseconds](https://currentmillis.com/). *enum* is a special type which indicates values in this property should be mapped. *enum* type should be in format like *enum,string*. This means this property values are mapped from original values which have type *string*, to some other values. This mapping of values should be defined in the section named *finiteSetPropertyMapping* inside [model description file](../src/assets/model_description.json). 
+[Model description file](../src/assets/model_description.json) file contains *classes* and *relations* sections.*classes* section contains data stuctures of nodes.
+Each *class* corresponds to a node type in graph.*relations* section contains data strcutures of edges. Each *relation* corresponds to an edge type in graph. For the movie dataset there 2 classes of nodes: *Person* and *Movie*. Each *class* have *properties* and *style*. Each *property* has a name and data type. For example *Person* class has 4 properties: name, born, start_t and end_t  
+
+A *property* might have different data types: *string*, *int*, *float*, *datetime* and *enum*.*string*, *float*, *int* are standard types which usually exist in programming languages.*datetime* is actually an integer 
+which represents date in [Unix time stamp in milliseconds](https://currentmillis.com/).*enum* is a special type which indicates values in this property should be mapped.*enum* type should be in format like *enum, string*. This means this property values are mapped from original values which have type *string*, to some other values. This mapping of values should be defined in the section named *finiteSetPropertyMapping* inside [model description file](../src/assets/model_description.json).
 
 You can also define style of your nodes. There is *style* field for each class of node. These styles are being used as [cytoscape style](https://js.cytoscape.org/#style). These styles designate how the nodes are going to be shown in the canvas.
 
-*relations* section of the [model description file](../src/assets/model_description.json) is very similar to *classes* section. *relations* section stores information about edges. Each *relation* has *property* and *style* exactly like a *class*. In addition, each *relation* also has *source*, *target* and *isBidirectional* fields. These are used to represent direction information of an edge.
+*relations* section of the [model description file](../src/assets/model_description.json) is very similar to *classes* section.*relations* section stores information about edges. Each *relation* has *property* and *style* exactly like a *class*. In addition, each *relation* also has *source*, *target* and *isBidirectional* fields. These are used to represent direction information of an edge.
 
 *timebarDataMapping* section of the file is used for representing lifetime of a node or edge. Lifetime information is being used in [timebar service](../src/app/timebar.service.ts) to show some graphics and statistics. Ideally, each *class* or each *relation* would have 2 datetime properties which represents start and end. These are named as *begin_datetime* and *end_datetime*. If these fields do not exist, visuall will use default begin and end times for timebar.
 
-*finiteSetPropertyMapping* section of the file is used to map values. For example, a status code might consists of numbers like 1,2,3 etc.. But you might want to show values like 'Active', 'Deactive', 'Suspend' etc.... Here you put mappings for each *property* of each *class*/*relation*. This is totally optional. You might not want to use any mapping and just use the values as is.
+*finiteSetPropertyMapping* section of the file is used to map values. For example, a status code might consists of numbers like 1, 2, 3 etc.. But you might want to show values like 'Active', 'Deactive', 'Suspend' etc... . Here you put mappings for each *property* of each *class*/*relation*. This is totally optional. You might not want to use any mapping and just use the values as is.
 
 *generalStyles* section of the file is being used as [cytoscape style](https://js.cytoscape.org/#style). You might chage values inside this file according to your needs. You might add/delete some properties but adding/deleting might harm integrity of the application. It is on the developer's responsiblity. On the other hand, changing existing values would less likely to cause any harm.
 
 *userPref* section of the file is being used to store user preferences. These values are used inside [settings component in source code](../src/app/operation-tabs/settings-tab/settings-tab.component.ts). If we need to store user specific settings they might be moved to somewhere else.
 
 ## Look & Feel
-By changing [model description file](../src/assets/model_description.json) and executing [style generator file](../src/style-generator.js), you can change how nodes/edges will look like. You might change the labels of nodes and edges. For people, we show *name* of the person as its label. The line `"label": "data(name)",` which is on path *classes>Person>style* inside [model description file](../src/assets/model_description.json) sets label. If we change that line to `"label": "data(born)"`,  it will show birth year of a person as its label. Here, *data* is [a mapper provided by cytoscape](https://js.cytoscape.org/#style/mappers). Each cytoscape element has a *data* function which returns associated data with the element. Below image shows the result of chaning label.
+
+By changing [model description file](../src/assets/model_description.json) and executing [style generator file](../src/style-generator.js), you can change how nodes/edges will look like. You might change the labels of nodes and edges. For people, we show *name* of the person as its label. The line `"label": "data(name)",` which is on path *classes>Person>style* inside [model description file](../src/assets/model_description.json) sets label. If we change that line to `"label": "data(born)"` , it will show birth year of a person as its label. Here, *data* is [a mapper provided by cytoscape](https://js.cytoscape.org/#style/mappers). Each cytoscape element has a *data* function which returns associated data with the element. Below image shows the result of chaning label.
 
 <p align="center">
     <img src="image/change-label.png" width="800"/>
@@ -32,12 +34,37 @@ By changing [model description file](../src/assets/model_description.json) and e
 
 You can change many other styles. `"text-valign"` property sets vertical alignment of labels. `"font-size"` sets font size of labels. `"shape"` sets shape of a node. `"background-image"` sets background image for a node. You can see more details about styles in [cytoscape.js documentation](https://js.cytoscape.org/#style)
 
-You can also change styles of edges. Node and edges have some common style properties like `label` and `width`. A static value might be set for label. Style `"label": "acted in",` sets label a static string "acted in". Edges also have some styles which are not defined for nodes. For example `line-color`, `line-style` are only defined for edges. There are detailed explanations in [cytoscape.js documentation](https://js.cytoscape.org/#style/edge-line). 
+You can also change styles of edges. Node and edges have some common style properties like `label` and `width` . A static value might be set for label. Style `"label": "acted in",` sets label a static string "acted in". Edges also have some styles which are not defined for nodes. For example `line-color` , `line-style` are only defined for edges. There are detailed explanations in [cytoscape.js documentation](https://js.cytoscape.org/#style/edge-line).
 
 ## Menus
 
+[Navigation bar](../src/app/navbar/navbar.component.html) and [tool bar](../src/app/navbar/navbar.component.html) menus are customizable. Each component uses files that names ends with `.customization.service.ts`. Customization services are generated specifically to prevent merge conflicts which might occur in the future. 
+
+To add new items to navigation bar menu, modify [navbar-customization.service.ts file](../src/app/navbar/navbar-customization.service.ts). Adding new items can be achived by adding new items to `_menu` array.
+
+`this._menu = [ 
+  { dropdown: 'File', actions: [{ txt: 'Custom Action 1', id: '', fn: 'fn1', isStd: false }] },
+  { dropdown: 'Custom DropDown 1', actions: [{ txt: 'Custom Action 2', id: '', fn: 'fn2', isStd: false }]}
+];`
+
+Here if the `dropdown` already exists, it will be pushed below that dropdown. If `dropdown` does not exists, a new dropdown item will be generated. One important thing is the functions of the menu items should be parameterless. Another important thing is `isStd` property of custom items must be `false` to distinguish them from standard items.
+
+There are only minimal number of menu items but you can remove items by modifying the file [navbar.component.ts file](../src/app/navbar/navbar.component.ts). This might cause some merge conflicts in the future. It is developers' responsiblity.
+
+You can add new items to tool bar in the same manner. 
+`this._menu = [{
+   div: 12, items: [{ title: 'Custom Action 1', isRegular: true, fn: 'fn1', isStd: false, imgSrc: 'assets/img/logo.png' }]
+ },
+ {
+   div: 1, items: [{ title: 'Custom Action 2', isRegular: true, fn: 'fn2', isStd: false, imgSrc: 'assets/img/logo.png' }]
+ }];`
+
+ <p align="center">
+    <img src="image/menu-customization.png" width="800"/>
+</p>
 ## Context Menus
 
 ## Query Tab
 
 ## Default Settings
+
