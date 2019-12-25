@@ -59,12 +59,19 @@ You can add new items to tool bar in the same manner.
    div: 1, items: [{ title: 'Custom Action 2', isRegular: true, fn: 'fn2', isStd: false, imgSrc: 'assets/img/logo.png' }]
  }];`
 
- <p align="center">
+<p align="center">
     <img src="image/menu-customization.png" width="800"/>
 </p>
+
 ## Context Menus
+Context menus can also customized in a similar way to navbar menu and toolbar menu. Context menu functionality is provided by using [context menu cytoscape.js extension](https://github.com/iVis-at-Bilkent/cytoscape.js-context-menus). [context-menu.service.ts file](../src/app/context-menu/context-menu.service.ts) contains essential menu items. [context-menu-customization.service.ts file](../src/app/context-menu/context-menu-customization.service.ts) contains custom items. You can modify and check [context-menu-customization.service.ts file](../src/app/context-menu/context-menu-customization.service.ts) file to add more context menu items.
 
 ## Query Tab
+[Query tab component](../src/app/operation-tabs/query-tab/query-tab.component.ts) and also queries inside the query tab designed to be completely customized. Each query should be an *angular component*. *Angular component* should have the path "../src/app/operation-tabs/query-tab/". For example there are 2 queries in this project. [Query0](../src/app/operation-tabs/query-tab/query0/query0.component.ts) and [Query1](../src/app/operation-tabs/query-tab/query1/query1.component.ts). Name of the components are not have to follow a format. But in order for them to be visible, they should be putted inside [query tab component html file](../src/app/operation-tabs/query-tab/query-tab.component.ts) in format like `<app-query0 *ngIf="selectedIdx==0"></app-query0> <app-query1 *ngIf="selectedIdx==1"></app-query1>`. Also, their display names should be added to [query tab component file](../src/app/operation-tabs/query-tab/query-tab.component.ts). For example, there are 2 queries in the file. `this.queryTypes = ['Get actors by movie counts', 'Get movies by genre'];`
 
 ## Default Settings
+There is a *userPref* section inside [model description file](../src/assets/model_description.json). This section stores user preferences. These values are shown to the user in [settings component html file](../src/app/operation-tabs/settings-tab/settings-tab.component.html). These settings are injected to visuall dynamically. So when you change a setting from model description file, you can observe the change in user interface after reloading the website. To make these settings user based, the section inside the model description file might be moved to somewhere else in future.
 
+<p align="center">
+    <img src="image/settings.png" width="407"/>
+</p>
