@@ -3,26 +3,76 @@
 This guide details how a custom application can be built using Visu*all*. We assume the reader has already gone over [User Guide](UG.md), and in each of the following sections, we describe how to customize various parts of a Visu*all* based visual analysis tool.
 
 ## Data Model
+The developer is required to first specify the structure of the data to be visualized in a [model description file](../src/assets/model_description.json). Once this file is prepared, the [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json), resulting in the desired customization, using the command:
 
-To visualize data, structre of data must be expressed inside [model description file](../src/assets/model_description.json). With command `node style-generator.js /assest/model_description.json` , [style generator file](../src/style-generator.js) reads [model description file](../src/assets/model_description.json). And [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json). These files used in source codes for customization purposes.
+`node style-generator.js /assest/model_description.json`
 
-[Model description file](../src/assets/model_description.json) file contains *classes* and *relations* sections.*classes* section contains data stuctures of nodes.
-Each *class* corresponds to a node type in graph.*relations* section contains data strcutures of edges. Each *relation* corresponds to an edge type in graph. For the movie dataset there 2 classes of nodes: *Person* and *Movie*. Each *class* have *properties* and *style*. Each *property* has a name and data type. For example *Person* class has 4 properties: name, born, start_t and end_t  
+The model description file contains many sections as detailed below. 
 
-A *property* might have different data types: *string*, *int*, *float*, *datetime* and *enum*.*string*, *float*, *int* are standard types which usually exist in programming languages.*datetime* is actually an integer 
-which represents date in [Unix time stamp in milliseconds](https://currentmillis.com/).*enum* is a special type which indicates values in this property should be mapped.*enum* type should be in format like *enum, string*. This means this property values are mapped from original values which have type *string*, to some other values. This mapping of values should be defined in the section named *finiteSetPropertyMapping* inside [model description file](../src/assets/model_description.json).
+### Application Information
 
-You can also define style of your nodes. There is *style* field for each class of node. These styles are being used as [cytoscape style](https://js.cytoscape.org/#style). These styles designate how the nodes are going to be shown in the canvas.
+The first section of the model description file named "appInfo" contains miscellaneous information about the visual application being developed as follows:
 
-*relations* section of the [model description file](../src/assets/model_description.json) is very similar to *classes* section.*relations* section stores information about edges. Each *relation* has *property* and *style* exactly like a *class*. In addition, each *relation* also has *source*, *target* and *isBidirectional* fields. These are used to represent direction information of an edge.
+- **name**: Name of the application as it appears to the left of the menubar,
+- **html_header**: Name of the application as it appears in the html page where Visu*all* is embedded,
+- **icon**: Logo of the application as it appears to the left of the menubar,
+- **version**: Version of the application as it appears in the About box,
+- **company_name**: Name of the company / institution as it appears in the About box,
+- **company_contact**: Contact info / email as it appears in the About box.
 
-*timebarDataMapping* section of the file is used for representing lifetime of a node or edge. Lifetime information is being used in [timebar service](../src/app/timebar.service.ts) to show some graphics and statistics. Ideally, each *class* or each *relation* would have 2 datetime properties which represents start and end. These are named as *begin_datetime* and *end_datetime*. If these fields do not exist, visuall will use default begin and end times for timebar.
+Below is how this section appears for the sample application:
+```
+  "appInfo": {
+    "name": "Visu<i>all</i> Sample App",
+    "html_header": "Visuall Sample App",
+    "icon": "assets/img/logo.png",
+    "version": "1.0.0 beta",
+    "company_name": "i-Vis at Bilkent",
+    "company_contact": "ivis@cs.bilkent.edu.tr"
+  }
+```
+### Objects
 
-*finiteSetPropertyMapping* section of the file is used to map values. For example, a status code might consists of numbers like 1, 2, 3 etc.. But you might want to show values like 'Active', 'Deactive', 'Suspend' etc... . Here you put mappings for each *property* of each *class*/*relation*. This is totally optional. You might not want to use any mapping and just use the values as is.
+The section named "objects" contains the stucture of different kinds of objects in your graphs. In other words, each *object* corresponds to a *node* type in your graph. For instance, in the sample movie application, there are two classes of nodes: `Person` and `Movie`. 
 
-*generalStyles* section of the file is being used as [cytoscape style](https://js.cytoscape.org/#style). You might chage values inside this file according to your needs. You might add/delete some properties but adding/deleting might harm integrity of the application. It is on the developer's responsiblity. On the other hand, changing existing values would less likely to cause any harm.
+Each node has a set of associated *properties* and *style*. Each property has a name and data type. For example, `Person` class has the following properties: `name`, `born`, `start_t`, and `end_t`.  
 
-*userPref* section of the file is being used to store user preferences. These values are used inside [settings component in source code](../src/app/operation-tabs/settings-tab/settings-tab.component.ts). If we need to store user specific settings they might be moved to somewhere else.
+Each *property* is one of the following data types: `string`, `int`, `float`, `datetime` and `enum`. Here, `string`, `float`, `int` are standard data types as described by most programming languages. `datetime`, on the other hand, is an integer which represents the date (and time in that date) in [Unix time stamp in milliseconds](https://currentmillis.com/). Finally, `enum` is a special type to define a group of pre-defined values for this property. Each `enum` type should be defined as a tuple `enum,<type>`, where the second element of the tuple corresponds to the type of the values in that enumeration. For instance, `enum,string` means this property's values are *string*. The corresponding set of values must be defined in the section named `finiteSetPropertyMapping` inside the model description file. 
+
+You may also customize the style of your nodes via a *style* field to change their apperance in the drawing canvas. These styles should be defined the same way they are defined in [Cytoscape.js](https://js.cytoscape.org/#style). Notice that Cytoscape.js style follows CSS conventions as closely as possible. More on styling your graph objects will be provided in upcoming sections.
+
+### Relations
+
+This section contains the strcuture of different kinds of relations among the objects in your graph. Each *relation* corresponds to an *edge* type in your graph with specifc types of `source` and `target` nodes. `isBidirectional` is used to specify if the edge is bi-directional (undirected) or uni-directional (directed). For instance, in the sample movie application, we define an edge type named `ACTED_IN` from `Person` objects to `Movie` objects as `source` and `target`, respectively, with `isBirectional` set to `false`.
+
+### Timebar
+
+"timebarDataMapping" section of the model description file is used to map lifetime of nodes and edges. Lifetime information is used in [timebar service](../src/app/timebar.service.ts) to filter graph objects by time and show useful, user-defined statistics during the specified period. Ideally, each *class* and each *relation* would have two datetime properties corresponding to their *begin* and *end* datettimes. These two fields should be provided under *begin_datetime* and *end_datetime*, respectively. In case begin or end datetime of a graph object is not mapped to a property of that object, Visu*all* assumes the default begin (as early as minus infinity) and end datetimes (as late as plus infinity) for the timebar.
+
+Minimum and maximum values for begin and datetimes are specified in the section on application default settings.
+
+### Enumeration Mapping
+
+"enumMapping" section of the file is used to map enum values to actual values to be shown. For example, the status of a computer device in a computer network might be internally represented with integers 1 and 2, corresponding to "up" and "down". Here, the type of the property `status` should be defined as `enum,int`, and the corresponding values are provided in an enumeration mapping in this section as:
+```
+  "enumMapping": {
+    "Device": {
+      "status": {
+        1: "up",
+        2: "down"
+      }
+    ...
+```
+
+### Default Styling
+
+"generalStyles" section of the file establishes default styling as described [here](https://js.cytoscape.org/#style). While changing existing values should not break the styling of your Visu*all* component, adding or deleting new styling might result in undesired style problems; thus, use this with caution.
+
+### Default Preferences
+
+"appDefaultPreferences" section stores the default for all sorts of settings. For instance, while some applications would prefer to show the Overview Window by dafault, others might not. These values are used inside the settings component related [ in source ]code](../src/app/operation-tabs/settings-tab/settings-tab.component.ts).
+
+ToDo
 
 ## Look & Feel
 
@@ -69,9 +119,18 @@ Context menus can also customized in a similar way to navbar menu and toolbar me
 ## Query Tab
 [Query tab component](../src/app/operation-tabs/query-tab/query-tab.component.ts) and also queries inside the query tab designed to be completely customized. Each query should be an *angular component*. *Angular component* should have the path "../src/app/operation-tabs/query-tab/". For example there are 2 queries in this project. [Query0](../src/app/operation-tabs/query-tab/query0/query0.component.ts) and [Query1](../src/app/operation-tabs/query-tab/query1/query1.component.ts). Name of the components are not have to follow a format. But in order for them to be visible, they should be putted inside [query tab component html file](../src/app/operation-tabs/query-tab/query-tab.component.ts) in format like `<app-query0 *ngIf="selectedIdx==0"></app-query0> <app-query1 *ngIf="selectedIdx==1"></app-query1>`. Also, their display names should be added to [query tab component file](../src/app/operation-tabs/query-tab/query-tab.component.ts). For example, there are 2 queries in the file. `this.queryTypes = ['Get actors by movie counts', 'Get movies by genre'];`
 
-## Default Settings
+## App Default Settings
 There is a *userPref* section inside [model description file](../src/assets/model_description.json). This section stores user preferences. These values are shown to the user in [settings component html file](../src/app/operation-tabs/settings-tab/settings-tab.component.html). These settings are injected to visuall dynamically. So when you change a setting from model description file, you can observe the change in user interface after reloading the website. To make these settings user based, the section inside the model description file might be moved to somewhere else in future.
 
 <p align="center">
     <img src="image/settings.png" width="407"/>
 </p>
+
+
+font styling
+
+
+- **timebar_min**: Minimum begin date of graph objects in [Unix time stamp in milliseconds](https://currentmillis.com/),
+- **timebar_max**: Maximum begin date of graph objects in [Unix time stamp in milliseconds](https://currentmillis.com/).
+
+movie rating -> size
