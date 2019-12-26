@@ -2,16 +2,15 @@
 
 This guide details how a custom application can be built using Visu*all*. We assume the reader has already gone over [User Guide](UG.md), and in each of the following sections, we describe how to customize various parts of a Visu*all* based visual analysis tool.
 
-## Data Model
-The developer is required to first specify the structure of the data to be visualized in a [model description file](../src/assets/model_description.json). Once this file is prepared, the [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json), resulting in the desired customization, using the command:
+Many of the things from the name and logo of your application to the type and style of nodes and edges to default values of various settings are defined in a so-called [description file](../src/assets/model_description.json). The description file contains many sections as detailed throughout this guide. 
+
+Once this file is prepared, the [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json), resulting in the desired customization, using the command:
 
 `node style-generator.js /assest/model_description.json`
 
-The model description file contains many sections as detailed below. 
+## Application Information
 
-### Application Information
-
-The first section of the model description file named "appInfo" contains miscellaneous information about the visual application being developed as follows:
+The first section of the description file named "appInfo" contains miscellaneous information about the visual application being developed as follows:
 
 - **name**: Name of the application as it appears to the left of the menubar,
 - **html_header**: Name of the application as it appears in the html page where Visu*all* is embedded,
@@ -31,25 +30,58 @@ Below is how this section appears for the sample application:
     "company_contact": "ivis@cs.bilkent.edu.tr"
   }
 ```
+## Data Model
+
+One of the essential definitions in this file is the structure of the data: the type and properties of *objects* and *relations* among these objects.
+
 ### Objects
 
 The section named "objects" contains the stucture of different kinds of objects in your graphs. In other words, each *object* corresponds to a *node* type in your graph. For instance, in the sample movie application, there are two classes of nodes: `Person` and `Movie`. 
 
 Each node has a set of associated *properties* and *style*. Each property has a name and data type. For example, `Person` class has the following properties: `name`, `born`, `start_t`, and `end_t`.  
 
-Each *property* is one of the following data types: `string`, `int`, `float`, `datetime` and `enum`. Here, `string`, `float`, `int` are standard data types as described by most programming languages. `datetime`, on the other hand, is an integer which represents the date (and time in that date) in [Unix time stamp in milliseconds](https://currentmillis.com/). Finally, `enum` is a special type to define a group of pre-defined values for this property. Each `enum` type should be defined as a tuple `enum,<type>`, where the second element of the tuple corresponds to the type of the values in that enumeration. For instance, `enum,string` means this property's values are *string*. The corresponding set of values must be defined in the section named `finiteSetPropertyMapping` inside the model description file. 
+Each *property* is one of the following data types: `string`, `int`, `float`, `datetime` and `enum`. Here, `string`, `float`, `int` are standard data types as described by most programming languages. `datetime`, on the other hand, is an integer which represents the date (and time in that date) in [Unix time stamp in milliseconds](https://currentmillis.com/). 
 
-You may also customize the style of your nodes via a *style* field to change their apperance in the drawing canvas. These styles should be defined the same way they are defined in [Cytoscape.js](https://js.cytoscape.org/#style). Notice that Cytoscape.js style follows CSS conventions as closely as possible. More on styling your graph objects will be provided in upcoming sections.
+Finally, `enum` is a special type to define a group of pre-defined values for this property. Each `enum` type should be defined as a tuple `enum,<type>`, where the second element of the tuple corresponds to the type of the values in that enumeration. For instance, `enum,string` means this property's values are *string*. The corresponding set of values to be actually used to show to the user *in a dropdown box* must be defined in the section named `enumMapping` inside the model description file. 
 
 ### Relations
 
 This section contains the strcuture of different kinds of relations among the objects in your graph. Each *relation* corresponds to an *edge* type in your graph with specifc types of `source` and `target` nodes. `isBidirectional` is used to specify if the edge is bi-directional (undirected) or uni-directional (directed). For instance, in the sample movie application, we define an edge type named `ACTED_IN` from `Person` objects to `Movie` objects as `source` and `target`, respectively, with `isBirectional` set to `false`.
 
-### Timebar
+### Styling
 
-"timebarDataMapping" section of the model description file is used to map lifetime of nodes and edges. Lifetime information is used in [timebar service](../src/app/timebar.service.ts) to filter graph objects by time and show useful, user-defined statistics during the specified period. Ideally, each *class* and each *relation* would have two datetime properties corresponding to their *begin* and *end* datettimes. These two fields should be provided under *begin_datetime* and *end_datetime*, respectively. In case begin or end datetime of a graph object is not mapped to a property of that object, Visu*all* assumes the default begin (as early as minus infinity) and end datetimes (as late as plus infinity) for the timebar.
+Look & feel of nodes (e.g. fill color and label) and edges (e.g. line color and width) in your graph can also be specified in the description file.
 
-Minimum and maximum values for begin and datetimes are specified in the section on application default settings.
+For instance, if you'd like a specific type of an edge to always have the color red, you specify the following (under the path `relations > ACTED_IN > style` in the description file) for that edge type:
+
+`"line-color": "#ff0000"`
+
+The value of a particular style element could also be mapped from a property of that graph object. For instance, in the sample application, for the label of the node type `Person`, we use the name of that person (under the path `objects > Person > style`) using:
+
+`"label": "data(name)",`
+
+Changing this line to
+
+`"label": "data(born)"`
+
+will result in born dates of persons to be displayed on associated nodes instead:
+
+<p align="center">
+    <img src="image/change-label.png" width="500"/>
+</p>
+
+Here, `data` is [a mapper](https://js.cytoscape.org/#style/mappers) provided by Cytoscape.js. Each Cytoscape.js element has a `data` function which returns the associated data of that element.
+
+You may change many other styles such as `"text-valign"` for vertical alignment of labels, `"font-size"` for font size of labels, and `"shape"` for shape of a node. More details about styles in Cytoscape.js can be found [here](https://js.cytoscape.org/#style). Notice that Cytoscape.js style follows CSS conventions as closely as possible.
+
+Styles of edges may be changed similarly.
+
+Another advanced way to specify the style of a graph object is through a linear mapping based on the value of a property of the corresponding object. For instance, in the sample application, we size `Movie` nodes with respect to their ratings using (the higher the rating, the larger the movie's node):
+```
+"width": "mapData(rating, 0, 10, 20px, 60px)",
+"height": "mapData(rating, 0, 10, 20px, 60px)"
+```
+Here, the rating is a value in range [0,10], which is linearly mapped to [20px,60px].
 
 ### Enumeration Mapping
 
@@ -64,73 +96,99 @@ Minimum and maximum values for begin and datetimes are specified in the section 
     ...
 ```
 
-### Default Styling
+### Timebar
 
-"generalStyles" section of the file establishes default styling as described [here](https://js.cytoscape.org/#style). While changing existing values should not break the styling of your Visu*all* component, adding or deleting new styling might result in undesired style problems; thus, use this with caution.
+"timebarDataMapping" section of the model description file is used to map lifetime of nodes and edges. Lifetime information is used in [timebar service](../src/app/timebar.service.ts) to filter graph objects by time and show useful, user-defined statistics during the specified period. Ideally, each *class* and each *relation* would have two datetime properties corresponding to their *begin* and *end* datettimes. These two fields should be provided under *begin_datetime* and *end_datetime*, respectively. In case begin or end datetime of a graph object is not mapped to a property of that object, Visu*all* assumes the default begin (as early as minus infinity) and end datetimes (as late as plus infinity) for the timebar.
 
-### Default Preferences
+Minimum and maximum values for begin and datetimes are specified in the section on application default settings.
 
-"appDefaultPreferences" section stores the default for all sorts of settings. For instance, while some applications would prefer to show the Overview Window by dafault, others might not. These values are used inside the settings component related [ in source ]code](../src/app/operation-tabs/settings-tab/settings-tab.component.ts).
+## Default Styling???
 
-ToDo
+"generalStyles" section of the file establishes default styling as described [here](https://js.cytoscape.org/#style). While changing existing values should not break the styling of your Visu*all* component,adding or deleting new styling might result in undesired style problems; thus, use this with caution.
 
-## Look & Feel
+## Default Preferences
 
-By changing [model description file](../src/assets/model_description.json) and executing [style generator file](../src/style-generator.js), you can change how nodes/edges will look like. You might change the labels of nodes and edges. For people, we show *name* of the person as its label. The line `"label": "data(name)",` which is on path *classes>Person>style* inside [model description file](../src/assets/model_description.json) sets label. If we change that line to `"label": "data(born)"` , it will show birth year of a person as its label. Here, *data* is [a mapper provided by cytoscape](https://js.cytoscape.org/#style/mappers). Each cytoscape element has a *data* function which returns associated data with the element. Below image shows the result of chaning label.
-
-<p align="center">
-    <img src="image/change-label.png" width="800"/>
-</p>
-
-You can change many other styles. `"text-valign"` property sets vertical alignment of labels. `"font-size"` sets font size of labels. `"shape"` sets shape of a node. `"background-image"` sets background image for a node. You can see more details about styles in [cytoscape.js documentation](https://js.cytoscape.org/#style)
-
-You can also change styles of edges. Node and edges have some common style properties like `label` and `width` . A static value might be set for label. Style `"label": "acted in",` sets label a static string "acted in". Edges also have some styles which are not defined for nodes. For example `line-color` , `line-style` are only defined for edges. There are detailed explanations in [cytoscape.js documentation](https://js.cytoscape.org/#style/edge-line).
-
-## Menus
-
-[Navigation bar](../src/app/navbar/navbar.component.html) and [tool bar](../src/app/navbar/navbar.component.html) menus are customizable. Each component uses files that names ends with `.customization.service.ts`. Customization services are generated specifically to prevent merge conflicts which might occur in the future. 
-
-To add new items to navigation bar menu, modify [navbar-customization.service.ts file](../src/app/navbar/navbar-customization.service.ts). Adding new items can be achived by adding new items to `_menu` array.
-
-`this._menu = [ 
-  { dropdown: 'File', actions: [{ txt: 'Custom Action 1', id: '', fn: 'fn1', isStd: false }] },
-  { dropdown: 'Custom DropDown 1', actions: [{ txt: 'Custom Action 2', id: '', fn: 'fn2', isStd: false }]}
-];`
-
-Here if the `dropdown` already exists, it will be pushed below that dropdown. If `dropdown` does not exists, a new dropdown item will be generated. One important thing is the functions of the menu items should be parameterless. Another important thing is `isStd` property of custom items must be `false` to distinguish them from standard items.
-
-There are only minimal number of menu items but you can remove items by modifying the file [navbar.component.ts file](../src/app/navbar/navbar.component.ts). This might cause some merge conflicts in the future. It is developers' responsiblity.
-
-You can add new items to tool bar in the same manner. 
-`this._menu = [{
-   div: 12, items: [{ title: 'Custom Action 1', isRegular: true, fn: 'fn1', isStd: false, imgSrc: 'assets/img/logo.png' }]
- },
- {
-   div: 1, items: [{ title: 'Custom Action 2', isRegular: true, fn: 'fn2', isStd: false, imgSrc: 'assets/img/logo.png' }]
- }];`
-
-<p align="center">
-    <img src="image/menu-customization.png" width="800"/>
-</p>
-
-## Context Menus
-Context menus can also customized in a similar way to navbar menu and toolbar menu. Context menu functionality is provided by using [context menu cytoscape.js extension](https://github.com/iVis-at-Bilkent/cytoscape.js-context-menus). [context-menu.service.ts file](../src/app/context-menu/context-menu.service.ts) contains essential menu items. [context-menu-customization.service.ts file](../src/app/context-menu/context-menu-customization.service.ts) contains custom items. You can modify and check [context-menu-customization.service.ts file](../src/app/context-menu/context-menu-customization.service.ts) file to add more context menu items.
-
-## Query Tab
-[Query tab component](../src/app/operation-tabs/query-tab/query-tab.component.ts) and also queries inside the query tab designed to be completely customized. Each query should be an *angular component*. *Angular component* should have the path "../src/app/operation-tabs/query-tab/". For example there are 2 queries in this project. [Query0](../src/app/operation-tabs/query-tab/query0/query0.component.ts) and [Query1](../src/app/operation-tabs/query-tab/query1/query1.component.ts). Name of the components are not have to follow a format. But in order for them to be visible, they should be putted inside [query tab component html file](../src/app/operation-tabs/query-tab/query-tab.component.ts) in format like `<app-query0 *ngIf="selectedIdx==0"></app-query0> <app-query1 *ngIf="selectedIdx==1"></app-query1>`. Also, their display names should be added to [query tab component file](../src/app/operation-tabs/query-tab/query-tab.component.ts). For example, there are 2 queries in the file. `this.queryTypes = ['Get actors by movie counts', 'Get movies by genre'];`
-
-## App Default Settings
-There is a *userPref* section inside [model description file](../src/assets/model_description.json). This section stores user preferences. These values are shown to the user in [settings component html file](../src/app/operation-tabs/settings-tab/settings-tab.component.html). These settings are injected to visuall dynamically. So when you change a setting from model description file, you can observe the change in user interface after reloading the website. To make these settings user based, the section inside the model description file might be moved to somewhere else in future.
+"appDefaultPreferences" section stores the default for all sorts of settings. For instance, while some applications would prefer to show the Overview Window by default, others might not. These values can be found inside [the settings component](../src/app/operation-tabs/settings-tab/settings-tab.component.ts). These settings are injected to Visu*all* dynamically. Thus, when you make a change in a setting from the description file, you should observe the associated change in the graphical user interface upon reload of the web page.
 
 <p align="center">
     <img src="image/settings.png" width="407"/>
 </p>
 
-
-font styling
-
-
+One particular set of preferences specified in this section but not exposed to the user under the Settings tab are timebar related:
 - **timebar_min**: Minimum begin date of graph objects in [Unix time stamp in milliseconds](https://currentmillis.com/),
 - **timebar_max**: Maximum begin date of graph objects in [Unix time stamp in milliseconds](https://currentmillis.com/).
+## Menus
 
-movie rating -> size
+[Navigation bar](../src/app/navbar/navbar.component.html) and [tool bar](../src/app/navbar/navbar.component.html) are also customizable components of Visu*all*. Visu*all* components are implemented in files whose names end with `.customization.service.ts`. Customization services are packaged separately to prevent future merge conflicts on updates to Visu*all*. 
+
+To add new items on the navigation bar menu, modify [navbar-customization.service.ts file](../src/app/navbar/navbar-customization.service.ts) (i.e. the `_menu` array in this file).
+```
+this._menu = [ 
+  { dropdown: 'File', actions: [{ txt: 'Custom Action 1', id: '', fn: 'fn1', isStd: false }] },
+  { dropdown: 'Custom DropDown 1', actions: [{ txt: 'Custom Action 2', id: '', fn: 'fn2', isStd: false }]}
+];
+```
+
+Here, if the menu named `dropdown` already exists, the new menu item will be prepended to that menu. Otherwise, a new menu will be created with the provided menu item. Note here that the functions of the menu items should be *without* parameters. Also note that `isStd` property of custom items must be `false` to distinguish them from standard menu items.
+
+Even though the existing menu items are pretty standard in such a visual analysis tool, you might prefer to remove them by modifying the file [navbar.component.ts file](../src/app/navbar/navbar.component.ts). However, this might cause some merge conflicts as Visu*all* is updated in the future.
+
+<p align="center">
+    <img src="image/menu-customization.png" width="600"/>
+</p>
+
+New tools may be added to the toolbar similarly: 
+```
+this._menu = [{
+   div: 12, items: [{ title: 'Custom Action 1', isRegular: true, fn: 'fn1', isStd: false, imgSrc: 'assets/img/logo.png' }]
+ },
+ {
+   div: 1, items: [{ title: 'Custom Action 2', isRegular: true, fn: 'fn2', isStd: false, imgSrc: 'assets/img/logo.png' }]
+ }];
+ ```
+
+## Context Menus
+
+Visu*all* provides node, edge, and root context menus, provided by [a Cytoscape.js extension](https://github.com/iVis-at-Bilkent/cytoscape.js-context-menus). These menus can be customized in a similar way to the navbar menu and the toolbar. The [context-menu.service.ts file](../src/app/context-menu/context-menu.service.ts) contains essential, standard menu items, whereas the [context-menu-customization.service.ts file](../src/app/context-menu/context-menu-customization.service.ts) contains the custom ones. You may modify the [context-menu-customization.service.ts file](../src/app/context-menu/context-menu-customization.service.ts) file to custom tailor context menu items.
+
+## Right Panel
+
+The panel on the right consists of a number of tabs as detailed below.
+
+### Object Tab
+
+As explained in the [User Guide](UG.md), this tab is used to inspect a selected object's properties. In case of multiple selection, common properties are shown here. The content of this tab is automatically generated and is not meant to be customizable.
+
+### Group Tab
+
+Visu*all* uses [a Cytoscape.js extension](https://github.com/iVis-at-Bilkent/cytoscape.js-expand-collapse) to group nodes into compound nodes to better manage complexity. The sample application provides one generic way to group nodes using [the Markov clustering algorithm](https://js.cytoscape.org/#collection/clustering) provided by Cytoscape.js core and one application specific way (i.e. by director).
+
+ToDo: can be customized?
+
+### Filter Tab
+
+As explained in the [User Guide](UG.md), this tab is used to filter the graph based on node/edge type or by putting together rules using graph object properties. The content of this tab is automatically generated and is not meant to be customizable.
+
+### Query Tab
+
+The queries defined in [the Query tab](../src/app/operation-tabs/query-tab/query-tab.component.ts) are all application specific ones. Each query here should be an *angular component* with the path `../src/app/operation-tabs/query-tab/`. In Visu*all* sample app, there are two movie related queries:
+- [Get actors with movie counts](../src/app/operation-tabs/query-tab/query0/query0.component.ts) and
+- [Get movies by genre](../src/app/operation-tabs/query-tab/query1/query1.component.ts).
+
+Name of such components do not have to follow a certain format but in order for them to be visible, they should be inside [the query tab component html file](../src/app/operation-tabs/query-tab/query-tab.component.ts) formatted like
+```
+<app-query0 *ngIf="selectedIdx==0"></app-query0> <app-query1 *ngIf="selectedIdx==1"></app-query1>
+```
+Also, their display names should be added to [the Query tab component file](../src/app/operation-tabs/query-tab/query-tab.component.ts). For the sample app, we have the following two queries in this file:
+
+`this.queryTypes = ['Get actors by movie counts', 'Get movies by genre'];`
+
+### Settings Tab
+
+ToDo: can be customized?
+
+
+
+ToDo: font styling heading 1, 2, etc.
+
+ToDo: list
