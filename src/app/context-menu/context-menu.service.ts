@@ -3,7 +3,6 @@ import cytoscape from 'cytoscape';
 import * as contextMenus from 'cytoscape-context-menus';
 import * as $ from 'jquery';
 import { CytoscapeService } from '../cytoscape.service';
-import { DbService } from '../db-service/db.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
 import { ContextMenuCustomizationService } from './context-menu-customization.service';
@@ -16,7 +15,7 @@ export class ContextMenuService {
 
   menu: ContextMenuItem[];
 
-  constructor(private _cyService: CytoscapeService, private _dbService: DbService, private _g: GlobalVariableService, private _customizationService: ContextMenuCustomizationService) {
+  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _customizationService: ContextMenuCustomizationService) {
 
     this.menu = [
       {

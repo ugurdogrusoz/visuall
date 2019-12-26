@@ -10,9 +10,10 @@ import stylesheet from '../assets/generated/stylesheet.json';
 import * as C from './constants';
 import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
-import { DbService } from './db-service/db.service';
+import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
+import { GraphResponse } from './db-service/data-types.js';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class CytoscapeService {
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
   applyElementStyleSettings: () => void;
 
-  constructor(private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
+  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
   }
 
   initCy(containerElem) {
@@ -329,8 +330,7 @@ export class CytoscapeService {
 
   getNeighbors(event) {
     const ele = event.target || event.cyTarget;
-    const cql = C.GET_NEIGHBORS.replace(C.CQL_PARAM0, ele.id().substr(1));
-    this._dbService.runQuery(cql, (response) => this.loadElementsFromDatabase(response, true));
+    this._dbService.getNeighbors(ele.id().substr(1), (x) => { this.loadElementsFromDatabase(x, true) });
   }
 
   setNavigatorPosition() {
@@ -348,7 +348,7 @@ export class CytoscapeService {
     $(navSelector).css('left', widthCy + leftCy - widthNavigator - offset);
   }
 
-  loadElementsFromDatabase(data, isIncremental: boolean) {
+  loadElementsFromDatabase(data: GraphResponse, isIncremental: boolean) {
     if (!data || !data.nodes || !data.edges) {
       console.error('Empty response from database!');
       return;
@@ -359,15 +359,15 @@ export class CytoscapeService {
     let current = this._g.cy.nodes(':visible');
     let elemIds: string[] = [];
     let cy_nodes = [];
-    for (const id in nodes) {
-      cy_nodes.push(this.createCyNode(nodes[id], 'n' + id));
-      elemIds.push('n' + id)
+    for (let i = 0; i < nodes.length; i++) {
+      cy_nodes.push(this.createCyNode(nodes[i], 'n' + nodes[i].id));
+      elemIds.push('n' + nodes[i].id);
     }
 
     let cy_edges = [];
-    for (const id in edges) {
-      cy_edges.push(this.createCyEdge(edges[id], 'e' + id));
-      elemIds.push('e' + id)
+    for (let i = 0; i < edges.length; i++) {
+      cy_edges.push(this.createCyEdge(edges[i], 'e' + edges[i].id));
+      elemIds.push('e' + edges[i].id)
     }
 
     this._g.switchLayoutRandomization(!isIncremental);

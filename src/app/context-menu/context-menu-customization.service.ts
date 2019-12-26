@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CytoscapeService } from '../cytoscape.service';
-import { DbService } from '../db-service/db.service';
+import { DbAdapterService } from '../db-service/db-adapter.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
-import { GET_NEIGHBORS, CQL_PARAM0 } from '../constants';
 import axios from 'axios';
 
 @Injectable({
@@ -28,7 +27,7 @@ export class ContextMenuCustomizationService {
   get menu(): ContextMenuItem[] {
     return this._menu;
   }
-  constructor(private _cyService: CytoscapeService, private _dbService: DbService, private _g: GlobalVariableService) {
+  constructor(private _cyService: CytoscapeService, private _dbService: DbAdapterService, private _g: GlobalVariableService) {
     this._menu = [
       {
         id: 'showMoviesOfPerson',
@@ -65,8 +64,7 @@ export class ContextMenuCustomizationService {
 
   getNeighbors(event) {
     const ele = event.target || event.cyTarget;
-    const cql = GET_NEIGHBORS.replace(CQL_PARAM0, ele.id().substr(1));
-    this._dbService.runQuery(cql, (response) => this._cyService.loadElementsFromDatabase(response, true));
+    this._dbService.getNeighbors(ele.id().substr(1), (x) => { this._cyService.loadElementsFromDatabase(x, true)})
   }
 
   getPoster(event) {

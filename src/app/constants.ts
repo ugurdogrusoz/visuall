@@ -6,13 +6,9 @@ export const EV_MOUSE_ON = 'mouseover';
 export const EV_MOUSE_OFF = 'mouseout';
 export const DATE_PROP_START = 'start_time';
 export const DATE_PROP_END = 'end_time';
-export const SAMPLE_DATA_CQL = 'match (n)-[e]-() return n,e limit 33';
-export const GET_ALL_CQL = 'match (n) return n UNION match ()-[e]-() return distinct e as n';
 export const MIN_DATE = -59011466152000; // Fri Jan 01 0100 00:00:00 GMT+0155
 export const MAX_DATE = 32503669200000;  // Wed Jan 01 3000 00:00:00 GMT+0300
 
-export const CQL_PARAM0 = 'PARAM0';
-export const GET_NEIGHBORS = `match (n)-[e]-(n2) where ID(n) = ${CQL_PARAM0} return n,n2,e`;
 
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
 export const FILTER_CLASS_HIDE = 'filter-class-disabled';

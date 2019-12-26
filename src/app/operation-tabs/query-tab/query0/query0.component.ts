@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DbService } from '../../../db-service/db.service';
+import { DbAdapterService } from '../../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
@@ -16,7 +16,7 @@ export class Query0Component implements OnInit {
 
   tableInput: TableViewInput = { columns: ['Actor', 'Count'], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
 
-  constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
+  constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
   }
 
   ngOnInit() {
@@ -45,12 +45,7 @@ export class Query0Component implements OnInit {
   }
 
   getCountOfData(d1: number, d2: number) {
-    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
-    WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
-    WITH n, SIZE(COLLECT(r)) as degree
-    WHERE degree >= ${this.movieCnt}
-    RETURN DISTINCT COUNT(*)`;
-    this._dbService.runQuery(cql, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
+    this._dbService.getCount4Q0(d1, d2, this.movieCnt, (x) => { this.tableInput.resultCnt = x.data[0] });
   }
 
   pageChanged(newPage: number) {
@@ -63,25 +58,14 @@ export class Query0Component implements OnInit {
   }
 
   loadTable(d1: number, d2: number, skip: number) {
-    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
-    WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
-    WITH n, SIZE(COLLECT(r)) as degree
-    WHERE degree >= ${this.movieCnt}
-    RETURN DISTINCT ID(n) as id, n.name as Actor, degree as Count 
-    ORDER BY degree DESC SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
-    this._dbService.runQuery(cql, (x) => this.fillTable(x), false);
+    this._dbService.getTable4Q0(d1, d2, this.movieCnt, skip, this.tableInput.pageSize, (x) => this.fillTable(x));
   }
 
   loadGraph(d1: number, d2: number, skip: number) {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
-    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
-      WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
-      WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
-      WHERE degree >= ${this.movieCnt}
-      RETURN n, edges ORDER BY degree DESC SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
-    this._dbService.runQuery(cql, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
+    this._dbService.getGraph4Q0(d1, d2, this.movieCnt, skip, this.tableInput.pageSize, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph));
   }
 
   fillTable(data) {
@@ -95,12 +79,6 @@ export class Query0Component implements OnInit {
   getDataForQueryResult(id: number) {
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
-
-    let cql =
-      `MATCH p=(n:Person)-[r:ACTED_IN]->(:Movie) WHERE ID(n) = ${id} AND r.act_begin >= ${d1} AND r.act_end <= ${d2}
-    RETURN nodes(p), relationships(p)`;
-
-    this._dbService.runQuery(cql, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
-
+    this._dbService.getDataForQ0(id, d1, d2, x => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph))
   }
 }

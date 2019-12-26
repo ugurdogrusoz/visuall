@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { DbService } from '../db-service/db.service';
+import { Neo4jDb } from '../db-service/neo4j-db.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -23,7 +23,7 @@ describe('NavbarComponent', () => {
       declarations: [NavbarComponent],
       providers: [
         { provide: CytoscapeService, useClass: CytoscapeServiceStub },
-        { provide: DbService, useClass: DbServiceStub },
+        { provide: Neo4jDb, useClass: DbServiceStub },
         { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
         NgbModal
       ]

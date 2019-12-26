@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { DbService } from '../../../db-service/db.service';
+import { DbAdapterService } from '../../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
@@ -19,15 +19,14 @@ export class Query1Component implements OnInit, AfterViewInit {
   date1Id = 'query1-inp0';
   date2Id = 'query1-inp1';
 
-  constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
+  constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
     this.movieGenres = [];
   }
 
   ngOnInit() {
 
     this.selectedGenre = 'Action';
-    let genres = `MATCH (m:Movie{})return distinct m.genre  `;
-    setTimeout(() => { this._dbService.runQuery(genres, (x) => this.fillGenres(x), false); }, 0);
+    setTimeout(() => { this._dbService.getMovieGenres((x) => this.fillGenres(x)); }, 0);
     this.tableInput.results = [];
     this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
   }
@@ -46,51 +45,36 @@ export class Query1Component implements OnInit, AfterViewInit {
   }
 
   prepareQuery() {
-    let date1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0];
-    let date2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0];
+    let d1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0].getFullYear();
+    let d2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0].getFullYear();
     let skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
-    let d1 = flatpickr.formatDate(date1, 'Y-M-D').substring(0, 4);
-    let d2 = flatpickr.formatDate(date2, 'Y-M-D').substring(0, 4);
 
     this.getCountOfData(d1, d2);
     this.loadTable(d1, d2, skip);
     this.loadGraph(d1, d2, skip);
   }
 
-  getCountOfData(d1: string, d2: string) {
-    let cql = ` MATCH (m:Movie {genre:'${this.selectedGenre}'})
-    WHERE m.released> ${d1} AND m.released < ${d2}  
-    RETURN DISTINCT COUNT(*)`;
-    this._dbService.runQuery(cql, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
+  getCountOfData(d1: number, d2: number) {
+    this._dbService.getCount4Q1(d1, d2, this.selectedGenre, (x) => { this.tableInput.resultCnt = x.data[0]; });
   }
 
-  loadTable(d1: string, d2: string, skip: number) {
-    let cql = ` MATCH (m:Movie {genre:'${this.selectedGenre}'})
-    WHERE m.released > ${d1} AND m.released < ${d2}  
-    RETURN DISTINCT ID(m) as id, m.title
-    ORDER BY m.title DESC SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
-    this._dbService.runQuery(cql, (x) => this.fillTable(x), false);
+  loadTable(d1: number, d2: number, skip: number) {
+    this._dbService.getTable4Q1(d1, d2, this.selectedGenre, skip, this.tableInput.pageSize, (x) => this.fillTable(x));
   }
 
-  loadGraph(d1: string, d2: string, skip: number) {
+  loadGraph(d1: number, d2: number, skip: number) {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
-    let cql = `MATCH (m:Movie {genre:'${this.selectedGenre}'})<-[r:ACTED_IN]-(a:Person)
-    WHERE m.released > ${d1} AND m.released < ${d2}  
-    WITH m, COLLECT(r) as edges
-    RETURN  m, edges
-    ORDER BY m.title DESC SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
 
-    this._dbService.runQuery(cql, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
+    this._dbService.getGraph4Q1(d1, d2, this.selectedGenre, skip, this.tableInput.pageSize,
+      (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph));
   }
 
   pageChanged(newPage: number) {
-    let date1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0];
-    let date2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0];
+    let d1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0].getFullYear();
+    let d2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0].getFullYear();
     let skip = (newPage - 1) * this.tableInput.pageSize;
-    let d1 = flatpickr.formatDate(date1, 'Y-M-D').substring(0, 4);
-    let d2 = flatpickr.formatDate(date2, 'Y-M-D').substring(0, 4);
 
     this.loadTable(d1, d2, skip);
     this.loadGraph(d1, d2, skip);
@@ -112,17 +96,9 @@ export class Query1Component implements OnInit, AfterViewInit {
   }
 
   getDataForQueryResult(id: number) {
+    let d1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0].getFullYear();
+    let d2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0].getFullYear();
 
-    let date1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0];
-    let date2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0];
-    let d1 = flatpickr.formatDate(date1, 'Y-M-D').substring(0, 4);;
-    let d2 = flatpickr.formatDate(date2, 'Y-M-D').substring(0, 4);
-
-    let cql =
-      `MATCH p=(m:Movie{genre:'${this.selectedGenre}'})<-[:ACTED_IN]-(a:Person) WHERE ID(m) = ${id} 
-     AND m.released > ${d1} AND m.released < ${d2}
-     RETURN nodes(p), relationships(p)`;
-
-    this._dbService.runQuery(cql, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
+    this._dbService.getDataForQ1(id, d1, d2, this.selectedGenre, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph));
   }
 }

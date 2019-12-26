@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
 import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE } from '../../constants';
 import * as $ from 'jquery';
-import { DbService } from '../../db-service/db.service';
+import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
-import { ClassOption, ClassBasedRules, Rule, RuleSync, CqlType } from './filtering-types.js';
+import { ClassOption, ClassBasedRules, Rule, RuleSync } from './filtering-types.js';
 import { Subject } from 'rxjs';
 import ModelDescription from '../../../assets/model_description.json';
 import { TableViewInput, TableData, TableDataType } from 'src/app/table-view/table-view-types.js';
-import { RuleParserService } from 'src/app/rule-parser.service.js';
+import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types.js';
 
 @Component({
   selector: 'app-filter-tab',
@@ -35,7 +35,7 @@ export class FilterTabComponent implements OnInit {
   isTableDraggable: boolean = false;
   currTableState: Subject<boolean> = new Subject();
 
-  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbService, private _timebarService: TimebarService, private _ruleParser: RuleParserService) {
+  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService) {
     this.isFilterOnDb = true;
     this.tableInput.isMergeGraph = true;
     this.nodeClasses = new Set([]);
@@ -48,7 +48,7 @@ export class FilterTabComponent implements OnInit {
 
   ngOnInit() {
     this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
-    
+
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
       this.nodeClasses.add(key);
@@ -201,23 +201,22 @@ export class FilterTabComponent implements OnInit {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
-    const cql = this._ruleParser.rule2cql(this.filteringRule, skip, limit, CqlType.std);
-    this._dbService.runQuery(cql, (response) => this._cyService.loadElementsFromDatabase(response, isMerge));
+    this._dbService.getFilteringResult(this.filteringRule, skip, limit, DbQueryType.std,
+      (x) => { this._cyService.loadElementsFromDatabase(x as GraphResponse, isMerge) });
+
   }
 
   private loadTable(skip: number, limit: number) {
-    const cql = this._ruleParser.rule2cql(this.filteringRule, skip, limit, CqlType.table);
-    this._dbService.runQuery(cql, (response) => this.fillTable(response), false);
+    this._dbService.getFilteringResult(this.filteringRule, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
   }
 
   private getCountOfData() {
-    const cql = this._ruleParser.rule2cql(this.filteringRule, 0, -1, CqlType.count);
-    this._dbService.runQuery(cql, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
+    this._dbService.getFilteringResult(this.filteringRule, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
   }
 
   private fillTable(data) {
     this.tableInput.results = [];
-    if (!data.data[0][1]) {
+    if (!data.data[0] || !data.data[0][1]) {
       return;
     }
 
@@ -300,7 +299,6 @@ export class FilterTabComponent implements OnInit {
       this._g.hiddenClasses.add(classText);
       this._g.viewUtils.hide(this._g.cy.$('.' + classText));
     }
-    // this.appManager.visibilityChanged();
     this._timebarService.cyElemListChanged();
   }
 
@@ -314,8 +312,7 @@ export class FilterTabComponent implements OnInit {
   }
 
   getDataForQueryResult(id: number) {
-    let cql = `MATCH p=(n)-[]-() WHERE ID(n) = ${id} RETURN nodes(p), relationships(p)`;
-    this._dbService.runQuery(cql, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
+    this._dbService.getNeighbors(id + '', (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) });
   }
 
   resetRule() {

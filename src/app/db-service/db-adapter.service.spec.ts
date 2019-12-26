@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RuleParserService } from './rule-parser.service';
+import { DbAdapterService } from './db-adapter.service';
 
-describe('RuleParserService', () => {
+describe('DbAdapterService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: RuleParserService = TestBed.get(RuleParserService);
+    const service: DbAdapterService = TestBed.get(DbAdapterService);
     expect(service).toBeTruthy();
   });
 });

@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DbService } from '../db-service/db.service';
+import { DbAdapterService } from '../db-service/db-adapter.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
-import { SAMPLE_DATA_CQL, GET_ALL_CQL } from '../constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaveAsPngModalComponent } from '../popups/save-as-png-modal/save-as-png-modal.component';
 import { AboutModalComponent } from '../popups/about-modal/about-modal.component';
@@ -25,7 +24,7 @@ export class NavbarComponent implements OnInit {
   toolName: string;
   toolLogo: string;
 
-  constructor(private _dbService: DbService, private _cyService: CytoscapeService, private _modalService: NgbModal,
+  constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _modalService: NgbModal,
     private _g: GlobalVariableService, private _customizationService: NavbarCustomizationService) {
     this.menu = [
       {
@@ -127,11 +126,11 @@ export class NavbarComponent implements OnInit {
   openAbout() { this._modalService.open(AboutModalComponent); }
 
   getSampleData() {
-    this._dbService.runQuery(SAMPLE_DATA_CQL, (x) => this._cyService.loadElementsFromDatabase(x, false));
+    this._dbService.getSampleData(x => { this._cyService.loadElementsFromDatabase(x, false) });
   }
 
   getAllData() {
-    this._dbService.runQuery(GET_ALL_CQL, (x) => this._cyService.loadElementsFromDatabase(x, false));
+    this._dbService.getAllData(x => { this._cyService.loadElementsFromDatabase(x, false) });
   }
 
   clearData() { this._g.cy.remove(this._g.cy.$()); }

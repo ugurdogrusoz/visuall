@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { CytoscapeService } from './cytoscape.service';
 import { GlobalVariableService } from './global-variable.service';
-import { DbService } from './db-service/db.service';
+import { Neo4jDb } from './db-service/neo4j-db.service';
 import { TimebarService } from './timebar.service';
 
 class GlobalVariableServiceStub { }
@@ -15,7 +15,7 @@ describe('CytoscapeService', () => {
     TestBed.configureTestingModule({
       providers: [CytoscapeService,
         { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
-        { provide: DbService, useClass: DbServiceStub },
+        { provide: Neo4jDb, useClass: DbServiceStub },
         { provide: TimebarService, useClass: TimebarServiceStub },
       ]
     })

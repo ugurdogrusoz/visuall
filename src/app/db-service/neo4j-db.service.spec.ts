@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { GlobalVariableService } from '../global-variable.service';
 import { HttpClient } from '@angular/common/http';
-import { DbService } from './db.service';
+import { Neo4jDb } from './neo4j-db.service';
 
 class GlobalVariableServiceStub { }
 class HttpClientStub { }
@@ -9,7 +9,7 @@ class HttpClientStub { }
 describe('DbService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [DbService,
+      providers: [Neo4jDb,
         { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
         { provide: HttpClient, useClass: HttpClientStub },
       ]
@@ -17,7 +17,7 @@ describe('DbService', () => {
   });
 
   it('should be created', () => {
-    const service: DbService = TestBed.get(DbService);
+    const service: Neo4jDb = TestBed.get(Neo4jDb);
     expect(service).toBeTruthy();
   });
 });

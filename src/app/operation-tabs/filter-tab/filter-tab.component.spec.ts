@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { DbService } from '../../db-service/db.service';
+import { Neo4jDb } from '../../db-service/neo4j-db.service';
 import { TimebarService } from '../../timebar.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { CytoscapeService } from '../../cytoscape.service';
@@ -21,7 +21,7 @@ describe('FilterTabComponent', () => {
       imports: [FormsModule],
       providers: [
         { provide: CytoscapeService, useClass: CytoscapeServiceStub },
-        { provide: DbService, useClass: DbServiceStub },
+        { provide: Neo4jDb, useClass: DbServiceStub },
         { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
         { provide: TimebarService, useClass: TimebarServiceStub },
       ]
