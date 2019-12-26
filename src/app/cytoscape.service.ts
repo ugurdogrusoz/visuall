@@ -10,7 +10,7 @@ import stylesheet from '../assets/generated/stylesheet.json';
 import * as C from './constants';
 import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
-import { DbService } from './db.service';
+import { DbService } from './db-service/db.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 
@@ -330,7 +330,7 @@ export class CytoscapeService {
   getNeighbors(event) {
     const ele = event.target || event.cyTarget;
     const cql = C.GET_NEIGHBORS.replace(C.CQL_PARAM0, ele.id().substr(1));
-    this._dbService.runQuery(cql, null, (response) => this.loadElementsFromDatabase(response, true));
+    this._dbService.runQuery(cql, (response) => this.loadElementsFromDatabase(response, true));
   }
 
   setNavigatorPosition() {

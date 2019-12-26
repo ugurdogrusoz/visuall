@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 
-export interface iUserPref {
+export interface UserPref {
   // boolean settings
   isAutoIncrementalLayoutOnChange: BehaviorSubject<boolean>;
   isHighlightOnHover: BehaviorSubject<boolean>;
@@ -43,7 +43,7 @@ export enum MergedElemIndicatorTypes {
   selection = 0, highlight = 1
 }
 
-export interface iBoolSetting {
+export interface BoolSetting {
   isEnable: boolean;
   text: string;
   actuator: any;

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { GlobalVariableService } from './global-variable.service';
+import { GlobalVariableService } from '../global-variable.service';
 import { HttpClient } from '@angular/common/http';
 import { DbService } from './db.service';
 

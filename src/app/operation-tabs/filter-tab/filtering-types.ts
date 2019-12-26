@@ -1,11 +1,11 @@
-export interface iClassOption {
+export interface ClassOption {
   text: string;
   isDisabled: boolean;
 }
 
-export interface iClassBasedRules {
+export interface ClassBasedRules {
   className: string;
-  rules: iRule[];
+  rules: Rule[];
   isEdge: boolean;
 }
 
@@ -17,7 +17,7 @@ export enum CqlType {
   std = 0, table = 1, count = 2
 }
 
-export interface iRule {
+export interface Rule {
   propertyOperand?: string;
   propertyType?: string;
   operator?: string;
@@ -26,7 +26,7 @@ export interface iRule {
   rawInput?: string;
 }
 
-export interface iRuleSync {
+export interface RuleSync {
   properties: string[];
   isGenericTypeSelected: boolean;
   selectedClass: string;
@@ -35,9 +35,9 @@ export interface iRuleSync {
 // 2 type of metric exists: sum or count. 
 // Sum: sums the property value without conditions
 // Count: counts the elements which satisfy the conditional expressions
-export interface iTimebarMetric {
+export interface TimebarMetric {
   incrementFn: (x: any) => number;
-  rules: iRule[];
+  rules: Rule[];
   name: string;
   className: string;
   isEdge?: boolean;
@@ -45,13 +45,13 @@ export interface iTimebarMetric {
   color?: string;
 }
 
-export interface iTimebarUnitData {
+export interface TimebarUnitData {
   isBegin: boolean;
   d: number;
   id: string;
 }
 
-export interface iTimebarItem {
+export interface TimebarItem {
   start: number;
   end: number;
   cyElem: any;

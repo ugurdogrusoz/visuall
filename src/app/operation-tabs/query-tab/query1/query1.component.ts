@@ -1,9 +1,9 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { DbService } from '../../../db.service';
+import { DbService } from '../../../db-service/db.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
-import { iTableViewInput, TableDataType } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableDataType } from 'src/app/table-view/table-view-types';
 
 @Component({
   selector: 'app-query1',
@@ -14,7 +14,7 @@ export class Query1Component implements OnInit, AfterViewInit {
 
   selectedGenre: string;
   movieGenres: string[];
-  tableInput: iTableViewInput = { columns: ['Movie'], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  tableInput: TableViewInput = { columns: ['Movie'], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
 
   date1Id = 'query1-inp0';
   date2Id = 'query1-inp1';
@@ -27,7 +27,7 @@ export class Query1Component implements OnInit, AfterViewInit {
 
     this.selectedGenre = 'Action';
     let genres = `MATCH (m:Movie{})return distinct m.genre  `;
-    setTimeout(() => { this._dbService.runQuery(genres, null, (x) => this.fillGenres(x), false); }, 0);
+    setTimeout(() => { this._dbService.runQuery(genres, (x) => this.fillGenres(x), false); }, 0);
     this.tableInput.results = [];
     this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
   }
@@ -61,7 +61,7 @@ export class Query1Component implements OnInit, AfterViewInit {
     let cql = ` MATCH (m:Movie {genre:'${this.selectedGenre}'})
     WHERE m.released> ${d1} AND m.released < ${d2}  
     RETURN DISTINCT COUNT(*)`;
-    this._dbService.runQuery(cql, null, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
+    this._dbService.runQuery(cql, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
   }
 
   loadTable(d1: string, d2: string, skip: number) {
@@ -69,7 +69,7 @@ export class Query1Component implements OnInit, AfterViewInit {
     WHERE m.released > ${d1} AND m.released < ${d2}  
     RETURN DISTINCT ID(m) as id, m.title
     ORDER BY m.title DESC SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
-    this._dbService.runQuery(cql, null, (x) => this.fillTable(x), false);
+    this._dbService.runQuery(cql, (x) => this.fillTable(x), false);
   }
 
   loadGraph(d1: string, d2: string, skip: number) {
@@ -82,7 +82,7 @@ export class Query1Component implements OnInit, AfterViewInit {
     RETURN  m, edges
     ORDER BY m.title DESC SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
 
-    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
+    this._dbService.runQuery(cql, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 
   pageChanged(newPage: number) {
@@ -123,6 +123,6 @@ export class Query1Component implements OnInit, AfterViewInit {
      AND m.released > ${d1} AND m.released < ${d2}
      RETURN nodes(p), relationships(p)`;
 
-    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
+    this._dbService.runQuery(cql, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 }

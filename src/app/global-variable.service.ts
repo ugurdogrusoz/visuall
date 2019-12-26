@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { iUserPref } from './user-preference';
+import { UserPref } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import model_description from '../assets/model_description.json'
@@ -17,7 +17,7 @@ export class GlobalVariableService {
   hiddenClasses: Set<string>;
   setLoadingStatus: (boolean) => void;
   isSelectFromLoad: boolean = false;
-  userPrefs: iUserPref = {} as iUserPref;
+  userPrefs: UserPref = {} as UserPref;
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);

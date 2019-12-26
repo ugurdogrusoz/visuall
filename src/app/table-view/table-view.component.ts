@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild }
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF } from '../constants';
-import { iTableViewInput } from './table-view-types';
+import { TableViewInput } from './table-view-types';
 import { IPosition } from 'angular2-draggable';
 import { Subject } from 'rxjs';
 
@@ -18,7 +18,7 @@ export class TableViewComponent implements OnInit {
   columnLimit: number;
   isDraggable: boolean = false;
   position: IPosition = { x: 0, y: 0 };
-  @Input() params: iTableViewInput;
+  @Input() params: TableViewInput;
   @Input() changeState: Subject<boolean>;
   @Output() onPageChanged = new EventEmitter<number>();
   @Output() onDataForQueryResult = new EventEmitter<number>();

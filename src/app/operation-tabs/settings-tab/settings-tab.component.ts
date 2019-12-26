@@ -4,7 +4,7 @@ import { TimebarService } from '../../timebar.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, MAX_DATA_PAGE_SIZE, MIN_DATA_PAGE_SIZE, MAX_TABLE_COLUMN_COUNT, MIN_TABLE_COLUMN_COUNT } from '../../constants';
 import stylesheet from '../../../assets/generated/stylesheet.json';
-import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, iBoolSetting } from 'src/app/user-preference';
+import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting } from 'src/app/user-preference';
 
 @Component({
   selector: 'app-settings-tab',
@@ -12,8 +12,8 @@ import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndic
   styleUrls: ['./settings-tab.component.css']
 })
 export class SettingsTabComponent implements OnInit {
-  generalBoolSettings: iBoolSetting[];
-  timebarBoolSettings: iBoolSetting[];
+  generalBoolSettings: BoolSetting[];
+  timebarBoolSettings: BoolSetting[];
   highlightWidth: number;
   timebarPlayingStep: number;
   timebarPlayingSpeed: number;
@@ -101,7 +101,7 @@ export class SettingsTabComponent implements OnInit {
     }
   }
 
-  onBoolSettingsChanged(setting: iBoolSetting) {
+  onBoolSettingsChanged(setting: BoolSetting) {
     setting.actuator[setting.fn](setting.isEnable);
   }
 

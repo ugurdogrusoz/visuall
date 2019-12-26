@@ -4,7 +4,7 @@ import * as $ from 'jquery';
 import { debounce, MIN_DATE, MAX_DATE, isClose, TIME_UNITS, MONTHS, SHORT_MONTHS, CSS_SM_TEXT_SIZE, CSS_FONT_NAME } from './constants';
 import { GlobalVariableService } from './global-variable.service';
 import ModelDescription from '../assets/model_description.json';
-import { iTimebarUnitData, iTimebarItem, iTimebarMetric } from './operation-tabs/filter-tab/filtering-types';
+import { TimebarUnitData, TimebarItem, TimebarMetric } from './operation-tabs/filter-tab/filtering-types';
 
 declare var google: any;
 
@@ -17,15 +17,15 @@ export class TimebarService {
   windowResizer: any;
   statsRange1: number;
   statsRange2: number;
-  times: iTimebarUnitData[];
-  items: iTimebarItem[];
+  times: TimebarUnitData[];
+  items: TimebarItem[];
   onlyDates: number[];
   graphDates: number[];
   dashboard: any;
   chartWrapper: any;
   controlWrapper: any;
   cursorPos: number;
-  shownMetrics: iTimebarMetric[];
+  shownMetrics: TimebarMetric[];
   sampleCount: number;
   playTimerId: number;
   isHideDisconnectedNodes: boolean;
@@ -125,7 +125,7 @@ export class TimebarService {
       return;
     }
     const eles = this._g.cy.$().not(':hidden, :transparent').map(x => x);
-    let times: iTimebarUnitData[] = [];
+    let times: TimebarUnitData[] = [];
     this.items = [];
 
     for (let i = 0; i < eles.length; i++) {
@@ -155,7 +155,7 @@ export class TimebarService {
     $('#filter_div').off('mousewheel');
   }
 
-  prepareChartData(times: iTimebarUnitData[]) {
+  prepareChartData(times: TimebarUnitData[]) {
     if (times.length < 1) {
       return;
     }
@@ -900,7 +900,7 @@ export class TimebarService {
   }
 
   getStatsForRange(start: number, end: number): number[] {
-    let eles: iTimebarItem[];
+    let eles: TimebarItem[];
     // represent element with begin
     if (this.statsInclusionType == 1) {
       eles = this.items.filter(x => x.start >= start && x.start <= end);

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DbService } from '../db.service';
+import { DbService } from '../db-service/db.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { SAMPLE_DATA_CQL, GET_ALL_CQL } from '../constants';
@@ -127,11 +127,11 @@ export class NavbarComponent implements OnInit {
   openAbout() { this._modalService.open(AboutModalComponent); }
 
   getSampleData() {
-    this._dbService.runQuery(SAMPLE_DATA_CQL, null, (x) => this._cyService.loadElementsFromDatabase(x, false));
+    this._dbService.runQuery(SAMPLE_DATA_CQL, (x) => this._cyService.loadElementsFromDatabase(x, false));
   }
 
   getAllData() {
-    this._dbService.runQuery(GET_ALL_CQL, null, (x) => this._cyService.loadElementsFromDatabase(x, false));
+    this._dbService.runQuery(GET_ALL_CQL, (x) => this._cyService.loadElementsFromDatabase(x, false));
   }
 
   clearData() { this._g.cy.remove(this._g.cy.$()); }

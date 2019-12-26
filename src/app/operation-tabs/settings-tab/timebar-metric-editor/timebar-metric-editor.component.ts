@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import ModelDescription from '../../../../assets/model_description.json';
-import { iClassOption, iTimebarMetric, iRule, iRuleSync } from '../../filter-tab/filtering-types.js';
+import { ClassOption, TimebarMetric, Rule, RuleSync } from '../../filter-tab/filtering-types.js';
 import { NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS, GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { Subject } from 'rxjs';
@@ -13,12 +13,12 @@ import { Subject } from 'rxjs';
 })
 export class TimebarMetricEditorComponent implements OnInit {
 
-  classOptions: iClassOption[];
+  classOptions: ClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
   private currDatetimes: Date[];
-  filteringRule: iTimebarMetric;
-  currMetrics: iTimebarMetric[];
+  filteringRule: TimebarMetric;
+  currMetrics: TimebarMetric[];
   currMetricName: string = 'new';
   currMetricColor: string = null;
   isAClassSelectedForMetric = false;
@@ -28,7 +28,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   isAddingNew = false;
   isGenericTypeSelected = true;
   isSumMetric = false;
-  currProperties: Subject<iRuleSync> = new Subject();
+  currProperties: Subject<RuleSync> = new Subject();
 
   constructor(private _timeBarService: TimebarService) {
     this.classOptions = [];
@@ -48,7 +48,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.refreshTimebar();
   }
 
-  getStyleForMetric(m: iTimebarMetric) {
+  getStyleForMetric(m: TimebarMetric) {
     if (m.isEditing) {
       return { 'background-color': '#eaeaea' };
     }
@@ -116,7 +116,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     }, 0);
   }
 
-  addRule2FilteringRules(r: iRule) {
+  addRule2FilteringRules(r: Rule) {
     const isEdge = properties.edges.hasOwnProperty(this.selectedClass);
 
 
@@ -286,7 +286,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     }
   }
 
-  private getBoolExpressionFromMetric(m: iTimebarMetric): string {
+  private getBoolExpressionFromMetric(m: TimebarMetric): string {
     let classCondition = '';
     // apply class condition
     if (m.className.toLowerCase() == GENERIC_TYPE.EDGES_CLASS.toLowerCase()) {
@@ -323,7 +323,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     return `if ( (${classCondition}) && (${propertyCondition}))`;
   }
 
-  private getJsExpressionForMetricRule(r: iRule) {
+  private getJsExpressionForMetricRule(r: Rule) {
     if (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'datetime' || r.propertyType == 'edge') {
       let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
       if (r.propertyType == 'datetime') {
@@ -355,7 +355,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   // if there is 1 sum rule it is a Sum metric (otherwise count metric)
-  private getIdxOfSumRule(m: iTimebarMetric) {
+  private getIdxOfSumRule(m: TimebarMetric) {
     let i = 0;
     if (!m) {
       return -1;
@@ -369,11 +369,11 @@ export class TimebarMetricEditorComponent implements OnInit {
     return -1;
   }
 
-  private isSumRule(r: iRule): boolean {
+  private isSumRule(r: Rule): boolean {
     return (!r.operator) && (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'edge');
   }
 
-  private putSumRuleAtStart(m: iTimebarMetric) {
+  private putSumRuleAtStart(m: TimebarMetric) {
     const idx = this.getIdxOfSumRule(m);
     if (idx < 1) {
       return;

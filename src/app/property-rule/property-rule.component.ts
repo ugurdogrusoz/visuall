@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { findTypeOfAttribute, TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber } from '../constants';
 import flatpickr from 'flatpickr';
-import { PropertyCategory, iRule, iRuleSync } from '../operation-tabs/filter-tab/filtering-types';
+import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/filter-tab/filtering-types';
 import properties from '../../assets/generated/properties.json';
 import ModelDescription from '../../assets/model_description.json';
 import { Subject } from 'rxjs';
@@ -29,9 +29,9 @@ export class PropertyRuleComponent implements OnInit {
   finiteSetPropertyMap: any = null;
   selectedClass: string;
   currInpType: string = 'text';
-  @Input() propertyChanged: Subject<iRuleSync>;
+  @Input() propertyChanged: Subject<RuleSync>;
   @Input() isStrict: boolean;
-  @Output() onRuleReady = new EventEmitter<iRule>();
+  @Output() onRuleReady = new EventEmitter<Rule>();
   @ViewChild('dateInp', { static: false }) dateInp: ElementRef;
 
   constructor(private _modalService: NgbModal) { }
@@ -111,7 +111,7 @@ export class PropertyRuleComponent implements OnInit {
       value = parseFloat(value);
     }
 
-    const rule: iRule = {
+    const rule: Rule = {
       propertyOperand: attribute,
       propertyType: atType,
       rawInput: rawValue,
@@ -147,7 +147,7 @@ export class PropertyRuleComponent implements OnInit {
     return PropertyCategory.other;
   }
 
-  private isStrictlyValid(rule: iRule) {
+  private isStrictlyValid(rule: Rule) {
     const p = rule.propertyOperand;
     // property not selected, so only a class is selected 
     if (p == null || p == GENERIC_TYPE.NOT_SELECTED) {

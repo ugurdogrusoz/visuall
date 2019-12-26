@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { GlobalVariableService } from './global-variable.service';
+import { GlobalVariableService } from '../global-variable.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class DbService {
     this._g.getConfig().subscribe(x => { this.dbConfig = x['database'] }, error => console.log('getConfig err: ', error));
   }
 
-  runQuery(query, params, cb, isGraphResponse = true) {
+  runQuery(query: string, cb, isGraphResponse = true) {
     const url = this.dbConfig.url;
     const username = this.dbConfig.username;
     const password = this.dbConfig.password;
@@ -27,7 +27,7 @@ export class DbService {
     const requestBody = {
       'statements': [{
         'statement': query,
-        'parameters': params,
+        'parameters': null,
         'resultDataContents': [requestType]
       }]
     };

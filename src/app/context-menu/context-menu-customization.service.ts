@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CytoscapeService } from '../cytoscape.service';
-import { DbService } from '../db.service';
+import { DbService } from '../db-service/db.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
 import { GET_NEIGHBORS, CQL_PARAM0 } from '../constants';
@@ -66,7 +66,7 @@ export class ContextMenuCustomizationService {
   getNeighbors(event) {
     const ele = event.target || event.cyTarget;
     const cql = GET_NEIGHBORS.replace(CQL_PARAM0, ele.id().substr(1));
-    this._dbService.runQuery(cql, null, (response) => this._cyService.loadElementsFromDatabase(response, true));
+    this._dbService.runQuery(cql, (response) => this._cyService.loadElementsFromDatabase(response, true));
   }
 
   getPoster(event) {

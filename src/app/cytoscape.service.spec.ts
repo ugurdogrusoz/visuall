@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { CytoscapeService } from './cytoscape.service';
 import { GlobalVariableService } from './global-variable.service';
-import { DbService } from './db.service';
+import { DbService } from './db-service/db.service';
 import { TimebarService } from './timebar.service';
 
 class GlobalVariableServiceStub { }

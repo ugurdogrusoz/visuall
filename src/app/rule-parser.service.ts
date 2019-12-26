@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { iClassBasedRules, iRule, CqlType } from './operation-tabs/filter-tab/filtering-types';
+import { ClassBasedRules, Rule, CqlType } from './operation-tabs/filter-tab/filtering-types';
 import { GlobalVariableService } from './global-variable.service';
 import { GENERIC_TYPE } from './constants';
 import ModelDescription from '../assets/model_description.json';
@@ -12,14 +12,14 @@ export class RuleParserService {
   constructor(private _g: GlobalVariableService) { }
 
   // methods for conversion to CQL
-  rule2cql(rules: iClassBasedRules, skip: number, limit: number, type: CqlType) {
+  rule2cql(rules: ClassBasedRules, skip: number, limit: number, type: CqlType) {
     let query = '';
     query += this.getCql4Rules(rules);
     query += this.generateFinalQueryBlock(rules.isEdge, skip, limit, type);
     return query;
   }
 
-  private getCql4Rules(rule: iClassBasedRules) {
+  private getCql4Rules(rule: ClassBasedRules) {
     let isGenericType = false;
     if (rule.className == GENERIC_TYPE.ANY_CLASS || rule.className == GENERIC_TYPE.EDGES_CLASS || rule.className == GENERIC_TYPE.NODES_CLASS) {
       isGenericType = true;
@@ -58,7 +58,7 @@ export class RuleParserService {
     return matchClause + 'WHERE ' + whereClauseItems.join(' ') + "\n";
   }
 
-  private getCondition4Rule(rule: iRule) {
+  private getCondition4Rule(rule: Rule) {
     if (!rule.propertyOperand || rule.propertyOperand == GENERIC_TYPE.NOT_SELECTED) {
       return '(TRUE)';
     }

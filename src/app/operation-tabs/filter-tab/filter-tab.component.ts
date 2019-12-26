@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
 import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE } from '../../constants';
 import * as $ from 'jquery';
-import { DbService } from '../../db.service';
+import { DbService } from '../../db-service/db.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
-import { iClassOption, iClassBasedRules, iRule, iRuleSync, CqlType } from './filtering-types.js';
+import { ClassOption, ClassBasedRules, Rule, RuleSync, CqlType } from './filtering-types.js';
 import { Subject } from 'rxjs';
 import ModelDescription from '../../../assets/model_description.json';
-import { iTableViewInput, iTableData, TableDataType } from 'src/app/table-view/table-view-types.js';
+import { TableViewInput, TableData, TableDataType } from 'src/app/table-view/table-view-types.js';
 import { RuleParserService } from 'src/app/rule-parser.service.js';
 
 @Component({
@@ -21,16 +21,16 @@ export class FilterTabComponent implements OnInit {
 
   nodeClasses: Set<string>;
   edgeClasses: Set<string>;
-  classOptions: iClassOption[];
+  classOptions: ClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
   attributeType: string;
   isDateProp: boolean;
   currDatetimes: Date[];
-  filteringRule: iClassBasedRules;
+  filteringRule: ClassBasedRules;
   isFilterOnDb: boolean;
-  currProperties: Subject<iRuleSync> = new Subject();
-  tableInput: iTableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  currProperties: Subject<RuleSync> = new Subject();
+  tableInput: TableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
   isClassTypeLocked: boolean;
   isTableDraggable: boolean = false;
   currTableState: Subject<boolean> = new Subject();
@@ -109,7 +109,7 @@ export class FilterTabComponent implements OnInit {
     return r;
   }
 
-  addRule2FilteringRules(r: iRule) {
+  addRule2FilteringRules(r: Rule) {
     const isEdge = this.edgeClasses.has(this.selectedClass);
 
     if (r.propertyType == 'datetime') {
@@ -145,7 +145,7 @@ export class FilterTabComponent implements OnInit {
     this.filteringRule.rules[idx] = tmp;
   }
 
-  filterByRule(rule: iRule, ele) {
+  filterByRule(rule: Rule, ele) {
     const attr = rule.propertyOperand;
     const op = rule.operator;
     const ruleVal = rule.inputOperand;
@@ -202,17 +202,17 @@ export class FilterTabComponent implements OnInit {
       return;
     }
     const cql = this._ruleParser.rule2cql(this.filteringRule, skip, limit, CqlType.std);
-    this._dbService.runQuery(cql, null, (response) => this._cyService.loadElementsFromDatabase(response, isMerge));
+    this._dbService.runQuery(cql, (response) => this._cyService.loadElementsFromDatabase(response, isMerge));
   }
 
   private loadTable(skip: number, limit: number) {
     const cql = this._ruleParser.rule2cql(this.filteringRule, skip, limit, CqlType.table);
-    this._dbService.runQuery(cql, null, (response) => this.fillTable(response), false);
+    this._dbService.runQuery(cql, (response) => this.fillTable(response), false);
   }
 
   private getCountOfData() {
     const cql = this._ruleParser.rule2cql(this.filteringRule, 0, -1, CqlType.count);
-    this._dbService.runQuery(cql, null, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
+    this._dbService.runQuery(cql, (x) => { this.tableInput.resultCnt = x.data[0]; }, false);
   }
 
   private fillTable(data) {
@@ -234,7 +234,7 @@ export class FilterTabComponent implements OnInit {
 
     for (let i = 0; i < data.data.length; i++) {
       // first column is ID
-      let d: iTableData[] = [{ val: data.data[i][0], type: TableDataType.string }];
+      let d: TableData[] = [{ val: data.data[i][0], type: TableDataType.string }];
       // j is column index
       let j = 0;
       for (let [k, v] of Object.entries(data.data[i][1])) {
@@ -255,7 +255,7 @@ export class FilterTabComponent implements OnInit {
     }
   }
 
-  private rawData2TableData(key: string, val: any): iTableData {
+  private rawData2TableData(key: string, val: any): TableData {
     let t = '';
     let cName = this.filteringRule.className;
     if (this.filteringRule.isEdge) {
@@ -315,7 +315,7 @@ export class FilterTabComponent implements OnInit {
 
   getDataForQueryResult(id: number) {
     let cql = `MATCH p=(n)-[]-() WHERE ID(n) = ${id} RETURN nodes(p), relationships(p)`;
-    this._dbService.runQuery(cql, null, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
+    this._dbService.runQuery(cql, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), true);
   }
 
   resetRule() {

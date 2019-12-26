@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { DbService } from '../../db.service';
+import { DbService } from '../../db-service/db.service';
 import { TimebarService } from '../../timebar.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { CytoscapeService } from '../../cytoscape.service';

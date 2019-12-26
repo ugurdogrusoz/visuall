@@ -3,14 +3,14 @@ export enum TableDataType {
   string = 0, number = 1, datetime = 2, enum = 3
 }
 
-export interface iTableData {
+export interface TableData {
   val: any;
   type: TableDataType;
 }
 
-export interface iTableViewInput {
+export interface TableViewInput {
   // first property of every result must be ID
-  results: iTableData[][];
+  results: TableData[][];
   columns: string[];
   isLoadGraph: boolean;
   isMergeGraph: boolean;
