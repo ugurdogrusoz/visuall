@@ -8,6 +8,13 @@ Once this file is prepared, the [style generator file](../src/style-generator.js
 
 `node style-generator.js /assest/model_description.json`
 
+Here is the overall look of the sample application on movies and people taking part in these movies:
+
+<p align="center">
+    <img src="image/visuall-ss.png" title="Visuall and its various components"/>
+</p>
+
+
 ## Application Information
 
 The first section of the description file named "appInfo" contains miscellaneous information about the visual application being developed as follows:
@@ -40,9 +47,34 @@ The section named "objects" contains the stucture of different kinds of objects 
 
 Each node has a set of associated *properties* and *style*. Each property has a name and data type. For example, `Person` class has the following properties: `name`, `born`, `start_t`, and `end_t`.  
 
-Each *property* is one of the following data types: `string`, `int`, `float`, `datetime` and `enum`. Here, `string`, `float`, `int` are standard data types as described by most programming languages. `datetime`, on the other hand, is an integer which represents the date (and time in that date) in [Unix time stamp in milliseconds](https://currentmillis.com/). 
+Each *property* is one of the following data types: `string`, `int`, `float`, `datetime`. `list` and `enum`. Here, `string`, `float`, `int` are standard data types as described by most programming languages. `datetime`, on the other hand, is an integer which represents the date (and time in that date) in [Unix time stamp in milliseconds](https://currentmillis.com/). 
 
-Finally, `enum` is a special type to define a group of pre-defined values for this property. Each `enum` type should be defined as a tuple `enum,<type>`, where the second element of the tuple corresponds to the type of the values in that enumeration. For instance, `enum,string` means this property's values are *string*. The corresponding set of values to be actually used to show to the user *in a dropdown box* must be defined in the section named `enumMapping` inside the model description file. 
+`list` is used to represent a *set of values* for a property. For instance, in our sample application, the `roles` property of `ACTED_IN` assumes a list of values corresponding to the list of roles assumed by the source `Person` in the target `Movie`. When the type of a property is `List`, binary operator used to specify values for it will be `in`. In the example below, we see that Hugo Weaving acted in a number of roles in Cloud Atlas.
+
+<p align="center">
+    <img src="image/list-example.png" width="480"/>
+</p>
+
+Finally, `enum` is a special type to define a group of pre-defined values for this property. Each `enum` type should be defined as a tuple `enum,<type>`, where the second element of the tuple corresponds to the type of the values in that enumeration. For instance, `enum,string` means this property's values are *string*. The corresponding set of values to be actually used must be defined in the section named `enumMapping` inside the description file. These values are shown to the user with a *dropdown box*.
+
+For example, in the sample application, the genre of a movie is defined as an enumaration (i.e. `enum,string`) where the internal values as kept in the database and those values as shown in the application happen to be the same strings:
+```
+  "enumMapping": {
+    "Movie": {
+      "genre": {
+        "Comedy": "Comedy",
+        "Adventure": "Adventure",
+        "Thriller": "Thriller",
+        "Crime": "Crime",
+        "Action": "Action",
+        "Drama": "Drama"
+      }
+```
+Hence, this property is shown as a dropdown box in the application user interface:
+
+<p align="center">
+    <img src="image/enum-example.png" width="340"/>
+</p>
 
 ### Relations
 
@@ -128,22 +160,7 @@ The developer also defines their style preferences in this section. For instance
       "font-size": "14px",
       "font-weight": "bold"
     },
-    ".va-heading2": {
-      "font-size": "12px"
-    },
-    ".panel-heading": {
-      "height": "17px"
-    },
-    ".va-heading3": {
-      "font-size": "12px"
-    },
-    ".va-text": {
-      "font-size": "12px"
-    },
-    ".va-small-text": {
-      "font-size": "11px"
-    }
-  },
+    ...
 ```
 
 For example, `va-title` defines the style of the font for the tool tile while `panel-heading` defines the style of panel headings. By changing the style here, for instance defining the font family as "Arial" for all text types, you could consistenly use a different font in your application.
@@ -188,17 +205,15 @@ The panel on the right consists of a number of tabs as detailed below.
 
 ### Object tab
 
-As explained in the [User Guide](UG.md), this tab is used to inspect a selected object's properties. In case of multiple selection, common properties are shown here. The content of this tab is automatically generated and is not meant to be customizable.
+As explained in the [User Guide](UG.md), this tab is used to inspect a selected object's properties. In case of multiple selection, common properties are shown here. The content of this tab is automatically generated and is *not* meant to be customizable.
 
 ### Group tab
 
 Visu*all* uses [a Cytoscape.js extension](https://github.com/iVis-at-Bilkent/cytoscape.js-expand-collapse) to group nodes into compound nodes to better manage complexity. The sample application provides one generic way to group nodes using [the Markov clustering algorithm](https://js.cytoscape.org/#collection/clustering) provided by Cytoscape.js core and one application specific way (i.e. by director).
 
-ToDo: can be customized?
-
 ### Filter tab
 
-As explained in the [User Guide](UG.md), this tab is used to filter the graph based on node/edge type or by putting together rules using graph object properties. The content of this tab is automatically generated and is not meant to be customizable.
+As explained in the [User Guide](UG.md), this tab is used to filter the graph based on node/edge type or by putting together rules using graph object properties. The content of this tab is automatically generated and is *not* meant to be customizable.
 
 ### Query tab
 
@@ -216,6 +231,4 @@ Also, their display names should be added to [the Query tab component file](../s
 
 ### Settings tab
 
-ToDo: can be customized?
-
-ToDo: list
+As explained in the [User Guide](UG.md), this tab is used to change all types of settings in your application. The content of this tab is automatically generated and is *not* meant to be customizable.
