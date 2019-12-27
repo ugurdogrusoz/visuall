@@ -3,7 +3,7 @@ import { findTypeOfAttribute, TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, 
 import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/filter-tab/filtering-types';
 import properties from '../../assets/generated/properties.json';
-import ModelDescription from '../../assets/model_description.json';
+import AppDescription from '../../assets/app_description.json';
 import { Subject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -135,7 +135,7 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   private getPropertyCategory(): PropertyCategory {
-    let m = ModelDescription.finiteSetPropertyMapping;
+    let m = AppDescription.enumMapping;
     this.finiteSetPropertyMap = null;
     if (m && m[this.selectedClass] && m[this.selectedClass][this.selectedProp]) {
       this.finiteSetPropertyMap = m[this.selectedClass][this.selectedProp];

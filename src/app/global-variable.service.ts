@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserPref } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import model_description from '../assets/model_description.json'
+import app_description from '../assets/app_description.json'
 import { isPrimitiveType } from './constants';
 
 @Injectable({
@@ -22,9 +22,9 @@ export class GlobalVariableService {
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
     // set user preferences staticly (necessary for rendering html initially)
-    this.setUserPrefs(model_description.userPref, this.userPrefs);
+    this.setUserPrefs(app_description.appPreferences, this.userPrefs);
     // set user preferences dynamically
-    this._http.get('./assets/model_description.json').subscribe(x => { this.setUserPrefs(x['userPref'], this.userPrefs); });
+    this._http.get('./assets/app_description.json').subscribe(x => { this.setUserPrefs(x['appPreferences'], this.userPrefs); });
   }
 
   private setUserPrefs(obj: any, userPref: any) {

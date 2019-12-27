@@ -4,7 +4,7 @@ import { GlobalVariableService } from '../global-variable.service';
 import { GraphResponse, TableResponse, DbService, DbQueryType } from './data-types';
 import { ClassBasedRules, Rule } from '../operation-tabs/filter-tab/filtering-types';
 import { GENERIC_TYPE } from '../constants';
-import ModelDescription from '../../assets/model_description.json';
+import AppDescription from '../../assets/app_description.json';
 
 @Injectable({
   providedIn: 'root'
@@ -195,10 +195,10 @@ export class Neo4jDb implements DbService {
     }
     let matchClause: string;
     if (rule.isEdge) {
-      let s = ModelDescription.relations[rule.className].source;
-      let t = ModelDescription.relations[rule.className].target;
+      let s = AppDescription.relations[rule.className].source;
+      let t = AppDescription.relations[rule.className].target;
       let conn = '>';
-      let isBidirectional = ModelDescription.relations[rule.className].isBidirectional;
+      let isBidirectional = AppDescription.relations[rule.className].isBidirectional;
       if (isBidirectional) {
         conn = '';
       }

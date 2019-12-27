@@ -8,7 +8,7 @@ import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import { ClassOption, ClassBasedRules, Rule, RuleSync } from './filtering-types.js';
 import { Subject } from 'rxjs';
-import ModelDescription from '../../../assets/model_description.json';
+import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType } from 'src/app/table-view/table-view-types.js';
 import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types.js';
 
@@ -100,8 +100,8 @@ export class FilterTabComponent implements OnInit {
     let r: string[] = [];
 
     const txt = this.selectedClass.toLowerCase();
-    for (let k of Object.keys(ModelDescription.relations)) {
-      const v = ModelDescription.relations[k];
+    for (let k of Object.keys(AppDescription.relations)) {
+      const v = AppDescription.relations[k];
       if (v.source.toLowerCase() == txt || v.target.toLowerCase() == txt) {
         r.push(k);
       }
@@ -263,7 +263,7 @@ export class FilterTabComponent implements OnInit {
       t = properties.nodes[cName][key];
     }
     if (t.startsWith('enum')) {
-      return { val: ModelDescription.finiteSetPropertyMapping[cName][key][val], type: TableDataType.enum };
+      return { val: AppDescription.enumMapping[cName][key][val], type: TableDataType.enum };
     } else if (t == 'string' || t == 'list') {
       return { val: val, type: TableDataType.string };
     } else if (t == 'datetime') {

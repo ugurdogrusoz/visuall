@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ElementRef } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import ModelDescription from '../../../assets/model_description.json';
+import AppDescription from '../../../assets/app_description.json';
 
 @Component({
   selector: 'app-about-modal',
@@ -18,11 +18,11 @@ export class AboutModalComponent implements OnInit, AfterViewChecked {
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
-    this.toolName = ModelDescription.template.name;
-    this.softwareVersion = ModelDescription.template.version;
-    this.toolLogo = ModelDescription.template.icon;
-    this.companyName = ModelDescription.template.company_name;
-    this.companyContact = ModelDescription.template.company_contact;
+    this.toolName = AppDescription.appInfo.name;
+    this.softwareVersion = AppDescription.appInfo.version;
+    this.toolLogo = AppDescription.appInfo.icon;
+    this.companyName = AppDescription.appInfo.company_name;
+    this.companyContact = AppDescription.appInfo.company_contact;
   }
 
   ngAfterViewChecked() {

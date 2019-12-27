@@ -7,7 +7,7 @@ import { SaveAsPngModalComponent } from '../popups/save-as-png-modal/save-as-png
 import { AboutModalComponent } from '../popups/about-modal/about-modal.component';
 import { QuickHelpModalComponent } from '../popups/quick-help-modal/quick-help-modal.component';
 import * as $ from 'jquery';
-import ModelDescription from '../../assets/model_description.json';
+import AppDescription from '../../assets/app_description.json';
 import { NavbarCustomizationService } from './navbar-customization.service';
 import { NavbarDropdown, NavbarAction } from './inavbar';
 
@@ -62,8 +62,8 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.toolName = ModelDescription.template.name;
-    this.toolLogo = ModelDescription.template.icon;
+    this.toolName = AppDescription.appInfo.name;
+    this.toolLogo = AppDescription.appInfo.icon;
     this.mergeCustomMenu();
   }
 

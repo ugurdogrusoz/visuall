@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
-import ModelDescription from '../../../../assets/model_description.json';
+import AppDescription from '../../../../assets/app_description.json';
 import { ClassOption, TimebarMetric, Rule, RuleSync } from '../../filter-tab/filtering-types.js';
 import { NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS, GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
@@ -144,8 +144,8 @@ export class TimebarMetricEditorComponent implements OnInit {
     let r: string[] = [];
 
     const txt = this.selectedClass.toLowerCase();
-    for (let k of Object.keys(ModelDescription.relations)) {
-      const v = ModelDescription.relations[k];
+    for (let k of Object.keys(AppDescription.relations)) {
+      const v = AppDescription.relations[k];
       if (v.source.toLowerCase() == txt || v.target.toLowerCase() == txt) {
         r.push(k);
       }

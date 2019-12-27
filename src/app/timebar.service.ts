@@ -3,7 +3,7 @@ import * as $ from 'jquery';
 
 import { debounce, MIN_DATE, MAX_DATE, isClose, TIME_UNITS, MONTHS, SHORT_MONTHS, CSS_SM_TEXT_SIZE, CSS_FONT_NAME } from './constants';
 import { GlobalVariableService } from './global-variable.service';
-import ModelDescription from '../assets/model_description.json';
+import AppDescription from '../assets/app_description.json';
 import { TimebarUnitData, TimebarItem, TimebarMetric } from './operation-tabs/filter-tab/filtering-types';
 
 declare var google: any;
@@ -94,14 +94,14 @@ export class TimebarService {
   getTimeRange(cyElem): any[] {
     let classes = cyElem.classes().map(x => x.toLowerCase());
 
-    if (!ModelDescription.timebarDataMapping) {
+    if (!AppDescription.timebarDataMapping) {
       return [this.defaultBeginDate, this.defaultEndDate];
     }
-    for (let c in ModelDescription.timebarDataMapping) {
+    for (let c in AppDescription.timebarDataMapping) {
       const idx = classes.findIndex(x => x == c.toLowerCase());
       if (idx != -1) {
-        const p1 = ModelDescription.timebarDataMapping[c][this.beginPropertyName];
-        const p2 = ModelDescription.timebarDataMapping[c][this.endPropertyName];
+        const p1 = AppDescription.timebarDataMapping[c][this.beginPropertyName];
+        const p2 = AppDescription.timebarDataMapping[c][this.endPropertyName];
         const v1 = cyElem.data()[p1];
         const v2 = cyElem.data()[p2];
         if (v1 && v2) {
@@ -255,9 +255,9 @@ export class TimebarService {
     let elems = this._g.cy.collection();
     let propNamesSelector = '';
     // filter by begin_datetime, end_datetime
-    for (let c in ModelDescription.timebarDataMapping) {
-      const p1 = ModelDescription.timebarDataMapping[c][this.beginPropertyName];
-      const p2 = ModelDescription.timebarDataMapping[c][this.endPropertyName];
+    for (let c in AppDescription.timebarDataMapping) {
+      const p1 = AppDescription.timebarDataMapping[c][this.beginPropertyName];
+      const p2 = AppDescription.timebarDataMapping[c][this.endPropertyName];
       if (p1) {
         propNamesSelector += `[^${p1}]`
       }
@@ -767,8 +767,8 @@ export class TimebarService {
 
     this.statsRange1 = center - perimeter;
     this.statsRange2 = center + perimeter;
-    const min = ModelDescription.template.timebar_min || MIN_DATE;
-    const max = ModelDescription.template.timebar_max || MAX_DATE;
+    const min = AppDescription.appPreferences.timebar.min || MIN_DATE;
+    const max = AppDescription.appPreferences.timebar.max || MAX_DATE;
     if (this.statsRange1 < min) {
       this.statsRange2 += min - this.statsRange1;
       this.statsRange1 = min;

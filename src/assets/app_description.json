@@ -1,39 +1,13 @@
 {
-  "template": {
+  "appInfo": {
     "name": "Visu<i>all</i> Sample App",
     "html_header": "Visuall Sample App",
     "icon": "assets/img/logo.png",
     "version": "1.0.0 beta",
     "company_name": "i-Vis at Bilkent",
-    "company_contact": "ivis@cs.bilkent.edu.tr",
-    "timebar_min": -59011466152000,
-    "timebar_max": 32503669200000
+    "company_contact": "ivis@cs.bilkent.edu.tr"
   },
-  "style": {
-    ".va-title": {
-      "font-size": "20px"
-    },
-    ".va-heading1": {
-      "font-size": "14px",
-      "font-weight": "bold"
-    },
-    ".va-heading2": {
-      "font-size": "12px"
-    },
-    ".panel-heading": {
-      "height": "17px"
-    },
-    ".va-heading3": {
-      "font-size": "12px"
-    },
-    ".va-text": {
-      "font-size": "12px"
-    },
-    ".va-small-text": {
-      "font-size": "11px"
-    }
-  },
-  "classes": {
+  "objects": {
     "Person": {
       "properties": {
         "name": "string",
@@ -233,7 +207,7 @@
       "end_datetime": "end"
     }
   },
-  "finiteSetPropertyMapping": {
+  "enumMapping": {
     "Movie": {
       "genre": {
         "Comedy": "Comedy",
@@ -319,7 +293,7 @@
       }
     }
   ],
-  "userPref": {
+  "appPreferences": {
     "isAutoIncrementalLayoutOnChange": true,
     "isHighlightOnHover": false,
     "isShowOverviewWindow": true,
@@ -342,7 +316,33 @@
       "zoomingStep": 50,
       "graphInclusionType": 0,
       "statsInclusionType": 0,
-      "isHideDisconnectedNodesOnAnim": false
+      "isHideDisconnectedNodesOnAnim": false,
+      "min": -59011466152000,
+      "max": 32503669200000
+    },
+    "style": {
+      ".va-title": {
+        "font-size": "20px"
+      },
+      ".va-heading1": {
+        "font-size": "14px",
+        "font-weight": "bold"
+      },
+      ".va-heading2": {
+        "font-size": "12px"
+      },
+      ".panel-heading": {
+        "height": "17px"
+      },
+      ".va-heading3": {
+        "font-size": "12px"
+      },
+      ".va-text": {
+        "font-size": "12px"
+      },
+      ".va-small-text": {
+        "font-size": "11px"
+      }
     }
   }
 }

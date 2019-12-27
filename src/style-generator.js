@@ -17,7 +17,7 @@ parse_model_description(model);
 function parse_model_description(model) {
   const data = JSON.parse(model);
 
-  const classes = data['classes'];
+  const objects = data['objects'];
   const relations = data['relations'];
 
   let stylesheet = [];
@@ -29,7 +29,7 @@ function parse_model_description(model) {
   generate_fixed_styles(stylesheet, data['generalStyles']);
 
   // Generate stylesheet.json & properties.json for nodes and edges
-  generate_node_styles(classes, stylesheet, properties);
+  generate_node_styles(objects, stylesheet, properties);
   generate_edge_styles(relations, stylesheet, properties);
 
   // Beautify JSON output with 2 space tabs and write to file
@@ -43,8 +43,8 @@ function apply_general_styles(data) {
   const indexFileName = 'index.html';
   const cssFileName = 'styles.css';
 
-  processCssFile(cssFileName, data.style);
-  processIndexFile(indexFileName, data.template);
+  processCssFile(cssFileName, data.appPreferences.style);
+  processIndexFile(indexFileName, data.appInfo);
 }
 
 function processCssFile(cssFileName, style) {

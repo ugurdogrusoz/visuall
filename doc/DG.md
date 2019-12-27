@@ -2,11 +2,11 @@
 
 This guide details how a custom application can be built using Visu*all*. We assume the reader has already gone over [User Guide](UG.md), and in each of the following sections, we describe how to customize various parts of a Visu*all* based visual analysis tool.
 
-Many of the things from the name and logo of your application to the type and style of nodes and edges to default values of various settings are defined in a so-called [description file](../src/assets/model_description.json). The description file contains many sections as detailed throughout this guide. 
+Many of the things from the name and logo of your application to the type and style of nodes and edges to default values of various settings are defined in a so-called [description file](../src/assets/app_description.json). The description file contains many sections as detailed throughout this guide. 
 
 Once this file is prepared, the [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json), resulting in the desired customization, using the command:
 
-`node style-generator.js /assest/model_description.json`
+`node style-generator.js /assest/app_description.json`
 
 ## Application Information
 
@@ -108,7 +108,7 @@ Minimum and maximum values for begin and datetimes are specified in the section 
 
 ## Default Preferences
 
-"appDefaultPreferences" section stores the default for all sorts of settings. For instance, while some applications would prefer to show the Overview Window by default, others might not. These values can be found inside [the settings component](../src/app/operation-tabs/settings-tab/settings-tab.component.ts). These settings are injected to Visu*all* dynamically. Thus, when you make a change in a setting from the description file, you should observe the associated change in the graphical user interface upon reload of the web page.
+"appPreferences" section stores the default for all sorts of settings. For instance, while some applications would prefer to show the Overview Window by default, others might not. These values can be found inside [the settings component](../src/app/operation-tabs/settings-tab/settings-tab.component.ts). These settings are injected to Visu*all* dynamically. Thus, when you make a change in a setting from the description file, you should observe the associated change in the graphical user interface upon reload of the web page.
 
 <p align="center">
     <img src="image/settings.png" width="407"/>

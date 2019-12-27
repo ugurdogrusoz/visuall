@@ -3,7 +3,7 @@ import { GlobalVariableService } from '../../global-variable.service';
 import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce } from '../../constants';
 import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
-import ModelDescription from '../../../assets/model_description.json';
+import AppDescription from '../../../assets/app_description.json';
 
 @Component({
   selector: 'app-object-tab',
@@ -191,17 +191,17 @@ export class ObjectTabComponent implements OnInit {
   }
 
   getMappedProperty(className: string, propertyName: string, propertyValue: string): string {
-    let classes = Object.keys(ModelDescription.finiteSetPropertyMapping);
+    let classes = Object.keys(AppDescription.enumMapping);
     let c = classes.find(x => x == className);
     if (!c) {
       return propertyValue;
     }
 
-    let mapping = ModelDescription.finiteSetPropertyMapping[c][propertyName];
+    let mapping = AppDescription.enumMapping[c][propertyName];
     if (!mapping) {
       return propertyValue;
     }
-    return ModelDescription.finiteSetPropertyMapping[c][propertyName][propertyValue];
+    return AppDescription.enumMapping[c][propertyName][propertyValue];
   }
 
 }

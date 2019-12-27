@@ -49,7 +49,7 @@ A toolbar is available right under the menubar to lists some frequently needed o
 
 ## Object Inspection
 
-Each node and edge has a set of properties (property-value pairs) as defined in the associated [model description file](../src/model_description.json) of the Visu*all* application. If you click on a graph object (a node or an edge) to select it, any current selection will be lifted and the graph object that you clicked on will be selected. As a graph object is selected, its properties are shown on the right panel under the "Object" tab. Below is a map where a movie was selected and is being inspected in the Object tab in the right panel.
+Each node and edge has a set of properties (property-value pairs) as defined in the associated [model description file](../src/assets/app_description.json) of the Visu*all* application. If you click on a graph object (a node or an edge) to select it, any current selection will be lifted and the graph object that you clicked on will be selected. As a graph object is selected, its properties are shown on the right panel under the "Object" tab. Below is a map where a movie was selected and is being inspected in the Object tab in the right panel.
 
 <p align="center">
   <img src="image/object-inspector-example.png" width="500" title="When a map object is selected, its properties are shown in the Object tab in the right panel"/>
@@ -155,7 +155,7 @@ The kind of queries / questions we would like to be able to answer via such a ti
 - In a graph about football clubs and players, etc. we would like to know all those players who were actively playing football during a certain time period (e.g. in season 2017-2018).
 
 First, let's define our terminology:
-- **Global range** contains all nodes and edges’ lifetimes going from the minimum begin datetime of a graph object to the maximum end datetime of a graph object. These values are defined programmatically by the developer in a so-called [model description file](../src/model_description.json).
+- **Global range** contains all nodes and edges’ lifetimes going from the minimum begin datetime of a graph object to the maximum end datetime of a graph object. These values are defined programmatically by the developer in a so-called [model description file](../src/assets/app_description.json).
 
 - **Stats range** is the range for displaying pre-configured statistics about our graph objects. This is typically a narrower range than the global range. 
 
