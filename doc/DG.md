@@ -6,7 +6,7 @@ Many of the things from the name and logo of your application to the type and st
 
 Once this file is prepared, the [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json), resulting in the desired customization, using the command:
 
-`node style-generator.js /assest/app_description.json`
+`node style-generator.js /assest/model_description.json`
 
 ## Application Information
 
@@ -48,7 +48,7 @@ Finally, `enum` is a special type to define a group of pre-defined values for th
 
 This section contains the strcuture of different kinds of relations among the objects in your graph. Each *relation* corresponds to an *edge* type in your graph with specifc types of `source` and `target` nodes. `isBidirectional` is used to specify if the edge is bi-directional (undirected) or uni-directional (directed). For instance, in the sample movie application, we define an edge type named `ACTED_IN` from `Person` objects to `Movie` objects as `source` and `target`, respectively, with `isBirectional` set to `false`.
 
-### Styling
+### Styling graph objects
 
 Look & feel of nodes (e.g. fill color and label) and edges (e.g. line color and width) in your graph can also be specified in the description file.
 
@@ -83,7 +83,7 @@ Another advanced way to specify the style of a graph object is through a linear 
 ```
 Here, the rating is a value in range [0,10], which is linearly mapped to [20px,60px].
 
-### Enumeration Mapping
+### Enumeration mapping
 
 "enumMapping" section of the file is used to map enum values to actual values to be shown. For example, the status of a computer device in a computer network might be internally represented with integers 1 and 2, corresponding to "up" and "down". Here, the type of the property `status` should be defined as `enum,int`, and the corresponding values are provided in an enumeration mapping in this section as:
 ```
@@ -102,21 +102,52 @@ Here, the rating is a value in range [0,10], which is linearly mapped to [20px,6
 
 Minimum and maximum values for begin and datetimes are specified in the section on application default settings.
 
-## Default Styling???
+## Styling
 
-"generalStyles" section of the file establishes default styling as described [here](https://js.cytoscape.org/#style). While changing existing values should not break the styling of your Visu*all* component,adding or deleting new styling might result in undesired style problems; thus, use this with caution.
+"generalStyles" section of the file establishes styling of the canvas such as how selected objects are shown and how grouped (i.e. compound) nodes are to be shown as described [here](https://js.cytoscape.org/#style). While changing existing values should not break the styling of your Visu*all* component, adding or deleting new styling might result in undesired style problems; thus, use this with caution.
 
-## Default Preferences
+## Preferences
 
-"appPreferences" section stores the default for all sorts of settings. For instance, while some applications would prefer to show the Overview Window by default, others might not. These values can be found inside [the settings component](../src/app/operation-tabs/settings-tab/settings-tab.component.ts). These settings are injected to Visu*all* dynamically. Thus, when you make a change in a setting from the description file, you should observe the associated change in the graphical user interface upon reload of the web page.
+"appPreferences" section stores the preferences for general styling of the tool as well as defaults for settings. For instance, while some applications would prefer to show the Overview Window by default, others might not. These values can be found inside [the settings component](../src/app/operation-tabs/settings-tab/settings-tab.component.ts). These settings are injected to Visu*all* dynamically. Thus, when you make a change in a setting from the description file, you should observe the associated change in the graphical user interface upon reload of the web page.
 
 <p align="center">
     <img src="image/settings.png" width="407"/>
 </p>
 
-One particular set of preferences specified in this section but not exposed to the user under the Settings tab are timebar related:
+One particular setting specified in this section but not exposed to the user under the Settings tab are timebar related:
 - **timebar_min**: Minimum begin date of graph objects in [Unix time stamp in milliseconds](https://currentmillis.com/),
 - **timebar_max**: Maximum begin date of graph objects in [Unix time stamp in milliseconds](https://currentmillis.com/).
+
+The developer also defines their style preferences in this section. For instance, Visu*all* makes use of the following text styles exclusively:
+```
+  "style": {
+    ".va-title": {
+      "font-size": "20px"
+    },
+    ".va-heading1": {
+      "font-size": "14px",
+      "font-weight": "bold"
+    },
+    ".va-heading2": {
+      "font-size": "12px"
+    },
+    ".panel-heading": {
+      "height": "17px"
+    },
+    ".va-heading3": {
+      "font-size": "12px"
+    },
+    ".va-text": {
+      "font-size": "12px"
+    },
+    ".va-small-text": {
+      "font-size": "11px"
+    }
+  },
+```
+
+For example, `va-title` defines the style of the font for the tool tile while `panel-heading` defines the style of panel headings. By changing the style here, for instance defining the font family as "Arial" for all text types, you could consistenly use a different font in your application.
+
 ## Menus
 
 [Navigation bar](../src/app/navbar/navbar.component.html) and [tool bar](../src/app/navbar/navbar.component.html) are also customizable components of Visu*all*. Visu*all* components are implemented in files whose names end with `.customization.service.ts`. Customization services are packaged separately to prevent future merge conflicts on updates to Visu*all*. 
@@ -155,21 +186,21 @@ Visu*all* provides node, edge, and root context menus, provided by [a Cytoscape.
 
 The panel on the right consists of a number of tabs as detailed below.
 
-### Object Tab
+### Object tab
 
 As explained in the [User Guide](UG.md), this tab is used to inspect a selected object's properties. In case of multiple selection, common properties are shown here. The content of this tab is automatically generated and is not meant to be customizable.
 
-### Group Tab
+### Group tab
 
 Visu*all* uses [a Cytoscape.js extension](https://github.com/iVis-at-Bilkent/cytoscape.js-expand-collapse) to group nodes into compound nodes to better manage complexity. The sample application provides one generic way to group nodes using [the Markov clustering algorithm](https://js.cytoscape.org/#collection/clustering) provided by Cytoscape.js core and one application specific way (i.e. by director).
 
 ToDo: can be customized?
 
-### Filter Tab
+### Filter tab
 
 As explained in the [User Guide](UG.md), this tab is used to filter the graph based on node/edge type or by putting together rules using graph object properties. The content of this tab is automatically generated and is not meant to be customizable.
 
-### Query Tab
+### Query tab
 
 The queries defined in [the Query tab](../src/app/operation-tabs/query-tab/query-tab.component.ts) are all application specific ones. Each query here should be an *angular component* with the path `../src/app/operation-tabs/query-tab/`. In Visu*all* sample app, there are two movie related queries:
 - [Get actors with movie counts](../src/app/operation-tabs/query-tab/query0/query0.component.ts) and
@@ -183,12 +214,8 @@ Also, their display names should be added to [the Query tab component file](../s
 
 `this.queryTypes = ['Get actors by movie counts', 'Get movies by genre'];`
 
-### Settings Tab
+### Settings tab
 
 ToDo: can be customized?
-
-
-
-ToDo: font styling heading 1, 2, etc.
 
 ToDo: list
