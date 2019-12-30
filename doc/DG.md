@@ -232,3 +232,11 @@ Also, their display names should be added to [the Query tab component file](../s
 ### Settings tab
 
 As explained in the [User Guide](UG.md), this tab is used to change all types of settings in your application. The content of this tab is automatically generated and is *not* meant to be customizable.
+
+## using different databases 
+To use a different database, you should change [db-adapter.service.ts file](../src/app/db-service/db-adapter.service.ts). In the ideal case, only changing the constructor of the service should be enough. Just by injecting your own [angular service](https://angular.io/tutorial/toh-pt4) which implements [the interface DbService](../src/app/db-service/data-types.ts), you can switch to another database. But queries are application-specific and you might to change/delete them or implement new queries for your application.
+
+For each database, database dependent query codes should be inside only one file. This file is the angular service that you should generate as your database driver. For example, Visu*all* uses neo4j database. All the queries which are specific for neo4j are inside the file named [neo4j-db.service.ts file](../src/app/db-service/neo4j-db.service.ts). Neo4j uses a language called [cypher](https://neo4j.com/developer/cypher-query-language/) for querying the database.
+
+Most of the database queries are built by parsing filtering rules or they are hardcoded queries. For parsing rules, you can check the implementation of the function called `rule2cql` inside the file [neo4j-db.service.ts](../src/app/db-service/neo4j-db.service.ts). Since the queries are application-specific, they might be different or might not even exist.
+
