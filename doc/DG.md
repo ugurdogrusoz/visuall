@@ -47,7 +47,7 @@ The section named "objects" contains the stucture of different kinds of objects 
 
 Each node has a set of associated *properties* and *style*. Each property has a name and data type. For example, `Person` class has the following properties: `name`, `born`, `start_t`, and `end_t`.  
 
-Each *property* is one of the following data types: `string`, `int`, `float`, `datetime`. `list` and `enum`. Here, `string`, `float`, `int` are standard data types as described by most programming languages. `datetime`, on the other hand, is an integer which represents the date (and time in that date) in [Unix time stamp in milliseconds](https://currentmillis.com/). 
+Each *property* is one of the following data types: `string`, `int`, `float`, `datetime`, `list` and `enum`. Here, `string`, `float`, `int` are standard data types as described by most programming languages. `datetime`, on the other hand, is an integer which represents the date (and time in that date) in [Unix time stamp in milliseconds](https://currentmillis.com/). 
 
 `list` is used to represent a *set of values* for a property. For instance, in our sample application, the `roles` property of `ACTED_IN` assumes a list of values corresponding to the list of roles assumed by the source `Person` in the target `Movie`. When the type of a property is `List`, binary operator used to specify values for it will be `in`. In the example below, we see that Hugo Weaving acted in a number of roles in Cloud Atlas.
 
@@ -130,7 +130,7 @@ Here, the rating is a value in range [0,10], which is linearly mapped to [20px,6
 
 ### Timebar
 
-"timebarDataMapping" section of the model description file is used to map lifetime of nodes and edges. Lifetime information is used in [timebar service](../src/app/timebar.service.ts) to filter graph objects by time and show useful, user-defined statistics during the specified period. Ideally, each *class* and each *relation* would have two datetime properties corresponding to their *begin* and *end* datettimes. These two fields should be provided under *begin_datetime* and *end_datetime*, respectively. In case begin or end datetime of a graph object is not mapped to a property of that object, Visu*all* assumes the default begin (as early as minus infinity) and end datetimes (as late as plus infinity) for the timebar.
+"timebarDataMapping" section of the model description file is used to map lifetime of nodes and edges. Lifetime information is used in [timebar service](../src/app/timebar.service.ts) to filter graph objects by time and show useful, user-defined statistics during the specified period. Ideally, each *object* and each *relation* would have two datetime properties corresponding to their *begin* and *end* datettimes. These two fields should be provided under *begin_datetime* and *end_datetime*, respectively. In case begin or end datetime of a graph object is not mapped to a property of that object, Visu*all* assumes the default begin (as early as minus infinity) and end datetimes (as late as plus infinity) for the timebar.
 
 Minimum and maximum values for begin and datetimes are specified in the section on application default settings.
 
