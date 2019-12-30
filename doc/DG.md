@@ -6,7 +6,7 @@ Many of the things from the name and logo of your application to the type and st
 
 Once this file is prepared, the [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json), resulting in the desired customization, using the command:
 
-`node style-generator.js /assest/model_description.json`
+`node style-generator.js /assest/app_description.json`
 
 Here is the overall look of the sample application on movies and people taking part in these movies:
 
