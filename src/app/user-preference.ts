@@ -28,6 +28,7 @@ export interface UserPref {
     playingSpeed: BehaviorSubject<number>;
     zoomingStep: BehaviorSubject<number>;
     isHideDisconnectedNodesOnAnim: BehaviorSubject<boolean>;
+    isMaintainGraphRange: BehaviorSubject<boolean>
   }
 }
 

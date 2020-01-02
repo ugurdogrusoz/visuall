@@ -379,6 +379,8 @@ export class CytoscapeService {
 
     this._g.cy.add(cy_nodes);
     this._g.cy.add(cy_edges);
+    // elements might already exist but hidden, so show them
+    this._g.viewUtils.show(this._g.cy.$(elemIds.map(x => '#' + x).join(',')));
 
     this._g.applyClassFiltering();
 

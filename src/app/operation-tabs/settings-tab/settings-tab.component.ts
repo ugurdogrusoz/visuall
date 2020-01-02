@@ -56,7 +56,8 @@ export class SettingsTabComponent implements OnInit {
 
     this.timebarBoolSettings = [
       { text: 'Show timebar', isEnable: false, actuator: this._cyService, fn: 'showHideTimebar' },
-      { text: 'Hide disconnected nodes on animation', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes' }];
+      { text: 'Hide disconnected nodes on animation', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes' },
+      { text: 'Maintain graph range on queries', isEnable: false, actuator: this, fn: 'maintainGraphRange' }];
 
     this._cyService.applyElementStyleSettings = this.applyElementStyleSettings.bind(this);
     this.subscribe2UserPrefs();
@@ -86,6 +87,7 @@ export class SettingsTabComponent implements OnInit {
     // timebar bool settings
     up.timebar.isEnabled.subscribe(x => this.timebarBoolSettings[0].isEnable = x);
     up.timebar.isHideDisconnectedNodesOnAnim.subscribe(x => this.timebarBoolSettings[1].isEnable = x);
+    up.timebar.isMaintainGraphRange.subscribe(x => this.timebarBoolSettings[2].isEnable = x);
   }
 
   mergedElemIndicatorChanged(i: number) {
@@ -106,6 +108,8 @@ export class SettingsTabComponent implements OnInit {
   }
 
   ignoreCaseSettingFn(isEnable: boolean) { this._g.userPrefs.isIgnoreCaseInText.next(isEnable); }
+
+  maintainGraphRange(isEnable: boolean) { this._g.userPrefs.timebar.isMaintainGraphRange.next(isEnable); }
 
   autoIncrementalLayoutSettingFn(isEnable: boolean) { this._g.userPrefs.isAutoIncrementalLayoutOnChange.next(isEnable); }
 

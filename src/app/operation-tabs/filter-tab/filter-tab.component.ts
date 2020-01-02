@@ -159,7 +159,7 @@ export class FilterTabComponent implements OnInit {
     return compareUsingOperator(eleVal, ruleVal, op);
   }
 
-  runFilteringOnClient() {
+  runFilteringOnClient(cb: (s: number, end: number) => void, cbParams: any[]) {
     this._g.viewUtils.hide(this._g.cy.$());
 
     let allClassElems = this._g.cy.$('.' + this.filteringRule.className);
@@ -181,9 +181,10 @@ export class FilterTabComponent implements OnInit {
     this._g.viewUtils.show(filteredClassElems);
     this._g.applyClassFiltering();
     this._timebarService.cyElemListChanged();
+    cb.apply(this, cbParams);
   }
 
-  runFilteringOnDatabase() {
+  runFilteringOnDatabase(cb: (s: number, end: number) => void, cbParams: any[]) {
     if ($.isEmptyObject(this.filteringRule)) {
       console.log('there is no filteringRule');
       return;
@@ -193,16 +194,16 @@ export class FilterTabComponent implements OnInit {
     const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
 
     this.getCountOfData();
-    this.loadGraph(skip, limit, isMerge);
+    this.loadGraph(skip, limit, isMerge, cb, cbParams);
     this.loadTable(skip, limit);
   }
 
-  private loadGraph(skip: number, limit: number, isMerge: boolean) {
+  private loadGraph(skip: number, limit: number, isMerge: boolean, cb: (s: number, end: number) => void, cbParams: any[]) {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
     this._dbService.getFilteringResult(this.filteringRule, skip, limit, DbQueryType.std,
-      (x) => { this._cyService.loadElementsFromDatabase(x as GraphResponse, isMerge) });
+      (x) => { this._cyService.loadElementsFromDatabase(x as GraphResponse, isMerge); cb.apply(this, cbParams); });
 
   }
 
@@ -275,11 +276,19 @@ export class FilterTabComponent implements OnInit {
     }
   }
 
+  maintainChartRange(s: number, e: number) {
+    if (this._g.userPrefs.timebar.isMaintainGraphRange.value) {
+      this._timebarService.setChartRange(s, e);
+      this._timebarService.rangeChange();
+    }
+  }
+
   runFiltering() {
+    const arr = this._timebarService.getChartRange();
     if (this.isFilterOnDb) {
-      this.runFilteringOnDatabase();
+      this.runFilteringOnDatabase(this.maintainChartRange, arr);
     } else {
-      this.runFilteringOnClient();
+      this.runFilteringOnClient(this.maintainChartRange, arr);
     }
   }
 
@@ -306,8 +315,8 @@ export class FilterTabComponent implements OnInit {
     const skip = (newPage - 1) * this.tableInput.pageSize;
     const limit = this.tableInput.pageSize;
     const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
-
-    this.loadGraph(skip, limit, isMerge);
+    const arr = this._timebarService.getChartRange();
+    this.loadGraph(skip, limit, isMerge, this.maintainChartRange, arr);
     this.loadTable(skip, limit);
   }
 

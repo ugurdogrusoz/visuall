@@ -124,7 +124,7 @@ export class TimebarService {
     if (!this._g.userPrefs.timebar.isEnabled.getValue()) {
       return;
     }
-    const eles = this._g.cy.$().not(':hidden, :transparent').map(x => x);
+    const eles = this._g.cy.$().map(x => x);
     let times: TimebarUnitData[] = [];
     this.items = [];
 

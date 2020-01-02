@@ -318,7 +318,8 @@
       "statsInclusionType": 0,
       "isHideDisconnectedNodesOnAnim": false,
       "min": -59011466152000,
-      "max": 32503669200000
+      "max": 32503669200000,
+      "isMaintainGraphRange": false 
     },
     "style": {
       ".va-title": {
