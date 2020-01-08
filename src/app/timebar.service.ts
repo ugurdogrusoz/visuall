@@ -142,8 +142,12 @@ export class TimebarService {
       this.coverAllTimes();
       this.isRefreshChart = false;
     } else {
-      this.renderChart();
-      this.setStatsRangeByRatio();
+      if (this._g.userPrefs.timebar.isMaintainGraphRange.value){
+        this.renderChart();
+        this.setStatsRangeByRatio();
+      } else {
+        this.coverVisibleRange();
+      }
     }
   }
 
