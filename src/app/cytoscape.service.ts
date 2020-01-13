@@ -14,6 +14,7 @@ import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse } from './db-service/data-types.js';
+import timebar from 'C:/dev/cy-ext/cytoscape.js-timebar/cytoscape-timebar.js'
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,8 @@ export class CytoscapeService {
   }
 
   initCy(containerElem) {
+    // register timebar extension
+    timebar(cytoscape);
     // register navigator extension
     navigator(cytoscape);
     // register view utilities extension
