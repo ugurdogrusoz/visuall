@@ -1,6 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CytoscapeService } from '../cytoscape.service';
-import { TimebarService } from '../timebar.service';
 import { ContextMenuService } from '../context-menu/context-menu.service';
 import { MarqueeZoomService } from './marquee-zoom.service';
 import { GlobalVariableService } from '../global-variable.service';
@@ -13,14 +12,14 @@ import { Timebar2Service } from '../timebar2.service';
 })
 export class CytoscapeComponent implements OnInit {
 
-  constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService, private _timebarService: TimebarService, private _tb2: Timebar2Service, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
+  constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService, private _tb2: Timebar2Service, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
   cyClass = false;
   isLoading = true;
 
   ngOnInit() {
     this._cyService.initCy(document.getElementById('cy'));
-    this._timebarService.init();
-    this._tb2.init();
+    // this._timebarService.init();
+    this._tb2.loadGoogleChart();
     this._ctxMenuService.bindContextMenuExtension();
     this._marqueeService.setChangeClassFn(this.setClassForCyDiv.bind(this));
   }

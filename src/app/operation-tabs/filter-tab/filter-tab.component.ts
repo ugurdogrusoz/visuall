@@ -5,7 +5,7 @@ import * as $ from 'jquery';
 import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
-import { TimebarService } from '../../timebar.service';
+import { Timebar2Service } from '../../timebar2.service';
 import { ClassOption, ClassBasedRules, Rule, RuleSync } from './filtering-types.js';
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
@@ -35,7 +35,7 @@ export class FilterTabComponent implements OnInit {
   isTableDraggable: boolean = false;
   currTableState: Subject<boolean> = new Subject();
 
-  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService) {
+  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: Timebar2Service) {
     this.isFilterOnDb = true;
     this.tableInput.isMergeGraph = true;
     this.nodeClasses = new Set([]);

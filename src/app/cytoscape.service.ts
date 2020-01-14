@@ -11,7 +11,7 @@ import * as C from './constants';
 import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
 import { DbAdapterService } from './db-service/db-adapter.service';
-import { TimebarService } from './timebar.service';
+import { Timebar2Service } from './timebar2.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse } from './db-service/data-types.js';
 import timebar from 'C:/dev/cy-ext/cytoscape.js-timebar/cytoscape-timebar.js'
@@ -24,7 +24,7 @@ export class CytoscapeService {
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
   applyElementStyleSettings: () => void;
 
-  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
+  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: Timebar2Service, private _marqueeZoomService: MarqueeZoomService) {
   }
 
   initCy(containerElem) {
@@ -398,7 +398,7 @@ export class CytoscapeService {
       this._g.layoutUtils.placeNewNodes(collection);
     }
     if (!isIncremental && this._g.userPrefs.timebar.isEnabled.getValue()) {
-      this._timebarService.setRefreshFlag(true);
+      // this._timebarService.setRefreshFlag(true);
     } else {
       this._g.performLayout(!isIncremental || wasEmpty);
     }

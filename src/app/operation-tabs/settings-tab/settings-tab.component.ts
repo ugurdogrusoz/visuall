@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CytoscapeService } from '../../cytoscape.service';
-import { TimebarService } from '../../timebar.service';
+import { Timebar2Service } from '../../timebar2.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, MAX_DATA_PAGE_SIZE, MIN_DATA_PAGE_SIZE, MAX_TABLE_COLUMN_COUNT, MIN_TABLE_COLUMN_COUNT } from '../../constants';
 import stylesheet from '../../../assets/generated/stylesheet.json';
@@ -29,7 +29,7 @@ export class SettingsTabComponent implements OnInit {
   statsInclusionType: TimebarStatsInclusionTypes;
   mergedElemIndicator: MergedElemIndicatorTypes;
 
-  constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _g: GlobalVariableService) {
+  constructor(private _cyService: CytoscapeService, private _timebarService: Timebar2Service, private _g: GlobalVariableService) {
   }
 
   ngOnInit() {

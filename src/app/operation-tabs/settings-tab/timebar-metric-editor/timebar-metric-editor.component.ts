@@ -3,7 +3,7 @@ import properties from '../../../../assets/generated/properties.json';
 import AppDescription from '../../../../assets/app_description.json';
 import { ClassOption, TimebarMetric, Rule, RuleSync } from '../../filter-tab/filtering-types.js';
 import { NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS, GENERIC_TYPE } from '../../../constants';
-import { TimebarService } from '../../../timebar.service';
+import { Timebar2Service } from '../../../timebar2.service';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -30,7 +30,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   isSumMetric = false;
   currProperties: Subject<RuleSync> = new Subject();
 
-  constructor(private _timeBarService: TimebarService) {
+  constructor(private _timeBarService: Timebar2Service) {
     this.classOptions = [];
     this.selectedClassProps = [];
     this.currDatetimes = [new Date()];

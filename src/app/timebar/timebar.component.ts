@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { TimebarService } from '../timebar.service';
+import { Timebar2Service } from '../timebar2.service';
 import { TIME_UNITS, MIN_DATE, MAX_DATE } from '../constants';
 import flatpickr from 'flatpickr';
 import { Locale } from 'flatpickr/dist/types/locale';
@@ -11,7 +11,7 @@ import { Locale } from 'flatpickr/dist/types/locale';
 })
 export class TimebarComponent implements OnInit {
 
-  s: TimebarService;
+  s: Timebar2Service;
   playImg: string;
   pauseImg: string;
   currPlayIcon: string;
@@ -22,7 +22,7 @@ export class TimebarComponent implements OnInit {
   @ViewChild('dateInp1', { static: false }) dateInp1: ElementRef;
   @ViewChild('dateInp2', { static: false }) dateInp2: ElementRef;
 
-  constructor(timebarService: TimebarService) {
+  constructor(timebarService: Timebar2Service) {
     this.s = timebarService;
   }
 
@@ -49,8 +49,7 @@ export class TimebarComponent implements OnInit {
   }
 
   private setStatsRangeStr() {
-    const d1 = this.s.graphDates[0];
-    const d2 = this.s.graphDates[this.s.graphDates.length - 1];
+    const [d1, d2] = this.s.getMinMaxGraphDates();
     if (!d1 || !d2) {
       console.log('rangeMaxDate or rangeMinDate is falsy!');
       return;
@@ -100,8 +99,9 @@ export class TimebarComponent implements OnInit {
     let arr = s.split(' ');
     arr.splice(0, 1);
     arr.splice(arr.length - 2, 2);
-    const isGreaterThanDay = this.s.currTimeUnit >= TIME_UNITS['day'];
-    const hasNeedMs = this.s.currTimeUnit < TIME_UNITS['second'];
+    const u = this.s.getCurrTimeUnit();
+    const isGreaterThanDay = u >= TIME_UNITS['day'];
+    const hasNeedMs = u < TIME_UNITS['second'];
     if (isGreaterThanDay) {
       arr.splice(arr.length - 1, 1);
     }
