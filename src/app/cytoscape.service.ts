@@ -398,7 +398,7 @@ export class CytoscapeService {
       this._g.layoutUtils.placeNewNodes(collection);
     }
     if (!isIncremental && this._g.userPrefs.timebar.isEnabled.getValue()) {
-      // this._timebarService.setRefreshFlag(true);
+      this._timebarService.setRefreshFlag(true);
     } else {
       this._g.performLayout(!isIncremental || wasEmpty);
     }

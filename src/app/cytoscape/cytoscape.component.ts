@@ -19,7 +19,7 @@ export class CytoscapeComponent implements OnInit {
   ngOnInit() {
     this._cyService.initCy(document.getElementById('cy'));
     // this._timebarService.init();
-    this._tb2.loadGoogleChart();
+    this._tb2.init();
     this._ctxMenuService.bindContextMenuExtension();
     this._marqueeService.setChangeClassFn(this.setClassForCyDiv.bind(this));
   }

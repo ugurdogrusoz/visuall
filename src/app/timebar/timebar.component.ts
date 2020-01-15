@@ -49,7 +49,7 @@ export class TimebarComponent implements OnInit {
   }
 
   private setStatsRangeStr() {
-    const [d1, d2] = this.s.getMinMaxGraphDates();
+    const [d1, d2] = this.s.getStatsRange();
     if (!d1 || !d2) {
       console.log('rangeMaxDate or rangeMinDate is falsy!');
       return;
