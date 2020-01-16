@@ -4,16 +4,16 @@ import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
 import AppDescription from '../assets/app_description.json';
 import { TimebarMetric } from './operation-tabs/filter-tab/filtering-types';
-
+import { Timebar } from 'C:/dev/cy-ext/cytoscape.js-timebar/src/core/Timebar'
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Timebar2Service {
 
-  shownMetrics: TimebarMetric[];
-  GRAPH_RANGE_RATIO = 0.33;
-  private timebarExt: any;
+  shownMetrics = new BehaviorSubject<TimebarMetric[]>(null);
+  private timebarExt: Timebar;
 
   constructor(private _g: GlobalVariableService) { }
 
@@ -41,12 +41,9 @@ export class Timebar2Service {
         $('#timebar').removeClass('d-none');
       }
     };
-    this.timebarExt = this._g.cy.timebar(m, s, e, this.shownMetrics);
+    this.timebarExt = this._g.cy.timebar(m, s, e, this.shownMetrics.getValue());
+    this.timebarExt.setColors();
     this.timebarExt.init();
-  }
-
-  showHideTimebar(isActive: boolean) {
-    this.timebarExt.showHideTimebar(isActive);
   }
 
   cyElemListChanged() {
@@ -82,6 +79,14 @@ export class Timebar2Service {
   }
 
   // ----------------------------------------- start of timebar settings  -----------------------------------------
+  showHideTimebar(isActive: boolean) {
+    this.timebarExt.showHideTimebar(isActive);
+  }
+
+  setisHideDisconnectedNodes(val: boolean) {
+    this.timebarExt.setisHideDisconnectedNodes(val);
+  }
+
   changeSpeed(v: number) {
     this.timebarExt.changeSpeed(v);
   }
@@ -100,6 +105,10 @@ export class Timebar2Service {
 
   changeStatsInclusionType(i: number) {
     this.timebarExt.changeStatsInclusionType(i);
+  }
+
+  setIsMaintainGraphRange(v: boolean) {
+    this.timebarExt.setIsMaintainGraphRange(v);
   }
   // ----------------------------------------- end of timebar settings  -----------------------------------------
 
@@ -139,6 +148,9 @@ export class Timebar2Service {
     return this.timebarExt.getCurrTimeUnit();
   }
 
+  getGraphRangeRatio(): number {
+    return this.timebarExt.getGraphRangeRatio();
+  }
 }
 
 

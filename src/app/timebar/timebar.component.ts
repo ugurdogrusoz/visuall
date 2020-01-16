@@ -32,8 +32,9 @@ export class TimebarComponent implements OnInit {
     this.currPlayIcon = this.playImg;
     this.s.onStatsChanged(this.setStatsRangeStr.bind(this));
     this.s.onGraphChanged(this.setGraphRangeStr.bind(this));
-    this.cssLeftDate1 = (1 - this.s.GRAPH_RANGE_RATIO) / 2 * 100;
-    this.cssLeftDate2 = (1 + this.s.GRAPH_RANGE_RATIO) / 2 * 100;
+    const r = this.s.getGraphRangeRatio();
+    this.cssLeftDate1 = (1 - r) / 2 * 100;
+    this.cssLeftDate2 = (1 + r) / 2 * 100;
   }
 
   playTiming() {
