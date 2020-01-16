@@ -42,8 +42,8 @@ export class Timebar2Service {
       }
     };
     this.timebarExt = this._g.cy.timebar(m, s, e, this.shownMetrics.getValue());
+    this.shownMetrics.subscribe(x => { this.timebarExt.setMetrics(x) });
     this.timebarExt.setColors();
-    this.timebarExt.init();
   }
 
   cyElemListChanged() {
