@@ -17,6 +17,18 @@ export class Timebar2Service {
 
   constructor(private _g: GlobalVariableService) { }
 
+  // this function should show only the provided elements, then should make layout
+  private shownOnlyElems(elems, isRandomize: boolean) {
+    let alreadyVisible = this._g.cy.nodes(':visible');
+    if (alreadyVisible.length > 0) {
+      let shownNodes = elems.nodes().difference(alreadyVisible);
+      this._g.layoutUtils.placeNewNodes(shownNodes);
+    }
+    this._g.viewUtils.show(elems);
+    this._g.viewUtils.hide(this._g.cy.elements().difference(elems));
+    this._g.performLayout(isRandomize);
+  }
+
   init() {
     const m = AppDescription.timebarDataMapping; // mapping for timebar
     const s = AppDescription.appPreferences.timebar; // settings for timebar
@@ -24,16 +36,7 @@ export class Timebar2Service {
       maintainFiltering: (elems) => {
         return this._g.filterByClass(elems);
       },
-      showOnlyElems: (elems, isRandomize) => {
-        let alreadyVisible = this._g.cy.nodes(':visible');
-        if (alreadyVisible.length > 0) {
-          let shownNodes = elems.nodes().difference(alreadyVisible);
-          this._g.layoutUtils.placeNewNodes(shownNodes);
-        }
-        this._g.viewUtils.show(elems);
-        this._g.viewUtils.hide(this._g.cy.elements().difference(elems));
-        this._g.performLayout(isRandomize);
-      },
+      showOnlyElems: this.shownOnlyElems.bind(this),
       chartRendered: () => {
         $('#timebar').removeClass('d-none');
       }
@@ -70,7 +73,7 @@ export class Timebar2Service {
     this.timebarExt.setChartRange(s, e);
   }
 
-  getChartRange() {
+  getChartRange(): number[] {
     return this.timebarExt.getChartRange();
   }
 
@@ -112,8 +115,8 @@ export class Timebar2Service {
     }
   }
 
-  setRefreshFlag(b: boolean) {
-    this.timebarExt.setRefreshFlag(b);
+  refreshChart() {
+    this.timebarExt.refreshChart();
   }
 
   onStatsChanged(f) {
@@ -128,11 +131,11 @@ export class Timebar2Service {
     this.timebarExt.playTiming(callback);
   }
 
-  getStatsRange() {
+  getStatsRange(): number[] {
     return this.timebarExt.getStatsRange();
   }
 
-  getCurrTimeUnit() {
+  getCurrTimeUnit(): number {
     return this.timebarExt.getCurrTimeUnit();
   }
 
