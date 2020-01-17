@@ -142,10 +142,6 @@ export class Timebar2Service {
     this.timebarExt.playTiming(callback);
   }
 
-  getStatsRange(): number[] {
-    return this.timebarExt.getStatsRange();
-  }
-
   getCurrTimeUnit(): number {
     return this.timebarExt.getCurrTimeUnit();
   }
