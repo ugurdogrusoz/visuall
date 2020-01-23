@@ -44,8 +44,7 @@ export class Timebar2Service {
     };
     const htmlElems = { chartElemId: 'chart_div', controllerElemId: 'filter_div' };
     this.timebarExt = this._g.cy.timebar(m, htmlElems, s, e, this.shownMetrics.getValue());
-    this.shownMetrics.subscribe(x => { this.timebarExt.setMetrics(x) });
-    this.timebarExt.setColors();
+    this.shownMetrics.subscribe(x => { this.timebarExt.setStats(x) });
   }
 
   cyElemListChanged() {
@@ -110,11 +109,6 @@ export class Timebar2Service {
   }
   // ----------------------------------------- end of timebar settings  -----------------------------------------
 
-  setColors() {
-    if (this.timebarExt) {
-      this.timebarExt.setColors();
-    }
-  }
 
   renderChart() {
     if (this.timebarExt) {
