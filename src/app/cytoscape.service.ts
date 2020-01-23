@@ -398,7 +398,7 @@ export class CytoscapeService {
       this._g.layoutUtils.placeNewNodes(collection);
     }
     if (!isIncremental && this._g.userPrefs.timebar.isEnabled.getValue()) {
-      this._timebarService.refreshChart();
+      this._timebarService.isRandomizedLayout = true; // make randomized layout on the next load
     } else {
       this._g.performLayout(!isIncremental || wasEmpty);
     }

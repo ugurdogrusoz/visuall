@@ -13,6 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 export class Timebar2Service {
 
   shownMetrics = new BehaviorSubject<TimebarMetric[]>(null);
+  isRandomizedLayout : boolean = false;
   private timebarExt: Timebar;
 
   constructor(private _g: GlobalVariableService) { }
@@ -26,7 +27,12 @@ export class Timebar2Service {
     }
     this._g.viewUtils.show(elems);
     this._g.viewUtils.hide(this._g.cy.elements().difference(elems));
-    this._g.performLayout(isRandomize);
+    if (this.isRandomizedLayout) {
+      this._g.performLayout(true);
+      this.isRandomizedLayout = false;
+    } else {
+      this._g.performLayout(false);
+    }
   }
 
   init() {
@@ -116,9 +122,6 @@ export class Timebar2Service {
     }
   }
 
-  refreshChart() {
-    this.timebarExt.refreshChart();
-  }
 
   onStatsChanged(f) {
     this.timebarExt.setEventListener('statsRangeChanged', f);
