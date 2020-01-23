@@ -116,13 +116,6 @@ export class Timebar2Service {
   // ----------------------------------------- end of timebar settings  -----------------------------------------
 
 
-  renderChart() {
-    if (this.timebarExt) {
-      this.timebarExt.renderChart();
-    }
-  }
-
-
   onStatsChanged(f) {
     this.timebarExt.setEventListener('statsRangeChanged', f);
   }
