@@ -78,9 +78,9 @@ export class TimebarComponent implements OnInit {
       });
       instance.setDate(date);
       if (isStart) {
-        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(selectedDates[0].getTime(), null); this.s.rangeChange(true, false); });
+        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(selectedDates[0].getTime(), null); });
       } else {
-        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(null, selectedDates[0].getTime()); this.s.rangeChange(true, false); });
+        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(null, selectedDates[0].getTime()); });
       }
     }
   }

@@ -279,7 +279,6 @@ export class FilterTabComponent implements OnInit {
   maintainChartRange(s: number, e: number) {
     if (this._g.userPrefs.timebar.isMaintainGraphRange.value) {
       this._timebarService.setChartRange(s, e);
-      this._timebarService.rangeChange();
     }
   }
 
