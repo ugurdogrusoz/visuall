@@ -53,10 +53,6 @@ export class Timebar2Service {
     this.shownMetrics.subscribe(x => { this.timebarExt.setStats(x) });
   }
 
-  cyElemListChanged() {
-    this.timebarExt.cyElemListChanged();
-  }
-
   coverVisibleRange() {
     this.timebarExt.coverVisibleRange();
   }

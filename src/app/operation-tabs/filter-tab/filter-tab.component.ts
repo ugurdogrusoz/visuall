@@ -180,7 +180,6 @@ export class FilterTabComponent implements OnInit {
     filteredClassElems.merge(filteredClassElems.connectedNodes());
     this._g.viewUtils.show(filteredClassElems);
     this._g.applyClassFiltering();
-    this._timebarService.cyElemListChanged();
     cb.apply(this, cbParams);
   }
 
@@ -307,7 +306,6 @@ export class FilterTabComponent implements OnInit {
       this._g.hiddenClasses.add(classText);
       this._g.viewUtils.hide(this._g.cy.$('.' + classText));
     }
-    this._timebarService.cyElemListChanged();
   }
 
   pageChanged(newPage: number) {

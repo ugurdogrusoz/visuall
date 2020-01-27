@@ -627,7 +627,6 @@ export class CytoscapeService {
     if (isHide) {
       this._g.viewUtils.hide(this._g.cy.$(':selected'));
       this._g.applyClassFiltering();
-      this._timebarService.cyElemListChanged();
     } else {
       if (!this.isAnyHidden()) {
         return;
@@ -639,7 +638,6 @@ export class CytoscapeService {
       }
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
-      this._timebarService.cyElemListChanged();
       this._timebarService.coverVisibleRange();
     }
   }
