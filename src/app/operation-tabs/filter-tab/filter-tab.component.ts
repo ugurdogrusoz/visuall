@@ -180,7 +180,7 @@ export class FilterTabComponent implements OnInit {
     filteredClassElems.merge(filteredClassElems.connectedNodes());
     this._g.viewUtils.show(filteredClassElems);
     this._g.applyClassFiltering();
-    this._timebarService.cyElemListChanged();
+    this._g.performLayout(false);
     cb.apply(this, cbParams);
   }
 
