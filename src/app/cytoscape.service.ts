@@ -394,10 +394,11 @@ export class CytoscapeService {
       }
       this._g.layoutUtils.placeNewNodes(collection);
     }
-    if (!isIncremental && this._g.userPrefs.timebar.isEnabled.getValue()) {
-      this._timebarService.setRefreshFlag(true);
+    const shouldRandomize = !isIncremental || wasEmpty;
+    if (this._g.userPrefs.timebar.isEnabled.getValue()) {
+      this._timebarService.setRefreshFlag(shouldRandomize);
     } else {
-      this._g.performLayout(!isIncremental || wasEmpty);
+      this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
     if (this.applyElementStyleSettings) {
