@@ -46,10 +46,10 @@ export class Timebar2Service {
       chartRendered: () => {
         $('#timebar').removeClass('d-none');
       },
-      
     };
+    s['events'] = e;
     const htmlElems = { chartElemId: 'chart_div', controllerElemId: 'filter_div' };
-    this.timebarExt = this._g.cy.timebar(m, htmlElems, s, e, this.shownMetrics.getValue());
+    this.timebarExt = this._g.cy.timebar(m, htmlElems, s);
     this.shownMetrics.subscribe(x => { this.timebarExt.setStats(x) });
   }
 
