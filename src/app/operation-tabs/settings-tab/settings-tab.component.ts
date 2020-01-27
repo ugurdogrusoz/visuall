@@ -57,7 +57,7 @@ export class SettingsTabComponent implements OnInit {
     this.timebarBoolSettings = [
       { text: 'Show timebar', isEnable: false, actuator: this._cyService, fn: 'showHideTimebar' },
       { text: 'Hide disconnected nodes on animation', isEnable: false, actuator: this._timebarService, fn: 'setisHideDisconnectedNodes' },
-      { text: 'Maintain graph range on queries', isEnable: false, actuator: this, fn: 'maintainGraphRange' }];
+      { text: 'Maintain graph range on topology changes', isEnable: false, actuator: this, fn: 'maintainGraphRange' }];
 
     this._cyService.applyElementStyleSettings = this.applyElementStyleSettings.bind(this);
     this.subscribe2UserPrefs();
