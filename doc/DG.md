@@ -233,7 +233,19 @@ Also, their display names should be added to [the Query tab component file](../s
 
 As explained in the [User Guide](UG.md), this tab is used to change all types of settings in your application. The content of this tab is automatically generated and is *not* meant to be customizable.
 
-## Using A Different Database 
+## Database connection
+To connect the database, visuall needs to read database connection information. Visual reads a file named **visuall-config.json**. The file should be added by the developer. Since the content of the file is environment dependent, it is written to `.gitignore` to be ignored. The file should be inside the folder **\assets**. An example file content is given below
+```
+{
+  "database": {
+    "url": "http://localhost:7474/db/data/transaction/commit",
+    "username": "neo4j",
+    "password": "123"
+  }
+}
+```
+
+### Using A Different Database 
 
 To use a different database in the back end, you should modify [the db-adapter.service.ts file](../src/app/db-service/db-adapter.service.ts). Idealy, only changing the constructor of the service should be sufficient. Just by injecting [your own angular service](https://angular.io/tutorial/toh-pt4) which implements [the interface DbService](../src/app/db-service/data-types.ts), you can switch to another database. Of course for your application-specific queries, you will want to change/delete existing ones or implement new ones.
 
