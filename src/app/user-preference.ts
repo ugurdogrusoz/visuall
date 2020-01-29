@@ -25,7 +25,7 @@ export interface UserPref {
     graphInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
     statsInclusionType: BehaviorSubject<TimebarStatsInclusionTypes>;
     playingStep: BehaviorSubject<number>;
-    playingSpeed: BehaviorSubject<number>;
+    playingPeriod: BehaviorSubject<number>;
     zoomingStep: BehaviorSubject<number>;
     isHideDisconnectedNodesOnAnim: BehaviorSubject<boolean>;
     isMaintainGraphRange: BehaviorSubject<boolean>

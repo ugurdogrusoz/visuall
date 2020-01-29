@@ -312,7 +312,7 @@
     "timebar": {
       "isEnabled": true,
       "playingStep": 50,
-      "playingSpeed": -1350,
+      "playingPeriod": 500,
       "zoomingStep": 50,
       "graphInclusionType": 0,
       "statsInclusionType": 0,

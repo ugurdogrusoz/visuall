@@ -16,7 +16,7 @@ export class SettingsTabComponent implements OnInit {
   timebarBoolSettings: BoolSetting[];
   highlightWidth: number;
   timebarPlayingStep: number;
-  timebarPlayingSpeed: number;
+  timebarPlayingPeriod: number;
   timebarZoomingStep: number;
   compoundPadding: string;
   dataPageSize: number;
@@ -71,7 +71,7 @@ export class SettingsTabComponent implements OnInit {
     up.highlightWidth.subscribe(x => this.highlightWidth = x);
     up.timebar.playingStep.subscribe(x => { this.timebarPlayingStep = x; tb.changeStep(x); });
     up.timebar.zoomingStep.subscribe(x => { this.timebarZoomingStep = x; tb.changeZoomStep(x); });
-    up.timebar.playingSpeed.subscribe(x => { this.timebarPlayingSpeed = x; tb.changeSpeed(x); });
+    up.timebar.playingPeriod.subscribe(x => { this.timebarPlayingPeriod = x; tb.changePeriod(x); });
     up.timebar.graphInclusionType.subscribe(x => { this.graphInclusionType = x; tb.changeGraphInclusionType(x); });
     up.timebar.statsInclusionType.subscribe(x => { this.statsInclusionType = x; tb.changeStatsInclusionType(x); });
     up.compoundPadding.subscribe(x => this.compoundPadding = x);
@@ -126,8 +126,8 @@ export class SettingsTabComponent implements OnInit {
     this._cyService.changeHighlightOptions(this.highlightWidth);
   }
 
-  setTimebarPlayingSpeed() {
-    this._timebarService.changeSpeed(this.timebarPlayingSpeed);
+  setTimebarPlayingPeriod() {
+    this._timebarService.changePeriod(this.timebarPlayingPeriod);
   }
 
   setTimebarPlayingStep() {

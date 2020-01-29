@@ -84,9 +84,9 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
-        <label class="form-check-label va-text" id="textAl">Animation speed</label>
+        <label class="form-check-label va-text" id="textAl">Animation period</label>
         <div>
-          <input (click)="setTimebarPlayingSpeed()" type="range" [(ngModel)]="timebarPlayingSpeed" min="-2500" max="-10"
+          <input (click)="setTimebarPlayingPeriod()" type="range" [(ngModel)]="timebarPlayingPeriod" min="10" max="2500"
             [disabled]="!timebarBoolSettings[0].isEnable">
         </div>
       </div>

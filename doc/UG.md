@@ -229,7 +229,7 @@ General properties of the timebar may be configured through the Settings tab in 
 
 - **Animation step**: Determines how quickly the move forward and backward buttons should move the graph and stats ranges.
 
-- **Animation speed**: Determines how quickly the graph and stats ranges should move forward in time during animation (play).
+- **Animation period**: Determines how quickly the graph and stats ranges should move forward in time during animation (play).
 
 - **Zoom sensitivity**: Determines how fast the graph and stats ranges should be expanded or shrunk during zoom out and in operations.
 

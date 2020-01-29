@@ -86,7 +86,7 @@ export class TimebarService {
     this.timebarExt.setSetting('isHideDisconnectedNodesOnAnim', val);
   }
 
-  changeSpeed(v: number) {
+  changePeriod(v: number) {
     this.timebarExt.setSetting('playingPeriod', v);
   }
 
