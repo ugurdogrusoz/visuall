@@ -32,8 +32,9 @@ export class TimebarComponent implements OnInit {
     this.currPlayIcon = this.playImg;
     this.s.onStatsChanged(this.setStatsRangeStr.bind(this));
     this.s.onGraphChanged(this.setGraphRangeStr.bind(this));
-    this.cssLeftDate1 = (1 - this.s.GRAPH_RANGE_RATIO) / 2 * 100;
-    this.cssLeftDate2 = (1 + this.s.GRAPH_RANGE_RATIO) / 2 * 100;
+    const r = this.s.getGraphRangeRatio();
+    this.cssLeftDate1 = (1 - r) / 2 * 100;
+    this.cssLeftDate2 = (1 + r) / 2 * 100;
   }
 
   playTiming() {
@@ -48,9 +49,7 @@ export class TimebarComponent implements OnInit {
     }
   }
 
-  private setStatsRangeStr() {
-    const d1 = this.s.graphDates[0];
-    const d2 = this.s.graphDates[this.s.graphDates.length - 1];
+  private setStatsRangeStr(d1: number, d2: number) {
     if (!d1 || !d2) {
       console.log('rangeMaxDate or rangeMinDate is falsy!');
       return;
@@ -59,8 +58,7 @@ export class TimebarComponent implements OnInit {
     this.statsRange2Str = this.date2str(d2);
   }
 
-  private setGraphRangeStr() {
-    const [d1, d2] = this.s.getChartRange();
+  private setGraphRangeStr(d1: number, d2: number) {
     if (!d1 || !d2) {
       console.log('rangeMaxDate or rangeMinDate is falsy!');
       return;
@@ -80,9 +78,9 @@ export class TimebarComponent implements OnInit {
       });
       instance.setDate(date);
       if (isStart) {
-        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(selectedDates[0].getTime(), null); this.s.rangeChange(true, false); });
+        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(selectedDates[0].getTime(), null); });
       } else {
-        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(null, selectedDates[0].getTime()); this.s.rangeChange(true, false); });
+        instance.config.onChange.push((selectedDates) => { this.s.setChartRange(null, selectedDates[0].getTime()); });
       }
     }
   }
@@ -100,8 +98,9 @@ export class TimebarComponent implements OnInit {
     let arr = s.split(' ');
     arr.splice(0, 1);
     arr.splice(arr.length - 2, 2);
-    const isGreaterThanDay = this.s.currTimeUnit >= TIME_UNITS['day'];
-    const hasNeedMs = this.s.currTimeUnit < TIME_UNITS['second'];
+    const u = this.s.getCurrTimeUnit();
+    const isGreaterThanDay = u >= TIME_UNITS['day'];
+    const hasNeedMs = u < TIME_UNITS['second'];
     if (isGreaterThanDay) {
       arr.splice(arr.length - 1, 1);
     }

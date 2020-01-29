@@ -14,6 +14,7 @@ import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse } from './db-service/data-types.js';
+import timebar from 'cytoscape-timebar';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,8 @@ export class CytoscapeService {
   }
 
   initCy(containerElem) {
+    // register timebar extension
+    timebar(cytoscape);
     // register navigator extension
     navigator(cytoscape);
     // register view utilities extension
@@ -394,9 +397,10 @@ export class CytoscapeService {
       }
       this._g.layoutUtils.placeNewNodes(collection);
     }
+
     const shouldRandomize = !isIncremental || wasEmpty;
     if (this._g.userPrefs.timebar.isEnabled.getValue()) {
-      this._timebarService.setRefreshFlag(shouldRandomize);
+      this._timebarService.isRandomizedLayout = shouldRandomize; // make randomized layout on the next load
     } else {
       this._g.performLayout(shouldRandomize);
     }
@@ -625,7 +629,6 @@ export class CytoscapeService {
     if (isHide) {
       this._g.viewUtils.hide(this._g.cy.$(':selected'));
       this._g.applyClassFiltering();
-      this._timebarService.cyElemListChanged();
     } else {
       if (!this.isAnyHidden()) {
         return;
@@ -637,7 +640,6 @@ export class CytoscapeService {
       }
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
-      this._timebarService.cyElemListChanged();
       this._timebarService.coverVisibleRange();
     }
   }

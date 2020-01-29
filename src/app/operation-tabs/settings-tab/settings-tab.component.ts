@@ -64,13 +64,16 @@ export class SettingsTabComponent implements OnInit {
   }
 
   private subscribe2UserPrefs() {
+    // reference variables for shorter text
     const up = this._g.userPrefs;
+    const tb = this._timebarService;
+
     up.highlightWidth.subscribe(x => this.highlightWidth = x);
-    up.timebar.playingStep.subscribe(x => this.timebarPlayingStep = x);
-    up.timebar.zoomingStep.subscribe(x => this.timebarZoomingStep = x);
-    up.timebar.playingSpeed.subscribe(x => this.timebarPlayingSpeed = x);
-    up.timebar.graphInclusionType.subscribe(x => this.graphInclusionType = x);
-    up.timebar.statsInclusionType.subscribe(x => this.statsInclusionType = x);
+    up.timebar.playingStep.subscribe(x => { this.timebarPlayingStep = x; tb.changeStep(x); });
+    up.timebar.zoomingStep.subscribe(x => { this.timebarZoomingStep = x; tb.changeZoomStep(x); });
+    up.timebar.playingSpeed.subscribe(x => { this.timebarPlayingSpeed = x; tb.changeSpeed(x); });
+    up.timebar.graphInclusionType.subscribe(x => { this.graphInclusionType = x; tb.changeGraphInclusionType(x); });
+    up.timebar.statsInclusionType.subscribe(x => { this.statsInclusionType = x; tb.changeStatsInclusionType(x); });
     up.compoundPadding.subscribe(x => this.compoundPadding = x);
     up.mergedElemIndicator.subscribe(x => this.mergedElemIndicator = x);
     up.dataPageSize.subscribe(x => this.dataPageSize = x);
@@ -85,9 +88,9 @@ export class SettingsTabComponent implements OnInit {
     up.isIgnoreCaseInText.subscribe(x => this.generalBoolSettings[5].isEnable = x);
 
     // timebar bool settings
-    up.timebar.isEnabled.subscribe(x => this.timebarBoolSettings[0].isEnable = x);
-    up.timebar.isHideDisconnectedNodesOnAnim.subscribe(x => this.timebarBoolSettings[1].isEnable = x);
-    up.timebar.isMaintainGraphRange.subscribe(x => this.timebarBoolSettings[2].isEnable = x);
+    up.timebar.isEnabled.subscribe(x => { this.timebarBoolSettings[0].isEnable = x; tb.showHideTimebar(x); });
+    up.timebar.isHideDisconnectedNodesOnAnim.subscribe(x => { this.timebarBoolSettings[1].isEnable = x; tb.setisHideDisconnectedNodes(x); });
+    up.timebar.isMaintainGraphRange.subscribe(x => { this.timebarBoolSettings[2].isEnable = x; tb.setIsMaintainGraphRange(x) });
   }
 
   mergedElemIndicatorChanged(i: number) {

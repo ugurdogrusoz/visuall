@@ -384,9 +384,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   private refreshTimebar() {
-    this._timeBarService.shownMetrics = this.currMetrics;
-    this._timeBarService.setColors();
-    this._timeBarService.renderChart();
+    this._timeBarService.shownMetrics.next(this.currMetrics);
   }
 
   colorSelected(c: string) {
