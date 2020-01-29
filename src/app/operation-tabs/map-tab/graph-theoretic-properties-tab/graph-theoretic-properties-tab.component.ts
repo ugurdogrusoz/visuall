@@ -29,17 +29,71 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let r = this[this.selectedPropFn]();
   }
 
-  degreeCentrality() {
+  private getCySelector(): string {
     let cySelector = '';
     if (this.isOnSelected) {
       cySelector = ':selected';
     }
+    return cySelector;
+  }
 
-    let elems = this._g.cy.nodes();
+  degreeCentrality() {
+    let cySelector = this.getCySelector();
+
+    let elems = this._g.cy.nodes(cySelector);
     for (let i = 0; i < elems.length; i++) {
       let r = this._g.cy.$(cySelector).degreeCentrality({ root: elems[i] });
       console.log('r: ', r);
     }
   }
 
+  degreeCentralityNormalized() {
+    let cySelector = this.getCySelector();
+
+    let elems = this._g.cy.nodes(cySelector);
+    let r = this._g.cy.$().degreeCentralityNormalized();
+    for (let i = 0; i < elems.length; i++) {
+      console.log('r: ', r.degree(elems[i]));
+    }
+  }
+
+  closenessCentrality() {
+    let cySelector = this.getCySelector();
+    let elems = this._g.cy.nodes(cySelector);
+    for (let i = 0; i < elems.length; i++) {
+      let r = this._g.cy.$(cySelector).closenessCentrality({ root: elems[i] });
+      console.log('r: ', r);
+    }
+  }
+
+  closenessCentralityNormalized() {
+    let cySelector = this.getCySelector();
+
+    let elems = this._g.cy.nodes(cySelector);
+    let r = this._g.cy.$().closenessCentralityNormalized();
+    for (let i = 0; i < elems.length; i++) {
+      console.log('r: ', r.closeness(elems[i]));
+    }
+  }
+
+  betweennessCentrality() {
+    let cySelector = this.getCySelector();
+
+    let elems = this._g.cy.nodes(cySelector);
+    let r = this._g.cy.$().betweennessCentrality();
+    for (let i = 0; i < elems.length; i++) {
+      console.log('r: ', r.betweenness(elems[i]));
+      console.log('r norm: ', r.betweennessNormalized(elems[i]));
+    }
+  }
+
+  pageRank() {
+    let cySelector = this.getCySelector();
+
+    let elems = this._g.cy.nodes(cySelector);
+    let r = this._g.cy.$().pageRank();
+    for (let i = 0; i < elems.length; i++) {
+      console.log('r: ', r.rank(elems[i]));
+    }
+  }
 }
