@@ -14,7 +14,7 @@ import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse } from './db-service/data-types.js';
-import timebar from 'cytoscape-timebar';
+import timebar from '../lib/timebar/cytoscape-timebar.js';
 
 @Injectable({
   providedIn: 'root'

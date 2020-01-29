@@ -4,7 +4,7 @@ import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
 import AppDescription from '../assets/app_description.json';
 import { TimebarMetric } from './operation-tabs/filter-tab/filtering-types';
-// import { Timebar } from '../../lib/timebar/Timebar';
+import { Timebar } from '../lib/timebar/Timebar';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -14,7 +14,7 @@ export class TimebarService {
 
   shownMetrics = new BehaviorSubject<TimebarMetric[]>(null);
   isRandomizedLayout : boolean = false;
-  private timebarExt: any;
+  private timebarExt: Timebar;
 
   constructor(private _g: GlobalVariableService) { }
 
