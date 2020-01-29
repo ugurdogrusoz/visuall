@@ -14,11 +14,11 @@ import { SaveAsPngModalComponent } from './popups/save-as-png-modal/save-as-png-
 import { QuickHelpModalComponent } from './popups/quick-help-modal/quick-help-modal.component';
 import { AboutModalComponent } from './popups/about-modal/about-modal.component';
 import { ObjectTabComponent } from './operation-tabs/object-tab/object-tab.component';
-import { FilterTabComponent } from './operation-tabs/filter-tab/filter-tab.component';
+import { MapTabComponent } from './operation-tabs/map-tab/map-tab.component';
 import { SettingsTabComponent } from './operation-tabs/settings-tab/settings-tab.component';
 import { QueryTabComponent } from './operation-tabs/query-tab/query-tab.component';
 import { Query0Component } from './operation-tabs/query-tab/query0/query0.component';
-import { GroupTabComponent } from './operation-tabs/group-tab/group-tab.component';
+import { GroupTabComponent } from './operation-tabs/map-tab/group-tab/group-tab.component';
 import { Query1Component } from './operation-tabs/query-tab/query1/query1.component';
 import { TableViewComponent } from './table-view/table-view.component';
 import { TimebarMetricEditorComponent } from './operation-tabs/settings-tab/timebar-metric-editor/timebar-metric-editor.component';
@@ -27,6 +27,7 @@ import { AutoSizeInputModule } from 'ngx-autosize-input';
 import { PropertyRuleComponent } from './property-rule/property-rule.component';
 import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
 import { AngularDraggableModule } from 'angular2-draggable';
+import { GraphTheoreticPropertiesTabComponent } from './operation-tabs/map-tab/graph-theoretic-properties-tab/graph-theoretic-properties-tab.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,7 @@ import { AngularDraggableModule } from 'angular2-draggable';
     QuickHelpModalComponent,
     AboutModalComponent,
     ObjectTabComponent,
-    FilterTabComponent,
+    MapTabComponent,
     SettingsTabComponent,
     QueryTabComponent,
     Query0Component,
@@ -50,7 +51,8 @@ import { AngularDraggableModule } from 'angular2-draggable';
     TimebarMetricEditorComponent,
     ColorPickerComponent,
     PropertyRuleComponent,
-    ErrorModalComponent
+    ErrorModalComponent,
+    GraphTheoreticPropertiesTabComponent
   ],
   imports: [
     BrowserModule,

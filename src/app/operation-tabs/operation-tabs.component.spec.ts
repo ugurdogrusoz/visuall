@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { OperationTabsComponent } from './operation-tabs.component';
-import { GroupTabComponent } from '../operation-tabs/group-tab/group-tab.component';
-import { FilterTabComponent } from '../operation-tabs/filter-tab/filter-tab.component';
+import { GroupTabComponent } from './map-tab/group-tab/group-tab.component';
+import { MapTabComponent } from './map-tab/map-tab.component';
 import { ObjectTabComponent } from '../operation-tabs/object-tab/object-tab.component';
 import { QueryTabComponent } from '../operation-tabs/query-tab/query-tab.component';
 import { SettingsTabComponent } from '../operation-tabs/settings-tab/settings-tab.component';
@@ -31,7 +31,7 @@ describe('OperationTabsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [OperationTabsComponent, FilterTabComponent, GroupTabComponent, ObjectTabComponentStub, QueryTabComponent, SettingsTabComponent, Query0Component, Query1Component],
+      declarations: [OperationTabsComponent, MapTabComponent, GroupTabComponent, ObjectTabComponentStub, QueryTabComponent, SettingsTabComponent, Query0Component, Query1Component],
       imports: [FormsModule, HttpClientModule]
     })
       .compileComponents();

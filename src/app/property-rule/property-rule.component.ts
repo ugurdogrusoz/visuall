@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { findTypeOfAttribute, TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber } from '../constants';
 import flatpickr from 'flatpickr';
-import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/filter-tab/filtering-types';
+import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/filtering-types';
 import properties from '../../assets/generated/properties.json';
 import AppDescription from '../../assets/app_description.json';
 import { Subject } from 'rxjs';

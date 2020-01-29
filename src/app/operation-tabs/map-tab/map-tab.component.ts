@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
 import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE } from '../../constants';
 import * as $ from 'jquery';
@@ -6,18 +6,19 @@ import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
-import { ClassOption, ClassBasedRules, Rule, RuleSync } from './filtering-types.js';
+import { ClassOption, ClassBasedRules, Rule, RuleSync } from './filtering-types';
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
-import { TableViewInput, TableData, TableDataType } from 'src/app/table-view/table-view-types.js';
-import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types.js';
+import { TableViewInput, TableData, TableDataType } from 'src/app/table-view/table-view-types';
+import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types';
+import { GroupTabComponent } from './group-tab/group-tab.component';
 
 @Component({
-  selector: 'app-filter-tab',
-  templateUrl: './filter-tab.component.html',
-  styleUrls: ['./filter-tab.component.css']
+  selector: 'app-map-tab',
+  templateUrl: './map-tab.component.html',
+  styleUrls: ['./map-tab.component.css']
 })
-export class FilterTabComponent implements OnInit {
+export class MapTabComponent implements OnInit {
 
   nodeClasses: Set<string>;
   edgeClasses: Set<string>;
@@ -34,7 +35,10 @@ export class FilterTabComponent implements OnInit {
   isClassTypeLocked: boolean;
   isTableDraggable: boolean = false;
   currTableState: Subject<boolean> = new Subject();
-
+  private isGroupTabOpen = false;
+  @ViewChild(GroupTabComponent, { static: false })
+  private groupComponent: GroupTabComponent;
+  
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService) {
     this.isFilterOnDb = true;
     this.tableInput.isMergeGraph = true;
@@ -333,6 +337,14 @@ export class FilterTabComponent implements OnInit {
   changeTableState() {
     this.isTableDraggable = !this.isTableDraggable;
     this.currTableState.next(this.isTableDraggable);
+  }
+
+  groupTabCliked() {
+    this.isGroupTabOpen = !this.isGroupTabOpen;
+    if (this.isGroupTabOpen) {
+      this.groupComponent.componentOpened();
+    }
+    console.log('groupTabCliked');
   }
 }
 

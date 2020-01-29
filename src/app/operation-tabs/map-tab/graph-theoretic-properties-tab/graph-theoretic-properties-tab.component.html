@@ -1,0 +1,10 @@
+<select class="custom-select filter-form va-text" [(ngModel)]="selectedPropFn">
+  <option *ngFor="let prop of theoreticProps" [value]="prop.fn">{{prop.text}}
+  </option>
+</select>
+
+<div class="custom-control custom-checkbox m-1">
+  <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isOnSelected" />
+  <label class="form-check-label va-text">Only for Selected Elements</label>
+</div>
+<input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runProperty()">

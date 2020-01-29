@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GroupTabComponent } from './group-tab/group-tab.component';
+import { GroupTabComponent } from './map-tab/group-tab/group-tab.component';
 
 @Component({
   selector: 'app-operation-tabs',
@@ -10,16 +10,14 @@ import { GroupTabComponent } from './group-tab/group-tab.component';
 export class OperationTabsComponent implements OnInit {
   currTab: Number;
   navItems: any[];
-  @ViewChild(GroupTabComponent, { static: false })
-  private groupComponent: GroupTabComponent;
 
   constructor() {
-    this.currTab = 2;
+    this.currTab = 1;
   }
 
   ngOnInit() {
-    this.navItems = [{ href: '#object', text: 'Object' }, { href: '#group', text: 'Group' }, { href: '#filter', text: 'Filter' },
-    { href: '#query', text: 'Query' }, { href: '#settings', text: 'Settings' }];
+    this.navItems = [{ href: '#object', text: 'Object' }, { href: '#map', text: 'Map' },
+    { href: '#query', text: 'Database' }, { href: '#settings', text: 'Settings' }];
   }
 
   setTabClasses(tabId: number) {
@@ -35,8 +33,5 @@ export class OperationTabsComponent implements OnInit {
 
   setTab(i: number) {
     this.currTab = i;
-    if (i == 1) {
-      this.groupComponent.componentOpened();
-    }
   }
 }

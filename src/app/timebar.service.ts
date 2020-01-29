@@ -3,7 +3,7 @@ import * as $ from 'jquery';
 
 import { GlobalVariableService } from './global-variable.service';
 import AppDescription from '../assets/app_description.json';
-import { TimebarMetric } from './operation-tabs/filter-tab/filtering-types';
+import { TimebarMetric } from './operation-tabs/map-tab/filtering-types';
 import { Timebar } from '../lib/timebar/Timebar';
 import { BehaviorSubject } from 'rxjs';
 

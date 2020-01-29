@@ -1,4 +1,4 @@
-import { ClassBasedRules } from '../operation-tabs/filter-tab/filtering-types';
+import { ClassBasedRules } from '../operation-tabs/map-tab/filtering-types';
 
 export interface DbService {
   getNeighbors(elemId: string, callback: (x: GraphResponse) => any);

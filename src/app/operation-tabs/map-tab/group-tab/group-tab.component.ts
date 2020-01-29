@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CytoscapeService } from '../../cytoscape.service';
-import { areSetsEqual } from '../../constants';
-import { GlobalVariableService } from '../../global-variable.service';
+import { CytoscapeService } from '../../../cytoscape.service';
+import { areSetsEqual } from '../../../constants';
+import { GlobalVariableService } from '../../../global-variable.service';
 
 @Component({
   selector: 'app-group-tab',

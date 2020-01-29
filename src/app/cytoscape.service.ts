@@ -13,8 +13,8 @@ import { GlobalVariableService } from './global-variable.service';
 import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
-import { GraphResponse } from './db-service/data-types.js';
-import timebar from '../lib/timebar/cytoscape-timebar.js';
+import { GraphResponse } from './db-service/data-types';
+import timebar from '../lib/timebar/cytoscape-timebar';
 
 @Injectable({
   providedIn: 'root'

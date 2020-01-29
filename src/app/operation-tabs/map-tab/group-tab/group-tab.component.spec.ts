@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { GlobalVariableService } from '../../global-variable.service';
-import { CytoscapeService } from '../../cytoscape.service';
+import { GlobalVariableService } from '../../../global-variable.service';
+import { CytoscapeService } from '../../../cytoscape.service';
 import { GroupTabComponent } from './group-tab.component';
 import { FormsModule } from '@angular/forms';
 

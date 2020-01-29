@@ -12,22 +12,17 @@
     <app-object-tab (onTabChanged)="tabChanged($event)"></app-object-tab>
   </div>
 
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(1)" id="group" role="tabpanel"
-    aria-labelledby="group-tab">
-    <app-group-tab></app-group-tab>
+  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(1)" id="map" role="tabpanel"
+    aria-labelledby="map-tab">
+    <app-map-tab></app-map-tab>
   </div>
 
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(2)" id="filter" role="tabpanel"
-    aria-labelledby="filter-tab">
-    <app-filter-tab></app-filter-tab>
-  </div>
-
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(3)" id="query" role="tabpanel"
+  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(2)" id="query" role="tabpanel"
     aria-labelledby="settings-tab">
     <app-query-tab></app-query-tab>
   </div>
 
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(4)" id="settings" role="tabpanel"
+  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(3)" id="settings" role="tabpanel"
     aria-labelledby="settings-tab">
     <app-settings-tab></app-settings-tab>
   </div>

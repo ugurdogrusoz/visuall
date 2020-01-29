@@ -4,7 +4,7 @@ import { Neo4jDb } from '../../db-service/neo4j-db.service';
 import { TimebarService } from '../../timebar.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { CytoscapeService } from '../../cytoscape.service';
-import { FilterTabComponent } from './filter-tab.component';
+import { MapTabComponent } from './map-tab.component';
 
 class CytoscapeServiceStub { }
 class DbServiceStub { }
@@ -12,12 +12,12 @@ class GlobalVariableServiceStub { }
 class TimebarServiceStub { }
 
 describe('FilterTabComponent', () => {
-  let component: FilterTabComponent;
-  let fixture: ComponentFixture<FilterTabComponent>;
+  let component: MapTabComponent;
+  let fixture: ComponentFixture<MapTabComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FilterTabComponent ],
+      declarations: [ MapTabComponent ],
       imports: [FormsModule],
       providers: [
         { provide: CytoscapeService, useClass: CytoscapeServiceStub },
@@ -30,7 +30,7 @@ describe('FilterTabComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FilterTabComponent);
+    fixture = TestBed.createComponent(MapTabComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

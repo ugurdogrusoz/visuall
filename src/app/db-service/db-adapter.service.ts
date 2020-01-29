@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DbService, GraphResponse, TableResponse, DbQueryType } from './data-types';
 import { Neo4jDb } from './neo4j-db.service';
-import { ClassBasedRules } from '../operation-tabs/filter-tab/filtering-types';
+import { ClassBasedRules } from '../operation-tabs/map-tab/filtering-types';
 
 @Injectable({
   providedIn: 'root'

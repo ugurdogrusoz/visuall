@@ -5,8 +5,8 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { CytoscapeComponent } from './cytoscape/cytoscape.component';
 import { TimebarComponent } from './timebar/timebar.component';
 import { OperationTabsComponent } from './operation-tabs/operation-tabs.component';
-import { FilterTabComponent } from './operation-tabs/filter-tab/filter-tab.component';
-import { GroupTabComponent } from './operation-tabs/group-tab/group-tab.component';
+import { MapTabComponent } from './operation-tabs/map-tab/map-tab.component';
+import { GroupTabComponent } from './operation-tabs/map-tab/group-tab/group-tab.component';
 import { ObjectTabComponent } from './operation-tabs/object-tab/object-tab.component';
 import { QueryTabComponent } from './operation-tabs/query-tab/query-tab.component';
 import { SettingsTabComponent } from './operation-tabs/settings-tab/settings-tab.component';
@@ -20,7 +20,7 @@ describe('AppComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent, NavbarComponent, ToolbarComponent, CytoscapeComponent, TimebarComponent, OperationTabsComponent,
-        FilterTabComponent, GroupTabComponent, ObjectTabComponent, QueryTabComponent, SettingsTabComponent, Query0Component, Query1Component
+        MapTabComponent, GroupTabComponent, ObjectTabComponent, QueryTabComponent, SettingsTabComponent, Query0Component, Query1Component
       ],
       imports: [FormsModule, HttpClientModule]
     }).compileComponents();

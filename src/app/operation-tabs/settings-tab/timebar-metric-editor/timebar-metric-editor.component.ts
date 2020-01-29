@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import AppDescription from '../../../../assets/app_description.json';
-import { ClassOption, TimebarMetric, Rule, RuleSync } from '../../filter-tab/filtering-types.js';
+import { ClassOption, TimebarMetric, Rule, RuleSync } from '../../map-tab/filtering-types';
 import { NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS, GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { Subject } from 'rxjs';

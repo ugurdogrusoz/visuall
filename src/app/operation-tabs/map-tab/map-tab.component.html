@@ -1,7 +1,7 @@
 <div class="panel-group">
   <div class="panel m-1">
     <div class="panel-heading" data-toggle="collapse" data-target="#filter-class" aria-expanded="true">
-      <p class="panel-title accordion-toggle"><b class="va-heading2">By Node / Edge Type</b></p>
+      <p class="panel-title accordion-toggle"><b class="va-heading2">Filter by Node/Edge Type</b></p>
     </div>
 
     <div id="filter-class" class="collapse show text-center m-1">
@@ -15,7 +15,7 @@
 
   <div class="panel m-1">
     <div class="panel-heading collapsed" data-toggle="collapse" data-target="#rule-elements" aria-expanded="false">
-      <p class="panel-title accordion-toggle"><b class="va-heading2">By Rules</b></p>
+      <p class="panel-title accordion-toggle"><b class="va-heading2">Filter by Rules</b></p>
     </div>
     <div id="rule-elements" class="collapse">
       <div class="form-inline m-2 justify-content-center">
@@ -91,9 +91,31 @@
           </a>
         </div>
       </div>
+      <app-table-view [params]="tableInput" [changeState]="currTableState" (onPageChanged)="pageChanged($event)"
+        (onDataForQueryResult)="getDataForQueryResult($event)"> </app-table-view>
     </div>
-    <app-table-view [params]="tableInput" [changeState]="currTableState" (onPageChanged)="pageChanged($event)"
-      (onDataForQueryResult)="getDataForQueryResult($event)"> </app-table-view>
+  </div>
+
+  <div class="panel m-1">
+    <div class="panel-heading collapsed" (click)="groupTabCliked()" data-toggle="collapse" data-target="#group"
+      aria-expanded="true">
+      <p class="panel-title accordion-toggle"><b class="va-heading2">Group</b></p>
+    </div>
+
+    <div id="group" class="collapse">
+      <app-group-tab></app-group-tab>
+    </div>
+  </div>
+
+  <div class="panel m-1">
+    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#graph-theoretic-measures"
+      aria-expanded="true">
+      <p class="panel-title accordion-toggle"><b class="va-heading2">Graph Theoretic Properties</b></p>
+    </div>
+
+    <div id="graph-theoretic-measures" class="collapse">
+      <app-graph-theoretic-properties-tab></app-graph-theoretic-properties-tab>
+    </div>
   </div>
 
 </div>
