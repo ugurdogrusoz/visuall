@@ -34,6 +34,7 @@
     "cytoscape-layout-utilities": "github:iVis-at-Bilkent/cytoscape.js-layout-utilities#unstable",
     "cytoscape-navigator": "^1.3.3",
     "cytoscape-panzoom": "^2.5.3",
+    "cytoscape-popper": "^1.0.6",
     "cytoscape-view-utilities": "github:iVis-at-Bilkent/cytoscape.js-view-utilities#unstable",
     "express": "^4.17.1",
     "flatpickr": "^4.6.3",

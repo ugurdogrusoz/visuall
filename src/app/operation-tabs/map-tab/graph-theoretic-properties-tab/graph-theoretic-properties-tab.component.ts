@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from 'src/app/global-variable.service';
+import { formatNumber } from '@angular/common';
+import { CytoscapeService } from 'src/app/cytoscape.service';
+import { debounce } from 'src/app/constants';
 
 @Component({
   selector: 'app-graph-theoretic-properties-tab',
@@ -12,13 +15,20 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   theoreticProps: { text: string, fn: string, arg: any }[] = [
     { text: 'Degree Centrality', fn: 'degreeCentrality', arg: '' }, { text: 'Normalized Degree Centrality', fn: 'degreeCentralityNormalized', arg: '' },
     { text: 'Closeness Centrality', fn: 'closenessCentrality', arg: '' }, { text: 'Normalized Closeness Centrality', fn: 'closenessCentralityNormalized', arg: '' },
-    { text: 'Betweenness Centrality', fn: 'betweennessCentrality', arg: '' }, { text: 'Page Rank', fn: 'pageRank', arg: '' }];
+    { text: 'Betweenness Centrality', fn: 'betweennessCentrality', arg: '' }, { text: 'Normalized Betweenness Centrality', fn: 'betweennessCentralityNormalized', arg: '' },
+    { text: 'Page Rank', fn: 'pageRank', arg: '' }];
   isOnSelected = false;
+  isDirectedGraph = true;
+  isMapNodeSizes = true;
   selectedPropFn: string = '';
+  poppedData: { popper: any, elem: any, fn: Function }[] = [];
+  UPDATE_POPPER_WAIT = 100;
 
-  constructor(private _g: GlobalVariableService) { }
+  constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) { }
 
   ngOnInit() {
+    this._cyService.setRemovePoppersFn(this.destroyCurrentPoppers.bind(this));
+    this._g.cy.on('remove', (e) => { this.destroyPopper(e.target.id()) })
   }
 
   runProperty() {
@@ -26,7 +36,8 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     if (this.isOnSelected) {
       cySelector = ':selected';
     }
-    let r = this[this.selectedPropFn]();
+    this.destroyCurrentPoppers();
+    this[this.selectedPropFn]();
   }
 
   private getCySelector(): string {
@@ -39,11 +50,18 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
 
   degreeCentrality() {
     let cySelector = this.getCySelector();
-
     let elems = this._g.cy.nodes(cySelector);
     for (let i = 0; i < elems.length; i++) {
-      let r = this._g.cy.$(cySelector).degreeCentrality({ root: elems[i] });
-      console.log('r: ', r);
+      let e = elems[i];
+      let r = this._g.cy.$(cySelector).degreeCentrality({ root: e, directed: this.isDirectedGraph });
+      let badges = [];
+      if (this.isDirectedGraph) {
+        badges.push(r.indegree);
+        badges.push(r.outdegree);
+      } else {
+        badges.push(r.degree);
+      }
+      this.generateBadge4Elem(e, badges);
     }
   }
 
@@ -51,9 +69,17 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let cySelector = this.getCySelector();
 
     let elems = this._g.cy.nodes(cySelector);
-    let r = this._g.cy.$().degreeCentralityNormalized();
+    let r = this._g.cy.$(cySelector).degreeCentralityNormalized({ directed: this.isDirectedGraph });
     for (let i = 0; i < elems.length; i++) {
-      console.log('r: ', r.degree(elems[i]));
+      let badges = [];
+      let e = elems[i];
+      if (this.isDirectedGraph) {
+        badges.push(r.indegree(e));
+        badges.push(r.outdegree(e));
+      } else {
+        badges.push(r.degree(e));
+      }
+      this.generateBadge4Elem(e, badges);
     }
   }
 
@@ -61,8 +87,10 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let cySelector = this.getCySelector();
     let elems = this._g.cy.nodes(cySelector);
     for (let i = 0; i < elems.length; i++) {
-      let r = this._g.cy.$(cySelector).closenessCentrality({ root: elems[i] });
-      console.log('r: ', r);
+      let e = elems[i];
+      let r = this._g.cy.$(cySelector).closenessCentrality({ root: e, directed: this.isDirectedGraph });
+      let badges = [r];
+      this.generateBadge4Elem(e, badges);
     }
   }
 
@@ -70,9 +98,10 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let cySelector = this.getCySelector();
 
     let elems = this._g.cy.nodes(cySelector);
-    let r = this._g.cy.$().closenessCentralityNormalized();
+    let r = this._g.cy.$(cySelector).closenessCentralityNormalized({ directed: this.isDirectedGraph });
     for (let i = 0; i < elems.length; i++) {
-      console.log('r: ', r.closeness(elems[i]));
+      let badges = [r.closeness(elems[i])];
+      this.generateBadge4Elem(elems[i], badges);
     }
   }
 
@@ -80,10 +109,21 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let cySelector = this.getCySelector();
 
     let elems = this._g.cy.nodes(cySelector);
-    let r = this._g.cy.$().betweennessCentrality();
+    let r = this._g.cy.$(cySelector).betweennessCentrality({ directed: this.isDirectedGraph });
     for (let i = 0; i < elems.length; i++) {
-      console.log('r: ', r.betweenness(elems[i]));
-      console.log('r norm: ', r.betweennessNormalized(elems[i]));
+      let badges = [r.betweenness(elems[i])];
+      this.generateBadge4Elem(elems[i], badges);
+    }
+  }
+
+  betweennessCentralityNormalized() {
+    let cySelector = this.getCySelector();
+
+    let elems = this._g.cy.nodes(cySelector);
+    let r = this._g.cy.$(cySelector).betweennessCentrality({ directed: this.isDirectedGraph });
+    for (let i = 0; i < elems.length; i++) {
+      let badges = [r.betweennessNormalized(elems[i])];
+      this.generateBadge4Elem(elems[i], badges);
     }
   }
 
@@ -91,9 +131,62 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let cySelector = this.getCySelector();
 
     let elems = this._g.cy.nodes(cySelector);
-    let r = this._g.cy.$().pageRank();
+    let r = this._g.cy.$(cySelector).pageRank();
     for (let i = 0; i < elems.length; i++) {
-      console.log('r: ', r.rank(elems[i]));
+      let badges = [r.rank(elems[i])];
+      this.generateBadge4Elem(elems[i], badges);
     }
+  }
+
+  generateBadge4Elem(e, badges: number[]) {
+    let popper = e.popper({
+      content: () => {
+        let div = document.createElement('div');
+        div.innerHTML = this.getHtml(badges);
+        document.getElementById('cy').appendChild(div);
+        return div;
+      },
+      popper: { removeOnDestroy: true, placement: 'top-end' }
+    });
+
+    let update = debounce(() => { popper.scheduleUpdate(); console.log('pud'); }, this.UPDATE_POPPER_WAIT, false);
+    e.on('position', update);
+    this._g.cy.on('pan zoom resize', update);
+    this.poppedData.push({ popper: popper, elem: e, fn: update });
+  }
+
+  destroyCurrentPoppers() {
+    for (let i = 0; i < this.poppedData.length; i++) {
+      this.poppedData[i].popper.destroy();
+      // unbind previously bound functions
+      const fn = this.poppedData[i].fn;
+      const elem = this.poppedData[i].elem;
+      elem.off('position', fn);
+      this._g.cy.off('pan zoom resize', fn);
+    }
+    this.poppedData.length = 0;
+  }
+
+  destroyPopper(id: string) {
+    // let i = this.poppedData.findIndex(x => x.elem.id() == id);
+    // if (i < 0) {
+    //   return;
+    // }
+    // this.poppedData[i].popper.destroy();
+    // // unbind previously bound functions
+    // const fn = this.poppedData[i].fn;
+    // const elem = this.poppedData[i].elem;
+    // elem.off('position', fn);
+    // this._g.cy.off('pan zoom resize', fn);
+
+    // this.poppedData.slice(i, 1);
+  }
+
+  getHtml(badges: number[]) {
+    let s = '';
+    for (let i = 0; i < badges.length; i++) {
+      s += `<span class="badge badge-pill badge-primary">${formatNumber(badges[i], 'en', '1.0-2')}</span>`
+    }
+    return s;
   }
 }

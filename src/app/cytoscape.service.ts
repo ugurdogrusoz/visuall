@@ -6,6 +6,7 @@ import fcose from 'cytoscape-fcose';
 import expandCollapse from 'cytoscape-expand-collapse';
 import viewUtilities from 'cytoscape-view-utilities';
 import layoutUtilities from 'cytoscape-layout-utilities';
+import popper from 'cytoscape-popper';
 import stylesheet from '../assets/generated/stylesheet.json';
 import * as C from './constants';
 import * as $ from 'jquery';
@@ -23,11 +24,14 @@ export class CytoscapeService {
   cyNavi: any;
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
   applyElementStyleSettings: () => void;
+  removePopperFn: Function;
 
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
   }
 
   initCy(containerElem) {
+    // register popper
+    popper(cytoscape);
     // register timebar extension
     timebar(cytoscape);
     // register navigator extension
@@ -528,6 +532,7 @@ export class CytoscapeService {
 
   removeHighlights() {
     this._g.viewUtils.removeHighlights();
+    this.removePopperFn();
   }
 
   unbindHighlightOnHoverListeners() {
@@ -740,5 +745,9 @@ export class CytoscapeService {
       }, 100);
 
     }.bind(this));
+  }
+
+  setRemovePoppersFn(fn) {
+    this.removePopperFn = fn;
   }
 }

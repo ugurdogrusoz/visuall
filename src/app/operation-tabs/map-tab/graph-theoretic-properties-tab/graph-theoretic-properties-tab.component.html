@@ -1,20 +1,23 @@
-<div class="container">
+<div>
   <div class="row m-1">
     <select class="custom-select filter-form va-text" [(ngModel)]="selectedPropFn">
       <option *ngFor="let prop of theoreticProps" [value]="prop.fn">{{prop.text}}
       </option>
     </select>
   </div>
-  <div class="row d-flex align-items-center justify-content-center m-1">
-
-    <div>
-      <input class="btn btn-dark va-text m-1" type="button" value="Run" (click)="runProperty()">
-    </div>
-
+  <div class="d-flex flex-wrap align-items-center justify-content-center m-1">
+    <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runProperty()">
     <div class="custom-control custom-checkbox m-1">
       <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isOnSelected" />
       <label class="form-check-label va-text">Only for Selected Elements</label>
     </div>
-
+    <div class="custom-control custom-checkbox m-1">
+      <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isDirectedGraph" />
+      <label class="form-check-label va-text">Directed graph</label>
+    </div>
+    <div class="custom-control custom-checkbox m-1">
+      <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isMapNodeSizes" />
+      <label class="form-check-label va-text">Map node sizes</label>
+    </div>
   </div>
 </div>
