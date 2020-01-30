@@ -156,30 +156,24 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   }
 
   destroyCurrentPoppers() {
-    for (let i = 0; i < this.poppedData.length; i++) {
-      this.poppedData[i].popper.destroy();
-      // unbind previously bound functions
-      const fn = this.poppedData[i].fn;
-      const elem = this.poppedData[i].elem;
-      elem.off('position', fn);
-      this._g.cy.off('pan zoom resize', fn);
+    let size = this.poppedData.length;
+    for (let i = 0; i < size; i++) {
+      this.destroyPopper('', 0);
     }
-    this.poppedData.length = 0;
   }
 
-  destroyPopper(id: string) {
-    // let i = this.poppedData.findIndex(x => x.elem.id() == id);
-    // if (i < 0) {
-    //   return;
-    // }
-    // this.poppedData[i].popper.destroy();
-    // // unbind previously bound functions
-    // const fn = this.poppedData[i].fn;
-    // const elem = this.poppedData[i].elem;
-    // elem.off('position', fn);
-    // this._g.cy.off('pan zoom resize', fn);
-
-    // this.poppedData.slice(i, 1);
+  destroyPopper(id: string, i: number = -1) {
+    if (i < 0) {
+      i = this.poppedData.findIndex(x => x.elem.id() == id);
+      if (i < 0) {
+        return;
+      }
+    }
+    this.poppedData[i].popper.destroy();
+    // unbind previously bound functions
+    this.poppedData[i].elem.off('position', this.poppedData[i].fn);
+    this._g.cy.off('pan zoom resize', this.poppedData[i].fn);
+    this.poppedData.splice(i, 1);
   }
 
   getHtml(badges: number[]) {
