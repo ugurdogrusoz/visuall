@@ -6,7 +6,6 @@ import fcose from 'cytoscape-fcose';
 import expandCollapse from 'cytoscape-expand-collapse';
 import viewUtilities from 'cytoscape-view-utilities';
 import layoutUtilities from 'cytoscape-layout-utilities';
-import popper from 'cytoscape-popper';
 import stylesheet from '../assets/generated/stylesheet.json';
 import * as C from './constants';
 import * as $ from 'jquery';
@@ -30,8 +29,6 @@ export class CytoscapeService {
   }
 
   initCy(containerElem) {
-    // register popper
-    popper(cytoscape);
     // register timebar extension
     timebar(cytoscape);
     // register navigator extension

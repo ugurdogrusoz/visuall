@@ -21,7 +21,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   isDirectedGraph = true;
   isMapNodeSizes = true;
   selectedPropFn: string = '';
-  poppedData: { popper: any, elem: any, fn: Function }[] = [];
+  poppedData: { popper: HTMLDivElement, elem: any, fn: Function }[] = [];
   UPDATE_POPPER_WAIT = 100;
 
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) { }
@@ -139,20 +139,27 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   }
 
   generateBadge4Elem(e, badges: number[]) {
-    let popper = e.popper({
-      content: () => {
-        let div = document.createElement('div');
-        div.innerHTML = this.getHtml(badges);
-        document.getElementById('cy').appendChild(div);
-        return div;
-      },
-      popper: { removeOnDestroy: true, placement: 'top-end' }
-    });
+    let div = document.createElement('div');
+    div.innerHTML = this.getHtml(badges);
+    div.style.cssText = `position: absolute; top: 0px; left: 0px;`;
+    document.getElementById('cy').appendChild(div);
 
-    let update = debounce(() => { popper.scheduleUpdate(); console.log('pud'); }, this.UPDATE_POPPER_WAIT, false);
-    e.on('position', update);
-    this._g.cy.on('pan zoom resize', update);
-    this.poppedData.push({ popper: popper, elem: e, fn: update });
+    this.setBadgeCoords(e, div);
+
+    let fn = () => {
+      this.setBadgeCoords(e, div);
+      console.log('pud');
+    };
+
+    e.on('position', fn);
+    this._g.cy.on('pan zoom resize', fn);
+    this.poppedData.push({ popper: div, elem: e, fn: fn });
+  }
+
+  private setBadgeCoords(e, div: HTMLDivElement) {
+    let bb = e.renderedBoundingBox({ includeLabels: false });
+    const w = div.clientWidth;
+    div.style.transform = `translate(${bb.x2 - w}px, ${bb.y1}px)`;
   }
 
   destroyCurrentPoppers() {
@@ -169,7 +176,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
         return;
       }
     }
-    this.poppedData[i].popper.destroy();
+    this.poppedData[i].popper.remove();
     // unbind previously bound functions
     this.poppedData[i].elem.off('position', this.poppedData[i].fn);
     this._g.cy.off('pan zoom resize', this.poppedData[i].fn);
