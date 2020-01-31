@@ -45,8 +45,6 @@ body {
 
 #cy {
   height: 75vh;
-  margin-right: 2px;
-  margin-bottom: 1px;
   border: 2px solid #2F4154;
   border-radius: 6px;
   background: #ffffff;
@@ -172,19 +170,12 @@ body {
   content: "\f078";
 }
 
+/* borders for navigator and map */
 .cytoscape-navigator-wrapper {
   position: fixed;
-  z-index: 100;
   width: 300px;
   height: 200px;
-  bottom: 3.5%;
-  right: 3.5%;
   overflow: hidden;
-}
-
-/* borders for navigator and map */
-
-.cytoscape-navigator-wrapper {
   border: 2px solid #2F4154;
   border-radius: 6px;
   background: #fff;

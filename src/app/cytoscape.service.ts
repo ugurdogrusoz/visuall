@@ -340,7 +340,6 @@ export class CytoscapeService {
   setNavigatorPosition() {
     const navSelector = '.cytoscape-navigator-wrapper';
     const containerSelector = '.cyContainer';
-    const offset = 3;
 
     const topCy = $(containerSelector).offset().top - window.scrollY;
     const leftCy = $(containerSelector).offset().left;
@@ -348,8 +347,8 @@ export class CytoscapeService {
     const widthCy = $(containerSelector).outerWidth();
     const heightNavigator = $(navSelector).outerHeight();
     const widthNavigator = $(navSelector).outerWidth();
-    $(navSelector).css('top', heightCy + topCy - heightNavigator - offset);
-    $(navSelector).css('left', widthCy + leftCy - widthNavigator - offset);
+    $(navSelector).css('top', heightCy + topCy - heightNavigator);
+    $(navSelector).css('left', widthCy + leftCy - widthNavigator);
   }
 
   loadElementsFromDatabase(data: GraphResponse, isIncremental: boolean) {
