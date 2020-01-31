@@ -14,7 +14,8 @@ export class TimebarService {
 
   shownMetrics = new BehaviorSubject<TimebarMetric[]>(null);
   isRandomizedLayout : boolean = false;
-  private timebarExt: Timebar;
+  private _timebarExt: Timebar;
+  private _playingPeriod: number;
 
   constructor(private _g: GlobalVariableService) { }
 
@@ -28,10 +29,10 @@ export class TimebarService {
     this._g.viewUtils.show(elems);
     this._g.viewUtils.hide(this._g.cy.elements().difference(elems));
     if (this.isRandomizedLayout) {
-      this._g.performLayout(true);
+      this._g.performLayout(true, false, this._playingPeriod);
       this.isRandomizedLayout = false;
     } else {
-      this._g.performLayout(false);
+      this._g.performLayout(false, false, this._playingPeriod);
     }
   }
 
@@ -49,87 +50,88 @@ export class TimebarService {
     };
     s['events'] = e;
     const htmlElems = { chartElemId: 'chart_div', controllerElemId: 'filter_div' };
-    this.timebarExt = this._g.cy.timebar(m, htmlElems, s);
-    this.shownMetrics.subscribe(x => { this.timebarExt.setStats(x) });
+    this._timebarExt = this._g.cy.timebar(m, htmlElems, s);
+    this.shownMetrics.subscribe(x => { this._timebarExt.setStats(x) });
   }
 
   coverVisibleRange() {
-    this.timebarExt.coverVisibleRange();
+    this._timebarExt.coverVisibleRange();
   }
 
   coverAllTimes() {
-    this.timebarExt.coverAllTimes();
+    this._timebarExt.coverAllTimes();
   }
 
   changeZoom(isIncrease: boolean) {
-    this.timebarExt.changeZoom(isIncrease);
+    this._timebarExt.changeZoom(isIncrease);
   }
 
   moveCursor(isLeft: boolean) {
-    this.timebarExt.moveCursor(isLeft);
+    this._timebarExt.moveCursor(isLeft);
   }
 
   setChartRange(s: number, e: number) {
-    this.timebarExt.setGraphRange(s, e);
+    this._timebarExt.setGraphRange(s, e);
   }
 
   getChartRange(): number[] {
-    return this.timebarExt.getGraphRange();
+    return this._timebarExt.getGraphRange();
   }
 
   // ----------------------------------------- start of timebar settings  -----------------------------------------
   showHideTimebar(isActive: boolean) {
-    this.timebarExt.setSetting('isEnabled', isActive);
+    this._timebarExt.setSetting('isEnabled', isActive);
   }
 
   setisHideDisconnectedNodes(val: boolean) {
-    this.timebarExt.setSetting('isHideDisconnectedNodesOnAnim', val);
+    this._timebarExt.setSetting('isHideDisconnectedNodesOnAnim', val);
   }
 
   changePeriod(v: number) {
-    this.timebarExt.setSetting('playingPeriod', v);
+    this._playingPeriod = v;
+    this._timebarExt.setSetting('playingPeriod', v);
   }
 
   changeStep(v: number) {
-    this.timebarExt.setSetting('playingStep', v);
+    this._timebarExt.setSetting('playingStep', v);
   }
 
   changeZoomStep(v: number) {
-    this.timebarExt.setSetting('zoomingStep', v);
+    this._timebarExt.setSetting('zoomingStep', v);
   }
 
   changeGraphInclusionType(i: number) {
-    this.timebarExt.setSetting('graphInclusionType', i);
+    this._timebarExt.setSetting('graphInclusionType', i);
   }
 
   changeStatsInclusionType(i: number) {
-    this.timebarExt.setSetting('statsInclusionType', i);
+    this._timebarExt.setSetting('statsInclusionType', i);
   }
 
   setIsMaintainGraphRange(v: boolean) {
-    this.timebarExt.setSetting('isMaintainGraphRange', v);
+    this._timebarExt.setSetting('isMaintainGraphRange', v);
   }
   // ----------------------------------------- end of timebar settings  -----------------------------------------
 
 
   onStatsChanged(f) {
-    this.timebarExt.setEventListener('statsRangeChanged', f);
+    this._timebarExt.setEventListener('statsRangeChanged', f);
   }
 
   onGraphChanged(f) {
-    this.timebarExt.setEventListener('graphRangeChanged', f);
+    this._timebarExt.setEventListener('graphRangeChanged', f);
   }
 
   playTiming(callback: (isShowPlay: boolean) => void) {
-    this.timebarExt.playTiming(callback);
+    this._timebarExt.playTiming(callback);
   }
 
   getCurrTimeUnit(): number {
-    return this.timebarExt.getCurrTimeUnit();
+    return this._timebarExt.getCurrTimeUnit();
   }
 
   getGraphRangeRatio(): number {
-    return this.timebarExt.getGraphRangeRatio();
+    return this._timebarExt.getGraphRangeRatio();
   }
 }
 

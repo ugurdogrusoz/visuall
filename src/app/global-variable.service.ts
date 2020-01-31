@@ -56,11 +56,12 @@ export class GlobalVariableService {
     this.cy.elements().not(':hidden, :transparent').layout(this.layout).run();
   }
 
-  performLayout(isRandomize: boolean, isDirectCommand: boolean = false) {
+  performLayout(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = 1000) {
     if (!this.userPrefs.isAutoIncrementalLayoutOnChange.getValue() && !isRandomize && !isDirectCommand) {
       this.cy.fit();
       return;
     }
+    this.layout.animationDuration = animationDuration;
     this.switchLayoutRandomization(isRandomize);
     this.runLayout();
   }
