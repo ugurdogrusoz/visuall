@@ -157,9 +157,14 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   }
 
   private setBadgeCoords(e, div: HTMLDivElement) {
-    let bb = e.renderedBoundingBox({ includeLabels: false });
+    let z1 = this._g.cy.zoom();
+    const z2 = z1 * 0.5;
+    // let bb = e.renderedBoundingBox({ includeLabels: false, includeOverlays: false, includeEdges: false });
+    const p = e.renderedPosition();
+    const eW = e.width() / 2;
+    const eH = e.height() / 2;
     const w = div.clientWidth;
-    div.style.transform = `translate(${bb.x2 - w}px, ${bb.y1}px)`;
+    div.style.transform = `translate(${p.x + eW * z1 - w * Math.sqrt(z2)}px, ${p.y - eH * z1}px) scale(${z2})`;
   }
 
   destroyCurrentPoppers() {
