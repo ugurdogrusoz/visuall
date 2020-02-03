@@ -154,6 +154,7 @@ export class CytoscapeService {
   }
 
   /** some styles uses functions, so they can't be added using JSON
+   * or they should e added last to overrite some of the previously added
    */
   private addOtherStyles() {
     this._g.cy.style().selector('node.fitlabel')
@@ -162,6 +163,14 @@ export class CytoscapeService {
 
     this._g.cy.style().selector('edge.nolabel')
       .style({ 'label': '' })
+      .update();
+
+      this.setNodeSizeOnGraphTheoreticProp();
+  }
+
+  setNodeSizeOnGraphTheoreticProp(maxVal = 1) {
+    this._g.cy.style().selector('node.graphTheoreticDisplay')
+      .style({ 'width': `mapData(__graphTheoreticProp, 0, ${maxVal}, 20px, 60px)`, 'height': `mapData(__graphTheoreticProp, 0, ${maxVal}, 20px, 60px)` })
       .update();
   }
 

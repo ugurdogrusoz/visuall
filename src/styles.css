@@ -171,6 +171,7 @@ body {
 }
 
 /* borders for navigator and map */
+
 .cytoscape-navigator-wrapper {
   position: fixed;
   width: 300px;
