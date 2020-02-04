@@ -42,7 +42,7 @@ export class CytoscapeComponent implements OnInit {
     }
     event.preventDefault();
     if (event.ctrlKey) {
-      this._g.cy.$().select();
+      this._g.cy.$().not(':hidden, :transparent').select();
     }
   }
 

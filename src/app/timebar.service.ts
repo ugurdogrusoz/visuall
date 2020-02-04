@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import * as $ from 'jquery';
-
 import { GlobalVariableService } from './global-variable.service';
 import AppDescription from '../assets/app_description.json';
 import { TimebarMetric } from './operation-tabs/map-tab/filtering-types';
@@ -34,6 +33,7 @@ export class TimebarService {
     } else {
       this._g.performLayout(false, false, this._playingPeriod);
     }
+    this._g.timebarChangedShownElems.next(true);
   }
 
   init() {

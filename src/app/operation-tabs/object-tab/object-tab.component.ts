@@ -17,6 +17,8 @@ export class ObjectTabComponent implements OnInit {
   selectedClasses: string;
   selectedItemProps: any[];
   @Output() onTabChanged = new EventEmitter<number>();
+  classStats: string[] = [];
+  objStats: string[] = [];
 
   constructor(private _g: GlobalVariableService) {
     this.selectedItemProps = [];
@@ -35,6 +37,8 @@ export class ObjectTabComponent implements OnInit {
     for (const key in properties.edges) {
       this.edgeClasses.add(key);
     }
+    this._g.cy.on('select unselect add remove tap', debounce(this.showStats, 200, false).bind(this));
+    this._g.timebarChangedShownElems.subscribe(() => { this.showStats() });
   }
 
   showObjectProps(event) {
@@ -202,6 +206,84 @@ export class ObjectTabComponent implements OnInit {
       return propertyValue;
     }
     return AppDescription.enumMapping[c][propertyName][propertyValue];
+  }
+
+  showStats() {
+    let stat = {};
+
+    let classSet = new Set<string>();
+
+    for (let i = 0; i < this._g.cy.$().length; i++) {
+      let curr = this._g.cy.$()[i];
+      let c = curr.classes();
+      let isSelected = curr.selected();
+      let isVisible = curr.visible();
+      for (let j = 0; j < c.length; j++) {
+        classSet.add(c[j]);
+        let TYPE_CLASS = curr.isNode() ? 'NODE' : 'EDGE';
+        this.increaseCountInObj(stat, TYPE_CLASS, 'total');
+        this.increaseCountInObj(stat, c[j], 'total');
+
+        if (isSelected) {
+          this.increaseCountInObj(stat, c[j], 'selected');
+          this.increaseCountInObj(stat, TYPE_CLASS, 'selected');
+        } 
+        if (!isVisible) {
+          this.increaseCountInObj(stat, c[j], 'hidden');
+          this.increaseCountInObj(stat, TYPE_CLASS, 'hidden');
+        }
+      }
+    }
+    this.setStatStrFromObj(stat, classSet);
+  }
+
+  private setStatStrFromObj(stat, classSet: Set<string>) {
+    this.objStats.length = 0;
+    this.classStats.length = 0;
+
+    for (let c of classSet) {
+      if (stat[c] === undefined) {
+        continue;
+      }
+      let s = `${stat[c].total} ${c}'s`;
+      if (stat[c]['selected']) {
+        s += `, ${stat[c]['selected']} selected`;
+      }
+      if (stat[c]['hidden']) {
+        s += `, ${stat[c]['hidden']} hidden`;
+      }
+      this.classStats.push(s);
+    }
+
+    let isFirst = true;
+    for (let c of ['NODE', 'EDGE']) {
+      if (stat[c] === undefined) {
+        continue;
+      }
+      let type = isFirst ? 'nodes' : 'edges';
+      let s = `Total no of ${type}: ${stat[c].total}`;
+      if (stat[c]['selected']) {
+        s += `, ${stat[c]['selected']} selected`;
+      }
+      if (stat[c]['hidden']) {
+        s += `, ${stat[c]['hidden']} hidden`;
+      }
+      this.objStats.push(s);
+      isFirst = false;
+    }
+  }
+
+  private increaseCountInObj(obj, p1: string, p2: string) {
+    if (obj[p1]) {
+      if (obj[p1][p2] === undefined) {
+        obj[p1][p2] = 1;
+      } else {
+        obj[p1][p2] += 1;
+      }
+    } else {
+      obj[p1] = {};
+      obj[p1][p2] = 1;
+    }
   }
 
 }
