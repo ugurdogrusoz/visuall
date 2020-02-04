@@ -152,6 +152,26 @@ export function debounce(func, wait, immediate) {
   };
 }
 
+// calls fn2 at the beginning of frequent calls to fn1
+export function debounce2(fn1: Function, wait: number, fn2: Function) {
+  let timeout;
+  let isInit = true;
+  return function () {
+    const context = this, args = arguments;
+    const later = function () {
+      timeout = null;
+      fn1.apply(context, args);
+      isInit = true;
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (isInit) {
+      fn2.apply(context, args);
+      isInit = false;
+    }
+  };
+}
+
 // objects is an array of objects, types is an array of strings
 // get propperty names of types. If types does not exists get all
 export function getPropNamesFromObj(objects, types) {

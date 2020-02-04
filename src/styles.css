@@ -25,7 +25,7 @@ html {
 }
 
 .va-small-text {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 body {
@@ -67,7 +67,7 @@ body {
 
 .filter-edge-class {
   color: #343a40;
-  border-bottom: 1px solid #343a40;
+  border-bottom: 2px solid #343a40;
   margin: 1%;
   padding: 3px;
 }
@@ -101,7 +101,7 @@ body {
 
 .logic-op-link {
   display: inline-block;
-  border: 1px solid;
+  border: 2px solid;
   border-radius: 5px;
   color: inherit;
   width: 3em;
@@ -141,7 +141,7 @@ body {
 }
 
 .panel {
-  border: 1px solid transparent;
+  border: 2px solid transparent;
 }
 
 .accordion-toggle {
@@ -240,4 +240,9 @@ body {
 
 .cb-filter {
   margin-left: -0.85rem !important;
+}
+
+.strokeme {
+  color: white;
+  text-shadow: 1px 0px 1px black, 0px 1px 1px black, -1px 0px 1px black, 0px -1px 1px black;
 }

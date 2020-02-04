@@ -3,6 +3,7 @@ import { GlobalVariableService } from 'src/app/global-variable.service';
 import { formatNumber } from '@angular/common';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { ColorPickerComponent } from 'src/app/color-picker/color-picker.component';
+import { debounce2 } from 'src/app/constants';
 
 @Component({
   selector: 'app-graph-theoretic-properties-tab',
@@ -17,7 +18,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     { text: 'Betweenness Centrality', fn: 'betweennessCentrality', arg: '' }, { text: 'Normalized Betweenness Centrality', fn: 'betweennessCentralityNormalized', arg: '' },
     { text: 'Page Rank', fn: 'pageRank', arg: '' }];
   isOnSelected = false;
-  isDirectedGraph = true;
+  isDirectedGraph = false;
   isMapNodeSizes = true;
   selectedPropFn: string = '';
   poppedData: { popper: HTMLDivElement, elem: any, fn: Function }[] = [];
@@ -49,8 +50,6 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let m = Math.max(...this._g.cy.nodes().map(x => x.data('__graphTheoreticProp')));
     this.maxPropValue = m;
     this._cyService.setNodeSizeOnGraphTheoreticProp(m);
-    this.hideShowOnZoomFn = this.hideShownBadgesOnZoom.bind(this);
-    this._g.cy.on('zoom', this.hideShowOnZoomFn);
     this.setBadgeColors();
   }
 
@@ -152,9 +151,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
 
     this.setBadgeCoords(e, div);
 
-    let fn = () => {
-      this.setBadgeCoords(e, div);
-    };
+    let fn = debounce2(() => { this.setBadgeCoords(e, div); }, this.UPDATE_POPPER_WAIT, () => { this.showHideBadge(false, div); }).bind(this);
 
     e.on('position', fn);
     this._g.cy.on('pan zoom resize', fn);
@@ -165,12 +162,12 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     // let the nodes resize first
     setTimeout(() => {
       let z1 = this._g.cy.zoom();
-      const z2 = z1 * 0.5;
       const p = e.renderedPosition();
       const eW = e.width() / 2;
       const eH = e.height() / 2;
       const w = div.clientWidth;
-      div.style.transform = `translate(${p.x + eW * z1 - w * Math.sqrt(z2)}px, ${p.y - eH * z1}px) scale(${z2})`;
+      div.style.transform = `translate(${p.x + eW * z1 - w * Math.sqrt(z1)}px, ${p.y - eH * z1}px) scale(${z1 / 2})`;
+      this.showHideBadge(true, div);
     }, 0);
   }
 
@@ -202,7 +199,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let s = '';
     let c = ColorPickerComponent.getAntiColor(this.badgeColor);
     for (let i = 0; i < badges.length; i++) {
-      s += `<span class="badge badge-pill badge-primary">${formatNumber(badges[i], 'en', '1.0-2')}</span>`
+      s += `<span class="badge badge-pill badge-primary strokeme">${formatNumber(badges[i], 'en', '1.0-2')}</span>`
     }
     return s;
   }
@@ -211,26 +208,46 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let z = this._g.cy.zoom();
 
     if (z > this.ZOOM_THRESHOLD && !this.isBadgeVisible) {
-      for (let i = 0; i < this.poppedData.length; i++) {
-        this.poppedData[i].popper.style.display = 'block';
-      }
+      this.showHideBadges(true);
       this.isBadgeVisible = true;
     }
     if (z <= this.ZOOM_THRESHOLD && this.isBadgeVisible) {
-      for (let i = 0; i < this.poppedData.length; i++) {
-        this.poppedData[i].popper.style.display = 'none';
-      }
+      this.showHideBadges(false);
       this.isBadgeVisible = false;
     }
+  }
+
+  showHideBadges(isShow: boolean) {
+    let z = this._g.cy.zoom();
+    if (z <= this.ZOOM_THRESHOLD) {
+      isShow = false;
+    }
+    let css = '0';
+    if (isShow) {
+      css = '1';
+    }
+    for (let i = 0; i < this.poppedData.length; i++) {
+      this.poppedData[i].popper.style.opacity = css;
+    }
+  }
+
+  showHideBadge(isShow: boolean, div: HTMLDivElement) {
+    let z = this._g.cy.zoom();
+    if (z <= this.ZOOM_THRESHOLD) {
+      isShow = false;
+    }
+    let css = '0';
+    if (isShow) {
+      css = '1';
+    }
+    div.style.opacity = css;
   }
 
   setBadgeColors() {
     for (let i = 0; i < this.poppedData.length; i++) {
       let c = ColorPickerComponent.mapColor(this.badgeColor, this.maxPropValue, this.poppedData[i].elem.data('__graphTheoreticProp'));
-      let antiC = ColorPickerComponent.getAntiColor(c);
       for (let j = 0; j < this.poppedData[i].popper.children.length; j++) {
         (this.poppedData[i].popper.children[j] as HTMLSpanElement).style.background = c;
-        (this.poppedData[i].popper.children[j] as HTMLSpanElement).style.color = antiC;
       }
     }
   }
