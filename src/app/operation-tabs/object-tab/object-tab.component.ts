@@ -219,6 +219,9 @@ export class ObjectTabComponent implements OnInit {
       let isSelected = curr.selected();
       let isVisible = curr.visible();
       for (let j = 0; j < c.length; j++) {
+        if (!this.nodeClasses.has(c[j]) && !this.edgeClasses.has(c[j])) {
+          continue;
+        }
         classSet.add(c[j]);
         let TYPE_CLASS = curr.isNode() ? 'NODE' : 'EDGE';
         this.increaseCountInObj(stat, TYPE_CLASS, 'total');
