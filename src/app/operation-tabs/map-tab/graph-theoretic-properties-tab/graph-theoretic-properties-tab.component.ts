@@ -26,7 +26,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   cySelector = '';
   badgeColor = '#007bff';
   isBadgeVisible = true;
-  readonly ZOOM_THRESHOLD = 0.6;
+  readonly ZOOM_THRESHOLD = 0.8;
   maxPropValue = 0;
 
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) { }
