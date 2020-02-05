@@ -161,12 +161,12 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   private setBadgeCoords(e, div: HTMLDivElement) {
     // let the nodes resize first
     setTimeout(() => {
-      let z1 = this._g.cy.zoom();
+      let z1 = this._g.cy.zoom() / 2;
       const p = e.renderedPosition();
-      const eW = e.width() / 2;
-      const eH = e.height() / 2;
+      const eW = e.renderedWidth() / 2;
+      const eH = e.renderedHeight() / 2;
       const w = div.clientWidth;
-      div.style.transform = `translate(${p.x + eW * z1 - w * (z1 / 2)}px, ${p.y - eH * z1}px) scale(${z1 / 2})`;
+      div.style.transform = `translate(${p.x + eW - w * z1}px, ${p.y - eH}px) scale(${z1})`;
       this.showHideBadge(true, div);
     }, 0);
   }
