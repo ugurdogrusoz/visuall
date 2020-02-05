@@ -27,7 +27,6 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   badgeColor = '#007bff';
   isBadgeVisible = true;
   readonly ZOOM_THRESHOLD = 0.6;
-  hideShowOnZoomFn = null;
   maxPropValue = 0;
 
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) { }
@@ -176,7 +175,6 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     for (let i = 0; i < size; i++) {
       this.destroyPopper('', 0);
     }
-    this._g.cy.off('zoom', this.hideShowOnZoomFn);
   }
 
   destroyPopper(id: string, i: number = -1) {
@@ -188,8 +186,10 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     }
     this.poppedData[i].popper.remove();
     // unbind previously bound functions
-    this.poppedData[i].elem.off('position', this.poppedData[i].fn);
-    this._g.cy.off('pan zoom resize', this.poppedData[i].fn);
+    if (this.poppedData[i].fn) {
+      this.poppedData[i].elem.off('position', this.poppedData[i].fn);
+      this._g.cy.off('pan zoom resize', this.poppedData[i].fn);
+    }
     this.poppedData[i].elem.removeClass('graphTheoreticDisplay');
     this.poppedData[i].elem.data('__graphTheoreticProp', undefined);
     this.poppedData.splice(i, 1);
