@@ -18,7 +18,7 @@ export class GlobalVariableService {
   setLoadingStatus: (boolean) => void;
   isSelectFromLoad: boolean = false;
   userPrefs: UserPref = {} as UserPref;
-  timebarChangedShownElems = new BehaviorSubject<boolean>(true);
+  shownElemsChanged = new BehaviorSubject<boolean>(true);
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);

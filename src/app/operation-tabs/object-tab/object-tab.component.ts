@@ -38,7 +38,7 @@ export class ObjectTabComponent implements OnInit {
       this.edgeClasses.add(key);
     }
     this._g.cy.on('select unselect add remove tap', debounce(this.showStats, 200, false).bind(this));
-    this._g.timebarChangedShownElems.subscribe(() => { this.showStats() });
+    this._g.shownElemsChanged.subscribe(() => { this.showStats() });
   }
 
   showObjectProps(event) {

@@ -33,7 +33,7 @@ export class TimebarService {
     } else {
       this._g.performLayout(false, false, this._playingPeriod);
     }
-    this._g.timebarChangedShownElems.next(true);
+    this._g.shownElemsChanged.next(true);
   }
 
   init() {

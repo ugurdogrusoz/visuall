@@ -186,6 +186,7 @@ export class MapTabComponent implements OnInit {
     this._g.applyClassFiltering();
     this._g.performLayout(false);
     cb.apply(this, cbParams);
+    this._g.shownElemsChanged.next(true);
   }
 
   runFilteringOnDatabase(cb: (s: number, end: number) => void, cbParams: any[]) {
@@ -311,6 +312,7 @@ export class MapTabComponent implements OnInit {
       this._g.hiddenClasses.add(classText);
       this._g.viewUtils.hide(this._g.cy.$('.' + classText));
     }
+    this._g.shownElemsChanged.next(true);
   }
 
   pageChanged(newPage: number) {

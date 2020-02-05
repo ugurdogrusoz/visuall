@@ -1,20 +1,27 @@
-<div class="panel-heading-hideable">
-  <div class="panel-title"><b class="va-heading2"> {{selectedClasses}}</b></div>
-</div>
-<div class="list-group list-group-flush">
-  <div *ngFor="let item of selectedItemProps">
-    <div class="row small m-1">
-      <div class="col-4 text-right px-1"><b class="va-text">{{item.key}}</b></div>
-      <div class="col-8 px-1 va-text">{{item.val}}</div>
+<div class="panel-group">
+  <div class="panel mx-1" *ngIf="selectedClasses && selectedClasses.length > 0">
+    <div class="panel-heading" data-toggle="collapse" data-target="#prop-tab" aria-expanded="true">
+      <p class="panel-title accordion-toggle"><b class="va-heading2">{{selectedClasses}}</b></p>
+    </div>
+
+    <div id="prop-tab" class="collapse show text-center m-1">
+      <div *ngFor="let item of selectedItemProps">
+        <div class="row small m-1">
+          <div class="col-4 text-right px-1"><b class="va-text">{{item.key}}</b></div>
+          <div class="col-8 px-1 va-text">{{item.val}}</div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="panel-heading-hideable">
-  <div class="panel-title"><b class="va-heading2"> Statistics</b></div>
-</div>
-<div>
-  <div class="va-text" *ngFor="let c of classStats">{{c}}</div>
-  <hr class="my-1" />
-  <div class="va-text" *ngFor="let c of objStats">{{c}}</div>
+  <div class="panel mx-1">
+    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#stat-tab" aria-expanded="false">
+      <p class="panel-title accordion-toggle"><b class="va-heading2">Statistics</b></p>
+    </div>
+    <div id="stat-tab" class="collapse">
+      <div class="va-text" *ngFor="let c of classStats">{{c}}</div>
+      <hr class="my-1" />
+      <div class="va-text" *ngFor="let c of objStats">{{c}}</div>
+    </div>
+  </div>
 </div>
