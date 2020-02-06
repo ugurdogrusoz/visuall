@@ -164,13 +164,28 @@ export class CytoscapeService {
     this._g.cy.style().selector('edge.nolabel')
       .style({ 'label': '' })
       .update();
-
-      this.setNodeSizeOnGraphTheoreticProp();
   }
 
-  setNodeSizeOnGraphTheoreticProp(maxVal = 1) {
+  setNodeSizeOnGraphTheoreticProp(maxVal: number, avgSize: number) {
+    if (maxVal <= 0) {
+      maxVal = 1;
+    }
     this._g.cy.style().selector('node.graphTheoreticDisplay')
-      .style({ 'width': `mapData(__graphTheoreticProp, 0, ${maxVal}, 20px, 60px)`, 'height': `mapData(__graphTheoreticProp, 0, ${maxVal}, 20px, 60px)` })
+      .style(
+        {
+          'width': (e) => {
+            let b = avgSize + 20;
+            let a = Math.max(5, avgSize - 20);
+            let x = e.data('__graphTheoreticProp');
+            return ((b - a) * x / maxVal + a) + 'px';
+          },
+          'height': (e) => {
+            let b = avgSize + 20;
+            let a = Math.max(5, avgSize - 20);
+            let x = e.data('__graphTheoreticProp');
+            return (((b - a) * x / maxVal + a) * e.height() / e.width()) + 'px';
+          }
+        })
       .update();
   }
 

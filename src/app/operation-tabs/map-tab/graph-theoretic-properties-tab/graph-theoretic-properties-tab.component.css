@@ -2,3 +2,8 @@ select {
   width: 60%;
   min-width: 200px;
 }
+
+.inp-3-char{
+  width: 5.5em;
+  height: 2em;
+}

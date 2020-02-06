@@ -311,6 +311,8 @@
 
     "compoundPadding": "5%",
 
+    "avgNodeSize": 40,
+
     "timebar": {
       "isEnabled": true,
       "playingStep": 50,

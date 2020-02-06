@@ -4,6 +4,7 @@ import { formatNumber } from '@angular/common';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { ColorPickerComponent } from 'src/app/color-picker/color-picker.component';
 import { debounce2, debounce } from 'src/app/constants';
+import AppDescription from '../../../../assets/app_description.json';
 
 @Component({
   selector: 'app-graph-theoretic-properties-tab',
@@ -28,12 +29,15 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   isBadgeVisible = true;
   readonly ZOOM_THRESHOLD = 0.8;
   maxPropValue = 0;
-
+  avgNodeSize = 30;
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) { }
 
   ngOnInit() {
     this._cyService.setRemovePoppersFn(this.destroyCurrentPoppers.bind(this));
-    this._g.cy.on('remove', (e) => { this.destroyPopper(e.target.id()) })
+    this._g.cy.on('remove', (e) => { this.destroyPopper(e.target.id()) });
+    if (AppDescription.appPreferences.avgNodeSize) {
+      this.avgNodeSize = AppDescription.appPreferences.avgNodeSize;
+    }
   }
 
   runProperty() {
@@ -48,7 +52,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     this[this.selectedPropFn]();
     let m = Math.max(...this._g.cy.nodes().map(x => x.data('__graphTheoreticProp')));
     this.maxPropValue = m;
-    this._cyService.setNodeSizeOnGraphTheoreticProp(m);
+    this._cyService.setNodeSizeOnGraphTheoreticProp(m, this.avgNodeSize);
     this.setBadgeColors();
   }
 
