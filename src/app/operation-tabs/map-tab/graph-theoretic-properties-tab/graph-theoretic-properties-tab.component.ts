@@ -161,11 +161,12 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     // let the nodes resize first
     setTimeout(() => {
       let z1 = this._g.cy.zoom() / 2;
-      const p = e.renderedPosition();
-      const eW = e.renderedWidth() / 2;
-      const eH = e.renderedHeight() / 2;
+      const bb = e.renderedBoundingBox({ includeLabels: false, includeOverlays: false });
       const w = div.clientWidth;
-      div.style.transform = `translate(${p.x + eW - w * z1}px, ${p.y - eH}px) scale(${z1})`;
+      const h = div.clientHeight;
+      const deltaW4Scale = (1 - z1) * w / 2;
+      const deltaH4Scale = (1 - z1) * h / 2;
+      div.style.transform = `translate(${bb.x2 - deltaW4Scale - w * z1}px, ${bb.y1 - deltaH4Scale}px) scale(${z1})`;
       this.showHideBadge(true, div);
     }, 0);
   }
