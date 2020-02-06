@@ -25,7 +25,7 @@
           <td *ngFor="let e of r | slice:1; let j = index;">
             <span *ngIf="isDraggable || (j <= columnLimit-1)">
               <span *ngIf="e.type == 0 || e.type == 3">{{e.val}}</span>
-              <span *ngIf="e.type == 1">{{e.val | number:'1.0-2'}}</span>
+              <span *ngIf="e.type == 1 && (e.val != 0 || !params.isHide0)">{{e.val | number:'1.0-2'}}</span>
               <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
             </span>
           </td>
@@ -38,7 +38,7 @@
       </tbody>
     </table>
   </div>
-  <div class="d-flex align-items-center justify-content-center va-text">
+  <div class="d-flex align-items-center justify-content-center va-text" *ngIf="params.resultCnt > params.pageSize">
     <ngb-pagination *ngIf="params.results.length > 0" (pageChange)="pageChanged($event)"
       [collectionSize]="params.resultCnt" [(page)]="params.currPage" [pageSize]="params.pageSize" [maxSize]="3"
       [rotate]="true">

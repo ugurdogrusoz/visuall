@@ -27,7 +27,7 @@ export class TableViewComponent implements OnInit {
 
   ngOnInit() {
     this.highlighterFn = this._cyService.highlightNeighbors();
-    this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; });
+    this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; if (this.params.columnLimit) { this.columnLimit = this.params.columnLimit; } });
     this.position.x = 0;
     this.position.y = 0;
     if (this.changeState) {

@@ -8,7 +8,7 @@
       <div *ngFor="let item of selectedItemProps">
         <div class="row small m-1">
           <div class="col-4 text-right px-1"><b class="va-text">{{item.key}}</b></div>
-          <div class="col-8 px-1 va-text">{{item.val}}</div>
+          <div class="col-8 text-left px-1 va-text">{{item.val}}</div>
         </div>
       </div>
     </div>
@@ -19,7 +19,7 @@
       <p class="panel-title accordion-toggle"><b class="va-heading2">Statistics</b></p>
     </div>
     <div id="stat-tab" class="collapse">
-      <div class="va-text" *ngFor="let c of classStats">{{c}}</div>
+      <app-table-view [params]="tableInput"> </app-table-view>
       <hr class="my-1" />
       <div class="va-text" *ngFor="let c of objStats">{{c}}</div>
     </div>

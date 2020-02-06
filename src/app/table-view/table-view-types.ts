@@ -18,4 +18,6 @@ export interface TableViewInput {
   pageSize: number;
   resultCnt: number;
   isNodeData: boolean;
+  columnLimit?: number;
+  isHide0?: boolean;
 }

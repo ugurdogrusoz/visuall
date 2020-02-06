@@ -4,6 +4,7 @@ import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribut
 import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
 import AppDescription from '../../../assets/app_description.json';
+import { TableViewInput, TableData, TableDataType } from 'src/app/table-view/table-view-types';
 
 @Component({
   selector: 'app-object-tab',
@@ -17,8 +18,8 @@ export class ObjectTabComponent implements OnInit {
   selectedClasses: string;
   selectedItemProps: any[];
   @Output() onTabChanged = new EventEmitter<number>();
-  classStats: string[] = [];
   objStats: string[] = [];
+  tableInput: TableViewInput = { columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false };
 
   constructor(private _g: GlobalVariableService) {
     this.selectedItemProps = [];
@@ -230,7 +231,7 @@ export class ObjectTabComponent implements OnInit {
         if (isSelected) {
           this.increaseCountInObj(stat, c[j], 'selected');
           this.increaseCountInObj(stat, TYPE_CLASS, 'selected');
-        } 
+        }
         if (!isVisible) {
           this.increaseCountInObj(stat, c[j], 'hidden');
           this.increaseCountInObj(stat, TYPE_CLASS, 'hidden');
@@ -242,20 +243,28 @@ export class ObjectTabComponent implements OnInit {
 
   private setStatStrFromObj(stat, classSet: Set<string>) {
     this.objStats.length = 0;
-    this.classStats.length = 0;
 
+    this.tableInput.results = [];
     for (let c of classSet) {
       if (stat[c] === undefined) {
         continue;
       }
-      let s = `${stat[c].total} ${c}'s`;
+      // first element must be ID, ID is irrelevant here
+      let row: TableData[] = [{ val: 0, type: TableDataType.number }];
+      row.push({ val: c, type: TableDataType.string });
+      row.push({ val: stat[c].total, type: TableDataType.number });
+
       if (stat[c]['selected']) {
-        s += `, ${stat[c]['selected']} selected`;
+        row.push({ val: stat[c]['selected'], type: TableDataType.number });
+      } else {
+        row.push({ val: 0, type: TableDataType.number });
       }
       if (stat[c]['hidden']) {
-        s += `, ${stat[c]['hidden']} hidden`;
+        row.push({ val: stat[c]['hidden'], type: TableDataType.number });
+      } else {
+        row.push({ val: 0, type: TableDataType.number });
       }
-      this.classStats.push(s);
+      this.tableInput.results.push(row);
     }
 
     let isFirst = true;
