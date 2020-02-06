@@ -3,7 +3,7 @@ import { GlobalVariableService } from 'src/app/global-variable.service';
 import { formatNumber } from '@angular/common';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { ColorPickerComponent } from 'src/app/color-picker/color-picker.component';
-import { debounce2 } from 'src/app/constants';
+import { debounce2, debounce } from 'src/app/constants';
 
 @Component({
   selector: 'app-graph-theoretic-properties-tab',
@@ -21,7 +21,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   isDirectedGraph = false;
   isMapNodeSizes = true;
   selectedPropFn: string = '';
-  poppedData: { popper: HTMLDivElement, elem: any, fn: Function }[] = [];
+  poppedData: { popper: HTMLDivElement, elem: any, fn: Function, fn2: Function }[] = [];
   UPDATE_POPPER_WAIT = 100;
   cySelector = '';
   badgeColor = '#007bff';
@@ -151,10 +151,12 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     this.setBadgeCoords(e, div);
 
     let fn = debounce2(() => { this.setBadgeCoords(e, div); }, this.UPDATE_POPPER_WAIT, () => { this.showHideBadge(false, div); }).bind(this);
+    let fn2 = debounce(() => { this.setBadgeVisibility(e, div); }, this.UPDATE_POPPER_WAIT * 2, false).bind(this);
 
     e.on('position', fn);
+    e.on('style', fn2);
     this._g.cy.on('pan zoom resize', fn);
-    this.poppedData.push({ popper: div, elem: e, fn: fn });
+    this.poppedData.push({ popper: div, elem: e, fn: fn, fn2: fn2 });
   }
 
   private setBadgeCoords(e, div: HTMLDivElement) {
@@ -167,8 +169,14 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
       const deltaW4Scale = (1 - z1) * w / 2;
       const deltaH4Scale = (1 - z1) * h / 2;
       div.style.transform = `translate(${bb.x2 - deltaW4Scale - w * z1}px, ${bb.y1 - deltaH4Scale}px) scale(${z1})`;
-      this.showHideBadge(true, div);
+      this.showHideBadge(e.visible(), div);
     }, 0);
+  }
+
+  private setBadgeVisibility(e, div: HTMLDivElement) {
+    if (!e.visible()) {
+      div.style.opacity = '0';
+    }
   }
 
   destroyCurrentPoppers() {
@@ -189,6 +197,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     // unbind previously bound functions
     if (this.poppedData[i].fn) {
       this.poppedData[i].elem.off('position', this.poppedData[i].fn);
+      this.poppedData[i].elem.off('style', this.poppedData[i].fn2);
       this._g.cy.off('pan zoom resize', this.poppedData[i].fn);
     }
     this.poppedData[i].elem.removeClass('graphTheoreticDisplay');
@@ -203,19 +212,6 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
       s += `<span class="badge badge-pill badge-primary strokeme">${formatNumber(badges[i], 'en', '1.0-2')}</span>`
     }
     return s;
-  }
-
-  hideShownBadgesOnZoom() {
-    let z = this._g.cy.zoom();
-
-    if (z > this.ZOOM_THRESHOLD && !this.isBadgeVisible) {
-      this.showHideBadges(true);
-      this.isBadgeVisible = true;
-    }
-    if (z <= this.ZOOM_THRESHOLD && this.isBadgeVisible) {
-      this.showHideBadges(false);
-      this.isBadgeVisible = false;
-    }
   }
 
   showHideBadges(isShow: boolean) {
