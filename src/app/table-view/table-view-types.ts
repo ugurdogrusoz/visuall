@@ -20,4 +20,5 @@ export interface TableViewInput {
   isNodeData: boolean;
   columnLimit?: number;
   isHide0?: boolean;
+  isUseCySelector4Highlight?: boolean;
 }

@@ -18,8 +18,12 @@ export class ObjectTabComponent implements OnInit {
   selectedClasses: string;
   selectedItemProps: any[];
   @Output() onTabChanged = new EventEmitter<number>();
-  objStats: string[] = [];
-  tableInput: TableViewInput = { columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false };
+  tableInput: TableViewInput = {
+    columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20,
+    isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true
+  };
+  private NODE_TYPE = '_NODE_';
+  private EDGE_TYPE = '_EDGE_';
 
   constructor(private _g: GlobalVariableService) {
     this.selectedItemProps = [];
@@ -224,7 +228,7 @@ export class ObjectTabComponent implements OnInit {
           continue;
         }
         classSet.add(c[j]);
-        let TYPE_CLASS = curr.isNode() ? 'NODE' : 'EDGE';
+        let TYPE_CLASS = curr.isNode() ? this.NODE_TYPE : this.EDGE_TYPE;
         this.increaseCountInObj(stat, TYPE_CLASS, 'total');
         this.increaseCountInObj(stat, c[j], 'total');
 
@@ -238,20 +242,30 @@ export class ObjectTabComponent implements OnInit {
         }
       }
     }
+    classSet.add(this.NODE_TYPE);
+    classSet.add(this.EDGE_TYPE);
     this.setStatStrFromObj(stat, classSet);
   }
 
   private setStatStrFromObj(stat, classSet: Set<string>) {
-    this.objStats.length = 0;
 
     this.tableInput.results = [];
     for (let c of classSet) {
       if (stat[c] === undefined) {
         continue;
       }
+      let cySelector = '.' + c;
       // first element must be ID, ID is irrelevant here
-      let row: TableData[] = [{ val: 0, type: TableDataType.number }];
-      row.push({ val: c, type: TableDataType.string });
+      let row: TableData[] = [{ val: cySelector, type: TableDataType.string }];
+      if (c == this.NODE_TYPE) {
+        row[0].val = 'node';
+        row.push({ val: 'Node', type: TableDataType.string });
+      } else if (c == this.EDGE_TYPE) {
+        row[0].val = 'edge';
+        row.push({ val: 'Edge', type: TableDataType.string });
+      } else {
+        row.push({ val: c, type: TableDataType.string });
+      }
       row.push({ val: stat[c].total, type: TableDataType.number });
 
       if (stat[c]['selected']) {
@@ -265,23 +279,6 @@ export class ObjectTabComponent implements OnInit {
         row.push({ val: 0, type: TableDataType.number });
       }
       this.tableInput.results.push(row);
-    }
-
-    let isFirst = true;
-    for (let c of ['NODE', 'EDGE']) {
-      if (stat[c] === undefined) {
-        continue;
-      }
-      let type = isFirst ? 'nodes' : 'edges';
-      let s = `Total no of ${type}: ${stat[c].total}`;
-      if (stat[c]['selected']) {
-        s += `, ${stat[c]['selected']} selected`;
-      }
-      if (stat[c]['hidden']) {
-        s += `, ${stat[c]['hidden']} hidden`;
-      }
-      this.objStats.push(s);
-      isFirst = false;
     }
   }
 

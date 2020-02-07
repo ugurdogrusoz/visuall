@@ -13,7 +13,7 @@ import { Subject } from 'rxjs';
 })
 export class TableViewComponent implements OnInit {
 
-  private highlighterFn: (ev: any) => void;
+  private highlighterFn: (ev: { target: any, type: string, cySelector?: string }) => void;
   // column index is also a column
   columnLimit: number;
   isDraggable: boolean = false;
@@ -39,20 +39,28 @@ export class TableViewComponent implements OnInit {
     this.onDataForQueryResult.emit(id);
   }
 
-  onMouseEnter(id: number) {
-    let target = this._g.cy.$('#n' + id);
-    if (!this.params.isNodeData) {
-      target = this._g.cy.$('#e' + id);
+  onMouseEnter(id: string) {
+    if (this.params.isUseCySelector4Highlight) {
+      this.highlighterFn({ target: null, type: EV_MOUSE_ON, cySelector: id });
+    } else {
+      let target = this._g.cy.$('#n' + id);
+      if (!this.params.isNodeData) {
+        target = this._g.cy.$('#e' + id);
+      }
+      this.highlighterFn({ target: target, type: EV_MOUSE_ON });
     }
-    this.highlighterFn({ target: target, type: EV_MOUSE_ON });
   }
 
-  onMouseExit(id: number) {
-    let target = this._g.cy.$('#n' + id);
-    if (!this.params.isNodeData) {
-      target = this._g.cy.$('#e' + id);
+  onMouseExit(id: string) {
+    if (this.params.isUseCySelector4Highlight) {
+      this.highlighterFn({ target: null, type: EV_MOUSE_OFF, cySelector: id });
+    } else {
+      let target = this._g.cy.$('#n' + id);
+      if (!this.params.isNodeData) {
+        target = this._g.cy.$('#e' + id);
+      }
+      this.highlighterFn({ target: target, type: EV_MOUSE_OFF });
     }
-    this.highlighterFn({ target: target, type: EV_MOUSE_OFF });
   }
 
   pageChanged(newPage: number) {

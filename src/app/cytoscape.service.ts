@@ -500,10 +500,15 @@ export class CytoscapeService {
     let currOpacity = 1;
     let nextOpacity = 1;
 
-    return function (event) {
-      let elements2remain = event.target.neighborhood().union(event.target);
-      if (event.target.isEdge()) {
-        elements2remain = event.target.connectedNodes().union(event.target);
+    return function (event: { target: any, type: string, cySelector?: string }) {
+      let elements2remain = null;
+      if (event.cySelector != undefined) {
+        elements2remain = this._g.cy.$(event.cySelector);
+      } else {
+        elements2remain = event.target.neighborhood().union(event.target);
+        if (event.target.isEdge()) {
+          elements2remain = event.target.connectedNodes().union(event.target);
+        }
       }
 
       if (event.type === C.EV_MOUSE_ON) {
