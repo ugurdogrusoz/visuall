@@ -80,7 +80,18 @@ export class SettingsTabComponent implements OnInit {
     up.tableColumnLimit.subscribe(x => this.tableColumnLimit = x);
 
     // general bool settings
-    up.isAutoIncrementalLayoutOnChange.subscribe(x => this.generalBoolSettings[0].isEnable = x);
+    up.isAutoIncrementalLayoutOnChange.subscribe(x => {
+      this.generalBoolSettings[0].isEnable = x;
+      if (x) {
+        this._g.expandCollapseApi.setOption('layoutBy', this._g.layout);
+        this._g.expandCollapseApi.setOption('fisheye', true);
+        this._g.expandCollapseApi.setOption('animate', true);
+      } else {
+        this._g.expandCollapseApi.setOption('layoutBy', null);
+        this._g.expandCollapseApi.setOption('fisheye', false);
+        this._g.expandCollapseApi.setOption('animate', false);
+      }
+    });
     up.isHighlightOnHover.subscribe(x => this.generalBoolSettings[1].isEnable = x);
     up.isShowOverviewWindow.subscribe(x => this.generalBoolSettings[2].isEnable = x);
     up.isShowEdgeLabels.subscribe(x => this.generalBoolSettings[3].isEnable = x);

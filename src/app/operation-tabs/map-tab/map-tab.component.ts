@@ -313,6 +313,7 @@ export class MapTabComponent implements OnInit {
       this._g.viewUtils.hide(this._g.cy.$('.' + classText));
     }
     this._g.shownElemsChanged.next(true);
+    this._g.performLayout(false);
   }
 
   pageChanged(newPage: number) {

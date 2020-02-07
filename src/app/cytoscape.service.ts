@@ -659,6 +659,7 @@ export class CytoscapeService {
     if (isHide) {
       this._g.viewUtils.hide(this._g.cy.$(':selected'));
       this._g.applyClassFiltering();
+      this._g.performLayout(false);
     } else {
       if (!this.isAnyHidden()) {
         return;
