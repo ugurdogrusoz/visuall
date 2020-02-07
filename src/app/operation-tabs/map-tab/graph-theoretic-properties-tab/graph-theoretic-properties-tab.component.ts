@@ -53,7 +53,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     let m = Math.max(...this._g.cy.nodes().map(x => x.data('__graphTheoreticProp')));
     this.maxPropValue = m;
     this._cyService.setNodeSizeOnGraphTheoreticProp(m, this.avgNodeSize);
-    this.setBadgeColors();
+    this.setBadgeColorsAndCoords();
   }
 
   degreeCentrality() {
@@ -152,8 +152,6 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
       e.addClass('graphTheoreticDisplay');
     }
 
-    this.setBadgeCoords(e, div);
-
     let fn = debounce2(() => { this.setBadgeCoords(e, div); }, this.UPDATE_POPPER_WAIT, () => { this.showHideBadge(false, div); }).bind(this);
     let fn2 = debounce(() => { this.setBadgeVisibility(e, div); }, this.UPDATE_POPPER_WAIT * 2, false).bind(this);
 
@@ -166,7 +164,11 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   private setBadgeCoords(e, div: HTMLDivElement) {
     // let the nodes resize first
     setTimeout(() => {
-      let z1 = this._g.cy.zoom() / 2;
+      let ratio = e.width() / this.avgNodeSize;
+      if (!this.isMapNodeSizes) {
+        ratio = 1;
+      }
+      let z1 = this._g.cy.zoom() / 2 * ratio;
       const bb = e.renderedBoundingBox({ includeLabels: false, includeOverlays: false });
       const w = div.clientWidth;
       const h = div.clientHeight;
@@ -211,7 +213,6 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
 
   getHtml(badges: number[]): string {
     let s = '';
-    let c = ColorPickerComponent.getAntiColor(this.badgeColor);
     for (let i = 0; i < badges.length; i++) {
       s += `<span class="badge badge-pill badge-primary strokeme">${formatNumber(badges[i], 'en', '1.0-2')}</span>`
     }
@@ -244,17 +245,24 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     div.style.opacity = css;
   }
 
-  setBadgeColors() {
+  setBadgeColorsAndCoords() {
     for (let i = 0; i < this.poppedData.length; i++) {
       let c = ColorPickerComponent.mapColor(this.badgeColor, this.maxPropValue, this.poppedData[i].elem.data('__graphTheoreticProp'));
       for (let j = 0; j < this.poppedData[i].popper.children.length; j++) {
         (this.poppedData[i].popper.children[j] as HTMLSpanElement).style.background = c;
       }
+      this.setBadgeCoords(this.poppedData[i].elem, this.poppedData[i].popper);
     }
   }
 
   colorSelected(s: string) {
     this.badgeColor = s;
+  }
+
+  avgNodeSizeChanged() {
+    if (this.avgNodeSize < 5) {
+      this.avgNodeSize = 5;
+    }
   }
 
 }
