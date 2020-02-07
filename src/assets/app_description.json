@@ -22,7 +22,7 @@
         "font-size": "11px",
         "shape": "ellipse",
         "background-fit": "contain",
-        "background-image": "assets/img/black-user-shape.png",
+        "background-image": "assets/img/person.png",
         "width": "58px",
         "height": "58px"
       }
