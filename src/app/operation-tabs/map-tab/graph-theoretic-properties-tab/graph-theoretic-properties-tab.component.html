@@ -17,6 +17,8 @@
     </div>
     <input type="number" (keydown.enter)="avgNodeSizeChanged()" min="5" max="1000" title="Average node size"
       [(ngModel)]="currNodeSize" class="mx-1 inp-3-char form-control va-text">
+  </div>
+  <div class="d-flex flex-wrap align-items-center justify-content-center m-1">
     <div class="custom-control custom-checkbox m-1">
       <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isMapBadgeSizes" />
       <label class="form-check-label va-text">Adjust badge size</label>
