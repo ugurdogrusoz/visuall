@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import AppDescription from '../../../../assets/app_description.json';
-import { ClassOption, TimebarMetric, Rule, RuleSync } from '../../map-tab/filtering-types';
-import { NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS, GENERIC_TYPE } from '../../../constants';
+import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric } from '../../map-tab/filtering-types';
+import { GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { Subject } from 'rxjs';
 
@@ -268,7 +268,7 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   private setFnsForMetrics() {
     for (let m of this.currMetrics) {
-      let fnStr = this.getBoolExpressionFromMetric(m);
+      let fnStr = getBoolExpressionFromMetric(m);
       const idxOfSumRule = this.getIdxOfSumRule(m);
       if (idxOfSumRule == -1) {
         fnStr += `return 1;`
@@ -283,74 +283,6 @@ export class TimebarMetricEditorComponent implements OnInit {
       fnStr += ' return 0;'
       console.log('fnStr: ', fnStr);
       m.incrementFn = new Function('x', fnStr) as (x: any) => number;
-    }
-  }
-
-  private getBoolExpressionFromMetric(m: TimebarMetric): string {
-    let classCondition = '';
-    // apply class condition
-    if (m.className.toLowerCase() == GENERIC_TYPE.EDGES_CLASS.toLowerCase()) {
-      classCondition = ` x.id()[0] === 'e' `;
-    } else if (m.className.toLowerCase() == GENERIC_TYPE.NODES_CLASS.toLowerCase()) {
-      classCondition = ` x.id()[0] === 'n' `;
-    } else if (m.className.toLowerCase() == GENERIC_TYPE.ANY_CLASS.toLowerCase()) {
-      classCondition = ` true `;
-    } else {
-      classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;
-    }
-
-    let propertyCondition = '';
-    let prevBoolExp = '';
-    for (let [i, r] of m.rules.entries()) {
-      let boolExp = '';
-      // apply property condition
-      if (r.operator && r.inputOperand) {
-        boolExp = this.getJsExpressionForMetricRule(r);
-      }
-      if (i > 0 && prevBoolExp.length > 0) {
-        if (r.ruleOperator == 'OR') {
-          propertyCondition += ' || ';
-        } else {
-          propertyCondition += ' && ';
-        }
-      }
-      propertyCondition += boolExp;
-      prevBoolExp = boolExp;
-    }
-    if (propertyCondition.length < 1) {
-      return `if (${classCondition})`;
-    }
-    return `if ( (${classCondition}) && (${propertyCondition}))`;
-  }
-
-  private getJsExpressionForMetricRule(r: Rule) {
-    if (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'datetime' || r.propertyType == 'edge') {
-      let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
-      if (r.propertyType == 'datetime') {
-        return `x.data().${r.propertyOperand} ${op} ${r.rawInput}`;
-      }
-      if (r.propertyType == 'edge') {
-        return `x.connectedEdges('.${r.propertyOperand}').length ${op} ${r.inputOperand}`;
-      }
-      return `x.data().${r.propertyOperand} ${op} ${r.inputOperand}`;
-    }
-    if (r.propertyType == 'string') {
-      if (r.operator === '=') {
-        return `x.data().${r.propertyOperand} === '${r.inputOperand}'`;
-      }
-      let op = NEO4J_2_JS_STR_OPERATORS[r.operator];
-      return `x.data().${r.propertyOperand}.${op}('${r.inputOperand}')`;
-    }
-    if (r.propertyType == 'list') {
-      return `x.data().${r.propertyOperand}.includes('${r.inputOperand}')`;
-    }
-    if (r.propertyType.startsWith('enum')) {
-      let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
-      if (r.propertyType.endsWith('string')) {
-        return `x.data().${r.propertyOperand} ${op} '${r.inputOperand}'`;
-      } else {
-        return `x.data().${r.propertyOperand} ${op} ${r.inputOperand}`;
-      }
     }
   }
 

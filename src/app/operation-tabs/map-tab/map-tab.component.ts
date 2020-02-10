@@ -6,7 +6,7 @@ import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
-import { ClassOption, ClassBasedRules, Rule, RuleSync } from './filtering-types';
+import { ClassOption, ClassBasedRules, Rule, RuleSync, getBoolExpressionFromMetric } from './filtering-types';
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType } from 'src/app/table-view/table-view-types';
@@ -38,7 +38,7 @@ export class MapTabComponent implements OnInit {
   private isGroupTabOpen = false;
   @ViewChild(GroupTabComponent, { static: false })
   private groupComponent: GroupTabComponent;
-  
+
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService) {
     this.isFilterOnDb = true;
     this.tableInput.isMergeGraph = true;
@@ -165,22 +165,8 @@ export class MapTabComponent implements OnInit {
 
   runFilteringOnClient(cb: (s: number, end: number) => void, cbParams: any[]) {
     this._g.viewUtils.hide(this._g.cy.$());
-
-    let allClassElems = this._g.cy.$('.' + this.filteringRule.className);
-    let filteredClassElems = this._g.cy.collection();
-    for (let i = 0; i < this.filteringRule.rules.length; i++) {
-      const rule = this.filteringRule.rules[i];
-      if (i == 0) {
-        filteredClassElems = allClassElems.filter(ele => { return this.filterByRule(rule, ele) });
-        continue;
-      }
-      if (rule.ruleOperator == 'OR') {
-        filteredClassElems.merge(allClassElems.filter(ele => { return this.filterByRule(rule, ele) }));
-      } else if (rule.ruleOperator == 'AND') {
-        filteredClassElems = filteredClassElems.filter(ele => { return this.filterByRule(rule, ele) });
-      }
-    }
-
+    let fnStr = getBoolExpressionFromMetric(this.filteringRule) + ' return true; return false;';
+    let filteredClassElems = this._g.cy.filter(new Function('x', fnStr));
     filteredClassElems.merge(filteredClassElems.connectedNodes());
     this._g.viewUtils.show(filteredClassElems);
     this._g.applyClassFiltering();

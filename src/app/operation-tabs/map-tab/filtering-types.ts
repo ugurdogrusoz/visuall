@@ -1,3 +1,5 @@
+import { GENERIC_TYPE, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS } from 'src/app/constants';
+
 export interface ClassOption {
   text: string;
   isDisabled: boolean;
@@ -51,4 +53,72 @@ export interface TimebarItem {
   start: number;
   end: number;
   cyElem: any;
+}
+
+export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules): string {
+  let classCondition = '';
+  // apply class condition
+  if (m.className.toLowerCase() == GENERIC_TYPE.EDGES_CLASS.toLowerCase()) {
+    classCondition = ` x.isEdge() `;
+  } else if (m.className.toLowerCase() == GENERIC_TYPE.NODES_CLASS.toLowerCase()) {
+    classCondition = ` x.isNode() `;
+  } else if (m.className.toLowerCase() == GENERIC_TYPE.ANY_CLASS.toLowerCase()) {
+    classCondition = ` true `;
+  } else {
+    classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;
+  }
+
+  let propertyCondition = '';
+  let prevBoolExp = '';
+  for (let [i, r] of m.rules.entries()) {
+    let boolExp = '';
+    // apply property condition
+    if (r.operator && r.inputOperand) {
+      boolExp = getJsExpressionForMetricRule(r);
+    }
+    if (i > 0 && prevBoolExp.length > 0) {
+      if (r.ruleOperator == 'OR') {
+        propertyCondition += ' || ';
+      } else {
+        propertyCondition += ' && ';
+      }
+    }
+    propertyCondition += boolExp;
+    prevBoolExp = boolExp;
+  }
+  if (propertyCondition.length < 1) {
+    return `if (${classCondition})`;
+  }
+  return `if ( (${classCondition}) && (${propertyCondition}))`;
+}
+
+function getJsExpressionForMetricRule(r: Rule) {
+  if (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'datetime' || r.propertyType == 'edge') {
+    let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
+    if (r.propertyType == 'datetime') {
+      return `x.data().${r.propertyOperand} ${op} ${r.rawInput}`;
+    }
+    if (r.propertyType == 'edge') {
+      return `x.connectedEdges('.${r.propertyOperand}').length ${op} ${r.inputOperand}`;
+    }
+    return `x.data().${r.propertyOperand} ${op} ${r.inputOperand}`;
+  }
+  if (r.propertyType == 'string') {
+    if (r.operator === '=') {
+      return `x.data().${r.propertyOperand} === '${r.inputOperand}'`;
+    }
+    let op = NEO4J_2_JS_STR_OPERATORS[r.operator];
+    return `x.data().${r.propertyOperand}.${op}('${r.inputOperand}')`;
+  }
+  if (r.propertyType == 'list') {
+    return `x.data().${r.propertyOperand}.includes('${r.inputOperand}')`;
+  }
+  if (r.propertyType.startsWith('enum')) {
+    let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
+    if (r.propertyType.endsWith('string')) {
+      return `x.data().${r.propertyOperand} ${op} '${r.inputOperand}'`;
+    } else {
+      return `x.data().${r.propertyOperand} ${op} ${r.inputOperand}`;
+    }
+  }
 }
