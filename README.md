@@ -10,7 +10,9 @@ Visu*all* is **not** an open source or free software. Please contact [i-Vis Rese
 
 ## Running a local instance
 
-`node style-generator.js {model description filename}` to generate customized application, it changes [styles.css](src/styles.css) and [index.html](src/index.html).
+`npm install` for loading dependencies
+
+`node style-generator.js {application description filename}` to generate customized application, this changes [styles.css](src/styles.css) and [index.html](src/index.html). Notice that the application description file is inside the `assets` folder.
 
 `ng serve` for development and debugging
 
