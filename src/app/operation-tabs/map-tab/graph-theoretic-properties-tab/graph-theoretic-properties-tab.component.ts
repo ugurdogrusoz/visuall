@@ -21,6 +21,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   isOnSelected = false;
   isDirectedGraph = false;
   isMapNodeSizes = true;
+  isMapBadgeSizes = false;
   selectedPropFn: string = '';
   poppedData: { popper: HTMLDivElement, elem: any, fn: Function, fn2: Function }[] = [];
   UPDATE_POPPER_WAIT = 100;
@@ -28,15 +29,16 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   badgeColor = '#007bff';
   isBadgeVisible = true;
   readonly ZOOM_THRESHOLD = 0.8;
+  readonly NODE_SIZE = 40;
   maxPropValue = 0;
-  avgNodeSize = 30;
+  currNodeSize = this.NODE_SIZE;
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) { }
 
   ngOnInit() {
     this._cyService.setRemovePoppersFn(this.destroyCurrentPoppers.bind(this));
     this._g.cy.on('remove', (e) => { this.destroyPopper(e.target.id()) });
     if (AppDescription.appPreferences.avgNodeSize) {
-      this.avgNodeSize = AppDescription.appPreferences.avgNodeSize;
+      this.currNodeSize = AppDescription.appPreferences.avgNodeSize;
     }
   }
 
@@ -52,7 +54,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     this[this.selectedPropFn]();
     let m = Math.max(...this._g.cy.nodes().map(x => x.data('__graphTheoreticProp')));
     this.maxPropValue = m;
-    this._cyService.setNodeSizeOnGraphTheoreticProp(m, this.avgNodeSize);
+    this._cyService.setNodeSizeOnGraphTheoreticProp(m, this.currNodeSize);
     this.setBadgeColorsAndCoords();
   }
 
@@ -142,12 +144,14 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     div.style.left = '0px';
     document.getElementById('cy').appendChild(div);
 
-    if (this.isMapNodeSizes) {
+    if (this.isMapNodeSizes || this.isMapBadgeSizes) {
       let sum = 0;
       for (let i = 0; i < badges.length; i++) {
         sum += badges[i];
       }
       e.data('__graphTheoreticProp', sum / badges.length);
+    }
+    if (this.isMapNodeSizes) {
       e.removeClass('graphTheoreticDisplay');
       e.addClass('graphTheoreticDisplay');
     }
@@ -164,10 +168,17 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   private setBadgeCoords(e, div: HTMLDivElement) {
     // let the nodes resize first
     setTimeout(() => {
-      let ratio = e.width() / this.avgNodeSize;
-      if (!this.isMapNodeSizes) {
-        ratio = 1;
+      let ratio = 1;
+      if (this.isMapBadgeSizes) {
+        let b = this.currNodeSize + 20;
+        let a = Math.max(5, this.currNodeSize - 20);
+        let x = e.data('__graphTheoreticProp');
+        ratio = ((b - a) * x / this.maxPropValue + a) / this.currNodeSize;
+      } else {
+        ratio = this.currNodeSize / this.NODE_SIZE;
       }
+      ratio = ratio < this.ZOOM_THRESHOLD ? this.ZOOM_THRESHOLD : ratio;
+
       let z1 = this._g.cy.zoom() / 2 * ratio;
       const bb = e.renderedBoundingBox({ includeLabels: false, includeOverlays: false });
       const w = div.clientWidth;
@@ -260,8 +271,8 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   }
 
   avgNodeSizeChanged() {
-    if (this.avgNodeSize < 5) {
-      this.avgNodeSize = 5;
+    if (this.currNodeSize < 5) {
+      this.currNodeSize = 5;
     }
   }
 

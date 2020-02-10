@@ -15,8 +15,12 @@
       <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isMapNodeSizes" />
       <label class="form-check-label va-text">Adjust node size</label>
     </div>
-    <input type="number" [disabled]="!isMapNodeSizes" (keydown.enter)="avgNodeSizeChanged()" min="5" max="1000"
-      title="Average node size" [(ngModel)]="avgNodeSize" class="mx-1 inp-3-char form-control va-text">
+    <input type="number" (keydown.enter)="avgNodeSizeChanged()" min="5" max="1000" title="Average node size"
+      [(ngModel)]="currNodeSize" class="mx-1 inp-3-char form-control va-text">
+    <div class="custom-control custom-checkbox m-1">
+      <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isMapBadgeSizes" />
+      <label class="form-check-label va-text">Adjust badge size</label>
+    </div>
     <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="badgeColor"></app-color-picker>
   </div>
   <div class="d-flex flex-wrap align-items-center justify-content-center m-1">
