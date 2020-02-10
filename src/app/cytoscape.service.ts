@@ -657,9 +657,12 @@ export class CytoscapeService {
 
   showHideSelectedElements(isHide: boolean) {
     if (isHide) {
-      this._g.viewUtils.hide(this._g.cy.$(':selected'));
+      let selected = this._g.cy.$(':selected');
+      this._g.viewUtils.hide(selected);
       this._g.applyClassFiltering();
-      this._g.performLayout(false);
+      if (selected.length > 0) {
+        this._g.performLayout(false);
+      }
     } else {
       if (!this.isAnyHidden()) {
         return;
