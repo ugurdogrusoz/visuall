@@ -22,8 +22,16 @@ export class Neo4jDb implements DbService {
     this._g.getConfig().subscribe(x => { this.dbConfig = x['database'] }, error => console.log('getConfig err: ', error));
   }
 
-  getNeighbors(elemId: string, callback: (x: GraphResponse) => any) {
-    this.runQuery(`MATCH (n)-[e]-(n2) WHERE ID(n) = ${elemId} RETURN n,n2,e`, callback);
+  getNeighbors(elemIds: string[]|number[], callback: (x: GraphResponse) => any) {
+    let condition = '';
+    for (let i = 0; i < elemIds.length; i++) {
+      if (i == elemIds.length - 1) {
+        condition += ` ID(n) = ${elemIds[i]} `
+      } else {
+        condition += ` ID(n) = ${elemIds[i]} OR `
+      }
+    }
+    this.runQuery(`MATCH (n)-[e]-(n2) WHERE ${condition} RETURN n,n2,e`, callback);
   }
 
   getSampleData(callback: (x: GraphResponse) => any) {

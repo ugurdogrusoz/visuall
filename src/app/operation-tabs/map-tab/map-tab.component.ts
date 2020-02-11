@@ -33,8 +33,6 @@ export class MapTabComponent implements OnInit {
   currProperties: Subject<RuleSync> = new Subject();
   tableInput: TableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
   isClassTypeLocked: boolean;
-  isTableDraggable: boolean = false;
-  currTableState: Subject<boolean> = new Subject();
   private isGroupTabOpen = false;
   @ViewChild(GroupTabComponent, { static: false })
   private groupComponent: GroupTabComponent;
@@ -311,8 +309,8 @@ export class MapTabComponent implements OnInit {
     this.loadTable(skip, limit);
   }
 
-  getDataForQueryResult(id: number) {
-    this._dbService.getNeighbors(id + '', (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) });
+  getDataForQueryResult(ids: number[]|string[]) {
+    this._dbService.getNeighbors(ids, (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) });
   }
 
   resetRule() {
@@ -321,11 +319,6 @@ export class MapTabComponent implements OnInit {
     this.isClassTypeLocked = false;
     this.selectedClass = this.classOptions[0].text;
     this.changeSelectedClass();
-  }
-
-  changeTableState() {
-    this.isTableDraggable = !this.isTableDraggable;
-    this.currTableState.next(this.isTableDraggable);
   }
 
   groupTabCliked() {

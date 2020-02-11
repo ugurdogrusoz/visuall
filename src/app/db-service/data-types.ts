@@ -1,7 +1,7 @@
 import { ClassBasedRules } from '../operation-tabs/map-tab/filtering-types';
 
 export interface DbService {
-  getNeighbors(elemId: string, callback: (x: GraphResponse) => any);
+  getNeighbors(elemIds: string[], callback: (x: GraphResponse) => any);
   getSampleData(callback: (x: GraphResponse) => any);
   getAllData(callback: (x: GraphResponse) => any);
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);

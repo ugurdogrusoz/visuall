@@ -85,13 +85,9 @@
               [disabled]="!isFilterOnDb" />
             <label class="form-check-label va-text">Merge</label>
           </div>
-          <a href="#" *ngIf="tableInput.results.length > 0" class="mx-3">
-            <img [src]="isTableDraggable ? 'assets/img/minimize.svg' : 'assets/img/maximize.svg'"
-              (click)="changeTableState()" [title]="isTableDraggable ? 'Minimize table' : 'Maximize table'">
-          </a>
         </div>
       </div>
-      <app-table-view [params]="tableInput" [changeState]="currTableState" (onPageChanged)="pageChanged($event)"
+      <app-table-view [params]="tableInput" (onPageChanged)="pageChanged($event)"
         (onDataForQueryResult)="getDataForQueryResult($event)"> </app-table-view>
     </div>
   </div>

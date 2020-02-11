@@ -13,7 +13,7 @@ export class DbAdapterService implements DbService {
   }
 
   // ----------------------- DbService interface methods starts -------------------------------
-  getNeighbors(elemId: string, callback: (x: GraphResponse) => any) {
+  getNeighbors(elemId: string[]|number[], callback: (x: GraphResponse) => any) {
     this._db.getNeighbors(elemId, callback);
   }
 

@@ -1,3 +1,17 @@
+<div class="d-flex flex-wrap align-items-center justify-content-left m-1" *ngIf="params.results.length > 0">
+  <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" class="form-control va-small-text"
+    placeholder="search..." [(ngModel)]="filterTxt" (ngModelChange)="filterTxtChanged()">
+
+  <a href="#" class="mx-3" *ngIf="params.results.length > 0" (click)="loadGraph4Checked()">
+    <img class="img-icon" title="Load graph" src="../assets/img/play-button.svg">
+  </a>
+
+  <a href="#" *ngIf="params.results.length > 0" (click)="tableStateChanged()">
+    <img [src]="isDraggable ? 'assets/img/minimize.svg' : 'assets/img/maximize.svg'"
+      [title]="isDraggable ? 'Minimize table' : 'Maximize table'">
+  </a>
+</div>
+
 <div [ngDraggable]="isDraggable" [position]="position"
   [ngClass]="{'draggable-content': isDraggable, 'drag-block': isDraggable}">
   <div class="table-responsive">
@@ -7,33 +21,43 @@
           <th scope="col">
             #
           </th>
-          <th scope="col" *ngFor="let col of params.columns; let i = index;"><span
-              *ngIf="isDraggable || (i <= columnLimit-1)">{{col}}</span>
+          <th scope="col" *ngFor="let col of params.columns; let i = index;">
+            <a href="#" class="table-header" *ngIf="isDraggable || (i <= columnLimit-1)" (click)="columnClicked(i)">
+              {{col}}
+              <span *ngIf="sortingIdx == i">
+                <span *ngIf="sortDirection == 'asc'">&#9650;</span>
+                <span *ngIf="sortDirection == 'desc'">&#9660;</span>
+              </span>
+            </a>
           </th>
           <th scope="col" *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)">
             <span>...</span>
           </th>
           <th scope="col" [hidden]="params.isLoadGraph">
-            <img src="assets/img/graph.svg" title="Load graph">
+            <input type="checkbox" (change)="cb4AllChanged()" />
           </th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let r of params.results; let i = index;" (mouseenter)="onMouseEnter(r[0].val)"
           (mouseleave)="onMouseExit(r[0].val)">
-          <td scope="row">{{ (params.currPage - 1) * params.pageSize + i + 1 }}</td>
-          <td *ngFor="let e of r | slice:1; let j = index;">
-            <span *ngIf="isDraggable || (j <= columnLimit-1)">
-              <span *ngIf="e.type == 0 || e.type == 3">{{e.val}}</span>
-              <span *ngIf="e.type == 1 && (e.val != 0 || !params.isHide0)">{{e.val | number:'1.0-2'}}</span>
-              <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
-            </span>
-          </td>
-          <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
-          <td [hidden]="params.isLoadGraph"><a href="#" class="query-result"
-              (click)="getDataForQueryResult(r[0].val)"><img class="img-icon" title="Load graph"
-                src="../assets/img/play-button.svg"></a>
-          </td>
+          <ng-container *ngIf="isRowVisible[i] || isInitial">
+            <td scope="row">{{ (params.currPage - 1) * params.pageSize + i + 1 }}</td>
+            <td *ngFor="let e of r | slice:1; let j = index;">
+              <span *ngIf="isDraggable || (j <= columnLimit-1)">
+                <span *ngIf="e.type == 0 || e.type == 3">
+                  <ngb-highlight [result]="e.val" [term]="filterTxt"></ngb-highlight>
+                </span>
+                <span *ngIf="e.type == 1 && (e.val != 0 || !params.isHide0)">{{e.val | number:'1.0-2'}}</span>
+                <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
+              </span>
+            </td>
+            <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
+            <td [hidden]="params.isLoadGraph">
+              <input type="checkbox" class="form-check-input mx-0" [(ngModel)]="isRowChecked[i]"
+                (change)="cbChanged()" />
+            </td>
+          </ng-container>
         </tr>
       </tbody>
     </table>
