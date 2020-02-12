@@ -257,6 +257,12 @@ export class Neo4jDb implements DbService {
         } else {
           s += ` toString(x.${k}) CONTAINS '${txt}' OR `;
         }
+      } else {
+        if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
+          s += ` LOWER(REDUCE(s='', w IN x.${k} | s + w)) CONTAINS LOWER('${txt}') OR `;
+        } else {
+          s += ` REDUCE(s = "", w IN x.${k} | s + w) CONTAINS '${txt}' OR `;
+        }
       }
     }
     s = s.slice(0, -3)
