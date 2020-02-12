@@ -21,4 +21,11 @@ export interface TableViewInput {
   columnLimit?: number;
   isHide0?: boolean;
   isUseCySelector4Highlight?: boolean;
+  isHideLoadGraph?: boolean;
+}
+
+export interface TableFiltering {
+  txt: string;
+  orderBy: string;
+  orderDirection: 'asc' | 'desc' | '';
 }

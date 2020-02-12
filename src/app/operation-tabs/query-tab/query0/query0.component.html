@@ -24,6 +24,6 @@
   </div>
 </div>
 
-<app-table-view [params]="tableInput" (onPageChanged)="pageChanged($event)"
+<app-table-view [params]="tableInput" (onPageChanged)="pageChanged($event)" [tableFilled]="tableFilled"
   (onDataForQueryResult)="getDataForQueryResult($event)">
 </app-table-view>

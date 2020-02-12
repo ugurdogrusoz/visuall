@@ -87,8 +87,9 @@
           </div>
         </div>
       </div>
-      <app-table-view [params]="tableInput" (onPageChanged)="pageChanged($event)"
-        (onDataForQueryResult)="getDataForQueryResult($event)"> </app-table-view>
+      <app-table-view [params]="tableInput" [tableFilled]="tableFilled" (onPageChanged)="pageChanged($event)"
+        (onDataForQueryResult)="getDataForQueryResult($event)" (onFilteringChanged)="filterTable($event)">
+      </app-table-view>
     </div>
   </div>
 

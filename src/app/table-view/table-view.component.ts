@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../constants';
-import { TableViewInput } from './table-view-types';
+import { TableViewInput, TableFiltering } from './table-view-types';
 import { IPosition } from 'angular2-draggable';
 import { Subject } from 'rxjs';
 
@@ -18,15 +18,16 @@ export class TableViewComponent implements OnInit {
   isDraggable: boolean = false;
   position: IPosition = { x: 0, y: 0 };
   filterTxt: string = '';
-  isInitial: boolean = true;
-  isRowVisible: boolean[] = [];
+  sortDirection: 'asc' | 'desc' | '' = '';
   isRowChecked: boolean[] = [];
   sortingIdx: number = -1;
-  sortDirection: 'asc' | 'desc' | '' = '';
+  isLoading: boolean = false;
+  isInitialized: boolean = false;
   filterTxtChanged: () => void;
   @Input() params: TableViewInput;
-  @Input() changeState: Subject<boolean>;
+  @Input() tableFilled = new Subject<boolean>();
   @Output() onPageChanged = new EventEmitter<number>();
+  @Output() onFilteringChanged = new EventEmitter<TableFiltering>();
   @Output() onDataForQueryResult = new EventEmitter<number[] | string[]>();
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
@@ -36,35 +37,13 @@ export class TableViewComponent implements OnInit {
     this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; if (this.params.columnLimit) { this.columnLimit = this.params.columnLimit; } });
     this.position.x = 0;
     this.position.y = 0;
-    if (this.changeState) {
-      this.changeState.subscribe({ next: (isDraggable) => { this.resetPosition(isDraggable); }, error: (x) => { console.log('error in changeState.subscribe', x); } });
-    }
-    this.filterTxtChanged = debounce(this.filterBy.bind(this), 100, false);
-
+    this.filterTxtChanged = debounce(this.filterBy.bind(this), 1000, false);
+    this.tableFilled.subscribe(() => { this.isLoading = false; this.isInitialized = true; });
   }
 
   filterBy() {
-    if (!this.filterTxt || this.filterTxt.length < 1) {
-      this.isRowVisible = this.params.results.map(_ => true);
-      return;
-    }
-    this.isInitial = false;
-    this.isRowVisible = [];
-
-    for (let i = 0; i < this.params.results.length; i++) {
-      this.isRowVisible.push(true);
-      let anyMatch = false;
-      // first column is ID
-      for (let j = 1; j < this.params.results[i].length; j++) {
-        let curr = this.params.results[i][j];
-        if ((curr.val + '').toLowerCase().includes(this.filterTxt.toLowerCase())) {
-          anyMatch = true;
-        }
-      }
-      if (!anyMatch) {
-        this.isRowVisible[this.isRowVisible.length - 1] = false;
-      }
-    }
+    this.isLoading = true;
+    this.onFilteringChanged.emit({ txt: this.filterTxt, orderBy: '', orderDirection: this.sortDirection });
   }
 
   onMouseEnter(id: string) {
@@ -109,22 +88,26 @@ export class TableViewComponent implements OnInit {
   }
 
   columnClicked(i: number) {
+    this.isLoading = true;
     this.sortingIdx = i;
+    let o = this.params.columns[i];
     if (this.sortDirection == 'asc') {
-      this.params.results.sort((a, b) => a[i + 1].val < b[i + 1].val ? 1 : a[i + 1].val > b[i + 1].val ? -1 : 0);
       this.sortDirection = 'desc';
     } else if (this.sortDirection == 'desc') {
-      this.params.results.sort(() => Math.random() - 0.5);
       this.sortDirection = '';
     } else if (this.sortDirection == '') {
-      this.params.results.sort((a, b) => a[i + 1].val < b[i + 1].val ? -1 : a[i + 1].val > b[i + 1].val ? 1 : 0);
       this.sortDirection = 'asc';
     }
+    this.onFilteringChanged.emit({ txt: this.filterTxt, orderBy: o, orderDirection: this.sortDirection });
   }
 
   cbChanged() {
     if (this.isRowChecked.length != this.params.results.length) {
+      let idx = this.isRowChecked.length - 1;
+      let val = this.isRowChecked[idx];
       this.isRowChecked = this.params.results.map(_ => false);
+      // maintain previous value
+      this.isRowChecked[idx] = val;
     }
   }
 

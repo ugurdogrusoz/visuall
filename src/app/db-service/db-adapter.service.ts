@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { DbService, GraphResponse, TableResponse, DbQueryType } from './data-types';
 import { Neo4jDb } from './neo4j-db.service';
 import { ClassBasedRules } from '../operation-tabs/map-tab/filtering-types';
+import { TableFiltering } from '../table-view/table-view-types';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,10 @@ export class DbAdapterService implements DbService {
 
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     this._db.getFilteringResult(rules, skip, limit, type, callback);
+  }
+
+  filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+    this._db.filterTable(rules, filter, skip, limit, type, callback);
   }
   // ----------------------- DbService interface methods ends -------------------------------
 

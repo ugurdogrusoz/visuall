@@ -358,7 +358,7 @@ export class CytoscapeService {
 
   getNeighbors(event) {
     const ele = event.target || event.cyTarget;
-    this._dbService.getNeighbors(ele.id().substr(1), (x) => { this.loadElementsFromDatabase(x, true) });
+    this._dbService.getNeighbors([ele.id().substr(1)], (x) => { this.loadElementsFromDatabase(x, true) });
   }
 
   setNavigatorPosition() {

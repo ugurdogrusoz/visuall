@@ -1,22 +1,26 @@
-<div class="d-flex flex-wrap align-items-center justify-content-left m-1" *ngIf="params.results.length > 0">
-  <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" class="form-control va-small-text"
-    placeholder="search..." [(ngModel)]="filterTxt" (ngModelChange)="filterTxtChanged()">
+<div class="d-flex flex-wrap justify-content-end m-1" *ngIf="isInitialized">
+  <input [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
+    class="form-control va-small-text" placeholder="Search..." [(ngModel)]="filterTxt"
+    (ngModelChange)="filterTxtChanged()">
 
-  <a href="#" class="mx-3" *ngIf="params.results.length > 0" (click)="loadGraph4Checked()">
-    <img class="img-icon" title="Load graph" src="../assets/img/play-button.svg">
-  </a>
+  <div class="spinner-border spinner-border-sm ml-3" *ngIf="isLoading" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
 
-  <a href="#" *ngIf="params.results.length > 0" (click)="tableStateChanged()">
+  <button *ngIf="!params.isHideLoadGraph" [disabled]="isLoading" class="btn btn-sm mx-3" (click)="loadGraph4Checked()">
+    <img class="img-icon" title="Merge selected to graph" src="../assets/img/play-button.svg">
+  </button>
+
+  <button [disabled]="isLoading" class="btn btn-sm" (click)="tableStateChanged()">
     <img [src]="isDraggable ? 'assets/img/minimize.svg' : 'assets/img/maximize.svg'"
       [title]="isDraggable ? 'Minimize table' : 'Maximize table'">
-  </a>
+  </button>
 </div>
 
-<div [ngDraggable]="isDraggable" [position]="position"
-  [ngClass]="{'draggable-content': isDraggable, 'drag-block': isDraggable}">
-  <div class="table-responsive">
+<div [ngDraggable]="isDraggable" [position]="position" [ngClass]="{'draggable-content': isDraggable}">
+  <div *ngIf="isInitialized" class="table-responsive">
     <table class="table table-sm table-hover va-text">
-      <thead *ngIf="params.results.length > 0">
+      <thead>
         <tr>
           <th scope="col">
             #
@@ -41,31 +45,27 @@
       <tbody>
         <tr *ngFor="let r of params.results; let i = index;" (mouseenter)="onMouseEnter(r[0].val)"
           (mouseleave)="onMouseExit(r[0].val)">
-          <ng-container *ngIf="isRowVisible[i] || isInitial">
-            <td scope="row">{{ (params.currPage - 1) * params.pageSize + i + 1 }}</td>
-            <td *ngFor="let e of r | slice:1; let j = index;">
-              <span *ngIf="isDraggable || (j <= columnLimit-1)">
-                <span *ngIf="e.type == 0 || e.type == 3">
-                  <ngb-highlight [result]="e.val" [term]="filterTxt"></ngb-highlight>
-                </span>
-                <span *ngIf="e.type == 1 && (e.val != 0 || !params.isHide0)">{{e.val | number:'1.0-2'}}</span>
-                <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
+          <td scope="row">{{ (params.currPage - 1) * params.pageSize + i + 1 }}</td>
+          <td *ngFor="let e of r | slice:1; let j = index;">
+            <span *ngIf="isDraggable || (j <= columnLimit-1)">
+              <span *ngIf="e.type == 0 || e.type == 3">
+                <ngb-highlight [result]="e.val" [term]="filterTxt"></ngb-highlight>
               </span>
-            </td>
-            <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
-            <td [hidden]="params.isLoadGraph">
-              <input type="checkbox" class="form-check-input mx-0" [(ngModel)]="isRowChecked[i]"
-                (change)="cbChanged()" />
-            </td>
-          </ng-container>
+              <span *ngIf="e.type == 1 && (e.val != 0 || !params.isHide0)">{{e.val | number:'1.0-2'}}</span>
+              <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
+            </span>
+          </td>
+          <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
+          <td [hidden]="params.isLoadGraph">
+            <input type="checkbox" class="form-check-input mx-0" [(ngModel)]="isRowChecked[i]" (change)="cbChanged()" />
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
   <div class="d-flex align-items-center justify-content-center va-text" *ngIf="params.resultCnt > params.pageSize">
-    <ngb-pagination *ngIf="params.results.length > 0" (pageChange)="pageChanged($event)"
-      [collectionSize]="params.resultCnt" [(page)]="params.currPage" [pageSize]="params.pageSize" [maxSize]="3"
-      [rotate]="true">
+    <ngb-pagination (pageChange)="pageChanged($event)" [collectionSize]="params.resultCnt" [(page)]="params.currPage"
+      [pageSize]="params.pageSize" [maxSize]="3" [rotate]="true">
       <ng-template ngbPaginationPrevious><img class="img-sm-icon" src="/assets/img/left-arrow.svg"></ng-template>
       <ng-template ngbPaginationNext><img class="img-sm-icon" src="/assets/img/right-arrow.svg"></ng-template>
     </ngb-pagination>

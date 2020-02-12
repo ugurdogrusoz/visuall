@@ -4,7 +4,8 @@ import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribut
 import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
 import AppDescription from '../../../assets/app_description.json';
-import { TableViewInput, TableData, TableDataType } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableData, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-object-tab',
@@ -17,10 +18,12 @@ export class ObjectTabComponent implements OnInit {
   edgeClasses: Set<string>;
   selectedClasses: string;
   selectedItemProps: any[];
+  tableFilled = new Subject<boolean>();
+
   @Output() onTabChanged = new EventEmitter<number>();
   tableInput: TableViewInput = {
     columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20,
-    isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true
+    isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
   private NODE_TYPE = '_NODE_';
   private EDGE_TYPE = '_EDGE_';
@@ -280,6 +283,7 @@ export class ObjectTabComponent implements OnInit {
       }
       this.tableInput.results.push(row);
     }
+    this.tableFilled.next(true);
   }
 
   private increaseCountInObj(obj, p1: string, p2: string) {
@@ -295,4 +299,48 @@ export class ObjectTabComponent implements OnInit {
     }
   }
 
+  filterTable(filter: TableFiltering) {
+    this.showStats();
+    this.tableInput.currPage = 1;
+    let idxHide = [];
+    // filter by text
+    for (let i = 0; i < this.tableInput.results.length; i++) {
+      let isMatch = false;
+      // first column is ID
+      for (let j = 1; j < this.tableInput.results[i].length; j++) {
+        let curr = this.tableInput.results[i][j].val;
+        if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
+          if ((curr + '').toLowerCase().includes(filter.txt.toLowerCase())) {
+            isMatch = true;
+            break;
+          }
+        } else {
+          if ((curr + '').includes(filter.txt)) {
+            isMatch = true;
+            break;
+          }
+        }
+      }
+      if (!isMatch) {
+        idxHide.push(i);
+      }
+    }
+
+    this.tableInput.results = this.tableInput.results.filter((_, i) => !idxHide.includes(i));
+
+    // order by
+    if (filter.orderDirection.length > 0) {
+      let i = this.tableInput.columns.findIndex(x => x == filter.orderBy);
+      if (i < 0) {
+        console.error('i < 0 !');
+      }
+      i++; // first column is for ID or for highlight
+      if (filter.orderDirection == 'asc') {
+        this.tableInput.results = this.tableInput.results.sort((a, b) => { if (a[i].val > b[i].val) return 1; if (b[i].val > a[i].val) return -1; return 0 });
+      } else {
+        this.tableInput.results = this.tableInput.results.sort((a, b) => { if (a[i].val < b[i].val) return 1; if (b[i].val < a[i].val) return -1; return 0 });
+      }
+    }
+    this.tableFilled.next(true);
+  }
 }

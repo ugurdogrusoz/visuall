@@ -4,6 +4,7 @@ import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
 import { TableViewInput, TableDataType } from 'src/app/table-view/table-view-types';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-query1',
@@ -15,7 +16,7 @@ export class Query1Component implements OnInit, AfterViewInit {
   selectedGenre: string;
   movieGenres: string[];
   tableInput: TableViewInput = { columns: ['Movie'], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
-
+  tableFilled = new Subject<boolean>();
   date1Id = 'query1-inp0';
   date2Id = 'query1-inp1';
 
@@ -86,6 +87,7 @@ export class Query1Component implements OnInit, AfterViewInit {
       const d = data.data[i];
       this.tableInput.results.push([{ type: TableDataType.number, val: d[0] }, { type: TableDataType.string, val: d[1] }]);
     }
+    this.tableFilled.next(true);
   }
 
   fillGenres(data) {

@@ -303,7 +303,7 @@
     "isFitLabels2Nodes": false,
     "isIgnoreCaseInText": false,
 
-    "dataPageSize": 20,
+    "dataPageSize": 15,
     "tableColumnLimit": 3,
     "highlightWidth": 4.5,
 

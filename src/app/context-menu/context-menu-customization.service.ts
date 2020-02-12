@@ -64,7 +64,7 @@ export class ContextMenuCustomizationService {
 
   getNeighbors(event) {
     const ele = event.target || event.cyTarget;
-    this._dbService.getNeighbors(ele.id().substr(1), (x) => { this._cyService.loadElementsFromDatabase(x, true)})
+    this._dbService.getNeighbors([ele.id().substr(1)], (x) => { this._cyService.loadElementsFromDatabase(x, true) })
   }
 
   getPoster(event) {

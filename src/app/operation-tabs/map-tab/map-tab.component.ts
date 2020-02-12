@@ -9,7 +9,7 @@ import { TimebarService } from '../../timebar.service';
 import { ClassOption, ClassBasedRules, Rule, RuleSync, getBoolExpressionFromMetric } from './filtering-types';
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
-import { TableViewInput, TableData, TableDataType } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableData, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
 import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
 
@@ -32,6 +32,7 @@ export class MapTabComponent implements OnInit {
   isFilterOnDb: boolean;
   currProperties: Subject<RuleSync> = new Subject();
   tableInput: TableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  tableFilled = new Subject<boolean>();
   isClassTypeLocked: boolean;
   private isGroupTabOpen = false;
   @ViewChild(GroupTabComponent, { static: false })
@@ -200,13 +201,18 @@ export class MapTabComponent implements OnInit {
     this._dbService.getFilteringResult(this.filteringRule, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
   }
 
-  private getCountOfData() {
-    this._dbService.getFilteringResult(this.filteringRule, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
+  private getCountOfData(filter: TableFiltering = null) {
+    if (filter != null) {
+      this._dbService.filterTable(this.filteringRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
+    } else {
+      this._dbService.getFilteringResult(this.filteringRule, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
+    }
   }
 
   private fillTable(data) {
     this.tableInput.results = [];
     if (!data.data[0] || !data.data[0][1]) {
+      this.tableFilled.next(true);
       return;
     }
 
@@ -242,6 +248,7 @@ export class MapTabComponent implements OnInit {
       }
       this.tableInput.results.push(d)
     }
+    this.tableFilled.next(true);
   }
 
   private rawData2TableData(key: string, val: any): TableData {
@@ -309,7 +316,7 @@ export class MapTabComponent implements OnInit {
     this.loadTable(skip, limit);
   }
 
-  getDataForQueryResult(ids: number[]|string[]) {
+  getDataForQueryResult(ids: number[] | string[]) {
     this._dbService.getNeighbors(ids, (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) });
   }
 
@@ -327,6 +334,13 @@ export class MapTabComponent implements OnInit {
       this.groupComponent.componentOpened();
     }
     console.log('groupTabCliked');
+  }
+
+  filterTable(filter: TableFiltering) {
+    this.tableInput.currPage = 1;
+    const limit = this.tableInput.pageSize;
+    this.getCountOfData(filter);
+    this._dbService.filterTable(this.filteringRule, filter, 0, limit, DbQueryType.table, (x) => { this.fillTable(x) });
   }
 }
 

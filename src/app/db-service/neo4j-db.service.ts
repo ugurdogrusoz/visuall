@@ -5,6 +5,8 @@ import { GraphResponse, TableResponse, DbService, DbQueryType } from './data-typ
 import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/filtering-types';
 import { GENERIC_TYPE } from '../constants';
 import AppDescription from '../../assets/app_description.json';
+import properties from '../../assets/generated/properties.json'
+import { TableFiltering } from '../table-view/table-view-types';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +24,7 @@ export class Neo4jDb implements DbService {
     this._g.getConfig().subscribe(x => { this.dbConfig = x['database'] }, error => console.log('getConfig err: ', error));
   }
 
-  getNeighbors(elemIds: string[]|number[], callback: (x: GraphResponse) => any) {
+  getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any) {
     let condition = '';
     for (let i = 0; i < elemIds.length; i++) {
       if (i == elemIds.length - 1) {
@@ -44,6 +46,11 @@ export class Neo4jDb implements DbService {
 
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     const cql = this.rule2cql(rules, skip, limit, type);
+    this.runQuery(cql, callback, type == DbQueryType.std);
+  }
+
+  filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+    const cql = this.rule2cql(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
@@ -185,14 +192,14 @@ export class Neo4jDb implements DbService {
   }
 
   // ------------------------------------------------- methods for conversion to CQL -------------------------------------------------
-  private rule2cql(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType) {
+  private rule2cql(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
     let query = '';
-    query += this.getCql4Rules(rules);
-    query += this.generateFinalQueryBlock(rules.isEdge, skip, limit, type);
+    query += this.getCql4Rules(rules, filter);
+    query += this.generateFinalQueryBlock(filter, skip, limit, type);
     return query;
   }
 
-  private getCql4Rules(rule: ClassBasedRules) {
+  private getCql4Rules(rule: ClassBasedRules, filter: TableFiltering = null) {
     let isGenericType = false;
     if (rule.className == GENERIC_TYPE.ANY_CLASS || rule.className == GENERIC_TYPE.EDGES_CLASS || rule.className == GENERIC_TYPE.NODES_CLASS) {
       isGenericType = true;
@@ -227,8 +234,34 @@ export class Neo4jDb implements DbService {
         whereClauseItems.push(rules[i + 1].ruleOperator);
       }
     }
+    let conditions = whereClauseItems.join(' ');
+    if (filter != null && filter.txt.length > 0) {
+      let s = this.getCondition4TxtFilter(rule.isEdge, rule.className, filter.txt);
+      conditions = '(' + conditions + ') AND ' + s;
+    }
 
-    return matchClause + 'WHERE ' + whereClauseItems.join(' ') + "\n";
+    return matchClause + 'WHERE ' + conditions + '\n';
+  }
+
+  private getCondition4TxtFilter(isEdge: boolean, className: string, txt: string): string {
+    let s = '';
+    let t = 'nodes';
+    if (isEdge) {
+      t = 'edges';
+    }
+    let p = properties[t][className];
+    for (let k in p) {
+      if (p[k] !== 'list') {
+        if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
+          s += ` LOWER(toString(x.${k})) CONTAINS LOWER('${txt}') OR `;
+        } else {
+          s += ` toString(x.${k}) CONTAINS '${txt}' OR `;
+        }
+      }
+    }
+    s = s.slice(0, -3)
+    s = '(' + s + ')'
+    return s;
   }
 
   private getCondition4Rule(rule: Rule) {
@@ -256,10 +289,16 @@ export class Neo4jDb implements DbService {
     }
   }
 
-  private generateFinalQueryBlock(isEdge: boolean, skip: number, limit: number, type: DbQueryType) {
+  private generateFinalQueryBlock(filter: TableFiltering, skip: number, limit: number, type: DbQueryType) {
     if (type == DbQueryType.table) {
+      if (filter != null && filter.orderDirection.length > 0) {
+        return `RETURN ID(x), x ORDER BY x.${filter.orderBy} ${filter.orderDirection} SKIP ${skip} LIMIT ${limit}`;
+      }
       return `RETURN ID(x), x  SKIP ${skip} LIMIT ${limit}`;
     } else if (type == DbQueryType.std) {
+      if (filter != null && filter.orderDirection.length > 0) {
+        return `RETURN x ORDER BY x.${filter.orderBy} ${filter.orderDirection} SKIP ${skip} LIMIT ${limit}`;
+      }
       return `RETURN x SKIP ${skip} LIMIT ${limit}`;
     } else if (type == DbQueryType.count) {
       return `RETURN COUNT(x)`;
