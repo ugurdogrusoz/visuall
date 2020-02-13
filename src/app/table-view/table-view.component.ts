@@ -43,7 +43,7 @@ export class TableViewComponent implements OnInit {
 
   filterBy() {
     this.isLoading = true;
-    this.onFilteringChanged.emit({ txt: this.filterTxt, orderBy: '', orderDirection: this.sortDirection });
+    this.onFilteringChanged.emit({ txt: this.filterTxt, orderBy: this.params.columns[this.sortingIdx], orderDirection: this.sortDirection });
   }
 
   onMouseEnter(id: string) {

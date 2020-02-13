@@ -25,5 +25,5 @@
 </div>
 
 <app-table-view [params]="tableInput" (onPageChanged)="pageChanged($event)" [tableFilled]="tableFilled"
-  (onDataForQueryResult)="getDataForQueryResult($event)">
+  (onDataForQueryResult)="getDataForQueryResult($event)" (onFilteringChanged)="filterTable($event)">
 </app-table-view>

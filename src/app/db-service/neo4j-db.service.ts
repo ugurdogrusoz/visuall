@@ -54,22 +54,27 @@ export class Neo4jDb implements DbService {
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
-  getCount4Q0(d1: number, d2: number, movieCount: number, callback: (x) => any) {
+  getCount4Q0(d1: number, d2: number, movieCount: number, callback: (x) => any, filter?: TableFiltering) {
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.name', 'degree']);
     let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
     WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
-    WHERE degree >= ${movieCount}
+    WHERE degree >= ${movieCount} ${txtCondition}
     RETURN DISTINCT COUNT(*)`;
     this.runQuery(cql, callback, false);
   }
 
-  getTable4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any) {
+  getTable4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, filter?: TableFiltering) {
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.name', 'degree']);
+    let ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
+    let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
+
     let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
     WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
-    WHERE degree >= ${movieCnt}
+    WHERE degree >= ${movieCnt} ${txtCondition}
     RETURN DISTINCT ID(n) as id, n.name as Actor, degree as Count 
-    ORDER BY degree DESC SKIP ${skip} LIMIT ${limit}`;
+    ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback, false);
   }
 
@@ -89,18 +94,23 @@ export class Neo4jDb implements DbService {
     this.runQuery(cql, callback);
   }
 
-  getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any) {
+  getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any, filter?: TableFiltering) {
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.title']);
     let cql = ` MATCH (m:Movie {genre:'${genre}'})
-    WHERE m.released> ${d1} AND m.released < ${d2}  
+    WHERE m.released> ${d1} AND m.released < ${d2} ${txtCondition} 
     RETURN DISTINCT COUNT(*)`;
     this.runQuery(cql, callback, false);
   }
 
-  getTable4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any) {
+  getTable4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, filter?: TableFiltering) {
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.title']);
+    let ui2Db = { 'Movie': 'm.title' };
+    let orderExpr = this.getOrderByExpression4Query(filter, 'm.title', 'desc', ui2Db);
+
     let cql = ` MATCH (m:Movie {genre:'${genre}'})
-    WHERE m.released > ${d1} AND m.released < ${d2}  
+    WHERE m.released > ${d1} AND m.released < ${d2} ${txtCondition} 
     RETURN DISTINCT ID(m) as id, m.title
-    ORDER BY m.title DESC SKIP ${skip} LIMIT ${limit}`;
+    ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback, false);
   }
 
@@ -310,6 +320,32 @@ export class Neo4jDb implements DbService {
       return `RETURN COUNT(x)`;
     }
     return '';
+  }
+
+  private getQueryCondition4TxtFilter(filter: TableFiltering, cols: string[]): string {
+    if (filter == null || filter.txt.length < 1) {
+      return '';
+    }
+    let s = '';
+
+    for (let i = 0; i < cols.length; i++) {
+      if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
+        s += ` LOWER(toString(${cols[i]})) CONTAINS LOWER('${filter.txt}') OR `;
+      } else {
+        s += ` toString(${cols[i]}) CONTAINS '${filter.txt}' OR `;
+      }
+    }
+    s = s.slice(0, -3)
+    s = 'AND (' + s + ')'
+    return s;
+  }
+
+  private getOrderByExpression4Query(filter: TableFiltering, orderBy: string, orderDirection: string, ui2Db: any) {
+    if (filter != null && filter.orderDirection.length > 0 && filter.orderBy.length > 0) {
+      orderBy = ui2Db[filter.orderBy];
+      orderDirection = filter.orderDirection;
+    }
+    return orderBy + ' ' + orderDirection;
   }
   // ------------------------------------------------- end of methods for conversion to CQL -------------------------------------------------
 

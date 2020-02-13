@@ -14,7 +14,7 @@ export class DbAdapterService implements DbService {
   }
 
   // ----------------------- DbService interface methods starts -------------------------------
-  getNeighbors(elemId: string[]|number[], callback: (x: GraphResponse) => any) {
+  getNeighbors(elemId: string[] | number[], callback: (x: GraphResponse) => any) {
     this._db.getNeighbors(elemId, callback);
   }
 
@@ -35,12 +35,12 @@ export class DbAdapterService implements DbService {
   }
   // ----------------------- DbService interface methods ends -------------------------------
 
-  getCount4Q0(d1: number, d2: number, movieCount: number, callback: (x) => any) {
-    this._db.getCount4Q0(d1, d2, movieCount, callback);
+  getCount4Q0(d1: number, d2: number, movieCount: number, callback: (x) => any, filter?: TableFiltering) {
+    this._db.getCount4Q0(d1, d2, movieCount, callback, filter);
   }
 
-  getTable4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any) {
-    this._db.getTable4Q0(d1, d2, movieCnt, skip, limit, callback);
+  getTable4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, filter?: TableFiltering) {
+    this._db.getTable4Q0(d1, d2, movieCnt, skip, limit, callback, filter);
   }
 
   getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any) {
@@ -51,19 +51,19 @@ export class DbAdapterService implements DbService {
     this._db.getDataForQ0(id, d1, d2, callback);
   }
 
-  getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any) {
-    this._db.getCount4Q1(d1, d2, genre, callback);
+  getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any, filter?: TableFiltering) {
+    this._db.getCount4Q1(d1, d2, genre, callback, filter);
   }
 
-  getTable4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any) {
-    this._db.getTable4Q1(d1, d2, genre, skip, limit, callback);
+  getTable4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, filter?: TableFiltering) {
+    this._db.getTable4Q1(d1, d2, genre, skip, limit, callback, filter);
   }
 
   getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any) {
     this._db.getGraph4Q1(d1, d2, genre, skip, limit, callback);
   }
 
-  getDataForQ1(id: number, d1: number, d2: number, genre: string, callback: (x) => any){
+  getDataForQ1(id: number, d1: number, d2: number, genre: string, callback: (x) => any) {
     this._db.getDataForQ1(id, d1, d2, genre, callback);
   }
 

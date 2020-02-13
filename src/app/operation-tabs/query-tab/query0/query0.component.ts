@@ -3,7 +3,7 @@ import { DbAdapterService } from '../../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
-import { TableViewInput, TableDataType } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 
 
@@ -46,8 +46,8 @@ export class Query0Component implements OnInit {
     this.loadGraph(d1, d2, skip);
   }
 
-  getCountOfData(d1: number, d2: number) {
-    this._dbService.getCount4Q0(d1, d2, this.movieCnt, (x) => { this.tableInput.resultCnt = x.data[0] });
+  getCountOfData(d1: number, d2: number, filter?: TableFiltering) {
+    this._dbService.getCount4Q0(d1, d2, this.movieCnt, (x) => { this.tableInput.resultCnt = x.data[0] }, filter);
   }
 
   pageChanged(newPage: number) {
@@ -59,8 +59,8 @@ export class Query0Component implements OnInit {
     this.loadGraph(d1, d2, skip);
   }
 
-  loadTable(d1: number, d2: number, skip: number) {
-    this._dbService.getTable4Q0(d1, d2, this.movieCnt, skip, this.tableInput.pageSize, (x) => this.fillTable(x));
+  loadTable(d1: number, d2: number, skip: number, filter?: TableFiltering) {
+    this._dbService.getTable4Q0(d1, d2, this.movieCnt, skip, this.tableInput.pageSize, (x) => this.fillTable(x), filter);
   }
 
   loadGraph(d1: number, d2: number, skip: number) {
@@ -83,5 +83,13 @@ export class Query0Component implements OnInit {
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
     this._dbService.getDataForQ0(id, d1, d2, x => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph))
+  }
+
+  filterTable(filter: TableFiltering) {
+    this.tableInput.currPage = 1;
+    let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
+    let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
+    this.getCountOfData(d1, d2, filter);
+    this.loadTable(d1, d2, 0, filter);
   }
 }
