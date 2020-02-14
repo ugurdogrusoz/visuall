@@ -501,6 +501,7 @@ export class CytoscapeService {
     let nextOpacity = 1;
 
     return function (event: { target: any, type: string, cySelector?: string }) {
+      console.log('highlightNeighbors: ', event);
       let elements2remain = null;
       if (event.cySelector != undefined) {
         elements2remain = this._g.cy.$(event.cySelector);
@@ -535,8 +536,7 @@ export class CytoscapeService {
   }
 
   setOtherElementsOpacity(elements, opacity) {
-    this._g.cy.elements().difference(elements).animate(
-      { style: { opacity: opacity } }, { duration: C.HIGHLIGHT_ANIM_DUR });
+    this._g.cy.elements().difference(elements).style({ opacity: opacity });
   }
 
   highlightSelected() {
