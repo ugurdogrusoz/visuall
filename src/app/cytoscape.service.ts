@@ -501,7 +501,6 @@ export class CytoscapeService {
     let nextOpacity = 1;
 
     return function (event: { target: any, type: string, cySelector?: string }) {
-      console.log('highlightNeighbors: ', event);
       let elements2remain = null;
       if (event.cySelector != undefined) {
         elements2remain = this._g.cy.$(event.cySelector);

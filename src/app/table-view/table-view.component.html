@@ -17,7 +17,7 @@
   </button>
 </div>
 
-<div [ngDraggable]="isDraggable" [position]="position" [ngClass]="{'draggable-content': isDraggable}">
+<div #dynamicDiv [ngResizable]="isDraggable" [ngDraggable]="isDraggable" [position]="position" [ngClass]="{'draggable-content': isDraggable}">
   <div *ngIf="isInitialized" class="table-responsive">
     <table class="table table-sm table-hover va-text">
       <thead>

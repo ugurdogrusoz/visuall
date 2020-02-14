@@ -29,7 +29,8 @@
               "node_modules/cytoscape-panzoom/cytoscape.js-panzoom.css",
               "node_modules/cytoscape-navigator/cytoscape.js-navigator.css",
               "node_modules/cytoscape-context-menus/cytoscape-context-menus.css",
-              "node_modules/flatpickr/dist/flatpickr.min.css"
+              "node_modules/flatpickr/dist/flatpickr.min.css",
+              "node_modules/angular2-draggable/css/resizable.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
