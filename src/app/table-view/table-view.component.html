@@ -1,5 +1,5 @@
 <div class="d-flex flex-wrap justify-content-end m-1" *ngIf="isInitialized">
-  <input [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
+  <input #searchTxt [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
     class="form-control va-small-text" placeholder="Search..." [(ngModel)]="filterTxt"
     (ngModelChange)="filterTxtChanged()">
 

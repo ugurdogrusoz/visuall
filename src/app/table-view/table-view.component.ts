@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../constants';
@@ -24,6 +24,8 @@ export class TableViewComponent implements OnInit {
   isLoading: boolean = false;
   isInitialized: boolean = false;
   filterTxtChanged: () => void;
+  @ViewChild('searchTxt', { static: false }) inpElem;
+
   @Input() params: TableViewInput;
   @Input() tableFilled = new Subject<boolean>();
   @Output() onPageChanged = new EventEmitter<number>();
@@ -38,7 +40,15 @@ export class TableViewComponent implements OnInit {
     this.position.x = 0;
     this.position.y = 0;
     this.filterTxtChanged = debounce(this.filterBy.bind(this), 1000, false);
-    this.tableFilled.subscribe(() => { this.isLoading = false; this.isInitialized = true; });
+    this.tableFilled.subscribe(this.onTableFilled.bind(this));
+  }
+
+  private onTableFilled() {
+    this.isLoading = false;
+    this.isInitialized = true;
+    if (this.inpElem) {
+      setTimeout(() => { this.inpElem.nativeElement.focus(); }, 0);
+    }
   }
 
   filterBy() {
