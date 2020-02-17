@@ -78,19 +78,13 @@ export class Neo4jDb implements DbService {
     this.runQuery(cql, callback, false);
   }
 
-  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any) {
+  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids: string[] | number[]) {
+    let idFilter = this.buildIdFilter(ids);
     let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
-      WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
+      WHERE ${idFilter} r.act_begin >= ${d1} AND r.act_end <= ${d2}  
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
       WHERE degree >= ${movieCnt}
       RETURN n, edges ORDER BY degree DESC SKIP ${skip} LIMIT ${limit}`;
-    this.runQuery(cql, callback);
-  }
-
-  getDataForQ0(id: number, d1: number, d2: number, callback: (x) => any) {
-    let cql =
-      `MATCH p=(n:Person)-[r:ACTED_IN]->(:Movie) WHERE ID(n) = ${id} AND r.act_begin >= ${d1} AND r.act_end <= ${d2}
-    RETURN nodes(p), relationships(p)`;
     this.runQuery(cql, callback);
   }
 
@@ -114,12 +108,13 @@ export class Neo4jDb implements DbService {
     this.runQuery(cql, callback, false);
   }
 
-  getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any) {
-    let cql = `MATCH (m:Movie {genre:'${genre}'})<-[r:ACTED_IN]-(a:Person)
-    WHERE m.released > ${d1} AND m.released < ${d2}  
-    WITH m, COLLECT(r) as edges
-    RETURN  m, edges
-    ORDER BY m.title DESC SKIP ${skip} LIMIT ${limit}`;
+  getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids: string[] | number[]) {
+    let idFilter = this.buildIdFilter(ids);
+    let cql = `MATCH (n:Movie {genre:'${genre}'})<-[r:ACTED_IN]-(:Person)
+    WHERE ${idFilter}  n.released > ${d1} AND n.released < ${d2}  
+    WITH n, COLLECT(r) as edges
+    RETURN  n, edges
+    ORDER BY n.title DESC SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback);
   }
 
@@ -347,6 +342,26 @@ export class Neo4jDb implements DbService {
     }
     return orderBy + ' ' + orderDirection;
   }
+
+  private buildIdFilter(ids: string[] | number[]): string {
+    if (ids === undefined) {
+      return '';
+    }
+    let cql = '';
+    if (ids.length > 0) {
+      cql = '(';
+    }
+    for (let i = 0; i < ids.length; i++) {
+      cql += `ID(n)=${ids[i]} OR `
+    }
+
+    if (ids.length > 0) {
+      cql = cql.slice(0, -4);
+      cql += ') AND ';
+    }
+    return cql;
+  }
+
   // ------------------------------------------------- end of methods for conversion to CQL -------------------------------------------------
 
 }

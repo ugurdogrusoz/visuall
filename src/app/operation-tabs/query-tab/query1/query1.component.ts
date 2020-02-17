@@ -97,11 +97,11 @@ export class Query1Component implements OnInit, AfterViewInit {
     }
   }
 
-  getDataForQueryResult(id: number) {
+  getDataForQueryResult(ids: number[] | string[]) {
     let d1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0].getFullYear();
     let d2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0].getFullYear();
 
-    this._dbService.getDataForQ1(id, d1, d2, this.selectedGenre, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph));
+    this._dbService.getGraph4Q1(d1, d2, this.selectedGenre, 0, this.tableInput.pageSize, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), ids);
   }
 
   filterTable(filter: TableFiltering) {

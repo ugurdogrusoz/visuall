@@ -23,6 +23,7 @@ export class TableViewComponent implements OnInit {
   sortingIdx: number = -1;
   isLoading: boolean = false;
   isInitialized: boolean = false;
+  origSize: { wid: number, hei: number } = { wid: 1, hei: 1 };
   filterTxtChanged: () => void;
   @ViewChild('searchTxt', { static: false }) inpElem;
   @ViewChild('dynamicDiv', { static: false }) dynamicDiv;
@@ -145,6 +146,13 @@ export class TableViewComponent implements OnInit {
       let e = this.dynamicDiv.nativeElement;
       e.style.width = '';
       e.style.height = '';
+    }
+    if (this.origSize.wid == 1) {
+      // get height and width when it is draggable
+      setTimeout(() => {
+        this.origSize.hei = this.dynamicDiv.nativeElement.clientHeight;
+        this.origSize.wid = this.dynamicDiv.nativeElement.clientWidth;
+      }, 0);
     }
   }
 }
