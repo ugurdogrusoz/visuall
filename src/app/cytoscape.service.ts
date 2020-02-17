@@ -585,10 +585,9 @@ export class CytoscapeService {
     } else {
       $('#cy').css('height', '75vh');
     }
-    // this._timebarService.showHideFn(!isChecked);
+    this._g.cy.resize();
     this._timebarService.showHideTimebar(isChecked);
     setTimeout(() => { this.setNavigatorPosition() }, 0);
-
   }
 
   loadFile(file: File) {

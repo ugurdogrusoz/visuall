@@ -93,7 +93,6 @@ export class SettingsTabComponent implements OnInit {
 
   isEnableTimebar(x: boolean) {
     this.timebarBoolSettings[0].isEnable = x;
-    this._timebarService.showHideTimebar(x);
     if (this.isInit) {
       this._cyService.showHideTimebar(x);
     }
