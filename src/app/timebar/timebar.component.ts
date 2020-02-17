@@ -3,6 +3,7 @@ import { TimebarService } from '../timebar.service';
 import { TIME_UNITS, MIN_DATE, MAX_DATE } from '../constants';
 import flatpickr from 'flatpickr';
 import { Locale } from 'flatpickr/dist/types/locale';
+import { GlobalVariableService } from '../global-variable.service';
 
 @Component({
   selector: 'app-timebar',
@@ -19,10 +20,11 @@ export class TimebarComponent implements OnInit {
   statsRange2Str: string;
   cssLeftDate1: number = 0;
   cssLeftDate2: number = 0;
+  isHide: boolean = true;
   @ViewChild('dateInp1', { static: false }) dateInp1: ElementRef;
   @ViewChild('dateInp2', { static: false }) dateInp2: ElementRef;
 
-  constructor(timebarService: TimebarService) {
+  constructor(timebarService: TimebarService, private _g: GlobalVariableService) {
     this.s = timebarService;
   }
 
@@ -35,6 +37,8 @@ export class TimebarComponent implements OnInit {
     const r = this.s.getGraphRangeRatio();
     this.cssLeftDate1 = (1 - r) / 2 * 100;
     this.cssLeftDate2 = (1 + r) / 2 * 100;
+    this.s.setShowHideFn(this.showHide.bind(this));
+    this._g.cy.on('add remove', this.hideIfEmpty.bind(this));
   }
 
   playTiming() {
@@ -109,6 +113,16 @@ export class TimebarComponent implements OnInit {
       s += '.' + (date as Date).getMilliseconds();
     }
     return s;
+  }
+
+  showHide(isHide: boolean) {
+    this.isHide = isHide;
+  }
+
+  hideIfEmpty() {
+    if (this._g.cy.$().length < 1) {
+      this.isHide = true;
+    }
   }
 
 }

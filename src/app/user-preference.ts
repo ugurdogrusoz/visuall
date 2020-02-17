@@ -9,26 +9,22 @@ export interface UserPref {
   isFitLabels2Nodes: BehaviorSubject<boolean>;
   isIgnoreCaseInText: BehaviorSubject<boolean>;
 
-  // numeric settings
+  // Show query results using 'Selection', 'Highlight'
+  mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
   dataPageSize: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;
   highlightWidth: BehaviorSubject<number>;
-
-  // string settings
   compoundPadding: BehaviorSubject<string>;
-
-  // multiple choice settings
-  mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
 
   timebar: {
     isEnabled: BehaviorSubject<boolean>;
-    graphInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
-    statsInclusionType: BehaviorSubject<TimebarStatsInclusionTypes>;
+    isHideDisconnectedNodesOnAnim: BehaviorSubject<boolean>;
+    isMaintainGraphRange: BehaviorSubject<boolean>
     playingStep: BehaviorSubject<number>;
     playingPeriod: BehaviorSubject<number>;
     zoomingStep: BehaviorSubject<number>;
-    isHideDisconnectedNodesOnAnim: BehaviorSubject<boolean>;
-    isMaintainGraphRange: BehaviorSubject<boolean>
+    graphInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
+    statsInclusionType: BehaviorSubject<TimebarStatsInclusionTypes>;
   }
 }
 
@@ -47,7 +43,5 @@ export enum MergedElemIndicatorTypes {
 export interface BoolSetting {
   isEnable: boolean;
   text: string;
-  actuator: any;
-  fn: string;
-  isElemStyleSetting?: boolean;
+  path2userPref: string;
 }

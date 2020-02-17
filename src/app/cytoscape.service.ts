@@ -22,7 +22,6 @@ import timebar from '../lib/timebar/cytoscape-timebar';
 export class CytoscapeService {
   cyNavi: any;
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
-  applyElementStyleSettings: () => void;
   removePopperFn: Function;
 
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
@@ -194,7 +193,6 @@ export class CytoscapeService {
   }
 
   bindNavigatorExtension() {
-
     const cyNaviClass = 'cytoscape-navigator-wrapper';
     $('.cyContainer').append(`<div class='${cyNaviClass}'></div>`);
 
@@ -429,9 +427,6 @@ export class CytoscapeService {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
-    if (this.applyElementStyleSettings) {
-      this.applyElementStyleSettings();
-    }
   }
 
   highlightElems(isIncremental: boolean, elemIds: string[]) {
@@ -572,9 +567,8 @@ export class CytoscapeService {
   }
 
   navigatorCheckBoxClicked(isChecked: boolean) {
-    if (!isChecked) {
-      this.unbindNavigatorExtension();
-    } else {
+    this.unbindNavigatorExtension();
+    if (isChecked) {
       this.bindNavigatorExtension();
     }
   }
@@ -588,13 +582,13 @@ export class CytoscapeService {
   showHideTimebar(isChecked: boolean) {
     if (!isChecked) {
       $('#cy').css('height', '90vh');
-      $('#timebar').hide();
     } else {
       $('#cy').css('height', '75vh');
-      $('#timebar').show();
     }
+    // this._timebarService.showHideFn(!isChecked);
     this._timebarService.showHideTimebar(isChecked);
-    this.setNavigatorPosition();
+    setTimeout(() => { this.setNavigatorPosition() }, 0);
+
   }
 
   loadFile(file: File) {

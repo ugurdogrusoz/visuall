@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
 import AppDescription from '../assets/app_description.json';
 import { TimebarMetric } from './operation-tabs/map-tab/filtering-types';
@@ -12,9 +11,10 @@ import { BehaviorSubject } from 'rxjs';
 export class TimebarService {
 
   shownMetrics = new BehaviorSubject<TimebarMetric[]>(null);
-  isRandomizedLayout : boolean = false;
+  isRandomizedLayout: boolean = false;
   private _timebarExt: Timebar;
   private _playingPeriod: number;
+  showHideFn: (isHide: boolean) => void;
 
   constructor(private _g: GlobalVariableService) { }
 
@@ -36,6 +36,10 @@ export class TimebarService {
     this._g.shownElemsChanged.next(true);
   }
 
+  setShowHideFn(fn: (isHide: boolean) => void) {
+    this.showHideFn = fn;
+  }
+
   init() {
     const m = AppDescription.timebarDataMapping; // mapping for timebar
     const s = AppDescription.appPreferences.timebar; // settings for timebar
@@ -45,7 +49,12 @@ export class TimebarService {
       },
       showOnlyElems: this.shownOnlyElems.bind(this),
       chartRendered: () => {
-        $('#timebar').removeClass('d-none');
+        let isEnabled = this._g.userPrefs.timebar.isEnabled.getValue();
+        if (!isEnabled) {
+          this.showHideFn(true);
+        } else {
+          this.showHideFn(false);
+        }
       },
     };
     s['events'] = e;

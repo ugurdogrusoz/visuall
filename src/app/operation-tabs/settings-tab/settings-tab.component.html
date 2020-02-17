@@ -6,7 +6,7 @@
     <div class="card border-0 m-1" *ngFor="let setting of generalBoolSettings; let i = index;">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="checkbox" [(ngModel)]="setting.isEnable"
-          (change)="onBoolSettingsChanged(setting)">
+          (change)="settingChanged(setting.isEnable, setting.path2userPref)">
         <label class="form-check-label va-text">{{setting.text}}</label>
       </div>
     </div>
@@ -16,7 +16,7 @@
         <label class="form-check-label va-text">Show query results using &nbsp;</label>
         <div class="form-check-inline va-text" *ngFor="let str of mergedElemIndicators; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="mergedElemIndicatorChanged(i)" name="optradio3"
+            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'mergedElemIndicator')" name="optradio3"
               [checked]="i==mergedElemIndicator">{{str}}
           </label>
         </div>
@@ -26,7 +26,7 @@
       <div class="form-inline">
         <label class="form-check-label va-text">Query result limit</label>
         <div class="mx-1">
-          <input type="number" max="10000" min="1" (keydown.enter)="dataPageSizeChanged()" [(ngModel)]="dataPageSize"
+          <input type="number" max="10000" min="1" (keydown.enter)="settingChanged(dataPageSize, 'dataPageSize')" [(ngModel)]="dataPageSize"
             class="form-control inp-3-char va-text">
         </div>
       </div>
@@ -35,7 +35,7 @@
         <div class="form-inline">
           <label class="form-check-label va-text">Maximum number of columns in tables</label>
           <div class="mx-1">
-            <input type="number" max="100" min="1" (keydown.enter)="tableColumnLimitChanged()" [(ngModel)]="tableColumnLimit"
+            <input type="number" max="100" min="1" (keydown.enter)="settingChanged(tableColumnLimit, 'tableColumnLimit')" [(ngModel)]="tableColumnLimit"
               class="form-control inp-3-char va-text">
           </div>
         </div>
@@ -44,7 +44,7 @@
       <div class="form-inline">
         <label class="form-check-label va-text">Highlight width</label>
         <div class="mx-1">
-          <input type="number" max="20" min="2" (keydown.enter)="changeHighlightOptions()" [(ngModel)]="highlightWidth"
+          <input type="number" max="20" min="2" (keydown.enter)="settingChanged(highlightWidth, 'highlightWidth')" [(ngModel)]="highlightWidth"
             class="form-control inp-3-char va-text">
         </div>
       </div>
@@ -53,7 +53,7 @@
       <div class="form-inline">
         <label class="form-check-label va-text">Compound padding</label>
         <div class="mx-1">
-          <input type="text" (keydown.enter)="changeCompoundPadding()" [(ngModel)]="compoundPadding"
+          <input type="text" (keydown.enter)="settingChanged(compoundPadding, 'compoundPadding')" [(ngModel)]="compoundPadding"
             class="form-control inp-3-char va-text">
         </div>
       </div>
@@ -69,7 +69,7 @@
     <div class="card border-0 m-1" *ngFor="let setting of timebarBoolSettings; let i = index;">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="checkbox" [(ngModel)]="setting.isEnable"
-          (change)="onBoolSettingsChanged(setting)" [disabled]="!timebarBoolSettings[0].isEnable && i > 0">
+          (change)="settingChanged(setting.isEnable, setting.path2userPref)" [disabled]="!timebarBoolSettings[0].isEnable && i > 0">
         <label class="form-check-label va-text">{{setting.text}}</label>
       </div>
     </div>
@@ -77,7 +77,7 @@
       <div class="form-inline" disable>
         <label class="form-check-label va-text" id="textAl1">Animation step</label>
         <div>
-          <input (click)="setTimebarPlayingStep()" [(ngModel)]="timebarPlayingStep" type="range" min="1" max="100"
+          <input (click)="settingChanged(timebarPlayingStep, 'timebar.playingStep')" [(ngModel)]="timebarPlayingStep" type="range" min="1" max="100"
             [disabled]="!timebarBoolSettings[0].isEnable">
         </div>
       </div>
@@ -86,7 +86,7 @@
       <div class="form-inline">
         <label class="form-check-label va-text" id="textAl">Animation period</label>
         <div>
-          <input (click)="setTimebarPlayingPeriod()" type="range" [(ngModel)]="timebarPlayingPeriod" min="10" max="2500"
+          <input (click)="settingChanged(timebarPlayingPeriod, 'timebar.playingPeriod')" type="range" [(ngModel)]="timebarPlayingPeriod" min="10" max="2500"
             [disabled]="!timebarBoolSettings[0].isEnable">
         </div>
       </div>
@@ -95,7 +95,7 @@
       <div class="form-inline">
         <label class="form-check-label va-text" id="textAl">Zoom sensitivity</label>
         <div>
-          <input (click)="setTimebarZoomStep()" type="range" [(ngModel)]="timebarZoomingStep" min="0" max="100"
+          <input (click)="settingChanged(timebarZoomingStep, 'timebar.zoomingStep')" type="range" [(ngModel)]="timebarZoomingStep" min="0" max="100"
             [disabled]="!timebarBoolSettings[0].isEnable">
         </div>
       </div>
@@ -105,7 +105,7 @@
         <div class="form-check-label va-text">Graph inclusion type: </div>
         <div class="form-check-inline va-text" *ngFor="let str of timebarGraphInclusionTypes; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="timebarGraphInclusionTypeChanged(i)" name="optradio"
+            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'timebar.graphInclusionType')" name="optradio"
               [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==graphInclusionType">{{str}}
           </label>
         </div>
@@ -116,7 +116,7 @@
         <div class="form-check-label va-text">Statistics inclusion type: </div>
         <div class="form-check-inline va-text" *ngFor="let str of timebarStatsInclusionTypes; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="timebarStatsInclusionTypeChanged(i)" name="optradio2"
+            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'timebar.statsInclusionType')" name="optradio2"
               [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==statsInclusionType">{{str}}
           </label>
         </div>
