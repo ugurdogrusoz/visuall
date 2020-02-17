@@ -19,7 +19,6 @@ export class TableViewComponent implements OnInit {
   position: IPosition = { x: 0, y: 0 };
   filterTxt: string = '';
   sortDirection: 'asc' | 'desc' | '' = '';
-  isRowChecked: boolean[] = [];
   sortingIdx: number = -1;
   isLoading: boolean = false;
   isInitialized: boolean = false;
@@ -27,6 +26,7 @@ export class TableViewComponent implements OnInit {
   filterTxtChanged: () => void;
   @ViewChild('searchTxt', { static: false }) inpElem;
   @ViewChild('dynamicDiv', { static: false }) dynamicDiv;
+  checkedIdx: any = {};
 
   @Input() params: TableViewInput;
   @Input() tableFilled = new Subject<boolean>();
@@ -48,6 +48,7 @@ export class TableViewComponent implements OnInit {
   private onTableFilled() {
     this.isLoading = false;
     this.isInitialized = true;
+    this.checkedIdx = {};
     if (this.inpElem) {
       setTimeout(() => { this.inpElem.nativeElement.focus(); }, 0);
     }
@@ -113,29 +114,34 @@ export class TableViewComponent implements OnInit {
     this.onFilteringChanged.emit({ txt: this.filterTxt, orderBy: o, orderDirection: this.sortDirection });
   }
 
-  cbChanged() {
-    if (this.isRowChecked.length != this.params.results.length) {
-      let idx = this.isRowChecked.length - 1;
-      let val = this.isRowChecked[idx];
-      this.isRowChecked = this.params.results.map(_ => false);
-      // maintain previous value
-      this.isRowChecked[idx] = val;
+  cbChanged(idx: number, isChecked: boolean) {
+    delete this.checkedIdx[idx];
+
+    if (isChecked) {
+      this.checkedIdx[idx] = true;
     }
   }
 
   loadGraph4Checked() {
-    let ids = this.params.results.filter((_, i) => this.isRowChecked[i]).map(x => x[0].val) as number[];
+    let ids = this.params.results.filter((_, i) => this.checkedIdx[i]).map(x => x[0].val) as number[];
     if (ids.length > 0) {
       this.onDataForQueryResult.emit(ids);
     }
   }
 
-  cb4AllChanged() {
-    if (this.isRowChecked.length != this.params.results.length) {
-      this.isRowChecked = this.params.results.map(_ => false);
-    }
-    for (let i = 0; i < this.isRowChecked.length; i++) {
-      this.isRowChecked[i] = !this.isRowChecked[i];
+  cb4AllChanged(isChecked: boolean) {
+    this.checkedIdx = {};
+    let elems = document.getElementsByClassName('row-cb');
+    
+    if (isChecked) {
+      for (let i = 0; i < this.params.results.length; i++) {
+        this.checkedIdx[i] = true;
+        (elems[i] as HTMLInputElement).checked = true;
+      }
+    } else {
+      for (let i = 0; i < elems.length; i++) {
+        (elems[i] as HTMLInputElement).checked = false;
+      }
     }
   }
 

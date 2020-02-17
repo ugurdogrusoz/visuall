@@ -38,7 +38,7 @@
             <span>...</span>
           </th>
           <th scope="col" [hidden]="params.isLoadGraph">
-            <input type="checkbox" (change)="cb4AllChanged()" />
+            <input type="checkbox" (change)="cb4AllChanged($event.target.checked)" />
           </th>
         </tr>
       </thead>
@@ -57,7 +57,7 @@
           </td>
           <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
           <td [hidden]="params.isLoadGraph">
-            <input type="checkbox" class="form-check-input mx-0" [(ngModel)]="isRowChecked[i]" (change)="cbChanged()" />
+            <input type="checkbox" class="form-check-input mx-0 row-cb" (change)="cbChanged(i, $event.target.checked)" />
           </td>
         </tr>
       </tbody>
