@@ -53,7 +53,12 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   changeSelectedProp() {
-    let attrType = findTypeOfAttribute(this.selectedProp, properties.nodes, properties.edges);
+    let attrType = undefined;
+    if (properties.nodes[this.selectedClass]) {
+      attrType = properties.nodes[this.selectedClass][this.selectedProp];
+    } else if (properties.edges[this.selectedClass]) {
+      attrType = properties.edges[this.selectedClass][this.selectedProp];
+    }
     if (properties.edges[this.selectedProp]) {
       attrType = 'edge';
     }
