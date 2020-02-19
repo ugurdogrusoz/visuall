@@ -161,4 +161,10 @@ export class TableViewComponent implements OnInit {
       }, 0);
     }
   }
+
+  onResizeStart(e) {
+    let bb0 = e.host.children[0].getBoundingClientRect();
+    let bb1 = e.host.children[1].getBoundingClientRect();
+    this.origSize.hei = bb0.height + bb1.height;
+  }
 }

@@ -6,6 +6,7 @@
   white-space: pre-wrap;
   border: 2px solid #555555;
   border-radius: 5px;
+  overflow: hidden;
 }
 
 img {
