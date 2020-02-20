@@ -76,6 +76,16 @@ export const NUMBER_OPERATORS = {
   '<': '<',
   '>': '>',
   '\u2264': '<=',
+  '\u2265': '>=',
+  'one of': 'IN'
+};
+
+export const DATETIME_OPERATORS = {
+  '=': '=',
+  '\u2260': '<>',
+  '<': '<',
+  '>': '>',
+  '\u2264': '<=',
   '\u2265': '>='
 };
 
@@ -88,7 +98,8 @@ export const TEXT_OPERATORS = {
   'equal to': '=',
   'contains': 'Contains',
   'starts with': 'Starts with',
-  'ends with': 'Ends with'
+  'ends with': 'Ends with',
+  'one of': 'IN'
 };
 export const LIST_OPERATORS = {
   'in': 'In'

@@ -93,6 +93,18 @@ export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules):
 }
 
 function getJsExpressionForMetricRule(r: Rule) {
+  if (r.propertyType != 'list' && r.operator == 'IN') {
+    let s = r.inputOperand;
+    s = s.replace(/'/g, '');
+    if (r.propertyType == 'string') {
+      let arr = s.split(',').map(x => `'${x}'`);
+      s = arr.join(',')
+    }
+    if (r.propertyType == 'edge') {
+      return `[${s}].includes(x.connectedEdges('.${r.propertyOperand}').length)`;
+    }
+    return `[${s}].includes(x.data().${r.propertyOperand})`;
+  }
   if (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'datetime' || r.propertyType == 'edge') {
     let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
     if (r.propertyType == 'datetime') {

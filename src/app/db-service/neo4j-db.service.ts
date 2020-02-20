@@ -275,7 +275,7 @@ export class Neo4jDb implements DbService {
     return s;
   }
 
-  private getCondition4Rule(rule: Rule) {
+  private getCondition4Rule(rule: Rule): string {
     if (!rule.propertyOperand || rule.propertyOperand == GENERIC_TYPE.NOT_SELECTED) {
       return '(TRUE)';
     }
@@ -291,12 +291,30 @@ export class Neo4jDb implements DbService {
       if (!rule.operator || !rule.inputOperand || rule.inputOperand.length < 1) {
         return `( size((x)-[:${rule.propertyOperand}]-()) > 0 )`;
       }
-      return `( size((x)-[:${rule.propertyOperand}]-()) ${rule.operator} ${rule.inputOperand} )`;
+      let i = this.transformInp(rule, rule.inputOperand);
+      return `( size((x)-[:${rule.propertyOperand}]-()) ${rule.operator} ${i} )`;
     } else {
       if (rule.propertyType == 'string' && this._g.userPrefs.isIgnoreCaseInText.getValue()) {
-        return `(LOWER(x.${rule.propertyOperand}) ${rule.operator} LOWER(${inputOp}))`;
+        inputOp = inputOp.toLowerCase();
+        inputOp = this.transformInp(rule, inputOp);
+        return `(LOWER(x.${rule.propertyOperand}) ${rule.operator} ${inputOp})`;
       }
+      inputOp = this.transformInp(rule, inputOp);
       return `(x.${rule.propertyOperand} ${rule.operator} ${inputOp})`;
+    }
+  }
+
+  private transformInp(rule: Rule, inputOp: string): string {
+    if (rule.operator != 'IN' || rule.propertyType == 'list') {
+      return inputOp;
+    }
+    let s = inputOp;
+    s = s.replace(/'/g, '');
+    if (rule.propertyType == 'string') {
+      let arr = s.split(',').map(x => `'${x}'`);
+      return `[${arr.join(',')}]`
+    } else {
+      return `[${s}]`
     }
   }
 

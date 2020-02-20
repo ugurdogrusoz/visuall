@@ -16,7 +16,8 @@
   <div class="col-5 pr-1">
     <div [hidden]="selectedPropertyCategory != 0">
       <input [type]="currInpType" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected"
-        class="form-control filter-form filter-input va-small-text" placeholder="Filter...">
+        (click)="filterInpClicked(popupContent)" class="form-control filter-form filter-input va-small-text"
+        placeholder="Filter...">
     </div>
     <div [hidden]="selectedPropertyCategory != 1">
       <input type="text" #dateInp [disabled]="isGenericTypeSelected" class="form-control va-small-text">
@@ -32,3 +33,13 @@
     <img src="assets/img/add.svg" alt="Add Rule" (click)="onAddRuleClick()">
   </div>
 </div>
+
+<ng-template #popupContent>
+  <div class="modal-body text-center va-text">
+    <textarea class="form-control va-text modal-txtarea" [(ngModel)]="textAreaInp"></textarea>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary va-text" data-dismiss="modal" (click)="txtAreaPopupOk(popupContent)">OK</button>
+    <button type="button" class="btn btn-secondary va-text" data-dismiss="modal" (click)="txtAreaPopupCancel(popupContent)">Cancel</button>
+  </div>
+</ng-template>

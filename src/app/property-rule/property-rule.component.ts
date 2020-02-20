@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
-import { findTypeOfAttribute, TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber } from '../constants';
+import { TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber, DATETIME_OPERATORS } from '../constants';
 import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/filtering-types';
 import properties from '../../assets/generated/properties.json';
@@ -26,6 +26,7 @@ export class PropertyRuleComponent implements OnInit {
   operatorKeys: string[];
   selectedPropertyCategory: PropertyCategory;
   filterInp: string;
+  textAreaInp: string = '';
   finiteSetPropertyMap: any = null;
   selectedClass: string;
   currInpType: string = 'text';
@@ -33,6 +34,7 @@ export class PropertyRuleComponent implements OnInit {
   @Input() isStrict: boolean;
   @Output() onRuleReady = new EventEmitter<Rule>();
   @ViewChild('dateInp', { static: false }) dateInp: ElementRef;
+  modal = null;
 
   constructor(private _modalService: NgbModal) { }
 
@@ -84,7 +86,7 @@ export class PropertyRuleComponent implements OnInit {
     } else if (attrType.startsWith('enum')) {
       this.addOperators(ENUM_OPERATORS);
     } else if (attrType == 'datetime') {
-      this.addOperators(NUMBER_OPERATORS);
+      this.addOperators(DATETIME_OPERATORS);
       let opt = {
         defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true,
       };
@@ -98,7 +100,6 @@ export class PropertyRuleComponent implements OnInit {
     const attribute = this.selectedProp;
     let value: any = this.filterInp;
     let rawValue: any = this.filterInp;
-    let category: PropertyCategory = PropertyCategory.other;
 
     let operator = this.operators[this.selectedOperatorKey];
     let atType = this.attributeType;
@@ -109,11 +110,14 @@ export class PropertyRuleComponent implements OnInit {
     if (atType == 'datetime') {
       value = this.dateInp.nativeElement['_flatpickr'].selectedDates[0].getTime();
       rawValue = value;
-      category = PropertyCategory.date;
     } else if (atType == 'int') {
       value = parseInt(value);
     } else if (atType == 'float') {
       value = parseFloat(value);
+    }
+
+    if (this.selectedOperatorKey == 'one of') {
+      value = this.filterInp;
     }
 
     const rule: Rule = {
@@ -169,10 +173,31 @@ export class PropertyRuleComponent implements OnInit {
       return false;
     }
     const t = rule.propertyType;
-    if ((t == 'datetime' || t == 'float' || t == 'int') && !isNumber(inp)) {
+    if ((t == 'datetime' || t == 'float' || t == 'int') && !isNumber(inp) && this.selectedOperatorKey != 'one of') {
       return false;
     }
     return true;
+  }
+
+  filterInpClicked(popupContent) {
+    if (this.selectedOperatorKey == 'one of') {
+      this.currInpType = 'text';
+      this.modal = this._modalService.open(popupContent);
+      this.modal.result.then(() => {
+        // on close
+        this.filterInp = this.textAreaInp.split('\n').join(',').trim();
+      }, () => {
+        // on dismiss
+      });
+    }
+  }
+
+  txtAreaPopupOk() {
+    this.modal.close();
+  }
+
+  txtAreaPopupCancel() {
+    this.modal.dismiss();
   }
 
 }

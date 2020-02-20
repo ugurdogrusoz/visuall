@@ -37,7 +37,7 @@ export class CytoscapeComponent implements OnInit {
 
   @HostListener('document:keydown.control.a', ['$event'])
   selectAllHotKeyFn(event: KeyboardEvent) {
-    if (document.activeElement.tagName == 'INPUT') {
+    if (document.activeElement.tagName == 'INPUT' || document.activeElement.tagName == 'TEXTAREA') {
       return;
     }
     event.preventDefault();
