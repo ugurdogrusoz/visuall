@@ -50,15 +50,6 @@ export class Query0Component implements OnInit {
     this._dbService.getCount4Q0(d1, d2, this.movieCnt, (x) => { this.tableInput.resultCnt = x.data[0] }, filter);
   }
 
-  pageChanged(newPage: number) {
-    let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
-    let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
-    let skip = (newPage - 1) * this.tableInput.pageSize;
-
-    this.loadTable(d1, d2, skip);
-    this.loadGraph(d1, d2, skip);
-  }
-
   loadTable(d1: number, d2: number, skip: number, filter?: TableFiltering) {
     this._dbService.getTable4Q0(d1, d2, this.movieCnt, skip, this.tableInput.pageSize, (x) => this.fillTable(x), filter);
   }
@@ -79,7 +70,7 @@ export class Query0Component implements OnInit {
     this.tableFilled.next(true);
   }
 
-  getDataForQueryResult(ids: number[]|string[]) {
+  getDataForQueryResult(ids: number[] | string[]) {
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
     this._dbService.getGraph4Q0(d1, d2, this.movieCnt, 0, this.tableInput.pageSize, x => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), ids);
@@ -90,6 +81,7 @@ export class Query0Component implements OnInit {
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
     this.getCountOfData(d1, d2, filter);
-    this.loadTable(d1, d2, 0, filter);
+    let skip = filter.skip ? filter.skip : 0;
+    this.loadTable(d1, d2, skip, filter);
   }
 }

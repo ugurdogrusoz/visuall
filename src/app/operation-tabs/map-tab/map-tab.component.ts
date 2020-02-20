@@ -340,7 +340,8 @@ export class MapTabComponent implements OnInit {
     this.tableInput.currPage = 1;
     const limit = this.tableInput.pageSize;
     this.getCountOfData(filter);
-    this._dbService.filterTable(this.filteringRule, filter, 0, limit, DbQueryType.table, (x) => { this.fillTable(x) });
+    let skip = filter.skip ? filter.skip : 0;
+    this._dbService.filterTable(this.filteringRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
   }
 }
 

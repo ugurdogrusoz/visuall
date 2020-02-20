@@ -28,4 +28,5 @@ export interface TableFiltering {
   txt: string;
   orderBy: string;
   orderDirection: 'asc' | 'desc' | '';
+  skip?: number;
 }

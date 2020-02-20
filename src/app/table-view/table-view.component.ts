@@ -30,7 +30,6 @@ export class TableViewComponent implements OnInit {
 
   @Input() params: TableViewInput;
   @Input() tableFilled = new Subject<boolean>();
-  @Output() onPageChanged = new EventEmitter<number>();
   @Output() onFilteringChanged = new EventEmitter<TableFiltering>();
   @Output() onDataForQueryResult = new EventEmitter<number[] | string[]>();
 
@@ -84,7 +83,9 @@ export class TableViewComponent implements OnInit {
   }
 
   pageChanged(newPage: number) {
-    this.onPageChanged.emit(newPage);
+    let o = this.params.columns[this.sortingIdx];
+    let skip = (newPage - 1) * this.params.pageSize;
+    this.onFilteringChanged.emit({ txt: this.filterTxt, orderBy: o, orderDirection: this.sortDirection, skip: skip });
   }
 
   isNumber(v: any) {
@@ -132,15 +133,20 @@ export class TableViewComponent implements OnInit {
   cb4AllChanged(isChecked: boolean) {
     this.checkedIdx = {};
     let elems = document.getElementsByClassName('row-cb');
-    
+    let elemsArr: HTMLInputElement[] = [];
+    for (let i = 0; i < elems.length; i++) {
+      elemsArr.push(elems[i] as HTMLInputElement);
+    }
+    elemsArr = elemsArr.filter(x => !x.parentElement.hidden);
+
     if (isChecked) {
       for (let i = 0; i < this.params.results.length; i++) {
         this.checkedIdx[i] = true;
-        (elems[i] as HTMLInputElement).checked = true;
+        elemsArr[i].checked = true;
       }
     } else {
-      for (let i = 0; i < elems.length; i++) {
-        (elems[i] as HTMLInputElement).checked = false;
+      for (let i = 0; i < elemsArr.length; i++) {
+        elemsArr[i].checked = false;
       }
     }
   }

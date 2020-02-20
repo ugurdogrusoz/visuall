@@ -17,8 +17,10 @@
   </button>
 </div>
 
-<div #dynamicDiv [ngResizable]="isDraggable" [rzHandles]="'all'" [rzMinWidth]="origSize.wid" [rzMinHeight]="origSize.hei" (rzStart)="onResizeStart($event)" [ngDraggable]="isDraggable" [position]="position" [ngClass]="{'draggable-content': isDraggable}">
-  <div *ngIf="isInitialized" class="table-responsive">
+<div #dynamicDiv [ngResizable]="isDraggable" [rzHandles]="'all'" [rzMinWidth]="origSize.wid"
+  [rzMinHeight]="origSize.hei" (rzStart)="onResizeStart($event)" [ngDraggable]="isDraggable" [position]="position"
+  [ngClass]="{'draggable-content': isDraggable}">
+  <div *ngIf="isInitialized && params.results.length > 0" class="table-responsive">
     <table class="table table-sm table-hover va-text">
       <thead>
         <tr>
@@ -57,7 +59,8 @@
           </td>
           <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
           <td [hidden]="params.isLoadGraph">
-            <input type="checkbox" class="form-check-input mx-0 row-cb" (change)="cbChanged(i, $event.target.checked)" />
+            <input type="checkbox" class="form-check-input mx-0 row-cb"
+              (change)="cbChanged(i, $event.target.checked)" />
           </td>
         </tr>
       </tbody>

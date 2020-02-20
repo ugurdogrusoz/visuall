@@ -72,15 +72,6 @@ export class Query1Component implements OnInit, AfterViewInit {
       (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph));
   }
 
-  pageChanged(newPage: number) {
-    let d1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0].getFullYear();
-    let d2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0].getFullYear();
-    let skip = (newPage - 1) * this.tableInput.pageSize;
-
-    this.loadTable(d1, d2, skip);
-    this.loadGraph(d1, d2, skip);
-  }
-
   fillTable(data) {
     this.tableInput.results = [];
     for (let i = 0; i < data.data.length; i++) {
@@ -109,6 +100,7 @@ export class Query1Component implements OnInit, AfterViewInit {
     let d1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0].getFullYear();
     let d2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0].getFullYear();
     this.getCountOfData(d1, d2, filter);
-    this.loadTable(d1, d2, 0, filter);
+    let skip = filter.skip ? filter.skip : 0;
+    this.loadTable(d1, d2, skip, filter);
   }
 }
