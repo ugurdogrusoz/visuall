@@ -4,6 +4,6 @@ img {
   cursor: pointer;
 }
 
-.modal-txtarea {
-  height: 33vh;
+textarea {
+  resize: both !important;
 }

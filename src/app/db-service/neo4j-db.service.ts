@@ -297,15 +297,17 @@ export class Neo4jDb implements DbService {
       if (rule.propertyType == 'string' && this._g.userPrefs.isIgnoreCaseInText.getValue()) {
         inputOp = inputOp.toLowerCase();
         inputOp = this.transformInp(rule, inputOp);
-        return `(LOWER(x.${rule.propertyOperand}) ${rule.operator} ${inputOp})`;
+        let op = rule.operator != 'One of' ? rule.operator : 'IN';
+        return `(LOWER(x.${rule.propertyOperand}) ${op} ${inputOp})`;
       }
       inputOp = this.transformInp(rule, inputOp);
-      return `(x.${rule.propertyOperand} ${rule.operator} ${inputOp})`;
+      let op = rule.operator != 'One of' ? rule.operator : 'IN';
+      return `(x.${rule.propertyOperand} ${op} ${inputOp})`;
     }
   }
 
   private transformInp(rule: Rule, inputOp: string): string {
-    if (rule.operator != 'IN' || rule.propertyType == 'list') {
+    if (rule.operator != 'One of') {
       return inputOp;
     }
     let s = inputOp;

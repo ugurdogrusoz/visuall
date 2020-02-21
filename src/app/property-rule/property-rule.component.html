@@ -35,11 +35,13 @@
 </div>
 
 <ng-template #popupContent>
-  <div class="modal-body text-center va-text">
-    <textarea class="form-control va-text modal-txtarea" [(ngModel)]="textAreaInp"></textarea>
+  <div class="modal-body text-center">
+    <textarea class="va-text form-control" rows="3" cols="40" [(ngModel)]="textAreaInp"></textarea>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-primary va-text" data-dismiss="modal" (click)="txtAreaPopupOk(popupContent)">OK</button>
-    <button type="button" class="btn btn-secondary va-text" data-dismiss="modal" (click)="txtAreaPopupCancel(popupContent)">Cancel</button>
+    <button type="button" class="btn btn-primary va-text" data-dismiss="modal"
+      (click)="txtAreaPopupOk(popupContent)">OK</button>
+    <button type="button" class="btn btn-secondary va-text" data-dismiss="modal"
+      (click)="txtAreaPopupCancel(popupContent)">Cancel</button>
   </div>
 </ng-template>

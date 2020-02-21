@@ -55,6 +55,8 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   changeSelectedProp() {
+    this.textAreaInp = '';
+    this.filterInp = '';
     let attrType = undefined;
     if (properties.nodes[this.selectedClass]) {
       attrType = properties.nodes[this.selectedClass][this.selectedProp];
@@ -180,16 +182,19 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   filterInpClicked(popupContent) {
-    if (this.selectedOperatorKey == 'one of') {
-      this.currInpType = 'text';
-      this.modal = this._modalService.open(popupContent);
-      this.modal.result.then(() => {
-        // on close
-        this.filterInp = this.textAreaInp.split('\n').join(',').trim();
-      }, () => {
-        // on dismiss
-      });
+    if (this.selectedOperatorKey != 'one of') {
+      return;
     }
+
+    this.currInpType = 'text';
+    this.modal = this._modalService.open(popupContent);
+    this.modal.result.then(() => {
+      // on close
+      this.filterInp = this.textAreaInp.trim().split('\n').join(',');
+    }, () => {
+      // on dismiss
+      this.textAreaInp = this.filterInp.split(',').join('\n');
+    });
   }
 
   txtAreaPopupOk() {

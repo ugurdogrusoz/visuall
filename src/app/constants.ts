@@ -77,7 +77,7 @@ export const NUMBER_OPERATORS = {
   '>': '>',
   '\u2264': '<=',
   '\u2265': '>=',
-  'one of': 'IN'
+  'one of': 'One of'
 };
 
 export const DATETIME_OPERATORS = {
@@ -99,7 +99,7 @@ export const TEXT_OPERATORS = {
   'contains': 'Contains',
   'starts with': 'Starts with',
   'ends with': 'Ends with',
-  'one of': 'IN'
+  'one of': 'One of'
 };
 export const LIST_OPERATORS = {
   'in': 'In'

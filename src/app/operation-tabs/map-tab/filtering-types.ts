@@ -93,7 +93,7 @@ export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules):
 }
 
 function getJsExpressionForMetricRule(r: Rule) {
-  if (r.propertyType != 'list' && r.operator == 'IN') {
+  if (r.operator == 'One of') {
     let s = r.inputOperand;
     s = s.replace(/'/g, '');
     if (r.propertyType == 'string') {
