@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { TimebarMetricEditorComponent } from './timebar-metric-editor.component';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('TimebarMetricEditorComponent', () => {
   let component: TimebarMetricEditorComponent;
@@ -8,9 +8,10 @@ describe('TimebarMetricEditorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TimebarMetricEditorComponent ]
+      declarations: [TimebarMetricEditorComponent],
+      imports: [HttpClientModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
