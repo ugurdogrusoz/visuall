@@ -16,7 +16,7 @@
   <div class="col-5 pr-1">
     <div [hidden]="selectedPropertyCategory != 0">
       <input [type]="currInpType" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected"
-        (click)="filterInpClicked(popupContent)" class="form-control filter-form filter-input va-small-text"
+        (click)="filterInpClicked()" class="form-control filter-form filter-input va-small-text"
         placeholder="Filter...">
     </div>
     <div [hidden]="selectedPropertyCategory != 1">
@@ -33,15 +33,15 @@
     <img src="assets/img/add.svg" alt="Add Rule" (click)="onAddRuleClick()">
   </div>
 </div>
-
-<ng-template #popupContent>
-  <div class="modal-body text-center">
-    <textarea class="va-text form-control" rows="3" cols="40" [(ngModel)]="textAreaInp"></textarea>
+<div class="draggable-content" ngResizable ngDraggable [position]="position" [rzHandles]="'all'" *ngIf="isShowTxtArea"
+  (endOffset)="onMoveEnd($event)" (rzStop)="onResizeStop($event)" [style.width]="txtAreaSize.width + 'px'" [style.height]="txtAreaSize.height + 'px'">
+  <div class="d-flex flex-column h-100">
+    <div class="flex-grow-1 h-100 m-1">
+      <textarea class="va-text form-control" rows="3" cols="40" [(ngModel)]="textAreaInp"></textarea>
+    </div>
+    <div class="align-self-center">
+      <button type="button" class="m-1 btn btn-primary va-text" (click)="txtAreaPopupOk()">OK</button>
+      <button type="button" class="m-1 btn btn-secondary va-text" (click)="txtAreaPopupCancel()">Cancel</button>
+    </div>
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-primary va-text" data-dismiss="modal"
-      (click)="txtAreaPopupOk(popupContent)">OK</button>
-    <button type="button" class="btn btn-secondary va-text" data-dismiss="modal"
-      (click)="txtAreaPopupCancel(popupContent)">Cancel</button>
-  </div>
-</ng-template>
+</div>

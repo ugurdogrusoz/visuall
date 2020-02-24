@@ -7,6 +7,7 @@ import AppDescription from '../../assets/app_description.json';
 import { Subject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IPosition } from 'angular2-draggable';
 
 @Component({
   selector: 'app-property-rule',
@@ -34,7 +35,9 @@ export class PropertyRuleComponent implements OnInit {
   @Input() isStrict: boolean;
   @Output() onRuleReady = new EventEmitter<Rule>();
   @ViewChild('dateInp', { static: false }) dateInp: ElementRef;
-  modal = null;
+  isShowTxtArea = false;
+  txtAreaSize: { width: number, height: number } = { width: 250, height: 150 };
+  position: IPosition = { x: 0, y: 0 };
 
   constructor(private _modalService: NgbModal) { }
 
@@ -181,28 +184,32 @@ export class PropertyRuleComponent implements OnInit {
     return true;
   }
 
-  filterInpClicked(popupContent) {
+  filterInpClicked() {
     if (this.selectedOperatorKey != 'one of') {
       return;
     }
-
+    if (this.position.x == 0 && this.position.y == 0) {
+      this.position = { x: -130, y: 0 };
+    }
+    this.isShowTxtArea = true;
     this.currInpType = 'text';
-    this.modal = this._modalService.open(popupContent);
-    this.modal.result.then(() => {
-      // on close
-      this.filterInp = this.textAreaInp.trim().split('\n').join(',');
-    }, () => {
-      // on dismiss
-      this.textAreaInp = this.filterInp.split(',').join('\n');
-    });
   }
 
   txtAreaPopupOk() {
-    this.modal.close();
+    this.filterInp = this.textAreaInp.trim().split('\n').join(',');
+    this.isShowTxtArea = false;
   }
 
   txtAreaPopupCancel() {
-    this.modal.dismiss();
+    this.textAreaInp = this.filterInp.split(',').join('\n');
+    this.isShowTxtArea = false;
   }
 
+  onMoveEnd(e) {
+    this.position = e;
+  }
+
+  onResizeStop(e) {
+    this.txtAreaSize = e.size;
+  }
 }
