@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientModule } from '@angular/common/http';
 
 import { CytoscapeComponent } from './cytoscape.component';
 import { CytoscapeService } from '../cytoscape.service';
@@ -7,8 +8,8 @@ import { TimebarService } from '../timebar.service';
 class CytoscapeServiceStub {
   initCy() { }
 }
-class TimebarServiceStub { 
-  init() { } 
+class TimebarServiceStub {
+  init() { }
 }
 
 describe('CytoscapeComponent', () => {
@@ -21,7 +22,8 @@ describe('CytoscapeComponent', () => {
       providers: [
         { provide: CytoscapeService, useClass: CytoscapeServiceStub },
         { provide: TimebarService, useClass: TimebarServiceStub },
-      ]
+      ],
+      imports: [HttpClientModule]
     })
       .compileComponents();
   }));

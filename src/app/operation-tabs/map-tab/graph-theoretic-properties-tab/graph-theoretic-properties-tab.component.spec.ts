@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientModule } from '@angular/common/http';
 
 import { GraphTheoreticPropertiesTabComponent } from './graph-theoretic-properties-tab.component';
 
@@ -8,9 +9,10 @@ describe('GraphTheoreticPropertiesTabComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GraphTheoreticPropertiesTabComponent ]
+      declarations: [GraphTheoreticPropertiesTabComponent],
+      imports: [HttpClientModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

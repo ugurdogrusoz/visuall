@@ -11,7 +11,7 @@ class DbServiceStub { }
 class GlobalVariableServiceStub { }
 class TimebarServiceStub { }
 
-describe('FilterTabComponent', () => {
+describe('MapTabComponent', () => {
   let component: MapTabComponent;
   let fixture: ComponentFixture<MapTabComponent>;
 
