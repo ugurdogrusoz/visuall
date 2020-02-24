@@ -34,7 +34,8 @@
   </div>
 </div>
 <div class="draggable-content" ngResizable ngDraggable [position]="position" [rzHandles]="'all'" *ngIf="isShowTxtArea"
-  (endOffset)="onMoveEnd($event)" (rzStop)="onResizeStop($event)" [style.width]="txtAreaSize.width + 'px'" [style.height]="txtAreaSize.height + 'px'">
+  [rzMinWidth]="250" [rzMinHeight]="150" (endOffset)="onMoveEnd($event)"
+  (rzStop)="onResizeStop($event)" [style.width]="txtAreaSize.width + 'px'" [style.height]="txtAreaSize.height + 'px'">
   <div class="d-flex flex-column h-100">
     <div class="flex-grow-1 h-100 m-1">
       <textarea class="va-text form-control" rows="3" cols="40" [(ngModel)]="textAreaInp"></textarea>
