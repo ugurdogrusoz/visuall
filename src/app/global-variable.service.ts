@@ -19,6 +19,7 @@ export class GlobalVariableService {
   isSelectFromLoad: boolean = false;
   userPrefs: UserPref = {} as UserPref;
   shownElemsChanged = new BehaviorSubject<boolean>(true);
+  operationTabChanged = new BehaviorSubject<number>(1);
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);

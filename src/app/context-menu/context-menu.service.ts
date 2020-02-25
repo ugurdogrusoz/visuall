@@ -41,6 +41,12 @@ export class ContextMenuService {
         content: 'Select Objects of This Type',
         selector: 'node,edge',
         onClickFunction: this.selectAllThisType.bind(this)
+      },
+      {
+        id: 'openTab',
+        content: 'Open tab in OperationTabsComponent',
+        selector: 'node,edge',
+        onClickFunction: () => { this._g.operationTabChanged.next(2) } // parameter is THE tab number
       }
     ];
   }

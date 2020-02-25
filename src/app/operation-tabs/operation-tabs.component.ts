@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GroupTabComponent } from './map-tab/group-tab/group-tab.component';
+import { GlobalVariableService } from '../global-variable.service';
 
 @Component({
   selector: 'app-operation-tabs',
@@ -11,8 +12,9 @@ export class OperationTabsComponent implements OnInit {
   currTab: Number;
   navItems: any[];
 
-  constructor() {
-    this.currTab = 1;
+  constructor(private _g: GlobalVariableService) {
+    this.currTab = this._g.operationTabChanged.getValue();
+    this._g.operationTabChanged.subscribe(x => { this.setTab(x) });
   }
 
   ngOnInit() {
