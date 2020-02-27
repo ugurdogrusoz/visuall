@@ -36,8 +36,11 @@ export class NavbarComponent implements OnInit {
         dropdown: 'Edit', actions: [{ txt: 'Delete Selected', id: 'nbi10', fn: 'deleteSelected', isStd: true }]
       },
       {
-        dropdown: 'View', actions: [{ txt: 'Hide Selected', id: 'nbi20', fn: 'hideSelected', isStd: true },
-        { txt: 'Show All', id: 'nbi21', fn: 'showAll', isStd: true }]
+        dropdown: 'View', actions: [
+          { txt: 'Hide Selected', id: 'nbi20', fn: 'hideSelected', isStd: true },
+          { txt: 'Hide Unselected', id: 'nbi20', fn: 'hideUnselected', isStd: true },
+          { txt: 'Show All', id: 'nbi21', fn: 'showAll', isStd: true }
+        ]
       },
       {
         dropdown: 'Highlight', actions: [{ txt: 'Search...', id: 'nbi30', fn: 'search2Highlight', isStd: true },
@@ -106,6 +109,8 @@ export class NavbarComponent implements OnInit {
   deleteSelected() { this._cyService.deleteSelected(null); }
 
   hideSelected() { this._cyService.showHideSelectedElements(true); }
+
+  hideUnselected() { this._cyService.hideUnselected(); }
 
   showAll() { this._cyService.showHideSelectedElements(false); }
 

@@ -12,8 +12,6 @@ export const MAX_DATE = 32503669200000;  // Wed Jan 01 3000 00:00:00 GMT+0300
 
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
 export const FILTER_CLASS_HIDE = 'filter-class-disabled';
-export const HIGHLIGHT_TYPE = 'highlighted3';
-export const HIGHLIGHT_TYPE_MERGE = 'highlighted';
 export const MAX_HIGHTLIGHT_WIDTH = 20;
 export const MIN_HIGHTLIGHT_WIDTH = 1;
 export const MAX_DATA_PAGE_SIZE = 10000;
@@ -69,6 +67,8 @@ export const HIGHLIGHTED_EDGE_4 = {
   'target-arrow-color': '#BF0603',
   'width': 4.5
 };
+
+export const MAX_HIGHLIGHT_CNT = 12;
 
 export const NUMBER_OPERATORS = {
   '=': '=',

@@ -273,7 +273,8 @@ export class CytoscapeService {
       neighbor: function (node) { // return desired neighbors of tapheld node
         return false;
       },
-      neighborSelectTime: 500 //ms, time to taphold to select desired neighbors
+      neighborSelectTime: 500, //ms, time to taphold to select desired neighbors,
+      colorCount: C.MAX_HIGHLIGHT_CNT
     };
     this._g.viewUtils = this._g.cy.viewUtilities(options);
 
@@ -440,15 +441,11 @@ export class CytoscapeService {
     for (let i = 0; i < cnt; i++) {
       ele2highlight.merge('#' + elemIds.pop());
     }
-    const options = {
-      eles: ele2highlight,
-      option: C.HIGHLIGHT_TYPE_MERGE
-    };
     if (this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
       this._g.isSelectFromLoad = true;
       ele2highlight.select();
     } else {
-      this._g.viewUtils.highlight(options);
+      this._g.highlightElems(ele2highlight);
     }
   }
 
@@ -538,15 +535,13 @@ export class CytoscapeService {
     if (selected.length < 1) {
       return;
     }
-    let options = { eles: selected, option: C.HIGHLIGHT_TYPE };
-    this._g.viewUtils.highlight(options);
+    this._g.highlightElems(selected);
   }
 
   staticHighlightNeighbors() {
     let selected = this._g.cy.$(':selected');
     let neighbors = selected.neighborhood();
-    let options = { eles: selected.union(neighbors), option: C.HIGHLIGHT_TYPE };
-    this._g.viewUtils.highlight(options);
+    this._g.highlightElems(selected.union(neighbors));
   }
 
   removeHighlights() {
@@ -670,20 +665,28 @@ export class CytoscapeService {
     }
   }
 
+  hideUnselected() {
+    let unselected = this._g.cy.$().not(':selected');
+    this._g.viewUtils.hide(unselected);
+    this._g.applyClassFiltering();
+    if (unselected.length > 0) {
+      this._g.performLayout(false);
+    }
+  }
+
   isAnyHidden() {
     return this._g.cy.$().map(x => x.hidden()).filter(x => x).length > 0;
   }
 
-  changeHighlightOptions(v: number) {
-    let nodeHighlights = ['HIGHLIGHTED_NODE_1', 'HIGHLIGHTED_NODE_2', 'HIGHLIGHTED_NODE_3', 'HIGHLIGHTED_NODE_4'];
-    let edgeHighlights = ['HIGHLIGHTED_EDGE_1', 'HIGHLIGHTED_EDGE_2', 'HIGHLIGHTED_EDGE_3', 'HIGHLIGHTED_EDGE_4'];
-    for (let i = 0; i < nodeHighlights.length; i++) {
-      C[nodeHighlights[i]]['border-width'] = v;
+  // used to change border width or color. One of them should be defined. (exclusively)
+  changeHighlights(borderWid?: number, color?: string) {
+    if (color) {
+      this._g.currHighlightIdx = (this._g.currHighlightIdx + 1) % C.MAX_HIGHLIGHT_CNT;
+      this._g.viewUtils.changeHighlightColor(this._g.currHighlightIdx, color, borderWid);
+    } else {
+      color = this._g.viewUtils.getHighlightColors()[this._g.currHighlightIdx];
+      this._g.viewUtils.changeHighlightColor(this._g.currHighlightIdx, color, borderWid);
     }
-    for (let i = 0; i < edgeHighlights.length; i++) {
-      C[edgeHighlights[i]]['width'] = v;
-    }
-    this.bindViewUtilitiesExtension();
   }
 
   markovClustering() {

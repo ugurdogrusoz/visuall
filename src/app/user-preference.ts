@@ -14,6 +14,7 @@ export interface UserPref {
   dataPageSize: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;
   highlightWidth: BehaviorSubject<number>;
+  highlightColor: BehaviorSubject<string>;
   compoundPadding: BehaviorSubject<string>;
 
   timebar: {

@@ -306,6 +306,7 @@
     "dataPageSize": 15,
     "tableColumnLimit": 3,
     "highlightWidth": 4.5,
+    "highlightColor": "#F5E663",
 
     "mergedElemIndicator": 0,
 

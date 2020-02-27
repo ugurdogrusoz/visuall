@@ -14,6 +14,7 @@ export class SettingsTabComponent implements OnInit {
   generalBoolSettings: BoolSetting[];
   timebarBoolSettings: BoolSetting[];
   highlightWidth: number;
+  highlightColor: string;
   timebarPlayingStep: number;
   timebarPlayingPeriod: number;
   timebarZoomingStep: number;
@@ -78,7 +79,8 @@ export class SettingsTabComponent implements OnInit {
     up.mergedElemIndicator.subscribe(x => this.mergedElemIndicator = x);
     up.dataPageSize.subscribe(x => { this.dataPageSize = x; this.dataPageSizeChanged(x); });
     up.tableColumnLimit.subscribe(x => { this.tableColumnLimit = x; this.tableColumnLimitChanged(x); });
-    up.highlightWidth.subscribe(x => { this.highlightWidth = x; this.changeHighlightOptions(x); });
+    up.highlightWidth.subscribe(x => { this.highlightWidth = x; this.changeHighlightWidth(x); });
+    up.highlightColor.subscribe(x => { this.highlightColor = x; this.changeHighlightColor(x); });
     up.compoundPadding.subscribe(x => { this.compoundPadding = x; this.changeCompoundPadding(x); });
 
     up_t.isEnabled.subscribe(x => this.isEnableTimebar(x));
@@ -110,7 +112,7 @@ export class SettingsTabComponent implements OnInit {
     }
   }
 
-  changeHighlightOptions(x: number) {
+  changeHighlightWidth(x: number) {
     if (x < MIN_HIGHTLIGHT_WIDTH) {
       x = MIN_HIGHTLIGHT_WIDTH;
       this._g.userPrefs.highlightWidth.next(x);
@@ -121,7 +123,11 @@ export class SettingsTabComponent implements OnInit {
       this._g.userPrefs.highlightWidth.next(x);
       return;
     }
-    this._cyService.changeHighlightOptions(x);
+    this._cyService.changeHighlights(x);
+  }
+
+  changeHighlightColor(color: string) {
+    this._cyService.changeHighlights(this.highlightWidth, color);
   }
 
   changeCompoundPadding(x: string) {
@@ -165,4 +171,7 @@ export class SettingsTabComponent implements OnInit {
     obj.next(val);
   }
 
+  onColorSelected(c: string) {
+    this._g.userPrefs.highlightColor.next(c);
+  }
 }

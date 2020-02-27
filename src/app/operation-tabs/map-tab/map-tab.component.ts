@@ -12,6 +12,7 @@ import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
 import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
+import { MergedElemIndicatorTypes } from 'src/app/user-preference.js';
 
 @Component({
   selector: 'app-map-tab',
@@ -163,15 +164,17 @@ export class MapTabComponent implements OnInit {
   }
 
   runFilteringOnClient(cb: (s: number, end: number) => void, cbParams: any[]) {
-    this._g.viewUtils.hide(this._g.cy.$());
     let fnStr = getBoolExpressionFromMetric(this.filteringRule) + ' return true; return false;';
     let filteredClassElems = this._g.cy.filter(new Function('x', fnStr));
     filteredClassElems.merge(filteredClassElems.connectedNodes());
-    this._g.viewUtils.show(filteredClassElems);
+    if (this._g.userPrefs.mergedElemIndicator.getValue() == MergedElemIndicatorTypes.highlight) {
+      this._g.highlightElems(filteredClassElems);
+    } else {
+      filteredClassElems.select();
+    }
     this._g.applyClassFiltering();
     this._g.performLayout(false);
     cb.apply(this, cbParams);
-    this._g.shownElemsChanged.next(true);
   }
 
   runFilteringOnDatabase(cb: (s: number, end: number) => void, cbParams: any[]) {

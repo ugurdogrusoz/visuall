@@ -5,7 +5,7 @@ import { SaveAsPngModalComponent } from '../popups/save-as-png-modal/save-as-png
 import { AboutModalComponent } from '../popups/about-modal/about-modal.component';
 import { QuickHelpModalComponent } from '../popups/quick-help-modal/quick-help-modal.component';
 import { GlobalVariableService } from '../global-variable.service';
-import { HIGHLIGHT_TYPE, getPropNamesFromObj } from '../constants';
+import { getPropNamesFromObj } from '../constants';
 import entityMap from '../../assets/generated/properties.json';
 import { ToolbarCustomizationService } from './toolbar-customization.service';
 import { ToolbarDiv, ToolbarAction } from './itoolbar';
@@ -104,8 +104,7 @@ export class ToolbarComponent implements OnInit {
     let e1 = this.findInListProps(this.searchTxt);
     let e2 = this._g.cy.$(q);
     let e3 = this.searchNumberProps(this.searchTxt);
-    let options = { eles: e1.union(e2).union(e3), option: HIGHLIGHT_TYPE };
-    this._g.viewUtils.highlight(options);
+    this._g.highlightElems(e1.union(e2).union(e3))
   }
 
   generateCyQueryForStrSearch(pattern) {
