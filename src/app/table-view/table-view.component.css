@@ -17,3 +17,7 @@ img {
 td {
   max-width: 200px;
 }
+
+th {
+  white-space: nowrap;
+}
