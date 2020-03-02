@@ -23,6 +23,7 @@ export class CytoscapeService {
   cyNavi: any;
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
   removePopperFn: Function;
+  showObjPropsFn: Function;
 
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
   }
@@ -150,6 +151,22 @@ export class CytoscapeService {
     this._marqueeZoomService.init();
     this.addOtherStyles();
     (<any>window).cy = this._g.cy;
+
+    this._g.cy.on('select unselect', (e) => { this.elemSelection(e) });
+  }
+
+  private elemSelection(e) {
+    if (e.type == 'select') {
+      // do not change tab if selection is originated from load
+      if (this._g.isSelectFromLoad && this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
+        this._g.isSelectFromLoad = false;
+      } else {
+        this._g.operationTabChanged.next(0);
+      }
+    }
+    if (this.showObjPropsFn) {
+      this.showObjPropsFn();
+    }
   }
 
   /** some styles uses functions, so they can't be added using JSON

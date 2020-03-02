@@ -7,23 +7,24 @@
 
 <!--Content will be dynamically loaded-->
 <div class="tab-content" id="edit-tab-content">
-  <div class="tab-pane fade tab-column m-1" [ngClass]="setTabClasses(0)" id="object" role="tabpanel"
-    aria-labelledby="object-tab">
+  <!-- <div class="tab-pane fade tab-column m-1" [ngClass]="setTabClasses(0)">
     <app-object-tab></app-object-tab>
   </div>
 
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(1)" id="map" role="tabpanel"
-    aria-labelledby="map-tab">
+  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(1)">
     <app-map-tab></app-map-tab>
   </div>
 
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(2)" id="query" role="tabpanel"
-    aria-labelledby="settings-tab">
+  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(2)">
     <app-query-tab></app-query-tab>
   </div>
 
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(3)" id="settings" role="tabpanel"
-    aria-labelledby="settings-tab">
+  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(3)">
     <app-settings-tab></app-settings-tab>
+  </div> -->
+  <div *ngFor="let t of tabs; let i = index" class="tab-pane fade tab-column m-1" [ngClass]="setTabClasses(i)">
+    <ng-container *ngIf="currTab == i">
+      <ng-container *ngComponentOutlet="t"></ng-container>
+    </ng-container>
   </div>
 </div>

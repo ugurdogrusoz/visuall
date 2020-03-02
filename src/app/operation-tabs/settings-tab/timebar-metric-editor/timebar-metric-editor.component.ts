@@ -48,13 +48,6 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.refreshTimebar();
   }
 
-  getStyleForMetric(m: TimebarMetric) {
-    if (m.isEditing) {
-      return { 'background-color': '#eaeaea' };
-    }
-    return { 'background-color': `rgba(${m.color.slice(1, 3)}, ${m.color.slice(3, 5)}, ${m.color.slice(5, 7)}, 0.5)` }
-  }
-
   ngOnInit() {
     this.classOptions.push({ text: GENERIC_TYPE.ANY_CLASS, isDisabled: false });
     this.classOptions.push({ text: GENERIC_TYPE.NODES_CLASS, isDisabled: false });
@@ -71,6 +64,14 @@ export class TimebarMetricEditorComponent implements OnInit {
     }
     this.clearInput();
   }
+
+  getStyleForMetric(m: TimebarMetric) {
+    if (m.isEditing) {
+      return { 'background-color': '#eaeaea' };
+    }
+    return { 'background-color': `rgba(${m.color.slice(1, 3)}, ${m.color.slice(3, 5)}, ${m.color.slice(5, 7)}, 0.5)` }
+  }
+
 
   private clearInput() {
     this.filteringRule = null;

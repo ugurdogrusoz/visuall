@@ -6,6 +6,7 @@ import * as $ from 'jquery';
 import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
+import { CytoscapeService } from 'src/app/cytoscape.service';
 
 @Component({
   selector: 'app-object-tab',
@@ -27,13 +28,13 @@ export class ObjectTabComponent implements OnInit {
   private NODE_TYPE = '_NODE_';
   private EDGE_TYPE = '_EDGE_';
 
-  constructor(private _g: GlobalVariableService) {
+  constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) {
     this.selectedItemProps = [];
   }
 
   ngOnInit() {
     let showPropFn = debounce(this.showObjectProps, 200, false);
-    this._g.cy.on('select unselect', showPropFn.bind(this));
+    // this._g.cy.on('select unselect', showPropFn.bind(this));
     properties.edges = properties.edges;
     this.nodeClasses = new Set([]);
     this.edgeClasses = new Set([]);
@@ -46,17 +47,11 @@ export class ObjectTabComponent implements OnInit {
     }
     this._g.cy.on('select unselect add remove tap', debounce(this.showStats, 200, false).bind(this));
     this._g.shownElemsChanged.subscribe(() => { this.showStats() });
+    this.showObjectProps();
+    this._cyService.showObjPropsFn = this.showObjectProps.bind(this);
   }
 
-  showObjectProps(event) {
-    if (event.type == 'select') {
-      // do not change tab if selection is originated from load
-      if (this._g.isSelectFromLoad && this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
-        this._g.isSelectFromLoad = false;
-      } else {
-        this._g.operationTabChanged.next(0);
-      }
-    }
+  showObjectProps() {
     const selectedItems = this._g.cy.$(':selected');
     let props, classNames;
     [props, classNames] = this.getCommonObjectProps(selectedItems);

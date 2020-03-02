@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../global-variable.service';
+import { ObjectTabComponent } from './object-tab/object-tab.component';
+import { MapTabComponent } from './map-tab/map-tab.component';
+import { QueryTabComponent } from './query-tab/query-tab.component';
+import { SettingsTabComponent } from './settings-tab/settings-tab.component';
 
 @Component({
   selector: 'app-operation-tabs',
@@ -10,6 +14,7 @@ import { GlobalVariableService } from '../global-variable.service';
 export class OperationTabsComponent implements OnInit {
   currTab: Number;
   navItems: any[];
+  tabs: any[] = [ObjectTabComponent, MapTabComponent, QueryTabComponent, SettingsTabComponent];
 
   constructor(private _g: GlobalVariableService) {
     this.currTab = this._g.operationTabChanged.getValue();

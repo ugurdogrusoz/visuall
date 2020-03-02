@@ -314,3 +314,17 @@ export function isPrimitiveType(o) {
   const t = typeof o;
   return t == 'string' || t == 'number' || t == 'boolean';
 }
+
+export function extend(a, b) {
+  if (a == undefined || a == null) {
+    a = {};
+  }
+  
+  for (var key in b) {
+    if (b.hasOwnProperty(key)) {
+      a[key] = b[key];
+    }
+  }
+
+  return a;
+}
