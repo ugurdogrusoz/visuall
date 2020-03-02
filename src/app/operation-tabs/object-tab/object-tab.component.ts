@@ -20,7 +20,6 @@ export class ObjectTabComponent implements OnInit {
   selectedItemProps: any[];
   tableFilled = new Subject<boolean>();
 
-  @Output() onTabChanged = new EventEmitter<number>();
   tableInput: TableViewInput = {
     columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20,
     isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
@@ -55,7 +54,7 @@ export class ObjectTabComponent implements OnInit {
       if (this._g.isSelectFromLoad && this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
         this._g.isSelectFromLoad = false;
       } else {
-        this.onTabChanged.emit(0);
+        this._g.operationTabChanged.next(0);
       }
     }
     const selectedItems = this._g.cy.$(':selected');
