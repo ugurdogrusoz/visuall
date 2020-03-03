@@ -33,8 +33,6 @@ export class ObjectTabComponent implements OnInit {
   }
 
   ngOnInit() {
-    let showPropFn = debounce(this.showObjectProps, 200, false);
-    // this._g.cy.on('select unselect', showPropFn.bind(this));
     properties.edges = properties.edges;
     this.nodeClasses = new Set([]);
     this.edgeClasses = new Set([]);
@@ -45,13 +43,15 @@ export class ObjectTabComponent implements OnInit {
     for (const key in properties.edges) {
       this.edgeClasses.add(key);
     }
-    this._g.cy.on('select unselect add remove tap', debounce(this.showStats, 200, false).bind(this));
-    this._g.shownElemsChanged.subscribe(() => { this.showStats() });
+
+    this._g.shownElemsChanged.subscribe(() => { console.log('shownElemsChanged'); this.showStats() });
     this.showObjectProps();
-    this._cyService.showObjPropsFn = this.showObjectProps.bind(this);
+    this._cyService.showObjPropsFn = debounce(this.showObjectProps, 200, false).bind(this);
+    this._cyService.showStatsFn = debounce(this.showStats, 200, false).bind(this)
   }
 
   showObjectProps() {
+    console.log('showObjectProps');
     const selectedItems = this._g.cy.$(':selected');
     let props, classNames;
     [props, classNames] = this.getCommonObjectProps(selectedItems);
@@ -211,6 +211,7 @@ export class ObjectTabComponent implements OnInit {
   }
 
   showStats() {
+    console.log('showStats');
     let stat = {};
 
     let classSet = new Set<string>();

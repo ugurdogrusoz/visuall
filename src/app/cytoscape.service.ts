@@ -24,6 +24,7 @@ export class CytoscapeService {
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
   removePopperFn: Function;
   showObjPropsFn: Function;
+  showStatsFn: Function;
 
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
   }
@@ -151,11 +152,11 @@ export class CytoscapeService {
     this._marqueeZoomService.init();
     this.addOtherStyles();
     (<any>window).cy = this._g.cy;
-
-    this._g.cy.on('select unselect', (e) => { this.elemSelection(e) });
+    this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
+    this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
   }
 
-  private elemSelection(e) {
+  private elemSelected(e) {
     if (e.type == 'select') {
       // do not change tab if selection is originated from load
       if (this._g.isSelectFromLoad && this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
@@ -166,6 +167,12 @@ export class CytoscapeService {
     }
     if (this.showObjPropsFn) {
       this.showObjPropsFn();
+    }
+  }
+
+  private statsChanged() {
+    if (this.showStatsFn) {
+      this.showStatsFn();
     }
   }
 
