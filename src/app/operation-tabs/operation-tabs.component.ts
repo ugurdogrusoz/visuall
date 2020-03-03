@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { GlobalVariableService } from '../global-variable.service';
 import { ObjectTabComponent } from './object-tab/object-tab.component';
 import { MapTabComponent } from './map-tab/map-tab.component';
 import { QueryTabComponent } from './query-tab/query-tab.component';
 import { SettingsTabComponent } from './settings-tab/settings-tab.component';
+import { TabCustomizationService } from './tab-customization.service';
 
 @Component({
   selector: 'app-operation-tabs',
@@ -11,19 +12,17 @@ import { SettingsTabComponent } from './settings-tab/settings-tab.component';
   styleUrls: ['./operation-tabs.component.css']
 })
 
-export class OperationTabsComponent implements OnInit {
+export class OperationTabsComponent {
   currTab: Number;
-  navItems: any[];
-  tabs: any[] = [ObjectTabComponent, MapTabComponent, QueryTabComponent, SettingsTabComponent];
+  tabs: { component: any, text: string }[] = [{ component: ObjectTabComponent, text: 'Object' }, { component: MapTabComponent, text: 'Map' }, { component: QueryTabComponent, text: 'Database' }, { component: SettingsTabComponent, text: 'Settings' }];
 
-  constructor(private _g: GlobalVariableService) {
+  constructor(private _g: GlobalVariableService, private _customizationService: TabCustomizationService) {
     this.currTab = this._g.operationTabChanged.getValue();
     this._g.operationTabChanged.subscribe(x => { this.setTab(x) });
-  }
 
-  ngOnInit() {
-    this.navItems = [{ href: '#object', text: 'Object' }, { href: '#map', text: 'Map' },
-    { href: '#query', text: 'Database' }, { href: '#settings', text: 'Settings' }];
+    this.tabs
+
+    this.tabs = this.tabs.concat(this._customizationService.tabs);
   }
 
   setTabClasses(tabId: number) {

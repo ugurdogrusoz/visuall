@@ -1,30 +1,15 @@
 <ul class="nav nav-tabs justify-content-center" id="edit-tab" role="tablist">
-  <li class="nav-item" *ngFor="let item of navItems; index as i">
-    <a class="nav-link va-heading1" data-toggle="tab" href="item.href" [class.active]="i==currTab"
-      (click)="setTab(i)">{{item.text}}</a>
+  <li class="nav-item" *ngFor="let t of tabs; index as i">
+    <a class="nav-link va-heading1" data-toggle="tab" href="" [class.active]="i==currTab"
+      (click)="setTab(i)">{{t.text}}</a>
   </li>
 </ul>
 
 <!--Content will be dynamically loaded-->
 <div class="tab-content" id="edit-tab-content">
-  <!-- <div class="tab-pane fade tab-column m-1" [ngClass]="setTabClasses(0)">
-    <app-object-tab></app-object-tab>
-  </div>
-
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(1)">
-    <app-map-tab></app-map-tab>
-  </div>
-
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(2)">
-    <app-query-tab></app-query-tab>
-  </div>
-
-  <div class="tab-pane fade tab-column" [ngClass]="setTabClasses(3)">
-    <app-settings-tab></app-settings-tab>
-  </div> -->
   <div *ngFor="let t of tabs; let i = index" class="tab-pane fade tab-column m-1" [ngClass]="setTabClasses(i)">
     <ng-container *ngIf="currTab == i">
-      <ng-container *ngComponentOutlet="t"></ng-container>
+      <ng-container *ngComponentOutlet="t.component"></ng-container>
     </ng-container>
   </div>
 </div>
