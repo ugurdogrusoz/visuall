@@ -111,11 +111,11 @@ export class MarqueeZoomService {
     }
 
     //Calculate zoom level
-    var zoomLevel = Math.min(this._g.cy.width() / (Math.abs(this.rect2.x - this.rect1.x)),
+    let zoomLevel = Math.min(this._g.cy.width() / (Math.abs(this.rect2.x - this.rect1.x)),
       this._g.cy.height() / Math.abs(this.rect2.y - this.rect1.y));
 
-    var diff_x = this._g.cy.width() / 2 - (this._g.cy.pan().x + zoomLevel * (this.rect1.x + this.rect2.x) / 2);
-    var diff_y = this._g.cy.height() / 2 - (this._g.cy.pan().y + zoomLevel * (this.rect1.y + this.rect2.y) / 2);
+    let diff_x = this._g.cy.width() / 2 - (this._g.cy.pan().x + zoomLevel * (this.rect1.x + this.rect2.x) / 2);
+    let diff_y = this._g.cy.height() / 2 - (this._g.cy.pan().y + zoomLevel * (this.rect1.y + this.rect2.y) / 2);
 
     this._g.cy.animate({
       panBy: { x: diff_x, y: diff_y },

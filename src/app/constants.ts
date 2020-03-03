@@ -204,8 +204,8 @@ export function getPropNamesFromObj(objects, types) {
 
 // return union of 2 sets
 export function union(setA, setB) {
-  var _union = new Set(setA);
-  for (var elem of setB) {
+  let _union = new Set(setA);
+  for (let elem of setB) {
     _union.add(elem);
   }
   return _union;
@@ -320,7 +320,7 @@ export function extend(a, b) {
     a = {};
   }
   
-  for (var key in b) {
+  for (let key in b) {
     if (b.hasOwnProperty(key)) {
       a[key] = b[key];
     }

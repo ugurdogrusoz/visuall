@@ -221,7 +221,7 @@ export class CytoscapeService {
     $('.cyContainer').append(`<div class='${cyNaviClass}'></div>`);
 
     this.setNavigatorPosition();
-    var defaults = {
+    let defaults = {
       container: `.${cyNaviClass}`,  // can be a HTML or jQuery
       // element or jQuery selector
 
