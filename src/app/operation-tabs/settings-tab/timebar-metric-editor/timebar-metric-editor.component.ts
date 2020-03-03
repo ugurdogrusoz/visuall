@@ -16,14 +16,13 @@ export class TimebarMetricEditorComponent implements OnInit {
   classOptions: ClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
-  private currDatetimes: Date[];
   filteringRule: TimebarMetric;
   currMetrics: TimebarMetric[];
   currMetricName: string = 'new';
   currMetricColor: string = null;
   isAClassSelectedForMetric = false;
   private editingIdx = -1;
-  private newStatBtnTxt = 'Add Statistic';
+  newStatBtnTxt = 'Add Statistic';
   isHideEditing = true;
   isAddingNew = false;
   isGenericTypeSelected = true;
@@ -33,7 +32,6 @@ export class TimebarMetricEditorComponent implements OnInit {
   constructor(private _timeBarService: TimebarService) {
     this.classOptions = [];
     this.selectedClassProps = [];
-    this.currDatetimes = [new Date()];
     this.filteringRule = null;
     let fnLo = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating < 5)) return 1; return 0; };
     let fnHi = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating > 7)) return 1; return 0; };
@@ -43,8 +41,6 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.currMetrics = [
       { incrementFn: fnLo, name: 'lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
       { incrementFn: fnHi, name: 'highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }];
-
-    this.refreshTimebar();
   }
 
   ngOnInit() {

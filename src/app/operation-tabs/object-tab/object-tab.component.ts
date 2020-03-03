@@ -44,14 +44,14 @@ export class ObjectTabComponent implements OnInit {
       this.edgeClasses.add(key);
     }
 
-    this._g.shownElemsChanged.subscribe(() => { console.log('shownElemsChanged'); this.showStats() });
+    this._g.shownElemsChanged.subscribe(() => { this.showStats() });
     this.showObjectProps();
+    this.showStats();
     this._cyService.showObjPropsFn = debounce(this.showObjectProps, 200, false).bind(this);
     this._cyService.showStatsFn = debounce(this.showStats, 200, false).bind(this)
   }
 
   showObjectProps() {
-    console.log('showObjectProps');
     const selectedItems = this._g.cy.$(':selected');
     let props, classNames;
     [props, classNames] = this.getCommonObjectProps(selectedItems);
@@ -211,7 +211,6 @@ export class ObjectTabComponent implements OnInit {
   }
 
   showStats() {
-    console.log('showStats');
     let stat = {};
 
     let classSet = new Set<string>();
@@ -278,7 +277,8 @@ export class ObjectTabComponent implements OnInit {
       }
       this.tableInput.results.push(row);
     }
-    this.tableFilled.next(true);
+    // let tableView ngOnInit finish
+    setTimeout(() => this.tableFilled.next(true), 100);
   }
 
   private increaseCountInObj(obj, p1: string, p2: string) {
@@ -336,6 +336,7 @@ export class ObjectTabComponent implements OnInit {
         this.tableInput.results = this.tableInput.results.sort((a, b) => { if (a[i].val < b[i].val) return 1; if (b[i].val < a[i].val) return -1; return 0 });
       }
     }
-    this.tableFilled.next(true);
+    // let tableView ngOnInit finish
+    setTimeout(() => this.tableFilled.next(true), 100);
   }
 }

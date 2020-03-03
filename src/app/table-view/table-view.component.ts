@@ -36,12 +36,12 @@ export class TableViewComponent implements OnInit {
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
 
   ngOnInit() {
-    this.highlighterFn = this._cyService.highlightNeighbors();
+    this.tableFilled.subscribe(this.onTableFilled.bind(this));
     this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; if (this.params.columnLimit) { this.columnLimit = this.params.columnLimit; } });
+    this.highlighterFn = this._cyService.highlightNeighbors();
     this.position.x = 0;
     this.position.y = 0;
     this.filterTxtChanged = debounce(this.filterBy.bind(this), 1000, false);
-    this.tableFilled.subscribe(this.onTableFilled.bind(this));
   }
 
   private onTableFilled() {

@@ -157,6 +157,7 @@ export class CytoscapeService {
     (<any>window).cy = this._g.cy;
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
     this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
+    this._g.cy.on('add', C.debounce(this.fitLabel2Node, 1000, false).bind(this));
     this._timebarService.init();
     this.userPrefHelper.listen4UserPref();
   }
@@ -505,9 +506,9 @@ export class CytoscapeService {
     }
   }
 
-  fitNodeLabelsCheckBoxClicked(isChecked: boolean) {
+  fitLabel2Node() {
     this._g.cy.nodes().removeClass('fitlabel');
-    if (isChecked) {
+    if (this._g.userPrefs.isFitLabels2Nodes.getValue()) {
       this._g.cy.nodes().addClass('fitlabel');
     }
   }

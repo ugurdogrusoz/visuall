@@ -30,7 +30,7 @@ export class SettingsTabComponent implements OnInit {
   mergedElemIndicator: MergedElemIndicatorTypes;
   isInit: boolean = false;
 
-  constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _g: GlobalVariableService) {
+  constructor(private _g: GlobalVariableService) {
   }
 
   ngOnInit() {
@@ -58,7 +58,8 @@ export class SettingsTabComponent implements OnInit {
     this.timebarBoolSettings = [
       { text: 'Show timebar', isEnable: false, path2userPref: 'timebar.isEnabled' },
       { text: 'Hide disconnected nodes on animation', isEnable: false, path2userPref: 'timebar.isHideDisconnectedNodesOnAnim' },
-      { text: 'Maintain graph range on topology changes', isEnable: false, path2userPref: 'timebar.isMaintainGraphRange' }];
+      { text: 'Maintain graph range on topology changes', isEnable: false, path2userPref: 'timebar.isMaintainGraphRange' }
+    ];
 
     this.subscribe2UserPrefs();
     this.isInit = true;

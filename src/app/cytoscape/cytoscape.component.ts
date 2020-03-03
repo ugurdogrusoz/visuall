@@ -27,7 +27,7 @@ export class CytoscapeComponent implements OnInit {
   }
 
   @HostListener('document:keydown.delete', ['$event'])
-  deleteHotKeyFn(event: KeyboardEvent) {
+  deleteHotKeyFn() {
     if (document.activeElement.tagName == 'INPUT') {
       return;
     }

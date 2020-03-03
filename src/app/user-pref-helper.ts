@@ -16,7 +16,7 @@ export class UserPrefHelper {
     up.isHighlightOnHover.subscribe(x => { this._cyService.highlighterCheckBoxClicked(x); });
     up.isShowOverviewWindow.subscribe(x => { this._cyService.navigatorCheckBoxClicked(x); });
     up.isShowEdgeLabels.subscribe(x => { this._cyService.showHideEdgeLabelCheckBoxClicked(x); });
-    up.isFitLabels2Nodes.subscribe(x => { this._cyService.fitNodeLabelsCheckBoxClicked(x); });
+    up.isFitLabels2Nodes.subscribe(x => { this._cyService.fitLabel2Node(); });
     up.dataPageSize.subscribe(x => { this.dataPageSizeChanged(x); });
     up.tableColumnLimit.subscribe(x => { this.tableColumnLimitChanged(x); });
     up.highlightWidth.subscribe(x => { this.changeHighlightWidth(x); });
@@ -31,6 +31,18 @@ export class UserPrefHelper {
     up_t.zoomingStep.subscribe(x => { tb.changeZoomStep(x); });
     up_t.graphInclusionType.subscribe(x => { tb.changeGraphInclusionType(x); });
     up_t.statsInclusionType.subscribe(x => { tb.changeStatsInclusionType(x); });
+
+    // timebar metrics might be a user preference 
+    let fnLo = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating < 5)) return 1; return 0; };
+    let fnHi = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating > 7)) return 1; return 0; };
+    const genreRule = { propertyOperand: 'genre', propertyType: 'string', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: 'AND', operator: '=' };
+    let rulesHi = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '>=' }];
+    let rulesLo = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '<=' }];
+    let metrics = [
+      { incrementFn: fnLo, name: 'lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
+      { incrementFn: fnHi, name: 'highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }
+    ];
+    this._timebarService.shownMetrics.next(metrics);
   }
 
   isEnableTimebar(x: boolean) {
