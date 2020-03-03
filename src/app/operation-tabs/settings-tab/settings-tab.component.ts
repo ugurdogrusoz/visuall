@@ -68,98 +68,28 @@ export class SettingsTabComponent implements OnInit {
     // reference variables for shorter text
     const up = this._g.userPrefs;
     const up_t = this._g.userPrefs.timebar;
-    const tb = this._timebarService;
 
-    up.isAutoIncrementalLayoutOnChange.subscribe(x => { this.generalBoolSettings[0].isEnable = x; this.changeAutoIncremental(x); });
-    up.isHighlightOnHover.subscribe(x => { this.generalBoolSettings[1].isEnable = x; this._cyService.highlighterCheckBoxClicked(x); });
-    up.isShowOverviewWindow.subscribe(x => { this.generalBoolSettings[2].isEnable = x; this._cyService.navigatorCheckBoxClicked(x); });
-    up.isShowEdgeLabels.subscribe(x => { this.generalBoolSettings[3].isEnable = x; this._cyService.showHideEdgeLabelCheckBoxClicked(x); });
-    up.isFitLabels2Nodes.subscribe(x => { this.generalBoolSettings[4].isEnable = x; this._cyService.fitNodeLabelsCheckBoxClicked(x); });
-    up.isIgnoreCaseInText.subscribe(x => { this.generalBoolSettings[5].isEnable = x; });
+    up.isAutoIncrementalLayoutOnChange.subscribe(x => { this.generalBoolSettings[0].isEnable = x });
+    up.isHighlightOnHover.subscribe(x => { this.generalBoolSettings[1].isEnable = x });
+    up.isShowOverviewWindow.subscribe(x => { this.generalBoolSettings[2].isEnable = x });
+    up.isShowEdgeLabels.subscribe(x => { this.generalBoolSettings[3].isEnable = x });
+    up.isFitLabels2Nodes.subscribe(x => { this.generalBoolSettings[4].isEnable = x });
+    up.isIgnoreCaseInText.subscribe(x => { this.generalBoolSettings[5].isEnable = x });
     up.mergedElemIndicator.subscribe(x => this.mergedElemIndicator = x);
-    up.dataPageSize.subscribe(x => { this.dataPageSize = x; this.dataPageSizeChanged(x); });
-    up.tableColumnLimit.subscribe(x => { this.tableColumnLimit = x; this.tableColumnLimitChanged(x); });
-    up.highlightWidth.subscribe(x => { this.highlightWidth = x; this.changeHighlightWidth(x); });
-    up.highlightColor.subscribe(x => { this.highlightColor = x; this.changeHighlightColor(x); });
-    up.compoundPadding.subscribe(x => { this.compoundPadding = x; this.changeCompoundPadding(x); });
+    up.dataPageSize.subscribe(x => { this.dataPageSize = x });
+    up.tableColumnLimit.subscribe(x => { this.tableColumnLimit = x });
+    up.highlightWidth.subscribe(x => { this.highlightWidth = x });
+    up.highlightColor.subscribe(x => { this.highlightColor = x });
+    up.compoundPadding.subscribe(x => { this.compoundPadding = x });
 
-    up_t.isEnabled.subscribe(x => this.isEnableTimebar(x));
-    up_t.isHideDisconnectedNodesOnAnim.subscribe(x => { this.timebarBoolSettings[1].isEnable = x; tb.setisHideDisconnectedNodes(x); });
-    up_t.isMaintainGraphRange.subscribe(x => { this.timebarBoolSettings[2].isEnable = x; tb.setIsMaintainGraphRange(x) });
-    up_t.playingStep.subscribe(x => { this.timebarPlayingStep = x; tb.changeStep(x); });
-    up_t.playingPeriod.subscribe(x => { this.timebarPlayingPeriod = x; tb.changePeriod(x); });
-    up_t.zoomingStep.subscribe(x => { this.timebarZoomingStep = x; tb.changeZoomStep(x); });
-    up_t.graphInclusionType.subscribe(x => { this.graphInclusionType = x; tb.changeGraphInclusionType(x); });
-    up_t.statsInclusionType.subscribe(x => { this.statsInclusionType = x; tb.changeStatsInclusionType(x); });
-  }
-
-  isEnableTimebar(x: boolean) {
-    this.timebarBoolSettings[0].isEnable = x;
-    if (this.isInit) {
-      this._cyService.showHideTimebar(x);
-    }
-  }
-
-  changeAutoIncremental(x: boolean) {
-    if (x) {
-      this._g.expandCollapseApi.setOption('layoutBy', this._g.layout);
-      this._g.expandCollapseApi.setOption('fisheye', true);
-      this._g.expandCollapseApi.setOption('animate', true);
-    } else {
-      this._g.expandCollapseApi.setOption('layoutBy', null);
-      this._g.expandCollapseApi.setOption('fisheye', false);
-      this._g.expandCollapseApi.setOption('animate', false);
-    }
-  }
-
-  changeHighlightWidth(x: number) {
-    if (x < MIN_HIGHTLIGHT_WIDTH) {
-      x = MIN_HIGHTLIGHT_WIDTH;
-      this._g.userPrefs.highlightWidth.next(x);
-      return;
-    }
-    if (x > MAX_HIGHTLIGHT_WIDTH) {
-      x = MAX_HIGHTLIGHT_WIDTH;
-      this._g.userPrefs.highlightWidth.next(x);
-      return;
-    }
-    this._cyService.changeHighlights(x);
-  }
-
-  changeHighlightColor(color: string) {
-    this._cyService.changeHighlights(this.highlightWidth, color);
-  }
-
-  changeCompoundPadding(x: string) {
-    this._g.cy.style().selector(':compound')
-      .style({ 'padding': x })
-      .update();
-  }
-
-  dataPageSizeChanged(x: number) {
-    if (x > MAX_DATA_PAGE_SIZE) {
-      x = MAX_DATA_PAGE_SIZE;
-      this._g.userPrefs.dataPageSize.next(x);
-      return;
-    }
-    if (x < MIN_DATA_PAGE_SIZE) {
-      x = MIN_DATA_PAGE_SIZE;
-      this._g.userPrefs.dataPageSize.next(x);
-      return;
-    }
-  }
-
-  tableColumnLimitChanged(x: number) {
-    if (x > MAX_TABLE_COLUMN_COUNT) {
-      x = MAX_TABLE_COLUMN_COUNT;
-      this._g.userPrefs.tableColumnLimit.next(x);
-      return;
-    }
-    if (x < MIN_TABLE_COLUMN_COUNT) {
-      x = MIN_TABLE_COLUMN_COUNT;
-      this._g.userPrefs.tableColumnLimit.next(x);
-      return;
-    }
+    up_t.isEnabled.subscribe(x => { this.timebarBoolSettings[0].isEnable = x; });
+    up_t.isHideDisconnectedNodesOnAnim.subscribe(x => { this.timebarBoolSettings[1].isEnable = x });
+    up_t.isMaintainGraphRange.subscribe(x => { this.timebarBoolSettings[2].isEnable = x });
+    up_t.playingStep.subscribe(x => { this.timebarPlayingStep = x });
+    up_t.playingPeriod.subscribe(x => { this.timebarPlayingPeriod = x });
+    up_t.zoomingStep.subscribe(x => { this.timebarZoomingStep = x });
+    up_t.graphInclusionType.subscribe(x => { this.graphInclusionType = x });
+    up_t.statsInclusionType.subscribe(x => { this.statsInclusionType = x });
   }
 
   settingChanged(val: any, userPref: string) {

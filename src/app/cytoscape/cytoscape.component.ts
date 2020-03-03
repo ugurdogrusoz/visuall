@@ -12,13 +12,12 @@ import { GlobalVariableService } from '../global-variable.service';
 })
 export class CytoscapeComponent implements OnInit {
 
-  constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService, private _timebarService: TimebarService, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
+  constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
   cyClass = false;
   isLoading = true;
 
   ngOnInit() {
     this._cyService.initCy(document.getElementById('cy'));
-    this._timebarService.init();
     this._ctxMenuService.bindContextMenuExtension();
     this._marqueeService.setChangeClassFn(this.setClassForCyDiv.bind(this));
   }

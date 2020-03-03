@@ -15,6 +15,7 @@ import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse } from './db-service/data-types';
 import timebar from '../lib/timebar/cytoscape-timebar';
+import { UserPrefHelper } from './user-pref-helper';
 
 @Injectable({
   providedIn: 'root'
@@ -22,11 +23,13 @@ import timebar from '../lib/timebar/cytoscape-timebar';
 export class CytoscapeService {
   cyNavi: any;
   cyNaviPositionSetter: EventListenerOrEventListenerObject;
+  userPrefHelper: UserPrefHelper;
   removePopperFn: Function;
   showObjPropsFn: Function;
   showStatsFn: Function;
 
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
+    this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g);
   }
 
   initCy(containerElem) {
@@ -154,6 +157,8 @@ export class CytoscapeService {
     (<any>window).cy = this._g.cy;
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
     this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
+    this._timebarService.init();
+    this.userPrefHelper.listen4UserPref();
   }
 
   private elemSelected(e) {
@@ -217,6 +222,9 @@ export class CytoscapeService {
   }
 
   bindNavigatorExtension() {
+    if (this.cyNavi) {
+      return;
+    }
     const cyNaviClass = 'cytoscape-navigator-wrapper';
     $('.cyContainer').append(`<div class='${cyNaviClass}'></div>`);
 
@@ -586,9 +594,10 @@ export class CytoscapeService {
   }
 
   navigatorCheckBoxClicked(isChecked: boolean) {
-    this.unbindNavigatorExtension();
     if (isChecked) {
       this.bindNavigatorExtension();
+    } else {
+      this.unbindNavigatorExtension();
     }
   }
 
@@ -596,6 +605,7 @@ export class CytoscapeService {
     window.removeEventListener('resize', this.cyNaviPositionSetter);
     window.removeEventListener('scroll', this.cyNaviPositionSetter);
     this.cyNavi.destroy();
+    this.cyNavi = null;
   }
 
   showHideTimebar(isChecked: boolean) {
