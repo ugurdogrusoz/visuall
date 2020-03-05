@@ -24,18 +24,23 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
-        <label class="form-check-label va-text">Highlight width</label>
+        <label class="form-check-label va-text">Highlight style</label>
         <div class="mx-1">
-          <input type="number" max="20" min="2" (keydown.enter)="settingChanged(highlightWidth, 'highlightWidth')"
-            [(ngModel)]="highlightWidth" class="form-control inp-3-char va-text">
-        </div>
-      </div>
-    </div>
-    <div class="card border-0 m-1">
-      <div class="form-inline">
-        <label class="form-check-label va-text">Highlight color</label>
-        <div class="mx-1">
+          <select class="custom-select filter-form va-text inp-3-char mx-1"
+            (change)="highlightStyleSelected($event.target.selectedIndex)">
+            <option *ngFor="let t of currHighlightStyles; let i=index" [selected]="highlightStyleIdx == i" [value]="t">
+              {{t}}
+            </option>
+          </select>
+          <input type="number" max="20" min="2" [(ngModel)]="highlightWidth" class="form-control inp-3-char va-text"
+            placeholder="width">
           <app-color-picker (onColorSelected)="onColorSelected($event)" [currColor]="highlightColor"></app-color-picker>
+          <a href="#" title="Add style" (click)="addHighlightStyle()" class="m-1">
+            <img src="../../../assets/img/add.svg" alt="Add style">
+          </a>
+          <a href="#" title="Update style" (click)="changeHighlightStyle()" class="m-1">
+            <img src="../../../assets/img/refresh.svg" alt="Update style">
+          </a>
         </div>
       </div>
     </div>

@@ -29,6 +29,8 @@ export class SettingsTabComponent implements OnInit {
   statsInclusionType: TimebarStatsInclusionTypes;
   mergedElemIndicator: MergedElemIndicatorTypes;
   isInit: boolean = false;
+  currHighlightStyles: string[] = [];
+  highlightStyleIdx = 0;
 
   constructor(private _g: GlobalVariableService) {
   }
@@ -63,6 +65,9 @@ export class SettingsTabComponent implements OnInit {
 
     this.subscribe2UserPrefs();
     this.isInit = true;
+
+    this.setHighlightStyles();
+    this.highlightStyleSelected(this._g.currHighlightIdx);
   }
 
   private subscribe2UserPrefs() {
@@ -93,6 +98,14 @@ export class SettingsTabComponent implements OnInit {
     up_t.statsInclusionType.subscribe(x => { this.statsInclusionType = x });
   }
 
+  private setHighlightStyles() {
+    this.currHighlightStyles = [];
+    let styleCount = this._g.viewUtils.getHighlightStyles().length;
+    for (let i = 0; i < styleCount; i++) {
+      this.currHighlightStyles.push('Style ' + (i + 1));
+    }
+  }
+
   settingChanged(val: any, userPref: string) {
     let path = userPref.split('.');
     let obj = this._g.userPrefs[path[0]];
@@ -104,5 +117,28 @@ export class SettingsTabComponent implements OnInit {
 
   onColorSelected(c: string) {
     this._g.userPrefs.highlightColor.next(c);
+  }
+
+  // used to change border width or color. One of them should be defined. (exclusively)
+  changeHighlightStyle() {
+    let nodeCss = { 'border-color': this.highlightColor, 'border-width': this.highlightWidth };
+    let edgeCss = { 'line-color': this.highlightColor, 'target-arrow-color': this.highlightColor, 'width': this.highlightWidth };
+    this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, nodeCss, edgeCss);
+    this.setHighlightStyles();
+  }
+
+  addHighlightStyle() {
+    let nodeCss = { 'border-color': this.highlightColor, 'border-width': this.highlightWidth };
+    let edgeCss = { 'line-color': this.highlightColor, 'target-arrow-color': this.highlightColor, 'width': this.highlightWidth };
+    this._g.viewUtils.addHighlightStyle(nodeCss, edgeCss);
+    this.setHighlightStyles();
+  }
+
+  highlightStyleSelected(i: number) {
+    this.highlightStyleIdx = i;
+    this._g.currHighlightIdx = i;
+    let style = this._g.viewUtils.getHighlightStyles()[i];
+    this.highlightColor = style.node['border-color'];
+    this.highlightWidth = style.node['border-width'];
   }
 }

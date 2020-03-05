@@ -7,6 +7,7 @@ import expandCollapse from 'cytoscape-expand-collapse';
 import viewUtilities from 'cytoscape-view-utilities';
 import layoutUtilities from 'cytoscape-layout-utilities';
 import stylesheet from '../assets/generated/stylesheet.json';
+import AppDescription from '../assets/app_description.json';
 import * as C from './constants';
 import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
@@ -268,38 +269,9 @@ export class CytoscapeService {
   }
 
   bindViewUtilitiesExtension() {
+    let currStyle = this.getCurrHighlightStyle();
     let options = {
-      node: {
-        highlighted: C.HIGHLIGHTED_NODE_1,
-        highlighted2: C.HIGHLIGHTED_NODE_2,
-        highlighted3: C.HIGHLIGHTED_NODE_3,
-        highlighted4: C.HIGHLIGHTED_NODE_4,
-        selected: {
-          'border-color': (ele) => {
-            return inheritStyle(ele, 'border-color', true);
-          },
-          'border-width': (ele) => {
-            return inheritStyle(ele, 'border-width', true);
-          }
-        }
-      },
-      edge: {
-        highlighted: C.HIGHLIGHTED_EDGE_1,
-        highlighted2: C.HIGHLIGHTED_EDGE_2,
-        highlighted3: C.HIGHLIGHTED_EDGE_3,
-        highlighted4: C.HIGHLIGHTED_EDGE_4,
-        selected: {
-          'line-color': (ele) => {
-            return inheritStyle(ele, 'line-color', false);
-          },
-          'target-arrow-color': (ele) => {
-            return inheritStyle(ele, 'target-arrow-color', false);
-          },
-          'width': (ele) => {
-            return inheritStyle(ele, 'width', false);
-          }
-        }
-      },
+      highlightStyles: [currStyle],
       setVisibilityOnHide: false, // whether to set visibility on hide/show
       setDisplayOnHide: true, // whether to set display on hide/show
       zoomAnimationDuration: 1500, //default duration for zoom animation speed
@@ -310,22 +282,6 @@ export class CytoscapeService {
       colorCount: C.MAX_HIGHLIGHT_CNT
     };
     this._g.viewUtils = this._g.cy.viewUtilities(options);
-
-    function inheritStyle(ele, styleKey, isNode) {
-      const h1 = isNode ? C.HIGHLIGHTED_NODE_1 : C.HIGHLIGHTED_EDGE_1;
-      const h2 = isNode ? C.HIGHLIGHTED_NODE_2 : C.HIGHLIGHTED_EDGE_2;
-      const h3 = isNode ? C.HIGHLIGHTED_NODE_3 : C.HIGHLIGHTED_EDGE_3;
-      const h4 = isNode ? C.HIGHLIGHTED_NODE_4 : C.HIGHLIGHTED_EDGE_4;
-
-      let style = h1[styleKey];
-      if (ele.hasClass('highlighted2'))
-        style = h2[styleKey];
-      else if (ele.hasClass('highlighted3'))
-        style = h3[styleKey];
-      else if (ele.hasClass('highlighted4'))
-        style = h4[styleKey];
-      return style;
-    }
   }
 
   bindPanZoomExtension() {
@@ -713,17 +669,6 @@ export class CytoscapeService {
     return this._g.cy.$().map(x => x.hidden()).filter(x => x).length > 0;
   }
 
-  // used to change border width or color. One of them should be defined. (exclusively)
-  changeHighlights(borderWid?: number, color?: string) {
-    if (color) {
-      this._g.currHighlightIdx = (this._g.currHighlightIdx + 1) % C.MAX_HIGHLIGHT_CNT;
-      this._g.viewUtils.changeHighlightColor(this._g.currHighlightIdx, color, borderWid);
-    } else {
-      color = this._g.viewUtils.getHighlightColors()[this._g.currHighlightIdx];
-      this._g.viewUtils.changeHighlightColor(this._g.currHighlightIdx, color, borderWid);
-    }
-  }
-
   markovClustering() {
     const opt = {
       attributes: [
@@ -808,5 +753,14 @@ export class CytoscapeService {
 
   setRemovePoppersFn(fn) {
     this.removePopperFn = fn;
+  }
+
+  getCurrHighlightStyle() {
+    let w = AppDescription.appPreferences.highlightWidth;
+    let c = AppDescription.appPreferences.highlightColor;
+    return {
+      node: { 'border-color': c, 'border-width': w },
+      edge: { 'line-color': c, 'target-arrow-color': c, 'width': 4.5 }
+    };
   }
 }

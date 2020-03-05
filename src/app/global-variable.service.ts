@@ -11,7 +11,7 @@ import { isPrimitiveType } from './constants';
 export class GlobalVariableService {
   cy: any;
   viewUtils: any;
-  currHighlightIdx: number = 1;
+  currHighlightIdx: number = 0;
   layoutUtils: any;
   layout: any;
   expandCollapseApi: any;
@@ -112,7 +112,6 @@ export class GlobalVariableService {
   }
 
   highlightElems(elems) {
-    let options = { eles: elems, option: this.currHighlightIdx };
-    this.viewUtils.highlight(options);
+    this.viewUtils.highlight(elems, this.currHighlightIdx);
   }
 }

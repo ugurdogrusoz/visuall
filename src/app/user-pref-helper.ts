@@ -20,7 +20,6 @@ export class UserPrefHelper {
     up.dataPageSize.subscribe(x => { this.dataPageSizeChanged(x); });
     up.tableColumnLimit.subscribe(x => { this.tableColumnLimitChanged(x); });
     up.highlightWidth.subscribe(x => { this.changeHighlightWidth(x); });
-    up.highlightColor.subscribe(x => { this.changeHighlightColor(x); });
     up.compoundPadding.subscribe(x => { this.changeCompoundPadding(x); });
 
     up_t.isEnabled.subscribe(x => this.isEnableTimebar(x));
@@ -72,11 +71,6 @@ export class UserPrefHelper {
       this._g.userPrefs.highlightWidth.next(x);
       return;
     }
-    this._cyService.changeHighlights(x);
-  }
-
-  changeHighlightColor(color: string) {
-    this._cyService.changeHighlights(undefined, color);
   }
 
   changeCompoundPadding(x: string) {
