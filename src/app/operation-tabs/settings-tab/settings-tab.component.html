@@ -26,7 +26,7 @@
       <div class="form-inline">
         <label class="form-check-label va-text">Highlight style</label>
         <div class="mx-1">
-          <select class="custom-select filter-form va-small-text inp-3-char mx-1"
+          <select class="custom-select filter-form va-small-text inp-4-char mx-1"
             (change)="highlightStyleSelected($event.target.selectedIndex)">
             <option *ngFor="let t of currHighlightStyles; let i=index" [selected]="highlightStyleIdx == i" [value]="t">
               {{t}}

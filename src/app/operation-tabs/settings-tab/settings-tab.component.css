@@ -2,6 +2,10 @@
   width: 5.5em;
   height: 2em;
 }
+.inp-4-char{
+  width: 6em;
+  height: 2em;
+}
 input[type=range] {
   height: 10px;
   -webkit-appearance: none;
