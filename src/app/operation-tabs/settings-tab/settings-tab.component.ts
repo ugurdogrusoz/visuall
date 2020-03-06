@@ -132,6 +132,8 @@ export class SettingsTabComponent implements OnInit {
     let edgeCss = { 'line-color': this.highlightColor, 'target-arrow-color': this.highlightColor, 'width': this.highlightWidth };
     this._g.viewUtils.addHighlightStyle(nodeCss, edgeCss);
     this.setHighlightStyles();
+    this.highlightStyleIdx = this.currHighlightStyles.length - 1;
+    this.highlightStyleSelected(this.highlightStyleIdx);
   }
 
   highlightStyleSelected(i: number) {
