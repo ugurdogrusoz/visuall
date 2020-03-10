@@ -28,6 +28,7 @@ import { PropertyRuleComponent } from './property-rule/property-rule.component';
 import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { GraphTheoreticPropertiesTabComponent } from './operation-tabs/map-tab/graph-theoretic-properties-tab/graph-theoretic-properties-tab.component';
+import { GraphHistoryComponent } from './graph-history/graph-history.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { GraphTheoreticPropertiesTabComponent } from './operation-tabs/map-tab/g
     ColorPickerComponent,
     PropertyRuleComponent,
     ErrorModalComponent,
-    GraphTheoreticPropertiesTabComponent
+    GraphTheoreticPropertiesTabComponent,
+    GraphHistoryComponent
   ],
   imports: [
     BrowserModule,

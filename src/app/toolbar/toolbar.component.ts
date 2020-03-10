@@ -28,7 +28,10 @@ export class ToolbarComponent implements OnInit {
         { imgSrc: 'assets/img/toolbar/json-file.svg', title: 'Save as JSON', fn: 'saveAsJson', isStd: true, isRegular: true },
         { imgSrc: 'assets/img/toolbar/png.svg', title: 'Save as PNG', fn: 'saveAsPng', isStd: true, isRegular: true }]
       },
-      { div: 1, items: [{ imgSrc: 'assets/img/toolbar/delete-simple.svg', title: 'Delete Selected', fn: 'deleteSelected', isStd: true, isRegular: true }] },
+      {
+        div: 1, items: [{ imgSrc: 'assets/img/toolbar/delete-simple.svg', title: 'Delete Selected', fn: 'deleteSelected', isStd: true, isRegular: true },
+        { imgSrc: 'assets/img/toolbar/history-clock-button.svg', title: 'Graph History', fn: 'showHideGraphHistory', isStd: true, isRegular: true }]
+      },
       {
         div: 2, items: [{ imgSrc: 'assets/img/toolbar/hide-selected.svg', title: 'Hide Selected', fn: 'hideSelected', isStd: true, isRegular: true },
         { imgSrc: 'assets/img/toolbar/show-all.svg', title: 'Show All', fn: 'showAll', isStd: true, isRegular: true }]
@@ -168,4 +171,9 @@ export class ToolbarComponent implements OnInit {
   openQuickHelp() { this.modalService.open(QuickHelpModalComponent); }
 
   openAbout() { this.modalService.open(AboutModalComponent); }
+
+  showHideGraphHistory() {
+    const v = this._g.showHideGraphHistory.getValue();
+    this._g.showHideGraphHistory.next(!v);
+  }
 }

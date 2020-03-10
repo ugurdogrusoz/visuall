@@ -3,6 +3,7 @@ import { DbService, GraphResponse, TableResponse, DbQueryType } from './data-typ
 import { Neo4jDb } from './neo4j-db.service';
 import { ClassBasedRules } from '../operation-tabs/map-tab/filtering-types';
 import { TableFiltering } from '../table-view/table-view-types';
+import { GlobalVariableService } from '../global-variable.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,23 +11,27 @@ import { TableFiltering } from '../table-view/table-view-types';
 // functions that are not defined due to interface DbService might be deleted
 export class DbAdapterService implements DbService {
   // put prefered database service type as argument 
-  constructor(private _db: Neo4jDb) {
+  constructor(private _db: Neo4jDb, private _g: GlobalVariableService) {
   }
 
   // ----------------------- DbService interface methods starts -------------------------------
   getNeighbors(elemId: string[] | number[], callback: (x: GraphResponse) => any) {
+    this._g.add2GraphHistory('getNeighbors of element(s)' + elemId.join(','));
     this._db.getNeighbors(elemId, callback);
   }
 
   getSampleData(callback: (x: GraphResponse) => any) {
-    this._db.getSampleData(callback);
+    let fn = (x) => { callback(x); this._g.add2GraphHistory('get sample data'); };
+    this._db.getSampleData(fn);
   }
 
   getAllData(callback: (x: GraphResponse) => any) {
+    this._g.add2GraphHistory('get all data');
     this._db.getAllData(callback);
   }
 
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+    this._g.add2GraphHistory('get filtering result');
     this._db.getFilteringResult(rules, skip, limit, type, callback);
   }
 
@@ -44,9 +49,10 @@ export class DbAdapterService implements DbService {
   }
 
   getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[]) {
+    this._g.add2GraphHistory('get query 0 results');
     this._db.getGraph4Q0(d1, d2, movieCnt, skip, limit, callback, ids);
   }
-  
+
   getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any, filter?: TableFiltering) {
     this._db.getCount4Q1(d1, d2, genre, callback, filter);
   }
@@ -56,7 +62,8 @@ export class DbAdapterService implements DbService {
   }
 
   getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[]) {
-    this._db.getGraph4Q1(d1, d2, genre, skip, limit, callback, ids);
+    let fn = (x) => { callback(x); this._g.add2GraphHistory('get query 0 results'); };
+    this._db.getGraph4Q1(d1, d2, genre, skip, limit, fn, ids);
   }
 
   getMovieGenres(callback: (x: any) => any) {

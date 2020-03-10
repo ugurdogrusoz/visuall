@@ -583,7 +583,6 @@ export class CytoscapeService {
       try {
         const fileJSON = JSON.parse(fileReader.result as string);
         this._g.cy.json({ elements: fileJSON });
-        this._g.runLayout();
       } catch (error) {
         console.error('Given file is not suitable.', error);
       }
@@ -631,6 +630,7 @@ export class CytoscapeService {
     } else {
       this._g.cy.remove(':selected');
     }
+    this._g.add2GraphHistory('deleteSelected');
   }
 
   showHideSelectedElements(isHide: boolean) {

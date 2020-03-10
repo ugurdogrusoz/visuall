@@ -1,0 +1,19 @@
+.draggable-content {
+  z-index: 1001 !important;
+  cursor: move;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.90);
+  white-space: pre-wrap;
+  border: 2px solid #555555;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.graph-thumbnail {
+  width: 64px;
+  height: auto;
+}
+
+.clickable-img {
+  width: 16px;
+}

@@ -1,0 +1,21 @@
+<div *ngIf="isShow" ngResizable ngDraggable [rzHandles]="'all'" [rzMinWidth]="250" [rzMinHeight]="150"
+  [position]="position" class="draggable-content">
+  Graph History
+  <div class="list-group">
+    <button *ngFor="let h of graphHistory; let i = index" type="button" class="list-group-item list-group-item-action"
+      (click)="load(i)">
+      <div class="d-flex">
+        <div class="mr-2">{{i}}</div>
+        <div>
+          <img class="graph-thumbnail" *ngIf="h.base64png.length > 6" [src]="h.base64png">
+        </div>
+        <div> {{h.expo}} </div>
+        <div class="ml-auto">
+          <img src="../../assets/img/toolbar/delete-simple.svg" class="toolbar-element p-1" title="delete"
+            (click)="delete(i)">
+        </div>
+      </div>
+
+    </button>
+  </div>
+</div>

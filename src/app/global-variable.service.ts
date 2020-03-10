@@ -4,11 +4,14 @@ import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import app_description from '../assets/app_description.json'
 import { isPrimitiveType } from './constants';
+import { GraphHistoryItem } from './db-service/data-types';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalVariableService {
+  private _graphHistorySize = 15;
+  private HISTORY_SNAP_DELAY = 1500;
   cy: any;
   viewUtils: any;
   currHighlightIdx: number = 0;
@@ -21,7 +24,9 @@ export class GlobalVariableService {
   userPrefs: UserPref = {} as UserPref;
   shownElemsChanged = new BehaviorSubject<boolean>(true);
   operationTabChanged = new BehaviorSubject<number>(1);
-  
+  graphHistory: GraphHistoryItem[] = [];
+  showHideGraphHistory = new BehaviorSubject<boolean>(false);
+
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
     // set user preferences staticly (necessary for rendering html initially)
@@ -113,5 +118,24 @@ export class GlobalVariableService {
 
   highlightElems(elems) {
     this.viewUtils.highlight(elems, this.currHighlightIdx);
+  }
+
+  add2GraphHistory(expo: string) {
+    setTimeout(() => {
+      if (this.graphHistory.length > this._graphHistorySize) {
+        this.graphHistory.splice(0, 1);
+      }
+      const options = { bg: 'white', scale: 3, full: true };
+      const base64png: string = this.cy.png(options);
+      const elements = this.cy.json().elements;
+      const txt = JSON.stringify(elements, undefined, 4);
+
+      let g: GraphHistoryItem = {
+        expo: expo,
+        base64png: base64png,
+        json: txt
+      };
+      this.graphHistory.push(g);
+    }, this.HISTORY_SNAP_DELAY);
   }
 }

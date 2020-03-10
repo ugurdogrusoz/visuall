@@ -33,7 +33,8 @@ export class NavbarComponent implements OnInit {
         { txt: 'Save as PNG...', id: 'nbi02', fn: 'saveAsPng', isStd: true }]
       },
       {
-        dropdown: 'Edit', actions: [{ txt: 'Delete Selected', id: 'nbi10', fn: 'deleteSelected', isStd: true }]
+        dropdown: 'Edit', actions: [{ txt: 'Delete Selected', id: 'nbi10', fn: 'deleteSelected', isStd: true },
+        { txt: 'Graph History', id: 'nbi101', fn: 'showHideGraphHistory', isStd: true }]
       },
       {
         dropdown: 'View', actions: [
@@ -138,7 +139,15 @@ export class NavbarComponent implements OnInit {
     this._dbService.getAllData(x => { this._cyService.loadElementsFromDatabase(x, false) });
   }
 
-  clearData() { this._g.cy.remove(this._g.cy.$()); }
+  clearData() {
+    this._g.add2GraphHistory('clear all');
+    this._g.cy.remove(this._g.cy.$());
+  }
+
+  showHideGraphHistory() {
+    const v = this._g.showHideGraphHistory.getValue();
+    this._g.showHideGraphHistory.next(!v);
+  }
 
 }
 
