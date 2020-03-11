@@ -140,7 +140,6 @@ export class NavbarComponent implements OnInit {
   }
 
   clearData() {
-    this._g.add2GraphHistory('clear all');
     this._g.cy.remove(this._g.cy.$());
   }
 

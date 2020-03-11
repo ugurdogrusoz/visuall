@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CytoscapeService } from '../../cytoscape.service';
-import { TimebarService } from '../../timebar.service';
 import { GlobalVariableService } from '../../global-variable.service';
-import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, MAX_DATA_PAGE_SIZE, MIN_DATA_PAGE_SIZE, MAX_TABLE_COLUMN_COUNT, MIN_TABLE_COLUMN_COUNT } from '../../constants';
 import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting } from 'src/app/user-preference';
 
 @Component({
@@ -20,6 +17,7 @@ export class SettingsTabComponent implements OnInit {
   timebarZoomingStep: number;
   compoundPadding: string;
   dataPageSize: number;
+  queryHistoryLimit: number;
   tableColumnLimit: number;
   timebarGraphInclusionTypes: string[] = ['overlaps', 'contains', 'contained by'];
   timebarStatsInclusionTypes: string[] = ['all', 'begin', 'middle', 'end'];
@@ -83,6 +81,7 @@ export class SettingsTabComponent implements OnInit {
     up.isIgnoreCaseInText.subscribe(x => { this.generalBoolSettings[5].isEnable = x });
     up.mergedElemIndicator.subscribe(x => this.mergedElemIndicator = x);
     up.dataPageSize.subscribe(x => { this.dataPageSize = x });
+    up.queryHistoryLimit.subscribe(x => { this.queryHistoryLimit = x });
     up.tableColumnLimit.subscribe(x => { this.tableColumnLimit = x });
     up.highlightWidth.subscribe(x => { this.highlightWidth = x });
     up.highlightColor.subscribe(x => { this.highlightColor = x });

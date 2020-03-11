@@ -10,8 +10,7 @@ import { GraphHistoryItem } from './db-service/data-types';
   providedIn: 'root'
 })
 export class GlobalVariableService {
-  private _graphHistorySize = 15;
-  private HISTORY_SNAP_DELAY = 1500;
+  private HISTORY_SNAP_DELAY = 2500;
   cy: any;
   viewUtils: any;
   currHighlightIdx: number = 0;
@@ -26,6 +25,8 @@ export class GlobalVariableService {
   operationTabChanged = new BehaviorSubject<number>(1);
   graphHistory: GraphHistoryItem[] = [];
   showHideGraphHistory = new BehaviorSubject<boolean>(false);
+  addNewGraphHistoryItem = new BehaviorSubject<boolean>(false);
+  isLoadFromHistory: boolean = false;
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
@@ -122,7 +123,7 @@ export class GlobalVariableService {
 
   add2GraphHistory(expo: string) {
     setTimeout(() => {
-      if (this.graphHistory.length > this._graphHistorySize) {
+      if (this.graphHistory.length > this.userPrefs.queryHistoryLimit.getValue() - 1) {
         this.graphHistory.splice(0, 1);
       }
       const options = { bg: 'white', scale: 3, full: true };
@@ -136,6 +137,7 @@ export class GlobalVariableService {
         json: txt
       };
       this.graphHistory.push(g);
+      this.addNewGraphHistoryItem.next(true);
     }, this.HISTORY_SNAP_DELAY);
   }
 }

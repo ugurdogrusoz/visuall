@@ -55,6 +55,15 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
+        <label class="form-check-label va-text">Query history limit</label>
+        <div class="mx-1">
+          <input type="number" max="100" min="1" (keydown.enter)="settingChanged(queryHistoryLimit, 'queryHistoryLimit')"
+            [(ngModel)]="queryHistoryLimit" class="form-control inp-3-char va-text">
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
         <label class="form-check-label va-text">Maximum number of columns in tables</label>
         <div class="mx-1">
           <input type="number" max="100" min="1" (keydown.enter)="settingChanged(tableColumnLimit, 'tableColumnLimit')"

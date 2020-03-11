@@ -12,6 +12,7 @@ export interface UserPref {
   // Show query results using 'Selection', 'Highlight'
   mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
   dataPageSize: BehaviorSubject<number>;
+  queryHistoryLimit: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;
   highlightWidth: BehaviorSubject<number>;
   highlightColor: BehaviorSubject<string>;

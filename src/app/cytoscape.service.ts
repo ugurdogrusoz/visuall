@@ -630,7 +630,6 @@ export class CytoscapeService {
     } else {
       this._g.cy.remove(':selected');
     }
-    this._g.add2GraphHistory('deleteSelected');
   }
 
   showHideSelectedElements(isHide: boolean) {

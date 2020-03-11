@@ -31,7 +31,6 @@ export class CytoscapeComponent implements OnInit {
     if (document.activeElement.tagName == 'INPUT') {
       return;
     }
-    this._g.add2GraphHistory('delete selected with hot key');
     this._g.cy.remove(':selected');
   }
 

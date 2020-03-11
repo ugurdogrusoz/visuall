@@ -31,7 +31,12 @@ export class TimebarService {
       this._g.performLayout(true, false, this._playingPeriod);
       this.isRandomizedLayout = false;
     } else {
-      this._g.performLayout(false, false, this._playingPeriod);
+      if (!this._g.isLoadFromHistory) {
+        this._g.performLayout(false, false, this._playingPeriod);
+      } else {
+        this._g.cy.fit();
+        this._g.isLoadFromHistory = false;
+      }
     }
     this._g.shownElemsChanged.next(true);
   }

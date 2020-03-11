@@ -16,22 +16,22 @@ export class DbAdapterService implements DbService {
 
   // ----------------------- DbService interface methods starts -------------------------------
   getNeighbors(elemId: string[] | number[], callback: (x: GraphResponse) => any) {
-    this._g.add2GraphHistory('getNeighbors of element(s)' + elemId.join(','));
+    this._g.add2GraphHistory('Get neighbors of element(s): ' + elemId.join(','));
     this._db.getNeighbors(elemId, callback);
   }
 
   getSampleData(callback: (x: GraphResponse) => any) {
-    let fn = (x) => { callback(x); this._g.add2GraphHistory('get sample data'); };
+    let fn = (x) => { callback(x); this._g.add2GraphHistory('Get sample data'); };
     this._db.getSampleData(fn);
   }
 
   getAllData(callback: (x: GraphResponse) => any) {
-    this._g.add2GraphHistory('get all data');
+    this._g.add2GraphHistory('Get all data');
     this._db.getAllData(callback);
   }
 
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    this._g.add2GraphHistory('get filtering result');
+    this._g.add2GraphHistory('Get filtering result');
     this._db.getFilteringResult(rules, skip, limit, type, callback);
   }
 
@@ -49,7 +49,7 @@ export class DbAdapterService implements DbService {
   }
 
   getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[]) {
-    this._g.add2GraphHistory('get query 0 results');
+    this._g.add2GraphHistory('Get query 0 results');
     this._db.getGraph4Q0(d1, d2, movieCnt, skip, limit, callback, ids);
   }
 
@@ -62,7 +62,7 @@ export class DbAdapterService implements DbService {
   }
 
   getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[]) {
-    let fn = (x) => { callback(x); this._g.add2GraphHistory('get query 0 results'); };
+    let fn = (x) => { callback(x); this._g.add2GraphHistory('Get query 1 results'); };
     this._db.getGraph4Q1(d1, d2, genre, skip, limit, fn, ids);
   }
 
