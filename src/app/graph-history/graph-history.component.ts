@@ -31,6 +31,12 @@ export class GraphHistoryComponent implements OnInit {
         this.activeItemIdx = this._g.graphHistory.length - 1;
       }
     });
+    this._g.userPrefs.queryHistoryLimit.subscribe(x => {
+      while (this._g.graphHistory.length > x) {
+        this._g.graphHistory.splice(0, 1);
+      }
+      this.graphHistory = this._g.graphHistory;
+    });
   }
 
   load(i: number) {

@@ -140,4 +140,32 @@ export class GlobalVariableService {
       this.addNewGraphHistoryItem.next(true);
     }, this.HISTORY_SNAP_DELAY);
   }
+
+  getLabels4Elems(elemIds: string[] | number[], isNode: boolean = true): string {
+    let cyIds: string[] = [];
+    let idChar = 'n';
+    if (!isNode) {
+      idChar = 'e';
+    }
+    for (let i = 0; i < elemIds.length; i++) {
+      cyIds.push(idChar + elemIds[i]);
+    }
+    let labels = '';
+    let labelParent: any = app_description.objects;
+    if (!isNode) {
+      labelParent = app_description.relations;
+    }
+    for (let i = 0; i < cyIds.length; i++) {
+      let curr = this.cy.$('#' + cyIds[i]);
+      let s = labelParent[curr.className()[0]]['style']['label'] as string;
+      if (s.indexOf('(') < 0) {
+        labels += s + ',';
+      } else {
+        let propName = s.slice(s.indexOf('(') + 1, s.indexOf(')'));
+        labels += curr.data(propName) + ',';
+      }
+    }
+
+    return labels.slice(0, -1);
+  }
 }

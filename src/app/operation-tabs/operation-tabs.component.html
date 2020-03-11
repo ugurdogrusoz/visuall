@@ -10,8 +10,6 @@
 <!--Content will be dynamically loaded-->
 <div class="tab-content" id="edit-tab-content">
   <div *ngFor="let t of tabs; let i = index" class="tab-pane fade tab-column m-1" [ngClass]="setTabClasses(i)">
-    <ng-container *ngIf="currTab == i">
-      <ng-container *ngComponentOutlet="t.component"></ng-container>
-    </ng-container>
+    <ng-container *ngComponentOutlet="t.component"></ng-container>
   </div>
 </div>

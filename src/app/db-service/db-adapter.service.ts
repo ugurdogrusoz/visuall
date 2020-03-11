@@ -16,7 +16,8 @@ export class DbAdapterService implements DbService {
 
   // ----------------------- DbService interface methods starts -------------------------------
   getNeighbors(elemId: string[] | number[], callback: (x: GraphResponse) => any) {
-    let fn = (x) => { callback(x); this._g.add2GraphHistory('Get neighbors of element(s): ' + elemId.join(',')); };
+    let s = this._g.getLabels4Elems(elemId);
+    let fn = (x) => { callback(x); this._g.add2GraphHistory('Get neighbors of element(s): ' + s); };
     this._db.getNeighbors(elemId, fn);
   }
 
