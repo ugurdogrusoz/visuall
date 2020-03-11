@@ -10,7 +10,7 @@ import { GraphHistoryItem } from './db-service/data-types';
   providedIn: 'root'
 })
 export class GlobalVariableService {
-  private HISTORY_SNAP_DELAY = 2500;
+  private HISTORY_SNAP_DELAY = 1500; // we should wait for layout to finish
   cy: any;
   viewUtils: any;
   currHighlightIdx: number = 0;

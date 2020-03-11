@@ -16,8 +16,8 @@ export class DbAdapterService implements DbService {
 
   // ----------------------- DbService interface methods starts -------------------------------
   getNeighbors(elemId: string[] | number[], callback: (x: GraphResponse) => any) {
-    this._g.add2GraphHistory('Get neighbors of element(s): ' + elemId.join(','));
-    this._db.getNeighbors(elemId, callback);
+    let fn = (x) => { callback(x); this._g.add2GraphHistory('Get neighbors of element(s): ' + elemId.join(',')); };
+    this._db.getNeighbors(elemId, fn);
   }
 
   getSampleData(callback: (x: GraphResponse) => any) {
@@ -26,15 +26,17 @@ export class DbAdapterService implements DbService {
   }
 
   getAllData(callback: (x: GraphResponse) => any) {
-    this._g.add2GraphHistory('Get all data');
-    this._db.getAllData(callback);
+    let fn = (x) => { callback(x); this._g.add2GraphHistory('Get all data'); };
+    this._db.getAllData(fn);
   }
 
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     if (type == DbQueryType.std) {
-      this._g.add2GraphHistory('Get filtering result');
+      let fn = (x) => { callback(x); this._g.add2GraphHistory('Get filtering result'); };
+      this._db.getFilteringResult(rules, skip, limit, type, fn);
+    } else {
+      this._db.getFilteringResult(rules, skip, limit, type, callback);
     }
-    this._db.getFilteringResult(rules, skip, limit, type, callback);
   }
 
   filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
@@ -51,8 +53,8 @@ export class DbAdapterService implements DbService {
   }
 
   getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[]) {
-    this._g.add2GraphHistory('Get query 0 results');
-    this._db.getGraph4Q0(d1, d2, movieCnt, skip, limit, callback, ids);
+    let fn = (x) => { callback(x); this._g.add2GraphHistory('Get query 0 results'); };
+    this._db.getGraph4Q0(d1, d2, movieCnt, skip, limit, fn, ids);
   }
 
   getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any, filter?: TableFiltering) {
