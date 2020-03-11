@@ -31,7 +31,9 @@ export class DbAdapterService implements DbService {
   }
 
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    this._g.add2GraphHistory('Get filtering result');
+    if (type == DbQueryType.std) {
+      this._g.add2GraphHistory('Get filtering result');
+    }
     this._db.getFilteringResult(rules, skip, limit, type, callback);
   }
 

@@ -34,7 +34,7 @@ export class NavbarComponent implements OnInit {
       },
       {
         dropdown: 'Edit', actions: [{ txt: 'Delete Selected', id: 'nbi10', fn: 'deleteSelected', isStd: true },
-        { txt: 'Graph History', id: 'nbi101', fn: 'showHideGraphHistory', isStd: true }]
+        { txt: 'Query History', id: 'nbi101', fn: 'showHideGraphHistory', isStd: true }]
       },
       {
         dropdown: 'View', actions: [

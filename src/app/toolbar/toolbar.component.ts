@@ -30,7 +30,7 @@ export class ToolbarComponent implements OnInit {
       },
       {
         div: 1, items: [{ imgSrc: 'assets/img/toolbar/delete-simple.svg', title: 'Delete Selected', fn: 'deleteSelected', isStd: true, isRegular: true },
-        { imgSrc: 'assets/img/toolbar/history.svg', title: 'Graph History', fn: 'showHideGraphHistory', isStd: true, isRegular: true }]
+        { imgSrc: 'assets/img/toolbar/history.svg', title: 'Query History', fn: 'showHideGraphHistory', isStd: true, isRegular: true }]
       },
       {
         div: 2, items: [{ imgSrc: 'assets/img/toolbar/hide-selected.svg', title: 'Hide Selected', fn: 'hideSelected', isStd: true, isRegular: true },
