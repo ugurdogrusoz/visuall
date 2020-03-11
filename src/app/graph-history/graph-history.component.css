@@ -11,12 +11,7 @@
   min-height: 600px;
 }
 
-.graph-thumbnail {
-  width: 64px;
-  height: auto;
-}
-
-.clickable-img {
+.std-icon {
   width: 16px;
 }
 

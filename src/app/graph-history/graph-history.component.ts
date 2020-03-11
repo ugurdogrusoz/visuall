@@ -13,7 +13,7 @@ export class GraphHistoryComponent implements OnInit {
   imgSrc: string = null;
   graphHistory: GraphHistoryItem[];
   position = { x: -130, y: 0 };
-  currSize: { width: number, height: number } = { width: 250, height: 150 };
+  currSize: { width: number, height: number } = { width: 375, height: 600 };
   activeItemIdx = 0;
 
   constructor(private _g: GlobalVariableService) { }

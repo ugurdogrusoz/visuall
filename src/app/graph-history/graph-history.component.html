@@ -2,24 +2,23 @@
   (endOffset)="onMoveEnd($event)" (rzStop)="onResizeStop($event)" [style.width]="currSize.width + 'px'"
   [style.height]="currSize.height + 'px'">
   <div class="d-flex">
-    <div class="mx-auto p-1">Query History</div>
+    <div class="mx-auto p-1 va-heading1">Query History</div>
     <button type="button" class="close m-1" (click)="closeClicked()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="list-group">
-    <button *ngFor="let h of graphHistory; let i = index" type="button" class="list-group-item list-group-item-action"
+    <button *ngFor="let h of graphHistory; let i = index" type="button" class="list-group-item p-1"
       [ngClass]="{'active': activeItemIdx == i}" (click)="load(i)">
-      <div class="d-flex">
+      <div class="d-flex va-text">
         <div class="mr-2">{{i+1}}</div>
         <div class="mr-auto"> {{h.expo}} </div>
         <div>
-          <img class="toolbar-element p-1" *ngIf="h.base64png.length > 6" src="../../assets/img/graph.svg"
-            title="show graph" (mouseover)="onMouseOver(i)" (mouseout)="onMouseOut()">
+          <img class="std-icon m-1" *ngIf="h.base64png.length > 6" src="../../assets/img/graph.svg" title="Show graph"
+            (mouseover)="onMouseOver(i)" (mouseout)="onMouseOut()">
         </div>
         <div>
-          <img src="../../assets/img/toolbar/delete-simple.svg" class="toolbar-element p-1" title="delete"
-            (click)="delete(i)">
+          <img class="std-icon m-1" src="../../assets/img/toolbar/delete-simple.svg" title="Delete" (click)="delete(i)">
         </div>
       </div>
     </button>
