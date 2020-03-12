@@ -7,11 +7,13 @@
     <span class="sr-only">Loading...</span>
   </div>
 
-  <button *ngIf="!params.isHideLoadGraph" [disabled]="isLoading" class="btn btn-sm" (click)="loadGraph4Checked()">
+  <button *ngIf="!params.isHideLoadGraph" [disabled]="isLoading || !params.results || params.results.length < 1"
+    class="btn btn-sm" (click)="loadGraph4Checked()">
     <img class="img-icon" title="Merge selected to graph" src="../assets/img/play-button.svg">
   </button>
 
-  <button [disabled]="isLoading" class="btn btn-sm" (click)="tableStateChanged()">
+  <button [disabled]="isLoading || !params.results || params.results.length < 1" class="btn btn-sm"
+    (click)="tableStateChanged()">
     <img [src]="isDraggable ? 'assets/img/minimize.svg' : 'assets/img/maximize.svg'"
       [title]="isDraggable ? 'Minimize table' : 'Maximize table'">
   </button>

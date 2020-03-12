@@ -48,7 +48,7 @@ export class TableViewComponent implements OnInit {
     this.isLoading = false;
     this.isInitialized = true;
     this.checkedIdx = {};
-    if (this.inpElem) {
+    if (this.inpElem && this.params.results && this.params.results.length > 0) {
       setTimeout(() => { this.inpElem.nativeElement.focus(); }, 0);
     }
   }
