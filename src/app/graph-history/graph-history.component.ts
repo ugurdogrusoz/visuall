@@ -34,6 +34,7 @@ export class GraphHistoryComponent implements OnInit {
     this._g.userPrefs.queryHistoryLimit.subscribe(x => {
       while (this._g.graphHistory.length > x) {
         this._g.graphHistory.splice(0, 1);
+        this.activeItemIdx = this.activeItemIdx - 1;
       }
       this.graphHistory = this._g.graphHistory;
     });
@@ -47,6 +48,12 @@ export class GraphHistoryComponent implements OnInit {
   }
 
   delete(i: number) {
+    if (i == this.activeItemIdx) {
+      this.activeItemIdx = -1;
+    }
+    if (i < this.activeItemIdx) {
+      this.activeItemIdx = this.activeItemIdx - 1;
+    }
     this._g.graphHistory.splice(i, 1);
   }
 
