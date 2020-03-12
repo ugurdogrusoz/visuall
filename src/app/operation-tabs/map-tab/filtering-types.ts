@@ -134,3 +134,23 @@ function getJsExpressionForMetricRule(r: Rule) {
     }
   }
 }
+
+export function rule2str(r: ClassBasedRules): string {
+  let s = `<b>${r.className}</b>`;
+
+  if (r.rules.length > 0) {
+    s += ' where ';
+  }
+  for (let i = 0; i < r.rules.length; i++) {
+    let curr = r.rules[i];
+    let inp = '' + curr.inputOperand;
+    if (curr.propertyType == 'string') {
+      inp = `"${inp}"`;
+    }
+    s += ` (<b>${curr.propertyOperand}</b> ${curr.operator} <b>${inp}</b>) `;
+    if (i != r.rules.length - 1) {
+      s += r.rules[i + 1].ruleOperator;
+    }
+  }
+  return s;
+}

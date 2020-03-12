@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DbService, GraphResponse, TableResponse, DbQueryType } from './data-types';
 import { Neo4jDb } from './neo4j-db.service';
-import { ClassBasedRules } from '../operation-tabs/map-tab/filtering-types';
+import { ClassBasedRules, rule2str } from '../operation-tabs/map-tab/filtering-types';
 import { TableFiltering } from '../table-view/table-view-types';
 import { GlobalVariableService } from '../global-variable.service';
 
@@ -33,7 +33,8 @@ export class DbAdapterService implements DbService {
 
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     if (type == DbQueryType.std) {
-      let fn = (x) => { callback(x); this._g.add2GraphHistory('Get filtering result'); };
+      let s = 'Get filtering for: ' + rule2str(rules);
+      let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
       this._db.getFilteringResult(rules, skip, limit, type, fn);
     } else {
       this._db.getFilteringResult(rules, skip, limit, type, callback);
