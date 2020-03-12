@@ -18,22 +18,11 @@ export class OperationTabsComponent {
 
   constructor(private _g: GlobalVariableService, private _customizationService: TabCustomizationService) {
     this.currTab = this._g.operationTabChanged.getValue();
-    this._g.operationTabChanged.subscribe(x => { this.setTab(x) });
+    this._g.operationTabChanged.subscribe(x => { this.currTab = x });
     this.tabs = this.tabs.concat(this._customizationService.tabs);
   }
 
-  setTabClasses(tabId: number) {
-    if (tabId === this.currTab) {
-      return 'active show';
-    }
-    return '';
-  }
-
-  tabChanged(event: number) {
-    this.currTab = event;
-  }
-
   setTab(i: number) {
-    this.currTab = i;
+    this._g.operationTabChanged.next(i);
   }
 }

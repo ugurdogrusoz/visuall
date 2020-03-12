@@ -61,40 +61,44 @@ export class SettingsTabComponent implements OnInit {
       { text: 'Maintain graph range on topology changes', isEnable: false, path2userPref: 'timebar.isMaintainGraphRange' }
     ];
 
-    this.subscribe2UserPrefs();
     this.isInit = true;
 
     this.setHighlightStyles();
     this.highlightStyleSelected(this._g.currHighlightIdx);
+    this._g.operationTabChanged.subscribe(x => {
+      if (x == 3) { // check if my tab is opened
+        this.fillUIFromMemory();
+      }
+    });
   }
 
-  private subscribe2UserPrefs() {
+  private fillUIFromMemory() {
     // reference variables for shorter text
     const up = this._g.userPrefs;
     const up_t = this._g.userPrefs.timebar;
 
-    up.isAutoIncrementalLayoutOnChange.subscribe(x => { this.generalBoolSettings[0].isEnable = x });
-    up.isHighlightOnHover.subscribe(x => { this.generalBoolSettings[1].isEnable = x });
-    up.isShowOverviewWindow.subscribe(x => { this.generalBoolSettings[2].isEnable = x });
-    up.isShowEdgeLabels.subscribe(x => { this.generalBoolSettings[3].isEnable = x });
-    up.isFitLabels2Nodes.subscribe(x => { this.generalBoolSettings[4].isEnable = x });
-    up.isIgnoreCaseInText.subscribe(x => { this.generalBoolSettings[5].isEnable = x });
-    up.mergedElemIndicator.subscribe(x => this.mergedElemIndicator = x);
-    up.dataPageSize.subscribe(x => { this.dataPageSize = x });
-    up.queryHistoryLimit.subscribe(x => { this.queryHistoryLimit = x });
-    up.tableColumnLimit.subscribe(x => { this.tableColumnLimit = x });
-    up.highlightWidth.subscribe(x => { this.highlightWidth = x });
-    up.highlightColor.subscribe(x => { this.highlightColor = x });
-    up.compoundPadding.subscribe(x => { this.compoundPadding = x });
+    this.generalBoolSettings[0].isEnable = up.isAutoIncrementalLayoutOnChange.getValue();
+    this.generalBoolSettings[1].isEnable = up.isHighlightOnHover.getValue();
+    this.generalBoolSettings[2].isEnable = up.isShowOverviewWindow.getValue();
+    this.generalBoolSettings[3].isEnable = up.isShowEdgeLabels.getValue();
+    this.generalBoolSettings[4].isEnable = up.isFitLabels2Nodes.getValue();
+    this.generalBoolSettings[5].isEnable = up.isIgnoreCaseInText.getValue();
+    this.mergedElemIndicator = up.mergedElemIndicator.getValue();
+    this.dataPageSize = up.dataPageSize.getValue();
+    this.queryHistoryLimit = up.queryHistoryLimit.getValue();
+    this.tableColumnLimit = up.tableColumnLimit.getValue();
+    this.highlightWidth = up.highlightWidth.getValue();
+    this.highlightColor = up.highlightColor.getValue();
+    this.compoundPadding = up.compoundPadding.getValue();
 
-    up_t.isEnabled.subscribe(x => { this.timebarBoolSettings[0].isEnable = x; });
-    up_t.isHideDisconnectedNodesOnAnim.subscribe(x => { this.timebarBoolSettings[1].isEnable = x });
-    up_t.isMaintainGraphRange.subscribe(x => { this.timebarBoolSettings[2].isEnable = x });
-    up_t.playingStep.subscribe(x => { this.timebarPlayingStep = x });
-    up_t.playingPeriod.subscribe(x => { this.timebarPlayingPeriod = x });
-    up_t.zoomingStep.subscribe(x => { this.timebarZoomingStep = x });
-    up_t.graphInclusionType.subscribe(x => { this.graphInclusionType = x });
-    up_t.statsInclusionType.subscribe(x => { this.statsInclusionType = x });
+    this.timebarBoolSettings[0].isEnable = up_t.isEnabled.getValue();
+    this.timebarBoolSettings[1].isEnable = up_t.isHideDisconnectedNodesOnAnim.getValue();
+    this.timebarBoolSettings[2].isEnable = up_t.isMaintainGraphRange.getValue();
+    this.timebarPlayingStep = up_t.playingStep.getValue();
+    this.timebarPlayingPeriod = up_t.playingPeriod.getValue();
+    this.timebarZoomingStep = up_t.zoomingStep.getValue();
+    this.graphInclusionType = up_t.graphInclusionType.getValue();
+    this.statsInclusionType = up_t.statsInclusionType.getValue();
   }
 
   private setHighlightStyles() {
