@@ -19,9 +19,6 @@ export class OperationTabsComponent {
   constructor(private _g: GlobalVariableService, private _customizationService: TabCustomizationService) {
     this.currTab = this._g.operationTabChanged.getValue();
     this._g.operationTabChanged.subscribe(x => { this.setTab(x) });
-
-    this.tabs
-
     this.tabs = this.tabs.concat(this._customizationService.tabs);
   }
 
