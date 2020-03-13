@@ -200,7 +200,7 @@ General properties of the map displayed as well as various options on filtering,
 
 - **Perform layout on changes**: As changes occur in the graph (e.g. bring people involved in a movie using the context menu for movies), whether or not an incremental layout is to be applied to tidy up the drawing.
 
-- **Highlight on hover**: When the mouse is over a node, whether or not the node and its neighbors are to be emphasized by ghosting the remaining objects.
+- **Emphasize on hover**: When the mouse is over a node, whether or not the node and its neighbors are to be emphasized by ghosting the remaining objects.
 
 - **Show overview window**: Whether or not an overview window (a smaller graph view) is to be shown. This is especially useful with large graphs to navigate the user.
 

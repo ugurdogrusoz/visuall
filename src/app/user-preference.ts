@@ -8,6 +8,7 @@ export interface UserPref {
   isShowEdgeLabels: BehaviorSubject<boolean>;
   isFitLabels2Nodes: BehaviorSubject<boolean>;
   isIgnoreCaseInText: BehaviorSubject<boolean>;
+  isOnlyHighlight4LatestQuery: BehaviorSubject<boolean>;
 
   // Show query results using 'Selection', 'Highlight'
   mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;

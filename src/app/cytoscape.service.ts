@@ -424,7 +424,9 @@ export class CytoscapeService {
       return;
     }
     // remove all existing hightlights before hightlighting new elements
-    this._g.viewUtils.removeHighlights();
+    if (this._g.userPrefs.isOnlyHighlight4LatestQuery.getValue()) {
+      this._g.viewUtils.removeHighlights();
+    }
     let ele2highlight = this._g.cy.collection();
     const cnt = elemIds.length;
     for (let i = 0; i < cnt; i++) {

@@ -39,7 +39,7 @@ export class SettingsTabComponent implements OnInit {
         text: 'Perform layout on changes', isEnable: false, path2userPref: 'isAutoIncrementalLayoutOnChange'
       },
       {
-        text: 'Highlight on hover', isEnable: false, path2userPref: 'isHighlightOnHover'
+        text: 'Emphasize on hover', isEnable: false, path2userPref: 'isHighlightOnHover'
       },
       {
         text: 'Show overview window', isEnable: false, path2userPref: 'isShowOverviewWindow'
@@ -52,7 +52,8 @@ export class SettingsTabComponent implements OnInit {
       },
       {
         text: 'Ignore case in text operations', isEnable: false, path2userPref: 'isIgnoreCaseInText'
-      }
+      },
+      { text: 'Highlight results of latest query only', isEnable: false, path2userPref: 'isOnlyHighlight4LatestQuery' }
     ];
 
     this.timebarBoolSettings = [
@@ -99,6 +100,8 @@ export class SettingsTabComponent implements OnInit {
     this.timebarZoomingStep = up_t.zoomingStep.getValue();
     this.graphInclusionType = up_t.graphInclusionType.getValue();
     this.statsInclusionType = up_t.statsInclusionType.getValue();
+
+    this.highlightStyleSelected(this._g.currHighlightIdx);
   }
 
   private setHighlightStyles() {
@@ -120,6 +123,7 @@ export class SettingsTabComponent implements OnInit {
 
   onColorSelected(c: string) {
     this._g.userPrefs.highlightColor.next(c);
+    this.highlightColor = c;
   }
 
   // used to change border width or color. One of them should be defined. (exclusively)

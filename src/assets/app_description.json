@@ -302,6 +302,7 @@
     "isShowEdgeLabels": true,
     "isFitLabels2Nodes": false,
     "isIgnoreCaseInText": false,
+    "isOnlyHighlight4LatestQuery": false,
 
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
@@ -309,7 +310,7 @@
     "highlightWidth": 4.5,
     "highlightColor": "#F5E663",
 
-    "mergedElemIndicator": 0,
+    "mergedElemIndicator": 1,
 
     "compoundPadding": "5%",
 
@@ -325,7 +326,7 @@
       "isHideDisconnectedNodesOnAnim": false,
       "min": -59011466152000,
       "max": 32503669200000,
-      "isMaintainGraphRange": false 
+      "isMaintainGraphRange": false
     },
     "style": {
       ".va-title": {
