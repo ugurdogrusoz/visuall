@@ -29,6 +29,7 @@ import { ErrorModalComponent } from './popups/error-modal/error-modal.component'
 import { AngularDraggableModule } from 'angular2-draggable';
 import { GraphTheoreticPropertiesTabComponent } from './operation-tabs/map-tab/graph-theoretic-properties-tab/graph-theoretic-properties-tab.component';
 import { GraphHistoryComponent } from './graph-history/graph-history.component';
+import { TabCustomizationService } from './operation-tabs/tab-customization.service';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { GraphHistoryComponent } from './graph-history/graph-history.component';
     PropertyRuleComponent,
     ErrorModalComponent,
     GraphTheoreticPropertiesTabComponent,
-    GraphHistoryComponent
+    GraphHistoryComponent,
+    TabCustomizationService.tabs.map(x => x.component)
   ],
   imports: [
     BrowserModule,

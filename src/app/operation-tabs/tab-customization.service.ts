@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class TabCustomizationService {
 
-  tabs: { component: any, text: string }[] = [];
+  // put your Angular Componenets here like below
+  // static tabs: { component: any, text: string }[] = [{ component: DummyComponent, text: 'Dummy' }];
+  static tabs: { component: any, text: string }[] = [];
   constructor() { }
 }

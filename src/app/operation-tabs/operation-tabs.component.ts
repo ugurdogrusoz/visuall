@@ -16,10 +16,10 @@ export class OperationTabsComponent {
   currTab: Number;
   tabs: { component: any, text: string }[] = [{ component: ObjectTabComponent, text: 'Object' }, { component: MapTabComponent, text: 'Map' }, { component: QueryTabComponent, text: 'Database' }, { component: SettingsTabComponent, text: 'Settings' }];
 
-  constructor(private _g: GlobalVariableService, private _customizationService: TabCustomizationService) {
+  constructor(private _g: GlobalVariableService) {
     this.currTab = this._g.operationTabChanged.getValue();
     this._g.operationTabChanged.subscribe(x => { this.currTab = x });
-    this.tabs = this.tabs.concat(this._customizationService.tabs);
+    this.tabs = this.tabs.concat(TabCustomizationService.tabs);
   }
 
   setTab(i: number) {

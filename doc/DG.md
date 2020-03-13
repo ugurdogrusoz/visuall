@@ -233,6 +233,12 @@ Also, their display names should be added to [the Query tab component file](../s
 
 As explained in the [User Guide](UG.md), this tab is used to change all types of settings in your application. The content of this tab is automatically generated and is *not* meant to be customizable.
 
+### Adding your own tabs
+
+You can add your own tabs. A tab is an [angular component](https://angular.io/api/core/Component). By using [angular cli](https://www.npmjs.com/package/@angular/cli) you can generate [an angular component](https://angular.io/api/core/Component) with command `ng g c aComponentNameHere`. By default, this adds you component to `declarations` of [app.module.ts](../src/app/app.module.ts). To prevent conflicts, you should **not** modify [app.module.ts file](../src/app/app.module.ts). Instead, you should modify [tab-customization.service.ts](../src/app/operation-tabs/tab-customization.service.ts). There you will see a static `tabs` member. You should add your tabs to there. Actually, this line `TabCustomizationService.tabs.map(x => x.component)` inside [app.module.ts](../src/app/app.module.ts) reads the static member and adds custom components to the `declarations`.
+
+
+
 ## Database connection
 To connect the database, visuall needs to read database connection information. Visual reads a file named **visuall-config.json**. The file should be added by the developer. Since the content of the file is environment dependent, it is written to `.gitignore` to be ignored. The file should be inside the folder **\assets**. An example file content is given below
 ```
