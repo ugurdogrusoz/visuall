@@ -33,7 +33,7 @@ export class DbAdapterService implements DbService {
 
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     if (type == DbQueryType.std) {
-      let s = 'Get filtering for: ' + rule2str(rules);
+      let s = 'Get: filtering for ' + rule2str(rules);
       let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
       this._db.getFilteringResult(rules, skip, limit, type, fn);
     } else {
@@ -55,7 +55,7 @@ export class DbAdapterService implements DbService {
   }
 
   getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[]) {
-    let s = `Get actors by movie counts with parameters: "${new Date(d1).toLocaleString()}", "${new Date(d2).toLocaleString()}", "${movieCnt}"`;
+    let s = `Get 'actors by movie counts' with: "${new Date(d1).toLocaleString()}", "${new Date(d2).toLocaleString()}", "${movieCnt}"`;
     let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
     this._db.getGraph4Q0(d1, d2, movieCnt, skip, limit, fn, ids);
   }
