@@ -4,7 +4,7 @@ import { ObjectTabComponent } from './object-tab/object-tab.component';
 import { MapTabComponent } from './map-tab/map-tab.component';
 import { QueryTabComponent } from './query-tab/query-tab.component';
 import { SettingsTabComponent } from './settings-tab/settings-tab.component';
-import { TabCustomizationService } from './tab-customization.service';
+import { TabCustomizationModule } from './tab-customization/tab-customization.module';
 
 @Component({
   selector: 'app-operation-tabs',
@@ -19,7 +19,7 @@ export class OperationTabsComponent {
   constructor(private _g: GlobalVariableService) {
     this.currTab = this._g.operationTabChanged.getValue();
     this._g.operationTabChanged.subscribe(x => { this.currTab = x });
-    this.tabs = this.tabs.concat(TabCustomizationService.tabs);
+    this.tabs = this.tabs.concat(TabCustomizationModule.tabs);
   }
 
   setTab(i: number) {
