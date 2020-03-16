@@ -17,6 +17,7 @@ import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse } from './db-service/data-types';
 import timebar from '../lib/timebar/cytoscape-timebar';
 import { UserPrefHelper } from './user-pref-helper';
+import { MergedElemIndicatorTypes } from './user-preference';
 
 @Injectable({
   providedIn: 'root'
@@ -425,7 +426,13 @@ export class CytoscapeService {
     }
     // remove all existing hightlights before hightlighting new elements
     if (this._g.userPrefs.isOnlyHighlight4LatestQuery.getValue()) {
-      this._g.viewUtils.removeHighlights();
+      let t = this._g.userPrefs.mergedElemIndicator.getValue();
+      if (t == MergedElemIndicatorTypes.highlight) {
+        this._g.viewUtils.removeHighlights();
+      }
+      if (t == MergedElemIndicatorTypes.selection) {
+        this._g.cy.$().unselect();
+      }
     }
     let ele2highlight = this._g.cy.collection();
     const cnt = elemIds.length;

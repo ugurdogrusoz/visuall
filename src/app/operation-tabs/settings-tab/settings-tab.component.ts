@@ -53,7 +53,7 @@ export class SettingsTabComponent implements OnInit {
       {
         text: 'Ignore case in text operations', isEnable: false, path2userPref: 'isIgnoreCaseInText'
       },
-      { text: 'Highlight results of latest query only', isEnable: false, path2userPref: 'isOnlyHighlight4LatestQuery' }
+      { text: 'Show results of latest query only', isEnable: false, path2userPref: 'isOnlyHighlight4LatestQuery' }
     ];
 
     this.timebarBoolSettings = [
