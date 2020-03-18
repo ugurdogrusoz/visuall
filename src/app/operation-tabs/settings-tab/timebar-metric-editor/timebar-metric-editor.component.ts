@@ -192,7 +192,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.selectedClass = this.currMetrics[i].className;
       this.changeSelectedClass();
       this.isAClassSelectedForMetric = true;
-      this.newStatBtnTxt = 'Update Statistic';
+      this.newStatBtnTxt = 'Update';
       this.isSumMetric = this.getIdxOfSumRule(this.filteringRule) > -1;
     }
   }
