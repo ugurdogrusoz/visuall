@@ -1,5 +1,14 @@
 import { GENERIC_TYPE, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS } from 'src/app/constants';
 
+export interface FilteringRule {
+  name: string;
+  rules: ClassBasedRules;
+  isEditing: boolean;
+  isOnDb: boolean;
+  isLoadGraph: boolean;
+  isMergeGraph: boolean;
+}
+
 export interface ClassOption {
   text: string;
   isDisabled: boolean;

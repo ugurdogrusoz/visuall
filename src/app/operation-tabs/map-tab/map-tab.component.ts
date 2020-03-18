@@ -6,7 +6,7 @@ import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
-import { ClassOption, ClassBasedRules, Rule, RuleSync, getBoolExpressionFromMetric } from './filtering-types';
+import { ClassOption, ClassBasedRules, Rule, RuleSync, getBoolExpressionFromMetric, FilteringRule } from './filtering-types';
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
@@ -38,10 +38,10 @@ export class MapTabComponent implements OnInit {
   private isGroupTabOpen = false;
   @ViewChild(GroupTabComponent, { static: false })
   private groupComponent: GroupTabComponent;
-  currRules: { name: string, rules: ClassBasedRules, isEditing: boolean }[] = [];
+  currRules: FilteringRule[] = [];
   isAddingNewRule = false;
-  isEditingARule = false;
-  currRuleName = 'new filtering rule';
+  changeBtnTxt = 'Update';
+  currRuleName = 'New rule';
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService) {
     this.isFilterOnDb = true;
@@ -70,7 +70,7 @@ export class MapTabComponent implements OnInit {
       this.classOptions.push({ text: key, isDisabled: false });
     }
 
-    this.resetRule();
+    this.newRuleClick();
   }
 
   ruleOperatorClicked(j: number, op: string) {
@@ -352,16 +352,20 @@ export class MapTabComponent implements OnInit {
 
   editRule(i: number) {
     this.isAddingNewRule = false;
+    this.changeBtnTxt = 'Update';
     this.resetRule();
-    if (!this.currRules[i].isEditing) {
+    let curr = this.currRules[i];
+    if (!curr.isEditing) {
       this.resetEditingRules();
-      this.currRules[i].isEditing = true;
-      this.filteringRule = JSON.parse(JSON.stringify(this.currRules[i].rules));
-      this.currRuleName = this.currRules[i].name;
+      curr.isEditing = true;
+      this.filteringRule = JSON.parse(JSON.stringify(curr.rules));
+      this.currRuleName = curr.name;
+      this.isFilterOnDb = curr.isOnDb;
+      this.tableInput.isMergeGraph = curr.isMergeGraph;
+      this.tableInput.isLoadGraph = curr.isLoadGraph;
       this.selectedClass = this.filteringRule.className;
       this.changeSelectedClass();
       this.isClassTypeLocked = true;
-      this.isEditingARule = true;
     }
   }
 
@@ -369,31 +373,39 @@ export class MapTabComponent implements OnInit {
     for (let i = 0; i < this.currRules.length; i++) {
       this.currRules[i].isEditing = false;
     }
-    this.isEditingARule = false;
   }
 
   deleteRule(i: number) {
     this.currRules.splice(i, 1);
+    if (this.currRules.length < 1) {
+      this.newRuleClick();
+    }
   }
 
   newRuleClick() {
     this.isAddingNewRule = true;
-    this.currRuleName = 'new filtering rule';
+    this.changeBtnTxt = 'Add';
+    this.currRuleName = 'New rule';
     this.resetEditingRules();
     this.resetRule();
   }
 
   updateRule() {
-    let idx = -1;
-    for (let i = 0; i < this.currRules.length; i++) {
-      if (this.currRules[i].isEditing) {
-        idx = i;
-        break;
-      }
-    }
-
+    let idx = this.getEditingRuleIdx();
     this.currRules[idx].rules = JSON.parse(JSON.stringify(this.filteringRule));
     this.currRules[idx].name = this.currRuleName;
+    this.currRules[idx].isLoadGraph = this.tableInput.isLoadGraph;
+    this.currRules[idx].isMergeGraph = this.tableInput.isMergeGraph;
+    this.currRules[idx].isOnDb = this.isFilterOnDb;
+  }
+
+  private getEditingRuleIdx(): number {
+    for (let i = 0; i < this.currRules.length; i++) {
+      if (this.currRules[i].isEditing) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   addRule() {
@@ -401,8 +413,20 @@ export class MapTabComponent implements OnInit {
       return;
     }
     this.resetEditingRules();
-    this.currRules.push({ rules: JSON.parse(JSON.stringify(this.filteringRule)), name: this.currRuleName, isEditing: true });
+    this.currRules.push({
+      rules: JSON.parse(JSON.stringify(this.filteringRule)),
+      name: this.currRuleName, isEditing: true, isOnDb: this.isFilterOnDb, isLoadGraph: this.tableInput.isLoadGraph, isMergeGraph: this.tableInput.isMergeGraph
+    });
     this.isAddingNewRule = false;
+    this.changeBtnTxt = 'Update';
+  }
+
+  addOrUpdateRule() {
+    if (this.isAddingNewRule) {
+      this.addRule();
+    } else {
+      this.updateRule();
+    }
   }
 }
 

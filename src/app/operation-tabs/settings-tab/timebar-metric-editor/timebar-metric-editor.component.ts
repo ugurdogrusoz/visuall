@@ -22,7 +22,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   currMetricColor: string = null;
   isAClassSelectedForMetric = false;
   private editingIdx = -1;
-  newStatBtnTxt = 'Add Statistic';
+  newStatBtnTxt = 'Add';
   isHideEditing = true;
   isAddingNew = false;
   isGenericTypeSelected = true;
@@ -72,7 +72,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.filteringRule = null;
     this.currMetricName = 'new';
     this.currMetricColor = this.getRandomColor();
-    this.newStatBtnTxt = 'Add Statistic';
+    this.newStatBtnTxt = 'Add';
     this.editingIdx = -1;
     this.selectedClass = this.classOptions[0].text;
     this.isAClassSelectedForMetric = false;
