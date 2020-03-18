@@ -3,3 +3,6 @@ img {
   height: 16px;
 }
 
+.pointer {
+  cursor: pointer;
+}

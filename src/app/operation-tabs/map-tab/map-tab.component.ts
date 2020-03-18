@@ -38,6 +38,10 @@ export class MapTabComponent implements OnInit {
   private isGroupTabOpen = false;
   @ViewChild(GroupTabComponent, { static: false })
   private groupComponent: GroupTabComponent;
+  currRules: { name: string, rules: ClassBasedRules, isEditing: boolean }[] = [];
+  isAddingNewRule = false;
+  isEditingARule = false;
+  currRuleName = 'new filtering rule';
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService) {
     this.isFilterOnDb = true;
@@ -336,7 +340,6 @@ export class MapTabComponent implements OnInit {
     if (this.isGroupTabOpen) {
       this.groupComponent.componentOpened();
     }
-    console.log('groupTabCliked');
   }
 
   filterTable(filter: TableFiltering) {
@@ -345,6 +348,61 @@ export class MapTabComponent implements OnInit {
     this.getCountOfData(filter);
     let skip = filter.skip ? filter.skip : 0;
     this._dbService.filterTable(this.filteringRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
+  }
+
+  editRule(i: number) {
+    this.isAddingNewRule = false;
+    this.resetRule();
+    if (!this.currRules[i].isEditing) {
+      this.resetEditingRules();
+      this.currRules[i].isEditing = true;
+      this.filteringRule = JSON.parse(JSON.stringify(this.currRules[i].rules));
+      this.currRuleName = this.currRules[i].name;
+      this.selectedClass = this.filteringRule.className;
+      this.changeSelectedClass();
+      this.isClassTypeLocked = true;
+      this.isEditingARule = true;
+    }
+  }
+
+  resetEditingRules() {
+    for (let i = 0; i < this.currRules.length; i++) {
+      this.currRules[i].isEditing = false;
+    }
+    this.isEditingARule = false;
+  }
+
+  deleteRule(i: number) {
+    this.currRules.splice(i, 1);
+  }
+
+  newRuleClick() {
+    this.isAddingNewRule = true;
+    this.currRuleName = 'new filtering rule';
+    this.resetEditingRules();
+    this.resetRule();
+  }
+
+  updateRule() {
+    let idx = -1;
+    for (let i = 0; i < this.currRules.length; i++) {
+      if (this.currRules[i].isEditing) {
+        idx = i;
+        break;
+      }
+    }
+
+    this.currRules[idx].rules = JSON.parse(JSON.stringify(this.filteringRule));
+    this.currRules[idx].name = this.currRuleName;
+  }
+
+  addRule() {
+    if (this.filteringRule == null || this.filteringRule == undefined) {
+      return;
+    }
+    this.resetEditingRules();
+    this.currRules.push({ rules: JSON.parse(JSON.stringify(this.filteringRule)), name: this.currRuleName, isEditing: true });
+    this.isAddingNewRule = false;
   }
 }
 
