@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
-import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE } from '../../constants';
+import { compareUsingOperator, FILTER_CLASS_HIDE, GENERIC_TYPE, deepCopy } from '../../constants';
 import * as $ from 'jquery';
 import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
@@ -358,7 +358,7 @@ export class MapTabComponent implements OnInit {
     if (!curr.isEditing) {
       this.resetEditingRules();
       curr.isEditing = true;
-      this.filteringRule = JSON.parse(JSON.stringify(curr.rules));
+      this.filteringRule = deepCopy(curr.rules);
       this.currRuleName = curr.name;
       this.isFilterOnDb = curr.isOnDb;
       this.tableInput.isMergeGraph = curr.isMergeGraph;
@@ -392,7 +392,7 @@ export class MapTabComponent implements OnInit {
 
   updateRule() {
     let idx = this.getEditingRuleIdx();
-    this.currRules[idx].rules = JSON.parse(JSON.stringify(this.filteringRule));
+    this.currRules[idx].rules = deepCopy(this.filteringRule);
     this.currRules[idx].name = this.currRuleName;
     this.currRules[idx].isLoadGraph = this.tableInput.isLoadGraph;
     this.currRules[idx].isMergeGraph = this.tableInput.isMergeGraph;
@@ -414,7 +414,7 @@ export class MapTabComponent implements OnInit {
     }
     this.resetEditingRules();
     this.currRules.push({
-      rules: JSON.parse(JSON.stringify(this.filteringRule)),
+      rules: deepCopy(this.filteringRule),
       name: this.currRuleName, isEditing: true, isOnDb: this.isFilterOnDb, isLoadGraph: this.tableInput.isLoadGraph, isMergeGraph: this.tableInput.isMergeGraph
     });
     this.isAddingNewRule = false;

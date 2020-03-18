@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import AppDescription from '../../../../assets/app_description.json';
 import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric } from '../../map-tab/filtering-types';
-import { GENERIC_TYPE } from '../../../constants';
+import { GENERIC_TYPE, deepCopy } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { Subject } from 'rxjs';
 
@@ -186,7 +186,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.isAddingNew = false;
       this.editingIdx = i;
       this.currMetrics[i].isEditing = true;
-      this.filteringRule = this.currMetrics[i];
+      this.filteringRule = deepCopy(this.currMetrics[i]);
       this.currMetricName = this.currMetrics[i].name;
       this.currMetricColor = this.currMetrics[i].color;
       this.selectedClass = this.currMetrics[i].className;
@@ -224,10 +224,10 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.filteringRule.name = this.currMetricName;
     this.filteringRule.color = this.currMetricColor;
     if (this.editingIdx != -1) {
-      this.currMetrics[this.editingIdx] = this.filteringRule;
+      this.currMetrics[this.editingIdx] = deepCopy(this.filteringRule);
       this.currMetrics[this.editingIdx].isEditing = false;
     } else {
-      this.currMetrics.push(this.filteringRule);
+      this.currMetrics.push(deepCopy(this.filteringRule));
     }
     this.isHideEditing = true;
     this.isAddingNew = false;
