@@ -35,12 +35,9 @@
         </div>
       </div>
 
-      <div class="d-flex flex-wrap justify-content-center">
-        <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
-          [(ngModel)]="currRuleName" class="form-control name-inp my-1 va-small-text">
-      </div>
-
       <div class="form-inline m-2 justify-content-center">
+        <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
+          [(ngModel)]="currRuleName" class="form-control name-inp m-1 va-small-text">
         <select class="custom-select filter-form va-text" [disabled]="isClassTypeLocked" [(ngModel)]="selectedClass"
           (change)="changeSelectedClass()">
           <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
@@ -88,8 +85,6 @@
         </div>
 
         <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="filteringRule">
-          <input class="btn btn-dark va-text m-1" type="button" [value]="changeBtnTxt" (click)="addOrUpdateRule()">
-          <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runFiltering()">
           <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isFilterOnDb" />
             <label class="form-check-label va-text">Database</label>
@@ -105,6 +100,12 @@
             <label class="form-check-label va-text">Merge</label>
           </div>
         </div>
+
+        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="filteringRule">
+          <input class="btn btn-dark va-text m-1" type="button" [value]="changeBtnTxt" (click)="addOrUpdateRule()">
+          <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runFiltering()">
+        </div>
+
       </div>
       <app-table-view [params]="tableInput" [tableFilled]="tableFilled"
         (onDataForQueryResult)="getDataForQueryResult($event)" (onFilteringChanged)="filterTable($event)">
