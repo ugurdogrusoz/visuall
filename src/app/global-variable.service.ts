@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserPref } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import app_description from '../assets/app_description.json'
+import AppDescription from '../assets/app_description.json'
 import { isPrimitiveType } from './constants';
 import { GraphHistoryItem } from './db-service/data-types';
 
@@ -31,9 +31,13 @@ export class GlobalVariableService {
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
     // set user preferences staticly (necessary for rendering html initially)
-    this.setUserPrefs(app_description.appPreferences, this.userPrefs);
+    delete AppDescription.appPreferences['style'];
+    this.setUserPrefs(AppDescription.appPreferences, this.userPrefs);
     // set user preferences dynamically
-    this._http.get('./assets/app_description.json').subscribe(x => { this.setUserPrefs(x['appPreferences'], this.userPrefs); });
+    this._http.get('./assets/app_description.json').subscribe(x => {
+      delete x['appPreferences']['style'];
+      this.setUserPrefs(x['appPreferences'], this.userPrefs);
+    });
   }
 
   private setUserPrefs(obj: any, userPref: any) {
@@ -54,6 +58,12 @@ export class GlobalVariableService {
         }
         this.setUserPrefs(obj[k], userPref[k]);
       }
+    }
+  }
+
+  transfer2UserPrefs(u: any) {
+    if (u) {
+      this.setUserPrefs(u, this.userPrefs);
     }
   }
 
@@ -151,9 +161,9 @@ export class GlobalVariableService {
       cyIds.push(idChar + elemIds[i]);
     }
     let labels = '';
-    let labelParent: any = app_description.objects;
+    let labelParent: any = AppDescription.objects;
     if (!isNode) {
-      labelParent = app_description.relations;
+      labelParent = AppDescription.relations;
     }
     for (let i = 0; i < cyIds.length; i++) {
       let curr = this.cy.$('#' + cyIds[i]);

@@ -173,7 +173,6 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   editMetric(i: number) {
-
     if (this.currMetrics[i].isEditing) {
       this.isHideEditing = true;
       this.editingIdx = -1;

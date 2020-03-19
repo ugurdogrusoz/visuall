@@ -303,6 +303,7 @@
     "isFitLabels2Nodes": false,
     "isIgnoreCaseInText": false,
     "isOnlyHighlight4LatestQuery": false,
+    "isStoreUserProfile": true,
 
     "dataPageSize": 15,
     "queryHistoryLimit": 10,

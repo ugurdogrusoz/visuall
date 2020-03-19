@@ -1,4 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
+import { FilteringRule, TimebarMetric } from './operation-tabs/map-tab/filtering-types';
 
 export interface UserPref {
   // boolean settings
@@ -9,6 +10,7 @@ export interface UserPref {
   isFitLabels2Nodes: BehaviorSubject<boolean>;
   isIgnoreCaseInText: BehaviorSubject<boolean>;
   isOnlyHighlight4LatestQuery: BehaviorSubject<boolean>;
+  isStoreUserProfile: BehaviorSubject<boolean>;
 
   // Show query results using 'Selection', 'Highlight'
   mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
@@ -47,4 +49,10 @@ export interface BoolSetting {
   isEnable: boolean;
   text: string;
   path2userPref: string;
+}
+
+export interface UserProfile {
+  filteringRules: FilteringRule[];
+  timebarMetrics: TimebarMetric[];
+  userPref: any;
 }

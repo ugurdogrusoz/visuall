@@ -2,6 +2,7 @@ import { CytoscapeService } from './cytoscape.service';
 import { TimebarService } from './timebar.service';
 import { GlobalVariableService } from './global-variable.service';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_DATA_PAGE_SIZE, MAX_HIGHTLIGHT_WIDTH, MIN_DATA_PAGE_SIZE, MAX_TABLE_COLUMN_COUNT, MIN_TABLE_COLUMN_COUNT } from './constants';
+import { BehaviorSubject } from 'rxjs';
 
 export class UserPrefHelper {
   constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _g: GlobalVariableService) {

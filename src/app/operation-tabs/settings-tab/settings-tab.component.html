@@ -34,7 +34,8 @@
           </select>
           <input type="number" max="20" min="2" [(ngModel)]="highlightWidth" class="form-control inp-3-char va-text"
             placeholder="width">
-          <app-color-picker (onColorSelected)="onColorSelected($event)" [currColor]="highlightColor" class="align-middle"></app-color-picker>
+          <app-color-picker (onColorSelected)="onColorSelected($event)" [currColor]="highlightColor"
+            class="align-middle"></app-color-picker>
           <a href="#" title="Update style" (click)="changeHighlightStyle()" class="m-1">
             <img src="../../../assets/img/refresh.svg" alt="Update style">
           </a>
@@ -57,8 +58,9 @@
       <div class="form-inline">
         <label class="form-check-label va-text">Query history limit</label>
         <div class="mx-1">
-          <input type="number" max="100" min="1" (keydown.enter)="settingChanged(queryHistoryLimit, 'queryHistoryLimit')"
-            [(ngModel)]="queryHistoryLimit" class="form-control inp-3-char va-text">
+          <input type="number" max="100" min="1"
+            (keydown.enter)="settingChanged(queryHistoryLimit, 'queryHistoryLimit')" [(ngModel)]="queryHistoryLimit"
+            class="form-control inp-3-char va-text">
         </div>
       </div>
     </div>
@@ -78,6 +80,13 @@
           <input type="text" (keydown.enter)="settingChanged(compoundPadding, 'compoundPadding')"
             [(ngModel)]="compoundPadding" class="form-control inp-3-char va-text">
         </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" [(ngModel)]="isStoreUserProfile"
+          (change)="settingChanged(isStoreUserProfile, 'isStoreUserProfile')">
+        <label class="form-check-label va-text">Store user profile</label>
       </div>
     </div>
   </div>

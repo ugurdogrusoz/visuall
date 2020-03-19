@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting } from 'src/app/user-preference';
+import { UserProfileService } from 'src/app/user-profile.service';
 
 @Component({
   selector: 'app-settings-tab',
@@ -29,8 +30,9 @@ export class SettingsTabComponent implements OnInit {
   isInit: boolean = false;
   currHighlightStyles: string[] = [];
   highlightStyleIdx = 0;
+  isStoreUserProfile = true;
 
-  constructor(private _g: GlobalVariableService) {
+  constructor(private _g: GlobalVariableService, private _profile: UserProfileService) {
   }
 
   ngOnInit() {
@@ -74,6 +76,11 @@ export class SettingsTabComponent implements OnInit {
   }
 
   private fillUIFromMemory() {
+
+    if (this._g.userPrefs.isStoreUserProfile.getValue()) {
+      this._profile.transferUserPrefs();
+    }
+
     // reference variables for shorter text
     const up = this._g.userPrefs;
     const up_t = this._g.userPrefs.timebar;
@@ -91,6 +98,7 @@ export class SettingsTabComponent implements OnInit {
     this.highlightWidth = up.highlightWidth.getValue();
     this.highlightColor = up.highlightColor.getValue();
     this.compoundPadding = up.compoundPadding.getValue();
+    this.isStoreUserProfile = up.isStoreUserProfile.getValue();
 
     this.timebarBoolSettings[0].isEnable = up_t.isEnabled.getValue();
     this.timebarBoolSettings[1].isEnable = up_t.isHideDisconnectedNodesOnAnim.getValue();
@@ -119,11 +127,13 @@ export class SettingsTabComponent implements OnInit {
       obj = obj[path[i]];
     }
     obj.next(val);
+    this._profile.setUserPrefs();
   }
 
   onColorSelected(c: string) {
     this._g.userPrefs.highlightColor.next(c);
     this.highlightColor = c;
+    this._profile.setUserPrefs();
   }
 
   // used to change border width or color. One of them should be defined. (exclusively)
