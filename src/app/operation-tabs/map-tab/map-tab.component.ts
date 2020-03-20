@@ -13,6 +13,7 @@ import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta 
 import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
 import { MergedElemIndicatorTypes } from 'src/app/user-preference.js';
+import { UserProfileService } from 'src/app/user-profile.service';
 
 @Component({
   selector: 'app-map-tab',
@@ -43,7 +44,8 @@ export class MapTabComponent implements OnInit {
   changeBtnTxt = 'Update';
   currRuleName = 'New rule';
 
-  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService) {
+  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService,
+    private _timebarService: TimebarService, private _profile: UserProfileService) {
     this.isFilterOnDb = true;
     this.tableInput.isMergeGraph = true;
     this.nodeClasses = new Set([]);
@@ -70,7 +72,16 @@ export class MapTabComponent implements OnInit {
       this.classOptions.push({ text: key, isDisabled: false });
     }
 
-    this.newRuleClick();
+    if (this._g.userPrefs.isStoreUserProfile.getValue()) {
+      this.currRules = this._profile.getFilteringRules();
+    }
+    let i = this.getEditingRuleIdx();
+    if (i > -1) {
+      this.currRules[i].isEditing = false; // simulate click
+      this.editRule(i);
+    } else {
+      this.newRuleClick();
+    }
   }
 
   ruleOperatorClicked(j: number, op: string) {
@@ -368,6 +379,7 @@ export class MapTabComponent implements OnInit {
       this.selectedClass = this.filteringRule.className;
       this.changeSelectedClass();
       this.isClassTypeLocked = true;
+      this._profile.saveFilteringRulesIfWanted(this.currRules);
     }
   }
 
@@ -375,6 +387,7 @@ export class MapTabComponent implements OnInit {
     for (let i = 0; i < this.currRules.length; i++) {
       this.currRules[i].isEditing = false;
     }
+    this._profile.saveFilteringRulesIfWanted(this.currRules);
   }
 
   deleteRule(i: number) {
@@ -382,6 +395,7 @@ export class MapTabComponent implements OnInit {
     if (this.currRules.length < 1) {
       this.newRuleClick();
     }
+    this._profile.saveFilteringRulesIfWanted(this.currRules);
   }
 
   newRuleClick() {
@@ -392,7 +406,7 @@ export class MapTabComponent implements OnInit {
     this.resetRule();
   }
 
-  updateRule() {
+  private updateRule() {
     let idx = this.getEditingRuleIdx();
     this.currRules[idx].rules = deepCopy(this.filteringRule);
     this.currRules[idx].name = this.currRuleName;
@@ -410,7 +424,7 @@ export class MapTabComponent implements OnInit {
     return -1;
   }
 
-  addRule() {
+  private addRule() {
     if (this.filteringRule == null || this.filteringRule == undefined) {
       return;
     }
@@ -429,6 +443,7 @@ export class MapTabComponent implements OnInit {
     } else {
       this.updateRule();
     }
+    this._profile.saveFilteringRulesIfWanted(this.currRules);
   }
 }
 

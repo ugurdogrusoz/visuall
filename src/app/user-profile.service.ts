@@ -3,7 +3,6 @@ import { UserProfile } from './user-preference';
 import { FilteringRule, TimebarMetric } from './operation-tabs/map-tab/filtering-types';
 import { BehaviorSubject } from 'rxjs';
 import { GlobalVariableService } from './global-variable.service';
-import AppDescription from '../assets/app_description.json'
 
 @Injectable({
   providedIn: 'root'
@@ -22,10 +21,16 @@ export class UserProfileService {
 
   getFilteringRules(): FilteringRule[] {
     let p = this.getUserProfile();
-    if (p) {
+    if (p && p.filteringRules) {
       return p.filteringRules;
     }
-    return null;
+    return [];
+  }
+
+  saveFilteringRulesIfWanted(f: FilteringRule[]) {
+    if (this._g.userPrefs.isStoreUserProfile.getValue()) {
+      this.setFilteringRules(f);
+    }
   }
 
   setFilteringRules(f: FilteringRule[]) {
