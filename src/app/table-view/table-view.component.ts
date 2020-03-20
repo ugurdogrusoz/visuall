@@ -31,7 +31,7 @@ export class TableViewComponent implements OnInit {
   @Input() params: TableViewInput;
   @Input() tableFilled = new Subject<boolean>();
   @Output() onFilteringChanged = new EventEmitter<TableFiltering>();
-  @Output() onDataForQueryResult = new EventEmitter<number[] | string[]>();
+  @Output() onDataForQueryResult = new EventEmitter<{ dbIds: number[] | string[], tableIdx: number[] }>();
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
 
@@ -124,9 +124,14 @@ export class TableViewComponent implements OnInit {
   }
 
   loadGraph4Checked() {
-    let ids = this.params.results.filter((_, i) => this.checkedIdx[i]).map(x => x[0].val) as number[];
-    if (ids.length > 0) {
-      this.onDataForQueryResult.emit(ids);
+    // index 0 keeps database IDs
+    let dbIds = this.params.results.filter((_, i) => this.checkedIdx[i]).map(x => x[0].val) as number[];
+    let idxes = [];
+    for (let i in this.checkedIdx) {
+      idxes.push(Number(i) + 1);
+    }
+    if (dbIds.length > 0) {
+      this.onDataForQueryResult.emit({ dbIds: dbIds, tableIdx: idxes });
     }
   }
 

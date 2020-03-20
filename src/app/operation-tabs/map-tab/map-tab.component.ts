@@ -9,7 +9,7 @@ import { TimebarService } from '../../timebar.service';
 import { ClassOption, ClassBasedRules, Rule, RuleSync, getBoolExpressionFromMetric, FilteringRule } from './filtering-types';
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
-import { TableViewInput, TableData, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta } from 'src/app/table-view/table-view-types';
 import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
 import { MergedElemIndicatorTypes } from 'src/app/user-preference.js';
@@ -323,8 +323,10 @@ export class MapTabComponent implements OnInit {
     this.loadTable(skip, limit);
   }
 
-  getDataForQueryResult(ids: number[] | string[]) {
-    this._dbService.getNeighbors(ids, (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) });
+  getDataForQueryResult(e: TableRowMeta) {
+    let isNode = !this.filteringRule.isEdge;
+    let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
+    this._dbService.getNeighbors(e.dbIds, fn, e.tableIdx.join(','), isNode, 'Loaded from table: ');
   }
 
   resetRule() {

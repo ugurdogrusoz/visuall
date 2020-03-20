@@ -30,3 +30,8 @@ export interface TableFiltering {
   orderDirection: 'asc' | 'desc' | '';
   skip?: number;
 }
+
+export interface TableRowMeta {
+  dbIds: number[] | string[]; 
+  tableIdx: number[];
+}

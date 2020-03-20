@@ -146,7 +146,9 @@ function getJsExpressionForMetricRule(r: Rule) {
 
 export function rule2str(r: ClassBasedRules): string {
   let s = `<b>${r.className}</b>`;
-
+  if (r.rules.length == 1 && !r.rules[0].propertyType) {
+    return s;
+  }
   if (r.rules.length > 0) {
     s += ' where ';
   }

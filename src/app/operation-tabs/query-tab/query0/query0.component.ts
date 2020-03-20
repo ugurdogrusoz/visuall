@@ -3,7 +3,7 @@ import { DbAdapterService } from '../../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
-import { TableViewInput, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableDataType, TableFiltering, TableRowMeta } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 
 
@@ -70,10 +70,11 @@ export class Query0Component implements OnInit {
     this.tableFilled.next(true);
   }
 
-  getDataForQueryResult(ids: number[] | string[]) {
+  getDataForQueryResult(e: TableRowMeta) {
     let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
     let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
-    this._dbService.getGraph4Q0(d1, d2, this.movieCnt, 0, this.tableInput.pageSize, x => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), ids);
+    this._dbService.getGraph4Q0(d1, d2, this.movieCnt, 0, this.tableInput.pageSize,
+      x => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), e.dbIds, e.tableIdx);
   }
 
   filterTable(filter: TableFiltering) {

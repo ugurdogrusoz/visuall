@@ -3,7 +3,7 @@ import { DbAdapterService } from '../../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { GlobalVariableService } from '../../../global-variable.service';
 import flatpickr from 'flatpickr';
-import { TableViewInput, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableDataType, TableFiltering, TableRowMeta } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -88,11 +88,12 @@ export class Query1Component implements OnInit, AfterViewInit {
     }
   }
 
-  getDataForQueryResult(ids: number[] | string[]) {
+  getDataForQueryResult(e: TableRowMeta) {
     let d1 = document.querySelector('#' + this.date1Id)['_flatpickr'].selectedDates[0].getFullYear();
     let d2 = document.querySelector('#' + this.date2Id)['_flatpickr'].selectedDates[0].getFullYear();
 
-    this._dbService.getGraph4Q1(d1, d2, this.selectedGenre, 0, this.tableInput.pageSize, (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), ids);
+    this._dbService.getGraph4Q1(d1, d2, this.selectedGenre, 0, this.tableInput.pageSize,
+      (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph), e.dbIds, e.tableIdx);
   }
 
   filterTable(filter: TableFiltering) {

@@ -15,9 +15,16 @@ export class DbAdapterService implements DbService {
   }
 
   // ----------------------- DbService interface methods starts -------------------------------
-  getNeighbors(elemId: string[] | number[], callback: (x: GraphResponse) => any) {
-    let s = this._g.getLabels4Elems(elemId);
-    let fn = (x) => { callback(x); this._g.add2GraphHistory('Get neighbors of element(s): ' + s); };
+  getNeighbors(elemId: string[] | number[], callback: (x: GraphResponse) => any, labels: string = null, isNode: boolean = true, customTxt: string = null) {
+    let s = labels;
+    if (!labels) {
+      s = this._g.getLabels4Elems(elemId, isNode);
+    }
+    let txt = 'Get neighbors of element(s): ';
+    if (customTxt) {
+      txt = customTxt;
+    }
+    let fn = (x) => { callback(x); this._g.add2GraphHistory(txt + s); };
     this._db.getNeighbors(elemId, fn);
   }
 
@@ -54,8 +61,11 @@ export class DbAdapterService implements DbService {
     this._db.getTable4Q0(d1, d2, movieCnt, skip, limit, callback, filter);
   }
 
-  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[]) {
+  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[], idxes?: number[]) {
     let s = `Get actors by movie counts with: "${new Date(d1).toLocaleString()}", "${new Date(d2).toLocaleString()}", "${movieCnt}"`;
+    if (idxes) {
+      s += ', ' + idxes.join(',');
+    }
     let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
     this._db.getGraph4Q0(d1, d2, movieCnt, skip, limit, fn, ids);
   }
@@ -68,8 +78,11 @@ export class DbAdapterService implements DbService {
     this._db.getTable4Q1(d1, d2, genre, skip, limit, callback, filter);
   }
 
-  getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[]) {
+  getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[], idxes?: number[]) {
     let s = `Get movies by genre with parameters: "${d1}", "${d2}", "${genre}"`;
+    if (idxes) {
+      s += ', ' + idxes.join(',');
+    }
     let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
     this._db.getGraph4Q1(d1, d2, genre, skip, limit, fn, ids);
   }
