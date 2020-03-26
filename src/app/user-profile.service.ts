@@ -19,6 +19,51 @@ export class UserProfileService {
     return JSON.parse(p) as UserProfile;
   }
 
+  private setFilteringRules(f: FilteringRule[]) {
+    let p = this.getUserProfile();
+    if (p) {
+      p.filteringRules = f;
+      localStorage.setItem('profile', JSON.stringify(p));
+    } else {
+      localStorage.setItem('profile', JSON.stringify({ filteringRules: [] }));
+    }
+  }
+
+  private setTimebarMetrics(t: TimebarMetric[]) {
+    let p = this.getUserProfile();
+    if (p) {
+      p.timebarMetrics = t;
+      localStorage.setItem('profile', JSON.stringify(p));
+    } else {
+      localStorage.setItem('profile', JSON.stringify({ timebarMetrics: [] }));
+    }
+  }
+
+  private getUserPrefs() {
+    let p = this.getUserProfile();
+    if (p) {
+      return p.userPref;
+    }
+    return null;
+  }
+
+  private userPref2RawData() {
+    let o = {};
+    this.mapSubjectProperties(this._g.userPrefs, o);
+    return o;
+  }
+
+  private mapSubjectProperties(obj, mappedObj) {
+    for (let k in obj) {
+      if (obj[k] instanceof BehaviorSubject) {
+        mappedObj[k] = (obj[k] as BehaviorSubject<any>).getValue();
+      } else {
+        mappedObj[k] = {};
+        this.mapSubjectProperties(obj[k], mappedObj[k]);
+      }
+    }
+  }
+
   getFilteringRules(): FilteringRule[] {
     let p = this.getUserProfile();
     if (p && p.filteringRules) {
@@ -41,16 +86,6 @@ export class UserProfileService {
     }
   }
 
-  private setFilteringRules(f: FilteringRule[]) {
-    let p = this.getUserProfile();
-    if (p) {
-      p.filteringRules = f;
-      localStorage.setItem('profile', JSON.stringify(p));
-    } else {
-      localStorage.setItem('profile', JSON.stringify({ filteringRules: [] }));
-    }
-  }
-
   getTimebarMetrics(): TimebarMetric[] {
     let p = this.getUserProfile();
     if (p && p.timebarMetrics) {
@@ -62,16 +97,6 @@ export class UserProfileService {
   saveTimebarMetricsIfWanted(t: TimebarMetric[]) {
     if (this.isStoreProfile()) {
       this.setTimebarMetrics(t);
-    }
-  }
-
-  private setTimebarMetrics(t: TimebarMetric[]) {
-    let p = this.getUserProfile();
-    if (p) {
-      p.timebarMetrics = t;
-      localStorage.setItem('profile', JSON.stringify(p));
-    } else {
-      localStorage.setItem('profile', JSON.stringify({ timebarMetrics: [] }));
     }
   }
 
@@ -87,14 +112,6 @@ export class UserProfileService {
     }
   }
 
-  private getUserPrefs() {
-    let p = this.getUserProfile();
-    if (p) {
-      return p.userPref;
-    }
-    return null;
-  }
-
   setUserPrefs() {
     let p = this.getUserProfile();
     if (p) {
@@ -106,20 +123,4 @@ export class UserProfileService {
     }
   }
 
-  private userPref2RawData() {
-    let o = {};
-    this.mapSubjectProperties(this._g.userPrefs, o);
-    return o;
-  }
-
-  private mapSubjectProperties(obj, mappedObj) {
-    for (let k in obj) {
-      if (obj[k] instanceof BehaviorSubject) {
-        mappedObj[k] = (obj[k] as BehaviorSubject<any>).getValue();
-      } else {
-        mappedObj[k] = {};
-        this.mapSubjectProperties(obj[k], mappedObj[k]);
-      }
-    }
-  }
 }

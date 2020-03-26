@@ -72,7 +72,7 @@ export class MapTabComponent implements OnInit {
       this.classOptions.push({ text: key, isDisabled: false });
     }
 
-    if (this._g.userPrefs.isStoreUserProfile.getValue()) {
+    if (this._profile.isStoreProfile()) {
       this.currRules = this._profile.getFilteringRules();
     }
     let i = this.getEditingRuleIdx();
