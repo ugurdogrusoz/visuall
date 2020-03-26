@@ -33,6 +33,13 @@ export class SettingsTabComponent implements OnInit {
   isStoreUserProfile = true;
 
   constructor(private _g: GlobalVariableService, private _profile: UserProfileService) {
+    this._profile.onLoadFromFile.subscribe(x => {
+      if (!x) {
+        return;
+      }
+      this._profile.transferUserPrefs();
+      this.fillUIFromMemory();
+    });
   }
 
   ngOnInit() {
@@ -123,13 +130,13 @@ export class SettingsTabComponent implements OnInit {
       obj = obj[path[i]];
     }
     obj.next(val);
-    this._profile.setUserPrefs();
+    this._profile.saveUserPrefs();
   }
 
   onColorSelected(c: string) {
     this._g.userPrefs.highlightColor.next(c);
     this.highlightColor = c;
-    this._profile.setUserPrefs();
+    this._profile.saveUserPrefs();
   }
 
   // used to change border width or color. One of them should be defined. (exclusively)

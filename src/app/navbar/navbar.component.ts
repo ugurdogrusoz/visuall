@@ -10,6 +10,9 @@ import * as $ from 'jquery';
 import AppDescription from '../../assets/app_description.json';
 import { NavbarCustomizationService } from './navbar-customization.service';
 import { NavbarDropdown, NavbarAction } from './inavbar';
+import { UserProfileService } from '../user-profile.service';
+import { readTxtFile } from '../constants';
+import { SaveProfileModalComponent } from '../popups/save-profile-modal/save-profile-modal.component';
 
 @Component({
   selector: 'app-navbar',
@@ -23,14 +26,17 @@ export class NavbarComponent implements OnInit {
   closeResult: string;
   toolName: string;
   toolLogo: string;
+  isLoadFile4Graph: boolean = false;
 
   constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _modalService: NgbModal,
-    private _g: GlobalVariableService, private _customizationService: NavbarCustomizationService) {
+    private _g: GlobalVariableService, private _customizationService: NavbarCustomizationService, private _profile: UserProfileService) {
     this.menu = [
       {
         dropdown: 'File', actions: [{ txt: 'Load...', id: 'nbi00', fn: 'loadFile', isStd: true },
         { txt: 'Save as JSON', id: 'nbi01', fn: 'saveAsJson', isStd: true },
-        { txt: 'Save as PNG...', id: 'nbi02', fn: 'saveAsPng', isStd: true }]
+        { txt: 'Save as PNG...', id: 'nbi02', fn: 'saveAsPng', isStd: true },
+        { txt: 'Load User Profile...', id: 'nbi03', fn: 'loadUserProfile', isStd: true },
+        { txt: 'Save User Profile...', id: 'nbi04', fn: 'saveUserProfile', isStd: true }]
       },
       {
         dropdown: 'Edit', actions: [{ txt: 'Delete Selected', id: 'nbi10', fn: 'deleteSelected', isStd: true },
@@ -87,7 +93,14 @@ export class NavbarComponent implements OnInit {
   }
 
   fileSelected() {
-    this._cyService.loadFile(this.file.nativeElement.files[0]);
+    if (this.isLoadFile4Graph) {
+      this._cyService.loadFile(this.file.nativeElement.files[0]);
+    } else {
+      readTxtFile(this.file.nativeElement.files[0], (s) => { 
+        this._profile.setUserProfile(s);
+        // this._g.operationTabChanged.next(3);
+      });
+    }
   }
 
   triggerAct(act: NavbarAction) {
@@ -99,8 +112,8 @@ export class NavbarComponent implements OnInit {
   }
 
   loadFile() {
-    this.file.nativeElement.value = '';
-    this.file.nativeElement.click();
+    this.isLoadFile4Graph = true;
+    this.openFileInput();
   }
 
   saveAsJson() { this._cyService.saveAsJson(); }
@@ -146,6 +159,20 @@ export class NavbarComponent implements OnInit {
   showHideGraphHistory() {
     const v = this._g.showHideGraphHistory.getValue();
     this._g.showHideGraphHistory.next(!v);
+  }
+
+  loadUserProfile() {
+    this.isLoadFile4Graph = false;
+    this.openFileInput();
+  }
+
+  saveUserProfile() {
+    this._modalService.open(SaveProfileModalComponent, { size: 'sm' });
+  }
+
+  private openFileInput() {
+    this.file.nativeElement.value = '';
+    this.file.nativeElement.click();
   }
 
 }

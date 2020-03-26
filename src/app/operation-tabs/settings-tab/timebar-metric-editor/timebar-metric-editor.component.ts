@@ -40,15 +40,17 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.currMetrics = [
       { incrementFn: null, name: 'lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
       { incrementFn: null, name: 'highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }];
-    
-    if (this._profile.isStoreProfile()) {
-      let storedMetrics = this._profile.getTimebarMetrics();
-      if (storedMetrics.length > 0) {
-        this.currMetrics = storedMetrics;
-      }
-    }
+
+    this.setCurrMetricsFromLocalStorage();
     this.setFnsForMetrics();
     this._timeBarService.shownMetrics.next(this.currMetrics);
+
+    this._profile.onLoadFromFile.subscribe(x => {
+      if (!x) {
+        return;
+      }
+      this.setCurrMetricsFromLocalStorage();
+    });
   }
 
   ngOnInit() {
@@ -141,7 +143,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     if (this.editingIdx == i) {
       this.clearInput();
     }
-    this._profile.saveTimebarMetricsIfWanted(this.currMetrics);
+    this._profile.saveTimebarMetrics(this.currMetrics);
     this.refreshTimebar();
   }
 
@@ -197,7 +199,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.isHideEditing = true;
     this.isAddingNew = false;
 
-    this._profile.saveTimebarMetricsIfWanted(this.currMetrics);
+    this._profile.saveTimebarMetrics(this.currMetrics);
     this.setFnsForMetrics();
     this.refreshTimebar();
     this.clearInput();
@@ -231,6 +233,15 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   colorSelected(c: string) {
     this.currMetricColor = c;
+  }
+
+  private setCurrMetricsFromLocalStorage() {
+    if (this._profile.isStoreProfile()) {
+      let storedMetrics = this._profile.getTimebarMetrics();
+      if (storedMetrics.length > 0) {
+        this.currMetrics = storedMetrics;
+      }
+    }
   }
 
   private setFnsForMetrics() {
@@ -311,7 +322,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       m.isEditing = false;
     }
     this.editingIdx = -1;
-    this._profile.saveTimebarMetricsIfWanted(this.currMetrics);
+    this._profile.saveTimebarMetrics(this.currMetrics);
   }
 
   private getEdgeTypesRelated(): string[] {

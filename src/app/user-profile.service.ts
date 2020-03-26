@@ -9,6 +9,7 @@ import { GlobalVariableService } from './global-variable.service';
 })
 export class UserProfileService {
 
+  onLoadFromFile: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   constructor(private _g: GlobalVariableService) { }
 
   private getUserProfile() {
@@ -72,6 +73,37 @@ export class UserProfileService {
     return [];
   }
 
+  downloadProfileAsFile(isSaveSettings = true, isSaveFilteringRules = true, isSaveTimebarStats = true) {
+    let p = this.getUserProfile();
+    if (p) {
+      if (!isSaveSettings) {
+        p.userPref = undefined;
+      }
+      if (!isSaveFilteringRules) {
+        p.filteringRules = undefined;
+      }
+      if (!isSaveTimebarStats) {
+        p.timebarMetrics = undefined;
+      }
+    }
+    let str = JSON.stringify(p);
+    let element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(str));
+    element.setAttribute('download', 'visuall user profile.vall');
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
+  setUserProfile(txt: string) {
+    localStorage.setItem('profile', txt);
+    this.onLoadFromFile.next(true);
+  }
+
   isStoreProfile() {
     let p = this.getUserProfile();
     if (!p || !p.userPref || p.userPref.isStoreUserProfile == undefined || p.userPref.isStoreUserProfile == null) {
@@ -80,10 +112,8 @@ export class UserProfileService {
     return p.userPref.isStoreUserProfile;
   }
 
-  saveFilteringRulesIfWanted(f: FilteringRule[]) {
-    if (this._g.userPrefs.isStoreUserProfile.getValue()) {
-      this.setFilteringRules(f);
-    }
+  saveFilteringRules(f: FilteringRule[]) {
+    this.setFilteringRules(f);
   }
 
   getTimebarMetrics(): TimebarMetric[] {
@@ -94,10 +124,8 @@ export class UserProfileService {
     return [];
   }
 
-  saveTimebarMetricsIfWanted(t: TimebarMetric[]) {
-    if (this.isStoreProfile()) {
-      this.setTimebarMetrics(t);
-    }
+  saveTimebarMetrics(t: TimebarMetric[]) {
+    this.setTimebarMetrics(t);
   }
 
   transferUserPrefs() {
@@ -112,7 +140,7 @@ export class UserProfileService {
     }
   }
 
-  setUserPrefs() {
+  saveUserPrefs() {
     let p = this.getUserProfile();
     if (p) {
       p.userPref = this.userPref2RawData();

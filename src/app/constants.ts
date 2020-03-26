@@ -319,7 +319,7 @@ export function extend(a, b) {
   if (a == undefined || a == null) {
     a = {};
   }
-  
+
   for (let key in b) {
     if (b.hasOwnProperty(key)) {
       a[key] = b[key];
@@ -357,3 +357,19 @@ export const deepCopy = <T>(target: T): T => {
   }
   return target;
 };
+
+export function readTxtFile(file: File, cb: (s: string) => void) {
+  const fileReader = new FileReader();
+  fileReader.onload = () => {
+    try {
+      cb(fileReader.result as string);
+    } catch (error) {
+      console.error('Given file is not suitable.', error);
+    }
+  };
+  fileReader.onerror = (error) => {
+    console.error('File could not be read!', error);
+    fileReader.abort();
+  };
+  fileReader.readAsText(file);
+}

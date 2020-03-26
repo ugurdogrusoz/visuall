@@ -571,6 +571,9 @@ export class CytoscapeService {
   unbindNavigatorExtension() {
     window.removeEventListener('resize', this.cyNaviPositionSetter);
     window.removeEventListener('scroll', this.cyNaviPositionSetter);
+    if (!this.cyNavi) {
+      return;
+    }
     this.cyNavi.destroy();
     this.cyNavi = null;
   }
@@ -587,21 +590,10 @@ export class CytoscapeService {
   }
 
   loadFile(file: File) {
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-      // Try to parse file into JSON object
-      try {
-        const fileJSON = JSON.parse(fileReader.result as string);
-        this._g.cy.json({ elements: fileJSON });
-      } catch (error) {
-        console.error('Given file is not suitable.', error);
-      }
-    };
-    fileReader.onerror = (error) => {
-      console.error('File could not be read!', error);
-      fileReader.abort();
-    };
-    fileReader.readAsText(file);
+    C.readTxtFile(file, (txt)=> {
+      const fileJSON = JSON.parse(txt);
+      this._g.cy.json({ elements: fileJSON });
+    });
   }
 
   saveAsJson() {

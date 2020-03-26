@@ -54,6 +54,14 @@ export class MapTabComponent implements OnInit {
     this.selectedClassProps = [];
     this.isDateProp = false;
     this.currDatetimes = [new Date()];
+    this._profile.onLoadFromFile.subscribe(x => {
+      if (!x) {
+        return;
+      }
+      if (this._profile.isStoreProfile()) {
+        this.currRules = this._profile.getFilteringRules();
+      }
+    });
   }
 
   ngOnInit() {
@@ -379,7 +387,7 @@ export class MapTabComponent implements OnInit {
       this.selectedClass = this.filteringRule.className;
       this.changeSelectedClass();
       this.isClassTypeLocked = true;
-      this._profile.saveFilteringRulesIfWanted(this.currRules);
+      this._profile.saveFilteringRules(this.currRules);
     }
   }
 
@@ -387,7 +395,7 @@ export class MapTabComponent implements OnInit {
     for (let i = 0; i < this.currRules.length; i++) {
       this.currRules[i].isEditing = false;
     }
-    this._profile.saveFilteringRulesIfWanted(this.currRules);
+    this._profile.saveFilteringRules(this.currRules);
   }
 
   deleteRule(i: number) {
@@ -395,7 +403,7 @@ export class MapTabComponent implements OnInit {
     if (this.currRules.length < 1) {
       this.newRuleClick();
     }
-    this._profile.saveFilteringRulesIfWanted(this.currRules);
+    this._profile.saveFilteringRules(this.currRules);
   }
 
   newRuleClick() {
@@ -443,7 +451,7 @@ export class MapTabComponent implements OnInit {
     } else {
       this.updateRule();
     }
-    this._profile.saveFilteringRulesIfWanted(this.currRules);
+    this._profile.saveFilteringRules(this.currRules);
   }
 }
 
