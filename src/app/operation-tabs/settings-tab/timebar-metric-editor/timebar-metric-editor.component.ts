@@ -248,7 +248,6 @@ export class TimebarMetricEditorComponent implements OnInit {
         }
       }
       fnStr += ' return 0;'
-      console.log('fnStr: ', fnStr);
       m.incrementFn = new Function('x', fnStr) as (x: any) => number;
     }
   }

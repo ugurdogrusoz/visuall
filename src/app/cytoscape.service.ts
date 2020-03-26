@@ -18,6 +18,7 @@ import { GraphResponse } from './db-service/data-types';
 import timebar from '../lib/timebar/cytoscape-timebar';
 import { UserPrefHelper } from './user-pref-helper';
 import { MergedElemIndicatorTypes } from './user-preference';
+import { UserProfileService } from './user-profile.service';
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +31,8 @@ export class CytoscapeService {
   showObjPropsFn: Function;
   showStatsFn: Function;
 
-  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService) {
-    this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g);
+  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService) {
+    this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g, this._profile);
   }
 
   initCy(containerElem) {

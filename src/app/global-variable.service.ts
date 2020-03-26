@@ -27,6 +27,7 @@ export class GlobalVariableService {
   showHideGraphHistory = new BehaviorSubject<boolean>(false);
   addNewGraphHistoryItem = new BehaviorSubject<boolean>(false);
   isLoadFromHistory: boolean = false;
+  isUserPrefReady = new BehaviorSubject<boolean>(false);
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
@@ -37,6 +38,7 @@ export class GlobalVariableService {
     this._http.get('./assets/app_description.json').subscribe(x => {
       delete x['appPreferences']['style'];
       this.setUserPrefs(x['appPreferences'], this.userPrefs);
+      this.isUserPrefReady.next(true);
     });
   }
 
