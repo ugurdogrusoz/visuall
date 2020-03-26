@@ -5,6 +5,7 @@ import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric
 import { GENERIC_TYPE, deepCopy } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { Subject } from 'rxjs';
+import { UserProfileService } from 'src/app/user-profile.service';
 
 @Component({
   selector: 'app-timebar-metric-editor',
@@ -13,6 +14,7 @@ import { Subject } from 'rxjs';
 })
 export class TimebarMetricEditorComponent implements OnInit {
 
+  private editingIdx = -1;
   classOptions: ClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
@@ -21,7 +23,6 @@ export class TimebarMetricEditorComponent implements OnInit {
   currMetricName: string = 'new';
   currMetricColor: string = null;
   isAClassSelectedForMetric = false;
-  private editingIdx = -1;
   newStatBtnTxt = 'Add';
   isHideEditing = true;
   isAddingNew = false;
@@ -29,18 +30,25 @@ export class TimebarMetricEditorComponent implements OnInit {
   isSumMetric = false;
   currProperties: Subject<RuleSync> = new Subject();
 
-  constructor(private _timeBarService: TimebarService) {
+  constructor(private _timeBarService: TimebarService, private _profile: UserProfileService) {
     this.classOptions = [];
     this.selectedClassProps = [];
     this.filteringRule = null;
-    let fnLo = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating < 5)) return 1; return 0; };
-    let fnHi = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating > 7)) return 1; return 0; };
     const genreRule = { propertyOperand: 'genre', propertyType: 'string', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: 'AND', operator: '=' };
     let rulesHi = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '>=' }];
     let rulesLo = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '<=' }];
     this.currMetrics = [
-      { incrementFn: fnLo, name: 'lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
-      { incrementFn: fnHi, name: 'highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }];
+      { incrementFn: null, name: 'lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
+      { incrementFn: null, name: 'highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }];
+    
+    if (this._profile.isStoreProfile()) {
+      let storedMetrics = this._profile.getTimebarMetrics();
+      if (storedMetrics.length > 0) {
+        this.currMetrics = storedMetrics;
+      }
+    }
+    this.setFnsForMetrics();
+    this._timeBarService.shownMetrics.next(this.currMetrics);
   }
 
   ngOnInit() {
@@ -67,28 +75,6 @@ export class TimebarMetricEditorComponent implements OnInit {
     return { 'background-color': `rgba(${m.color.slice(1, 3)}, ${m.color.slice(3, 5)}, ${m.color.slice(5, 7)}, 0.5)` }
   }
 
-
-  private clearInput() {
-    this.filteringRule = null;
-    this.currMetricName = 'new';
-    this.currMetricColor = this.getRandomColor();
-    this.newStatBtnTxt = 'Add';
-    this.editingIdx = -1;
-    this.selectedClass = this.classOptions[0].text;
-    this.isAClassSelectedForMetric = false;
-    this.changeSelectedClass();
-    this.isSumMetric = false;
-  }
-
-  private getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
-
   changeSelectedClass() {
     const txt = this.selectedClass;
     let isNodeClassSelected: boolean = properties.nodes.hasOwnProperty(txt);
@@ -98,7 +84,7 @@ export class TimebarMetricEditorComponent implements OnInit {
 
     if (isNodeClassSelected) {
       this.selectedClassProps.push(...Object.keys(properties.nodes[txt]));
-      this.selectedClassProps.push(...this.getEdgeTypesRelated(txt));
+      this.selectedClassProps.push(...this.getEdgeTypesRelated());
       this.isGenericTypeSelected = false;
     } else if (isEdgeClassSelected) {
       this.selectedClassProps.push(...Object.keys(properties.edges[txt]));
@@ -114,7 +100,6 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   addRule2FilteringRules(r: Rule) {
     const isEdge = properties.edges.hasOwnProperty(this.selectedClass);
-
 
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
@@ -134,19 +119,6 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.putSumRuleAtStart(this.filteringRule);
     this.isAClassSelectedForMetric = true;
     this.isSumMetric = this.getIdxOfSumRule(this.filteringRule) > -1;
-  }
-
-  private getEdgeTypesRelated(nodeType: string): string[] {
-    let r: string[] = [];
-
-    const txt = this.selectedClass.toLowerCase();
-    for (let k of Object.keys(AppDescription.relations)) {
-      const v = AppDescription.relations[k];
-      if (v.source.toLowerCase() == txt || v.target.toLowerCase() == txt) {
-        r.push(k);
-      }
-    }
-    return r;
   }
 
   deleteFilterRule(j: number) {
@@ -169,6 +141,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     if (this.editingIdx == i) {
       this.clearInput();
     }
+    this._profile.saveTimebarMetricsIfWanted(this.currMetrics);
     this.refreshTimebar();
   }
 
@@ -208,13 +181,6 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.clearEditingOnRules();
   }
 
-  private clearEditingOnRules() {
-    for (let m of this.currMetrics) {
-      m.isEditing = false;
-    }
-    this.editingIdx = -1;
-  }
-
   addStat() {
     this.isAClassSelectedForMetric = false;
     if (!this.currMetricName || this.currMetricName.length < 2) {
@@ -230,6 +196,8 @@ export class TimebarMetricEditorComponent implements OnInit {
     }
     this.isHideEditing = true;
     this.isAddingNew = false;
+
+    this._profile.saveTimebarMetricsIfWanted(this.currMetrics);
     this.setFnsForMetrics();
     this.refreshTimebar();
     this.clearInput();
@@ -259,6 +227,10 @@ export class TimebarMetricEditorComponent implements OnInit {
     } else {
       this.filteringRule.rules[j].ruleOperator = 'OR';
     }
+  }
+
+  colorSelected(c: string) {
+    this.currMetricColor = c;
   }
 
   private setFnsForMetrics() {
@@ -314,8 +286,46 @@ export class TimebarMetricEditorComponent implements OnInit {
     this._timeBarService.shownMetrics.next(this.currMetrics);
   }
 
-  colorSelected(c: string) {
-    this.currMetricColor = c;
+  private clearInput() {
+    this.filteringRule = null;
+    this.currMetricName = 'new';
+    this.currMetricColor = this.getRandomColor();
+    this.newStatBtnTxt = 'Add';
+    this.editingIdx = -1;
+    this.selectedClass = this.classOptions[0].text;
+    this.isAClassSelectedForMetric = false;
+    this.changeSelectedClass();
+    this.isSumMetric = false;
+  }
+
+  private getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  private clearEditingOnRules() {
+    for (let m of this.currMetrics) {
+      m.isEditing = false;
+    }
+    this.editingIdx = -1;
+    this._profile.saveTimebarMetricsIfWanted(this.currMetrics);
+  }
+
+  private getEdgeTypesRelated(): string[] {
+    let r: string[] = [];
+
+    const txt = this.selectedClass.toLowerCase();
+    for (let k of Object.keys(AppDescription.relations)) {
+      const v = AppDescription.relations[k];
+      if (v.source.toLowerCase() == txt || v.target.toLowerCase() == txt) {
+        r.push(k);
+      }
+    }
+    return r;
   }
 
 }

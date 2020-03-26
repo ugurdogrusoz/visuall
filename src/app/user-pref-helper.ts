@@ -2,7 +2,6 @@ import { CytoscapeService } from './cytoscape.service';
 import { TimebarService } from './timebar.service';
 import { GlobalVariableService } from './global-variable.service';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_DATA_PAGE_SIZE, MAX_HIGHTLIGHT_WIDTH, MIN_DATA_PAGE_SIZE, MAX_TABLE_COLUMN_COUNT, MIN_TABLE_COLUMN_COUNT } from './constants';
-import { BehaviorSubject } from 'rxjs';
 
 export class UserPrefHelper {
   constructor(private _cyService: CytoscapeService, private _timebarService: TimebarService, private _g: GlobalVariableService) {
@@ -31,18 +30,6 @@ export class UserPrefHelper {
     up_t.zoomingStep.subscribe(x => { tb.changeZoomStep(x); });
     up_t.graphInclusionType.subscribe(x => { tb.changeGraphInclusionType(x); });
     up_t.statsInclusionType.subscribe(x => { tb.changeStatsInclusionType(x); });
-
-    // timebar metrics might be a user preference 
-    let fnLo = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating < 5)) return 1; return 0; };
-    let fnHi = (x) => { if ((x.classes().map(x => x.toLowerCase()).includes('movie')) && (x.data().genre === 'Comedy' && x.data().rating > 7)) return 1; return 0; };
-    const genreRule = { propertyOperand: 'genre', propertyType: 'string', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: 'AND', operator: '=' };
-    let rulesHi = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '>=' }];
-    let rulesLo = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '<=' }];
-    let metrics = [
-      { incrementFn: fnLo, name: 'lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
-      { incrementFn: fnHi, name: 'highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }
-    ];
-    this._timebarService.shownMetrics.next(metrics);
   }
 
   isEnableTimebar(x: boolean) {

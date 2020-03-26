@@ -27,13 +27,21 @@ export class UserProfileService {
     return [];
   }
 
+  isStoreProfile() {
+    let p = this.getUserProfile();
+    if (!p || !p.userPref || p.userPref.isStoreUserProfile == undefined || p.userPref.isStoreUserProfile == null) {
+      return this._g.userPrefs.isStoreUserProfile;
+    }
+    return p.userPref.isStoreUserProfile;
+  }
+
   saveFilteringRulesIfWanted(f: FilteringRule[]) {
     if (this._g.userPrefs.isStoreUserProfile.getValue()) {
       this.setFilteringRules(f);
     }
   }
 
-  setFilteringRules(f: FilteringRule[]) {
+  private setFilteringRules(f: FilteringRule[]) {
     let p = this.getUserProfile();
     if (p) {
       p.filteringRules = f;
@@ -43,15 +51,21 @@ export class UserProfileService {
     }
   }
 
-  getTimebarMetrics() {
+  getTimebarMetrics(): TimebarMetric[] {
     let p = this.getUserProfile();
-    if (p) {
+    if (p && p.timebarMetrics) {
       return p.timebarMetrics;
     }
-    return null;
+    return [];
   }
 
-  setTimebarMetrics(t: TimebarMetric[]) {
+  saveTimebarMetricsIfWanted(t: TimebarMetric[]) {
+    if (this.isStoreProfile()) {
+      this.setTimebarMetrics(t);
+    }
+  }
+
+  private setTimebarMetrics(t: TimebarMetric[]) {
     let p = this.getUserProfile();
     if (p) {
       p.timebarMetrics = t;
@@ -64,6 +78,13 @@ export class UserProfileService {
   transferUserPrefs() {
     let p = this.getUserPrefs();
     this._g.transfer2UserPrefs(p);
+  }
+
+  transferIsStoreUserProfile() {
+    let p = this.getUserProfile();
+    if (p && p.userPref && typeof p.userPref.isStoreUserProfile === 'boolean') {
+      this._g.userPrefs.isStoreUserProfile.next(p.userPref.isStoreUserProfile);
+    }
   }
 
   private getUserPrefs() {

@@ -77,10 +77,11 @@ export class SettingsTabComponent implements OnInit {
 
   private fillUIFromMemory() {
 
-    if (this._g.userPrefs.isStoreUserProfile.getValue()) {
+    if (this._profile.isStoreProfile()) {
       this._profile.transferUserPrefs();
     }
-
+    this._profile.transferIsStoreUserProfile();
+    
     // reference variables for shorter text
     const up = this._g.userPrefs;
     const up_t = this._g.userPrefs.timebar;
