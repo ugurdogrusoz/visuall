@@ -308,8 +308,8 @@
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
     "tableColumnLimit": 3,
-    "highlightWidth": 4.5,
-    "highlightColor": "#F5E663",
+    "highlightStyles": [{"wid": 4.5, "color": "#F5E663"}],
+    "currHighlightIdx": 0,
 
     "mergedElemIndicator": 1,
 

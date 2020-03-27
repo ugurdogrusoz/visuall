@@ -32,7 +32,7 @@
               {{t}}
             </option>
           </select>
-          <input type="number" max="20" min="2" [(ngModel)]="highlightWidth" class="form-control inp-3-char va-text"
+          <input type="number" max="20" min="1" (change)="bandPassHighlightWidth()" [(ngModel)]="highlightWidth" class="form-control inp-3-char va-text"
             placeholder="width">
           <app-color-picker (onColorSelected)="onColorSelected($event)" [currColor]="highlightColor"
             class="align-middle"></app-color-picker>

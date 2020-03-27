@@ -150,7 +150,6 @@ export class CytoscapeService {
       pixelRatio: 'auto'
     });
     this.bindNavigatorExtension();
-    this.bindViewUtilitiesExtension();
     this.bindLayoutUtilitiesExtension();
     this.bindPanZoomExtension();
     this.bindExpandCollapseExtension();
@@ -271,9 +270,8 @@ export class CytoscapeService {
   }
 
   bindViewUtilitiesExtension() {
-    let currStyle = this.getCurrHighlightStyle();
     let options = {
-      highlightStyles: [currStyle],
+      highlightStyles: this.getHighlightStyles(),
       setVisibilityOnHide: false, // whether to set visibility on hide/show
       setDisplayOnHide: true, // whether to set display on hide/show
       zoomAnimationDuration: 1500, //default duration for zoom animation speed
@@ -590,7 +588,7 @@ export class CytoscapeService {
   }
 
   loadFile(file: File) {
-    C.readTxtFile(file, (txt)=> {
+    C.readTxtFile(file, (txt) => {
       const fileJSON = JSON.parse(txt);
       this._g.cy.json({ elements: fileJSON });
     });
@@ -756,12 +754,20 @@ export class CytoscapeService {
     this.removePopperFn = fn;
   }
 
-  getCurrHighlightStyle() {
-    let w = AppDescription.appPreferences.highlightWidth;
-    let c = AppDescription.appPreferences.highlightColor;
-    return {
-      node: { 'border-color': c, 'border-width': w },
-      edge: { 'line-color': c, 'target-arrow-color': c, 'width': 4.5 }
-    };
+  getHighlightStyles(): any[] {
+    let r = [];
+
+    for (let i = 0; i < this._g.userPrefs.highlightStyles.length; i++) {
+      let style = this._g.userPrefs.highlightStyles[i];
+      let w = style.wid.getValue();
+      let c = style.color.getValue();
+
+      r.push({
+        node: { 'border-color': c, 'border-width': w },
+        edge: { 'line-color': c, 'target-arrow-color': c, 'width': 4.5 }
+      });
+
+    }
+    return r;
   }
 }

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting } from 'src/app/user-preference';
 import { UserProfileService } from 'src/app/user-profile.service';
+import { BehaviorSubject } from 'rxjs';
+import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH } from 'src/app/constants';
 
 @Component({
   selector: 'app-settings-tab',
@@ -61,8 +63,6 @@ export class SettingsTabComponent implements OnInit {
 
     this.isInit = true;
 
-    this.setHighlightStyles();
-    this.highlightStyleSelected(this._g.currHighlightIdx);
     this._g.operationTabChanged.subscribe(x => {
       if (x == 3) { // check if my tab is opened
         this.fillUIFromMemory();
@@ -71,7 +71,6 @@ export class SettingsTabComponent implements OnInit {
   }
 
   private fillUIFromMemory() {
-
     // reference variables for shorter text
     const up = this._g.userPrefs;
     const up_t = this._g.userPrefs.timebar;
@@ -88,8 +87,8 @@ export class SettingsTabComponent implements OnInit {
     this.dataPageSize = up.dataPageSize.getValue();
     this.queryHistoryLimit = up.queryHistoryLimit.getValue();
     this.tableColumnLimit = up.tableColumnLimit.getValue();
-    this.highlightWidth = up.highlightWidth.getValue();
-    this.highlightColor = up.highlightColor.getValue();
+    this.highlightColor = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].color.getValue();
+    this.highlightWidth = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].wid.getValue();
     this.compoundPadding = up.compoundPadding.getValue();
     this.isStoreUserProfile = up.isStoreUserProfile.getValue();
 
@@ -102,15 +101,28 @@ export class SettingsTabComponent implements OnInit {
     this.graphInclusionType = up_t.graphInclusionType.getValue();
     this.statsInclusionType = up_t.statsInclusionType.getValue();
 
-    this.highlightStyleSelected(this._g.currHighlightIdx);
+    this.highlightStyleSelected(this._g.userPrefs.currHighlightIdx.getValue());
+    this.setHighlightStyles();
   }
 
   private setHighlightStyles() {
-    this.currHighlightStyles = [];
-    let styleCount = this._g.viewUtils.getHighlightStyles().length;
-    for (let i = 0; i < styleCount; i++) {
-      this.currHighlightStyles.push('Style ' + (i + 1));
+    if (!this._g.viewUtils) {
+      return;
     }
+    this.currHighlightStyles = [];
+    let styles = this._g.viewUtils.getHighlightStyles();
+    for (let i = 0; i < styles.length; i++) {
+      this.currHighlightStyles.push('Style ' + (i + 1));
+      let c = styles[i].node['border-color'];
+      let w = styles[i].node['border-width'];
+      if (this._g.userPrefs.highlightStyles[i]) {
+        this._g.userPrefs.highlightStyles[i].color.next(c);
+        this._g.userPrefs.highlightStyles[i].wid.next(w);
+      } else {
+        this._g.userPrefs.highlightStyles[i] = { wid: new BehaviorSubject<number>(w), color: new BehaviorSubject<string>(c) };
+      }
+    }
+    this._profile.saveUserPrefs();
   }
 
   settingChanged(val: any, userPref: string) {
@@ -124,13 +136,12 @@ export class SettingsTabComponent implements OnInit {
   }
 
   onColorSelected(c: string) {
-    this._g.userPrefs.highlightColor.next(c);
     this.highlightColor = c;
-    this._profile.saveUserPrefs();
   }
 
   // used to change border width or color. One of them should be defined. (exclusively)
   changeHighlightStyle() {
+    this.bandPassHighlightWidth();
     let nodeCss = { 'border-color': this.highlightColor, 'border-width': this.highlightWidth };
     let edgeCss = { 'line-color': this.highlightColor, 'target-arrow-color': this.highlightColor, 'width': this.highlightWidth };
     this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, nodeCss, edgeCss);
@@ -138,6 +149,7 @@ export class SettingsTabComponent implements OnInit {
   }
 
   addHighlightStyle() {
+    this.bandPassHighlightWidth();
     let nodeCss = { 'border-color': this.highlightColor, 'border-width': this.highlightWidth };
     let edgeCss = { 'line-color': this.highlightColor, 'target-arrow-color': this.highlightColor, 'width': this.highlightWidth };
     this._g.viewUtils.addHighlightStyle(nodeCss, edgeCss);
@@ -148,9 +160,19 @@ export class SettingsTabComponent implements OnInit {
 
   highlightStyleSelected(i: number) {
     this.highlightStyleIdx = i;
-    this._g.currHighlightIdx = i;
+    this._g.userPrefs.currHighlightIdx.next(i);
     let style = this._g.viewUtils.getHighlightStyles()[i];
     this.highlightColor = style.node['border-color'];
     this.highlightWidth = style.node['border-width'];
+    this._profile.saveUserPrefs();
+  }
+
+  bandPassHighlightWidth() {
+    if (this.highlightWidth < MIN_HIGHTLIGHT_WIDTH) {
+      this.highlightWidth = MIN_HIGHTLIGHT_WIDTH;
+    }
+    if (this.highlightWidth > MAX_HIGHTLIGHT_WIDTH) {
+      this.highlightWidth = MAX_HIGHTLIGHT_WIDTH;
+    }
   }
 }

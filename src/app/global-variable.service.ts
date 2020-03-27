@@ -13,7 +13,6 @@ export class GlobalVariableService {
   private HISTORY_SNAP_DELAY = 1500; // we should wait for layout to finish
   cy: any;
   viewUtils: any;
-  currHighlightIdx: number = 0;
   layoutUtils: any;
   layout: any;
   expandCollapseApi: any;
@@ -56,7 +55,11 @@ export class GlobalVariableService {
         }
       } else {
         if (!userPref[k]) {
-          userPref[k] = {};
+          if (prop instanceof Array) {
+            userPref[k] = [];
+          } else {
+            userPref[k] = {};
+          }
         }
         this.setUserPrefs(obj[k], userPref[k]);
       }
@@ -130,7 +133,7 @@ export class GlobalVariableService {
   }
 
   highlightElems(elems) {
-    this.viewUtils.highlight(elems, this.currHighlightIdx);
+    this.viewUtils.highlight(elems, this.userPrefs.currHighlightIdx.getValue());
   }
 
   add2GraphHistory(expo: string) {

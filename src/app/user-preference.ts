@@ -17,8 +17,8 @@ export interface UserPref {
   dataPageSize: BehaviorSubject<number>;
   queryHistoryLimit: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;
-  highlightWidth: BehaviorSubject<number>;
-  highlightColor: BehaviorSubject<string>;
+  highlightStyles: { wid: BehaviorSubject<number>, color: BehaviorSubject<string> }[];
+  currHighlightIdx: BehaviorSubject<number>;
   compoundPadding: BehaviorSubject<string>;
 
   timebar: {

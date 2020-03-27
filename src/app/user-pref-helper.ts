@@ -14,6 +14,8 @@ export class UserPrefHelper {
         return;
       }
       this.loadPrefFromLocalStorage();
+      // bind view utilities after UserPreferences are finalized
+      this._cyService.bindViewUtilitiesExtension();
 
       const up = this._g.userPrefs;
       const up_t = this._g.userPrefs.timebar;
@@ -26,7 +28,6 @@ export class UserPrefHelper {
       up.isFitLabels2Nodes.subscribe(x => { this._cyService.fitLabel2Node(); });
       up.dataPageSize.subscribe(x => { this.dataPageSizeChanged(x); });
       up.tableColumnLimit.subscribe(x => { this.tableColumnLimitChanged(x); });
-      up.highlightWidth.subscribe(x => { this.changeHighlightWidth(x); });
       up.compoundPadding.subscribe(x => { this.changeCompoundPadding(x); });
 
       up_t.isEnabled.subscribe(x => this.isEnableTimebar(x));
@@ -53,19 +54,6 @@ export class UserPrefHelper {
       this._g.expandCollapseApi.setOption('layoutBy', null);
       this._g.expandCollapseApi.setOption('fisheye', false);
       this._g.expandCollapseApi.setOption('animate', false);
-    }
-  }
-
-  changeHighlightWidth(x: number) {
-    if (x < MIN_HIGHTLIGHT_WIDTH) {
-      x = MIN_HIGHTLIGHT_WIDTH;
-      this._g.userPrefs.highlightWidth.next(x);
-      return;
-    }
-    if (x > MAX_HIGHTLIGHT_WIDTH) {
-      x = MAX_HIGHTLIGHT_WIDTH;
-      this._g.userPrefs.highlightWidth.next(x);
-      return;
     }
   }
 
