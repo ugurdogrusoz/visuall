@@ -89,7 +89,7 @@ export class UserProfileService {
     let str = JSON.stringify(p);
     let element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(str));
-    element.setAttribute('download', 'visuall user profile.vall');
+    element.setAttribute('download', 'Visuall_User_Profile.vall');
 
     element.style.display = 'none';
     document.body.appendChild(element);

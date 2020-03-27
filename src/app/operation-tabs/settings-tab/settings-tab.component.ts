@@ -44,24 +44,12 @@ export class SettingsTabComponent implements OnInit {
 
   ngOnInit() {
     this.generalBoolSettings = [
-      {
-        text: 'Perform layout on changes', isEnable: false, path2userPref: 'isAutoIncrementalLayoutOnChange'
-      },
-      {
-        text: 'Emphasize on hover', isEnable: false, path2userPref: 'isHighlightOnHover'
-      },
-      {
-        text: 'Show overview window', isEnable: false, path2userPref: 'isShowOverviewWindow'
-      },
-      {
-        text: 'Show edge labels', isEnable: false, path2userPref: 'isShowEdgeLabels'
-      },
-      {
-        text: 'Fit labels to nodes', isEnable: false, path2userPref: 'isFitLabels2Nodes'
-      },
-      {
-        text: 'Ignore case in text operations', isEnable: false, path2userPref: 'isIgnoreCaseInText'
-      },
+      { text: 'Perform layout on changes', isEnable: false, path2userPref: 'isAutoIncrementalLayoutOnChange' },
+      { text: 'Emphasize on hover', isEnable: false, path2userPref: 'isHighlightOnHover' },
+      { text: 'Show overview window', isEnable: false, path2userPref: 'isShowOverviewWindow' },
+      { text: 'Show edge labels', isEnable: false, path2userPref: 'isShowEdgeLabels' },
+      { text: 'Fit labels to nodes', isEnable: false, path2userPref: 'isFitLabels2Nodes' },
+      { text: 'Ignore case in text operations', isEnable: false, path2userPref: 'isIgnoreCaseInText' },
       { text: 'Show results of latest query only', isEnable: false, path2userPref: 'isOnlyHighlight4LatestQuery' }
     ];
 
@@ -94,6 +82,8 @@ export class SettingsTabComponent implements OnInit {
     this.generalBoolSettings[3].isEnable = up.isShowEdgeLabels.getValue();
     this.generalBoolSettings[4].isEnable = up.isFitLabels2Nodes.getValue();
     this.generalBoolSettings[5].isEnable = up.isIgnoreCaseInText.getValue();
+    this.generalBoolSettings[6].isEnable = up.isOnlyHighlight4LatestQuery.getValue();
+
     this.mergedElemIndicator = up.mergedElemIndicator.getValue();
     this.dataPageSize = up.dataPageSize.getValue();
     this.queryHistoryLimit = up.queryHistoryLimit.getValue();
