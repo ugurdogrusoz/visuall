@@ -372,23 +372,24 @@ export class MapTabComponent implements OnInit {
   }
 
   editRule(i: number) {
+    let curr = this.currRules[i];
+    if (curr.isEditing) {
+      return;
+    }
     this.isAddingNewRule = false;
     this.changeBtnTxt = 'Update';
     this.resetRule();
-    let curr = this.currRules[i];
-    if (!curr.isEditing) {
-      this.resetEditingRules();
-      curr.isEditing = true;
-      this.filteringRule = deepCopy(curr.rules);
-      this.currRuleName = curr.name;
-      this.isFilterOnDb = curr.isOnDb;
-      this.tableInput.isMergeGraph = curr.isMergeGraph;
-      this.tableInput.isLoadGraph = curr.isLoadGraph;
-      this.selectedClass = this.filteringRule.className;
-      this.changeSelectedClass();
-      this.isClassTypeLocked = true;
-      this._profile.saveFilteringRules(this.currRules);
-    }
+    this.resetEditingRules();
+    curr.isEditing = true;
+    this.filteringRule = deepCopy(curr.rules);
+    this.currRuleName = curr.name;
+    this.isFilterOnDb = curr.isOnDb;
+    this.tableInput.isMergeGraph = curr.isMergeGraph;
+    this.tableInput.isLoadGraph = curr.isLoadGraph;
+    this.selectedClass = this.filteringRule.className;
+    this.changeSelectedClass();
+    this.isClassTypeLocked = true;
+    this._profile.saveFilteringRules(this.currRules);
   }
 
   resetEditingRules() {
