@@ -59,7 +59,11 @@ export class UserProfileService {
       if (obj[k] instanceof BehaviorSubject) {
         mappedObj[k] = (obj[k] as BehaviorSubject<any>).getValue();
       } else {
-        mappedObj[k] = {};
+        if (obj[k] instanceof Array) {
+          mappedObj[k] = [];
+        } else {
+          mappedObj[k] = {};
+        }
         this.mapSubjectProperties(obj[k], mappedObj[k]);
       }
     }

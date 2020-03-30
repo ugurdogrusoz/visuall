@@ -40,6 +40,7 @@ export class SettingsTabComponent implements OnInit {
         return;
       }
       this._profile.transferUserPrefs();
+      this.setViewUtilsStyle();
       this.fillUIFromMemory();
     });
   }
@@ -87,6 +88,8 @@ export class SettingsTabComponent implements OnInit {
     this.dataPageSize = up.dataPageSize.getValue();
     this.queryHistoryLimit = up.queryHistoryLimit.getValue();
     this.tableColumnLimit = up.tableColumnLimit.getValue();
+    this.currHighlightStyles = up.highlightStyles.map((_, i) => 'Style ' + i);
+    this.highlightStyleIdx = up.currHighlightIdx.getValue();
     this.highlightColor = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].color.getValue();
     this.highlightWidth = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].wid.getValue();
     this.compoundPadding = up.compoundPadding.getValue();
@@ -101,8 +104,8 @@ export class SettingsTabComponent implements OnInit {
     this.graphInclusionType = up_t.graphInclusionType.getValue();
     this.statsInclusionType = up_t.statsInclusionType.getValue();
 
-    this.highlightStyleSelected(this._g.userPrefs.currHighlightIdx.getValue());
     this.setHighlightStyles();
+    this.highlightStyleSelected(this._g.userPrefs.currHighlightIdx.getValue());
   }
 
   private setHighlightStyles() {
@@ -125,6 +128,27 @@ export class SettingsTabComponent implements OnInit {
     this._profile.saveUserPrefs();
   }
 
+  // set view utils extension highlight styles from memory (_g.userPrefs)
+  private setViewUtilsStyle() {
+    const styles = this._g.userPrefs.highlightStyles;
+    let vuStyles = this._g.viewUtils.getHighlightStyles();
+    for (let i = 0; i < vuStyles.length; i++) {
+      let cyStyle = this.getCyStyleFromColorAndWid(styles[i].color.getValue(), styles[i].wid.getValue());
+      this._g.viewUtils.changeHighlightStyle(i, cyStyle.nodeCss, cyStyle.edgeCss);
+    }
+    for (let i = vuStyles.length; i < styles.length; i++) {
+      let cyStyle = this.getCyStyleFromColorAndWid(styles[i].color.getValue(), this.highlightWidth);
+      this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
+    }
+  }
+
+  private getCyStyleFromColorAndWid(color: string, wid: number): { nodeCss: any, edgeCss: any } {
+    return {
+      nodeCss: { 'border-color': color, 'border-width': wid },
+      edgeCss: { 'line-color': color, 'target-arrow-color': color, 'width': wid }
+    };
+  }
+
   settingChanged(val: any, userPref: string) {
     let path = userPref.split('.');
     let obj = this._g.userPrefs[path[0]];
@@ -142,17 +166,15 @@ export class SettingsTabComponent implements OnInit {
   // used to change border width or color. One of them should be defined. (exclusively)
   changeHighlightStyle() {
     this.bandPassHighlightWidth();
-    let nodeCss = { 'border-color': this.highlightColor, 'border-width': this.highlightWidth };
-    let edgeCss = { 'line-color': this.highlightColor, 'target-arrow-color': this.highlightColor, 'width': this.highlightWidth };
-    this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, nodeCss, edgeCss);
+    let cyStyle = this.getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
+    this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, cyStyle.nodeCss, cyStyle.edgeCss);
     this.setHighlightStyles();
   }
 
   addHighlightStyle() {
     this.bandPassHighlightWidth();
-    let nodeCss = { 'border-color': this.highlightColor, 'border-width': this.highlightWidth };
-    let edgeCss = { 'line-color': this.highlightColor, 'target-arrow-color': this.highlightColor, 'width': this.highlightWidth };
-    this._g.viewUtils.addHighlightStyle(nodeCss, edgeCss);
+    let cyStyle = this.getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
+    this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
     this.setHighlightStyles();
     this.highlightStyleIdx = this.currHighlightStyles.length - 1;
     this.highlightStyleSelected(this.highlightStyleIdx);
