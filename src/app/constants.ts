@@ -1,4 +1,4 @@
-export const HIGHLIGHT_OPACITY = 0.3;
+export const HIGHLIGHT_OPACITY = 0.05;
 // it is more reasonable to make HIGHLIGHT_ANIM_DUR * 2 < HIGHLIGHT_WAIT_DUR
 export const HIGHLIGHT_ANIM_DUR = 400;
 export const HIGHLIGHT_WAIT_DUR = 1500;
