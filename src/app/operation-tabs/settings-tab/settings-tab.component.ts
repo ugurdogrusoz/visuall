@@ -88,7 +88,7 @@ export class SettingsTabComponent implements OnInit {
     this.dataPageSize = up.dataPageSize.getValue();
     this.queryHistoryLimit = up.queryHistoryLimit.getValue();
     this.tableColumnLimit = up.tableColumnLimit.getValue();
-    this.currHighlightStyles = up.highlightStyles.map((_, i) => 'Style ' + i);
+    this.currHighlightStyles = up.highlightStyles.map((_, i) => 'Style ' + (i + 1));
     this.highlightStyleIdx = up.currHighlightIdx.getValue();
     this.highlightColor = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].color.getValue();
     this.highlightWidth = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].wid.getValue();
