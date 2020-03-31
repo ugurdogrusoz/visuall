@@ -33,7 +33,7 @@
     "cytoscape-expand-collapse": "github:iVis-at-Bilkent/cytoscape.js-expand-collapse#unstable",
     "cytoscape-fcose": "github:iVis-at-Bilkent/cytoscape.js-fcose#unstable",
     "cytoscape-layout-utilities": "github:iVis-at-Bilkent/cytoscape.js-layout-utilities#unstable",
-    "cytoscape-navigator": "github:canbax/cytoscape.js-navigator",
+    "cytoscape-navigator": "^2.0.1",
     "cytoscape-panzoom": "^2.5.3",
     "cytoscape-view-utilities": "github:iVis-at-Bilkent/cytoscape.js-view-utilities#unstable",
     "express": "^4.17.1",
