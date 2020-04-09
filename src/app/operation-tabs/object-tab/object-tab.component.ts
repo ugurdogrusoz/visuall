@@ -214,9 +214,9 @@ export class ObjectTabComponent implements OnInit {
     let stat = {};
 
     let classSet = new Set<string>();
-
-    for (let i = 0; i < this._g.cy.$().length; i++) {
-      let curr = this._g.cy.$()[i];
+    let elems = this._g.cy.$();
+    for (let i = 0; i < elems.length; i++) {
+      let curr = elems[i];
       let c = curr.classes();
       let isSelected = curr.selected();
       let isVisible = curr.visible();

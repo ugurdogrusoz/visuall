@@ -464,17 +464,21 @@ export class CytoscapeService {
   }
 
   showHideEdgeLabelCheckBoxClicked(isChecked: boolean) {
-    this._g.cy.edges().removeClass('nolabel');
-    if (!isChecked) {
-      this._g.cy.edges().addClass('nolabel');
-    }
+    this._g.cy.batch(() => {
+      this._g.cy.edges().removeClass('nolabel');
+      if (!isChecked) {
+        this._g.cy.edges().addClass('nolabel');
+      }
+    });
   }
 
   fitLabel2Node() {
-    this._g.cy.nodes().removeClass('fitlabel');
-    if (this._g.userPrefs.isFitLabels2Nodes.getValue()) {
-      this._g.cy.nodes().addClass('fitlabel');
-    }
+    this._g.cy.batch(() => {
+      this._g.cy.nodes().removeClass('fitlabel');
+      if (this._g.userPrefs.isFitLabels2Nodes.getValue()) {
+        this._g.cy.nodes().addClass('fitlabel');
+      }
+    });
   }
 
   bindHighlightOnHoverListeners() {
