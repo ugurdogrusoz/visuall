@@ -573,6 +573,7 @@ export class CytoscapeService {
       return;
     }
     this.cyNavi.destroy();
+    this.cyNavi._removeCyListeners();
     this.cyNavi = null;
   }
 
