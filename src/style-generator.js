@@ -3,43 +3,37 @@ const css = require('css');
 
 // Check given inputs for filename
 if (process.argv.length !== 3) {
-  console.log(
-    'Give model filename as input: \nnode style-generator.js {filename}');
+  console.log('Give model filename as input: \nnode style-generator.js {filename}');
   return;
 }
 
 const filename = process.argv[2];
 
-const model = read_file(filename);
-parse_model_description(model);
+const model = readFile(filename);
+parseAppDescription(model);
 
-
-function parse_model_description(model) {
+function parseAppDescription(model) {
   const data = JSON.parse(model);
-
-  const objects = data['objects'];
-  const relations = data['relations'];
 
   let stylesheet = [];
   let properties = { nodes: {}, edges: {} };
 
-  apply_general_styles(data);
+  updateHtmlCss(data);
 
   // Apply required fixed styles
-  generate_fixed_styles(stylesheet, data['generalStyles']);
+  setFixedStyles(stylesheet, data['generalStyles']);
 
   // Generate stylesheet.json & properties.json for nodes and edges
-  generate_node_styles(objects, stylesheet, properties);
-  generate_edge_styles(relations, stylesheet, properties);
+  setCyStyles(data['objects'], stylesheet, properties, false);
+  setCyStyles(data['relations'], stylesheet, properties);
 
+  let path = 'assets/generated/';
   // Beautify JSON output with 2 space tabs and write to file
-  write_file(
-    'assets/generated/stylesheet.json', JSON.stringify(stylesheet, null, 2));
-  write_file(
-    'assets/generated/properties.json', JSON.stringify(properties, null, 2));
+  writeFile(path + 'stylesheet.json', JSON.stringify(stylesheet, null, 2));
+  writeFile(path + 'properties.json', JSON.stringify(properties, null, 2));
 }
 
-function apply_general_styles(data) {
+function updateHtmlCss(data) {
   const indexFileName = 'index.html';
   const cssFileName = 'styles.css';
 
@@ -48,7 +42,7 @@ function apply_general_styles(data) {
 }
 
 function processCssFile(cssFileName, style) {
-  let cssFile = read_file(cssFileName);
+  let cssFile = readFile(cssFileName);
 
   let ast = css.parse(cssFile);
 
@@ -59,66 +53,44 @@ function processCssFile(cssFileName, style) {
   }
 
   cssFile = css.stringify(ast);
-  write_file(cssFileName, cssFile);
+  writeFile(cssFileName, cssFile);
 }
 
 function processIndexFile(indexFileName, template) {
-  let indexFile = read_file(indexFileName);
+  let indexFile = readFile(indexFileName);
 
   // Insert name between <title>___</title>
   indexFile = indexFile.replace(/(?<=<title>)(.*?)(?=<\/title>)/, template.html_header);
-  write_file(indexFileName, indexFile);
+  writeFile(indexFileName, indexFile);
 }
 
-function generate_fixed_styles(stylesheet, generalStyles) {
+function setFixedStyles(stylesheet, generalStyles) {
   generalStyles.forEach(element => {
     stylesheet.push(element);
   });
 }
 
-function generate_node_styles(nodes, stylesheet, properties) {
-  const check = ['icon'];
+function setCyStyles(graphElems, stylesheet, properties, isEdge = true) {
+  let s = 'node.';
+  let s2 = 'nodes';
+  if (isEdge) {
+    s = 'edge.';
+    s2 = 'edges';
+  }
 
-  for (let key in nodes) {
-    let val = nodes[key];
-    let style = { selector: 'node.' + key, style: {} };
+  for (let key in graphElems) {
+    let val = graphElems[key];
+    let cyStyle = { selector: s + key, style: {} };
 
     for (let style_key in val['style']) {
-      if (check.includes(style_key)) {
-        continue;
-      }
-      let styleVal = val['style'][style_key];
-      if (isImageFilePath(styleVal)) {
-        styleVal = encode2Base64(styleVal);
-      }
-      style['style'][style_key] = styleVal;
+      cyStyle['style'][style_key] = val['style'][style_key];
     }
-    stylesheet.push(style);
-
-    properties['nodes'][key] = val['properties'];
+    stylesheet.push(cyStyle);
+    properties[s2][key] = val['properties'];
   }
 }
 
-function generate_edge_styles(edges, stylesheet, properties) {
-  const check = ['icon'];
-
-  for (let key in edges) {
-    let val = edges[key];
-    let style = { selector: 'edge.' + key, style: {} };
-
-    for (let style_key in val['style']) {
-      if (check.includes(style_key)) continue;
-
-      style['style'][style_key] = val['style'][style_key];
-    }
-
-    stylesheet.push(style);
-
-    properties['edges'][key] = val['properties'];
-  }
-}
-
-function read_file(filename) {
+function readFile(filename) {
   if (typeof filename !== 'string') {
     console.log('Invalid use of function!\nread_file(filename:string)');
     return;
@@ -127,10 +99,9 @@ function read_file(filename) {
   return fs.readFileSync(filename, 'utf8');
 }
 
-function write_file(filename, content) {
+function writeFile(filename, content) {
   if (typeof filename !== 'string' || typeof content !== 'string') {
-    console.log(
-      'Invalid use of function!\nwrite_file(filename:string, content:string)');
+    console.log('Invalid use of function!\nwrite_file(filename:string, content:string)');
     return;
   }
 
@@ -139,18 +110,6 @@ function write_file(filename, content) {
 
     console.log(filename + ' written successfully!');
   });
-}
-
-function isImageFilePath(filepath) {
-  const s = filepath.toLowerCase();
-  return s.endsWith('.png') || s.endsWith('.jpg') || s.endsWith('.jpeg') || s.endsWith('.svg');
-}
-
-function encode2Base64(file) {
-  // read binary data
-  const bitmap = fs.readFileSync(file);
-  // convert binary data to base64 encoded string
-  return 'data:image/png;base64,' + Buffer.from(bitmap).toString('base64');
 }
 
 // ast is abstract syntax tree for style.css file 
