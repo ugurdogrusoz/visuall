@@ -19,12 +19,13 @@
         "label": "data(name)",
         "color": "#e5ffb5",
         "text-valign": "bottom",
-        "text-margin-y": "12px",
-        "font-size": "11px",
+        "text-margin-y": "-10px",
+        "font-size": "8px",
         "shape": "ellipse",
         "background-fit": "contain",
         "background-image": "assets/img/person.svg",
-        "width": "44px"
+        "width": "44px",
+        "height": "44px"
       }
     },
     "Movie": {
@@ -41,8 +42,8 @@
         "label": "data(title)",
         "color": "#ffc5a8",
         "text-valign": "bottom",
-        "text-margin-y": "6px",
-        "font-size": "9px",
+        "text-margin-y": "-10px",
+        "font-size": "8px",
         "background-image": "assets/img/movie-roll.svg",
         "shape": "ellipse",
         "background-fit": "contain",
@@ -64,7 +65,7 @@
       "style": {
         "label": "acted in",
         "width": "4px",
-        "font-size": "9px",
+        "font-size": "7px",
         "line-color": "#abcaf2",
         "line-style": "solid",
         "curve-style": "bezier",
@@ -84,7 +85,7 @@
       "style": {
         "label": "directed",
         "width": "3px",
-        "font-size": "9px",
+        "font-size": "7px",
         "line-color": "#1eead1",
         "line-style": "solid",
         "curve-style": "bezier",
@@ -104,7 +105,7 @@
       "style": {
         "label": "produced",
         "width": "2px",
-        "font-size": "9px",
+        "font-size": "7px",
         "line-color": "#ed9ca7",
         "line-style": "solid",
         "curve-style": "bezier",
@@ -124,7 +125,7 @@
       "style": {
         "label": "wrote",
         "width": "2px",
-        "font-size": "9px",
+        "font-size": "7px",
         "line-color": "#b5b74b",
         "line-style": "dashed",
         "curve-style": "bezier",
@@ -144,7 +145,7 @@
       "style": {
         "label": "reviewed",
         "width": "2px",
-        "font-size": "9px",
+        "font-size": "7px",
         "line-color": "#f997fc",
         "line-style": "solid",
         "curve-style": "bezier",
@@ -164,7 +165,7 @@
       "style": {
         "label": "follows",
         "width": "2px",
-        "font-size": "9px",
+        "font-size": "7px",
         "line-color": "#f7a67e",
         "line-style": "dashed",
         "curve-style": "bezier",
@@ -240,7 +241,7 @@
         "overlay-padding": "6px",
         "z-index": "10",
         "text-wrap": "wrap",
-        "text-max-width": "58px"
+        "text-max-width": "44px"
       }
     },
     {
