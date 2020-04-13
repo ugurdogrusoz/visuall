@@ -84,5 +84,8 @@ export class Query0Component implements OnInit {
     this.getCountOfData(d1, d2, filter);
     let skip = filter.skip ? filter.skip : 0;
     this.loadTable(d1, d2, skip, filter);
+    if (this.tableInput.isLoadGraph) {
+      this.loadGraph(d1, d2, skip);
+    }
   }
 }
