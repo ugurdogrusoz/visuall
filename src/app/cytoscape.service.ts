@@ -7,7 +7,6 @@ import expandCollapse from 'cytoscape-expand-collapse';
 import viewUtilities from 'cytoscape-view-utilities';
 import layoutUtilities from 'cytoscape-layout-utilities';
 import stylesheet from '../assets/generated/stylesheet.json';
-import AppDescription from '../assets/app_description.json';
 import * as C from './constants';
 import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
@@ -159,7 +158,7 @@ export class CytoscapeService {
     (<any>window).cy = this._g.cy;
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
     this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
-    this._g.cy.on('add', C.debounce(this.fitLabel2Node, 1000, false).bind(this));
+    this._g.cy.on('add', C.debounce(this.applyStyle4NewElements, 1000, false).bind(this));
     this._timebarService.init();
     this.userPrefHelper.listen4UserPref();
   }
@@ -196,6 +195,13 @@ export class CytoscapeService {
     this._g.cy.style().selector('edge.nolabel')
       .style({ 'label': '' })
       .update();
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
+  }
+
+  private applyStyle4NewElements() {
+    this._g.cy.startBatch();
+    this.fitLabel2Node();
+    this.showHideEdgeLabels();
     setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
@@ -467,10 +473,10 @@ export class CytoscapeService {
     return { data: properties, classes: edge.type };
   }
 
-  showHideEdgeLabelCheckBoxClicked(isChecked: boolean) {
+  showHideEdgeLabels() {
     this._g.cy.startBatch();
     this._g.cy.edges().removeClass('nolabel');
-    if (!isChecked) {
+    if (!this._g.userPrefs.isShowEdgeLabels.getValue()) {
       this._g.cy.edges().addClass('nolabel');
     }
     setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
