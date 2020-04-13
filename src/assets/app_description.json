@@ -19,12 +19,12 @@
         "label": "data(name)",
         "color": "#e5ffb5",
         "text-valign": "bottom",
+        "text-margin-y": "12px",
         "font-size": "11px",
         "shape": "ellipse",
         "background-fit": "contain",
         "background-image": "assets/img/person.svg",
-        "width": "58px",
-        "height": "58px"
+        "width": "44px"
       }
     },
     "Movie": {
@@ -41,12 +41,13 @@
         "label": "data(title)",
         "color": "#ffc5a8",
         "text-valign": "bottom",
+        "text-margin-y": "6px",
         "font-size": "9px",
         "background-image": "assets/img/movie-roll.svg",
         "shape": "ellipse",
         "background-fit": "contain",
-        "width": "mapData(rating, 0, 10, 20px, 60px)",
-        "height": "mapData(rating, 0, 10, 20px, 60px)"
+        "width": "mapData(rating, 0, 10, 20px, 44px)",
+        "height": "mapData(rating, 0, 10, 20px, 44px)"
       }
     }
   },
