@@ -79,7 +79,7 @@
     "style": {
       "label": "data(name)",
       "color": "#e5ffb5",
-      "text-valign": "center",
+      "text-valign": "bottom",
       "font-size": "11px",
       "shape": "ellipse",
       "background-fit": "contain",
