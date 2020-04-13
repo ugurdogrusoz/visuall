@@ -125,6 +125,7 @@ export class SettingsTabComponent implements OnInit {
         this._g.userPrefs.highlightStyles[i] = { wid: new BehaviorSubject<number>(w), color: new BehaviorSubject<string>(c) };
       }
     }
+    this._g.userPrefs.highlightStyles.splice(styles.length);
     this._profile.saveUserPrefs();
   }
 
@@ -169,6 +170,19 @@ export class SettingsTabComponent implements OnInit {
     let cyStyle = this.getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
     this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, cyStyle.nodeCss, cyStyle.edgeCss);
     this.setHighlightStyles();
+  }
+
+  deleteHighlightStyle() {
+    if (this._g.viewUtils.getAllHighlightClasses().length < 2) {
+      return;
+    }
+    this._g.viewUtils.removeHighlightStyle(this.highlightStyleIdx);
+    this.setHighlightStyles();
+    let styleCnt = this._g.viewUtils.getAllHighlightClasses().length - 1;
+    if (this.highlightStyleIdx > styleCnt) {
+      this.highlightStyleIdx = styleCnt;
+    }
+    this.highlightStyleSelected(this.highlightStyleIdx);
   }
 
   addHighlightStyle() {
