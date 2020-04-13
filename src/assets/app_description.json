@@ -40,7 +40,7 @@
       "style": {
         "label": "data(title)",
         "color": "#ffc5a8",
-        "text-valign": "center",
+        "text-valign": "bottom",
         "font-size": "9px",
         "background-image": "assets/img/movie-roll.svg",
         "shape": "ellipse",
