@@ -188,6 +188,7 @@ export class CytoscapeService {
    * or they should e added last to overrite some of the previously added
    */
   private addOtherStyles() {
+    this._g.cy.startBatch();
     this._g.cy.style().selector('node.fitlabel')
       .style({ 'text-wrap': 'ellipsis', 'text-max-width': function (ele) { return ele.width() + 'px'; } })
       .update();
@@ -195,6 +196,7 @@ export class CytoscapeService {
     this._g.cy.style().selector('edge.nolabel')
       .style({ 'label': '' })
       .update();
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   setNodeSizeOnGraphTheoreticProp(maxVal: number, avgSize: number) {
@@ -368,6 +370,7 @@ export class CytoscapeService {
       console.error('Empty response from database!');
       return;
     }
+    this._g.cy.startBatch();
     const nodes = data.nodes;
     const edges = data.edges;
 
@@ -417,6 +420,7 @@ export class CytoscapeService {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   highlightElems(isIncremental: boolean, elemIds: string[]) {
@@ -464,21 +468,21 @@ export class CytoscapeService {
   }
 
   showHideEdgeLabelCheckBoxClicked(isChecked: boolean) {
-    this._g.cy.batch(() => {
-      this._g.cy.edges().removeClass('nolabel');
-      if (!isChecked) {
-        this._g.cy.edges().addClass('nolabel');
-      }
-    });
+    this._g.cy.startBatch();
+    this._g.cy.edges().removeClass('nolabel');
+    if (!isChecked) {
+      this._g.cy.edges().addClass('nolabel');
+    }
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   fitLabel2Node() {
-    this._g.cy.batch(() => {
-      this._g.cy.nodes().removeClass('fitlabel');
-      if (this._g.userPrefs.isFitLabels2Nodes.getValue()) {
-        this._g.cy.nodes().addClass('fitlabel');
-      }
-    });
+    this._g.cy.startBatch();
+    this._g.cy.nodes().removeClass('fitlabel');
+    if (this._g.userPrefs.isFitLabels2Nodes.getValue()) {
+      this._g.cy.nodes().addClass('fitlabel');
+    }
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   bindHighlightOnHoverListeners() {
@@ -528,7 +532,9 @@ export class CytoscapeService {
   }
 
   setOtherElementsOpacity(elements, opacity) {
+    this._g.cy.startBatch();
     this._g.cy.elements().difference(elements).style({ opacity: opacity });
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   highlightSelected() {
