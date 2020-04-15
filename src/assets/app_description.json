@@ -1,6 +1,6 @@
 {
   "appInfo": {
-    "name": "Visu<i>all</i> Sample App",
+    "name": "Huawei Explorer",
     "html_header": "Visuall Sample App",
     "icon": "assets/img/logo.png",
     "version": "1.0.0 beta",
@@ -8,15 +8,14 @@
     "company_contact": "ivis@cs.bilkent.edu.tr"
   },
   "objects": {
-    "Person": {
+    "S3Port": {
       "properties": {
-        "name": "string",
-        "born": "int",
+        "label": "string",
         "start_t": "datetime",
         "end_t": "datetime"
       },
       "style": {
-        "label": "data(name)",
+        "label": "data(label)",
         "color": "#e5ffb5",
         "text-valign": "center",
         "font-size": "11px",
@@ -27,33 +26,508 @@
         "height": "58px"
       }
     },
-    "Movie": {
+    "ONT": {
       "properties": {
-        "title": "string",
-        "tagline": "string",
-        "released": "int",
-        "rating": "float",
-        "genre": "enum,string",
-        "begin": "datetime",
-        "end": "datetime"
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
       },
       "style": {
-        "label": "data(title)",
-        "color": "#ffc5a8",
-        "text-valign": "bottom",
-        "font-size": "9px",
-        "background-image": "assets/img/movie-roll.png",
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
         "shape": "ellipse",
         "background-fit": "contain",
-        "width": "mapData(rating, 0, 10, 20px, 60px)",
-        "height": "mapData(rating, 0, 10, 20px, 60px)"
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "alarm_records_view": {
+      "properties": {
+        "label": "string",
+        "onu_id": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "S2Port": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "S3": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "Alarm": {
+      "properties": {
+        "label": "string",
+        "alarm_id": "string",
+        "no_ont": "string",
+        "raw_message": "string",
+        "event_time": "datetime",
+        "cleared_time": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "CircuitInventory": {
+      "properties": {
+        "label": "string",
+        "niden": "string",
+        "nid": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "S2": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "S1Port": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "OLTPort": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "S6Port": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "S6": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "S1": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "Ticket": {
+      "properties": {
+        "label": "string",
+        "splitter_id": "string",
+        "fault_symptom": "string",
+        "ticket_id": "string",
+        "faulty_circuit": "string",
+        "closed_code": "string",
+        "ticket_created_date": "datetime",
+        "ticket_closed_time": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "OLTSlot": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "BNG1Shell": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "OLTUplink2Port": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "BNG2": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "BNG1Slot": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "OLTUplink2Slot": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "OLTUplink1Port": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "OLTUplink1Slot": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "BNG2Shell": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "OLT": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "BNG1Port": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "BNG2Port": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "BNG1": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "BNG2Slot": {
+      "properties": {
+        "label": "string",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(label)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
       }
     }
   },
   "relations": {
-    "ACTED_IN": {
-      "source": "Person",
-      "target": "Movie",
+    "s3PortToOnt": {
+      "source": "S3Port",
+      "target": "ONT",
       "isBidirectional": false,
       "properties": {
         "roles": "list",
@@ -72,9 +546,30 @@
         "text-rotation": "autorotate"
       }
     },
-    "DIRECTED": {
-      "source": "Person",
-      "target": "Movie",
+    "s2PortToS3": {
+      "source": "S2Port",
+      "target": "S3",
+      "isBidirectional": false,
+      "properties": {
+        "roles": "list",
+        "act_begin": "datetime",
+        "act_end": "datetime"
+      },
+      "style": {
+        "label": "acted in",
+        "width": "4px",
+        "font-size": "9px",
+        "line-color": "#abcaf2",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#abcaf2",
+        "text-rotation": "autorotate"
+      }
+    },
+    "s2PortToS6": {
+      "source": "S2Port",
+      "target": "S6",
       "isBidirectional": false,
       "properties": {
         "begin": "datetime",
@@ -92,9 +587,9 @@
         "text-rotation": "autorotate"
       }
     },
-    "PRODUCED": {
-      "source": "Person",
-      "target": "Movie",
+    "s2PortToOnt": {
+      "source": "S2Port",
+      "target": "ONT",
       "isBidirectional": false,
       "properties": {
         "begin": "datetime",
@@ -112,9 +607,9 @@
         "text-rotation": "autorotate"
       }
     },
-    "WROTE": {
-      "source": "Person",
-      "target": "Movie",
+    "hasS3Port": {
+      "source": "S3",
+      "target": "S3PORT",
       "isBidirectional": false,
       "properties": {
         "occurence_begin": "datetime",
@@ -132,9 +627,9 @@
         "text-rotation": "autorotate"
       }
     },
-    "REVIEWED": {
-      "source": "Person",
-      "target": "Movie",
+    "almBelongsToInv": {
+      "source": "Alarm",
+      "target": "OLTPort",
       "isBidirectional": false,
       "properties": {
         "begin": "datetime",
@@ -152,9 +647,549 @@
         "text-rotation": "autorotate"
       }
     },
-    "FOLLOWS": {
-      "source": "Person",
-      "target": "Person",
+    "hasS6": {
+      "source": "CircuitInventory",
+      "target": "S6",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "invToPort": {
+      "source": "CircuitInventory",
+      "target": "OLTPort",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasS1": {
+      "source": "CircuitInventory",
+      "target": "S1",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasOLT": {
+      "source": "CircuitInventory",
+      "target": "OLT",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasS3": {
+      "source": "CircuitInventory",
+      "target": "S3",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasS2Port": {
+      "source": "S2",
+      "target": "S2Port",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "s1PortToS2": {
+      "source": "S1Port",
+      "target": "S2",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "s1PortToS3": {
+      "source": "S1Port",
+      "target": "S3",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "oltToS1": {
+      "source": "OLTPort",
+      "target": "S1",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "oltToS2": {
+      "source": "OLTPort",
+      "target": "S2",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "s6PortToOnt": {
+      "source": "S6Port",
+      "target": "ONT",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasS6Port": {
+      "source": "S6",
+      "target": "S6Port",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasS1Port": {
+      "source": "S1",
+      "target": "S1Port",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "ttBelongsToInv": {
+      "source": "Ticket",
+      "target": "CircuitInventory",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasOLTPort": {
+      "source": "OLTSlot",
+      "target": "OLTPort",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasBNG1Slot": {
+      "source": "BNG1Shell",
+      "target": "BNG1Slot",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasBNG2Shell": {
+      "source": "BNG2",
+      "target": "BNG2Shell",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasBNG1Port": {
+      "source": "BNG1Slot",
+      "target": "BNG1Port",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasUplink2Port": {
+      "source": "OLTUplink2Slot",
+      "target": "OLTUplink2Port",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasUplink1Port": {
+      "source": "OLTUplink1Slot",
+      "target": "OLTUplink1Port",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasBNG2Slot": {
+      "source": "BNG2Shell",
+      "target": "BNG2Slot",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasUplink2Slot": {
+      "source": "OLT",
+      "target": "OLTUplink2Slot",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasUplink1Slot": {
+      "source": "OLT",
+      "target": "OLTUplink1Slot",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasOLTSlot": {
+      "source": "OLT",
+      "target": "OLTSlot",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "BNG1ToOLT": {
+      "source": "BNG1Port",
+      "target": "OLTUplink1Port",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "BNG2ToOLT": {
+      "source": "BNG2Port",
+      "target": "OLTUplink2Port",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasBNG1Shell": {
+      "source": "BNG1",
+      "target": "BNG1Shell",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "hasBNG2Port": {
+      "source": "BNG2Slot",
+      "target": "BNG2Port",
       "isBidirectional": false,
       "properties": {
         "begin": "datetime",
@@ -279,7 +1314,7 @@
     {
       "selector": "node.cy-expand-collapse-collapsed-node",
       "style": {
-        "label": "data(name)",
+        "label": "data(label)",
         "font-size": "9px",
         "border-color": "black",
         "border-width": 1,

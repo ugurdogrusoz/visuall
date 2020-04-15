@@ -7,7 +7,7 @@ export interface DbService {
   getAllData(callback: (x: GraphResponse) => any);
   getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
   filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
-}
+} 
 
 export interface GraphResponse {
   nodes: CyElem[];
@@ -16,6 +16,7 @@ export interface GraphResponse {
 
 export interface CyElem {
   id: string;
+  graph?: string;
 }
 
 export interface TableResponse {

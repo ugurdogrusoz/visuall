@@ -1,44 +1,293 @@
 {
   "nodes": {
-    "Person": {
-      "name": "string",
-      "born": "int",
+    "S3Port": {
+      "label": "string",
       "start_t": "datetime",
       "end_t": "datetime"
     },
-    "Movie": {
-      "title": "string",
-      "tagline": "string",
-      "released": "int",
-      "rating": "float",
-      "genre": "enum,string",
-      "begin": "datetime",
-      "end": "datetime"
+    "ONT": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "alarm_records_view": {
+      "label": "string",
+      "onu_id": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "S2Port": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "S3": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "Alarm": {
+      "label": "string",
+      "alarm_id": "string",
+      "no_ont": "string",
+      "raw_message": "string",
+      "event_time": "datetime",
+      "cleared_time": "datetime"
+    },
+    "CircuitInventory": {
+      "label": "string",
+      "niden": "string",
+      "nid": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "S2": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "S1Port": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "OLTPort": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "S6Port": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "S6": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "S1": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "Ticket": {
+      "label": "string",
+      "splitter_id": "string",
+      "fault_symptom": "string",
+      "ticket_id": "string",
+      "faulty_circuit": "string",
+      "closed_code": "string",
+      "ticket_created_date": "datetime",
+      "ticket_closed_time": "datetime"
+    },
+    "OLTSlot": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "BNG1Shell": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "OLTUplink2Port": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "BNG2": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "BNG1Slot": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "OLTUplink2Slot": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "OLTUplink1Port": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "OLTUplink1Slot": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "BNG2Shell": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "OLT": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "BNG1Port": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "BNG2Port": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "BNG1": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
+    },
+    "BNG2Slot": {
+      "label": "string",
+      "start_t": "datetime",
+      "end_t": "datetime"
     }
   },
   "edges": {
-    "ACTED_IN": {
+    "s3PortToOnt": {
       "roles": "list",
       "act_begin": "datetime",
       "act_end": "datetime"
     },
-    "DIRECTED": {
+    "s2PortToS3": {
+      "roles": "list",
+      "act_begin": "datetime",
+      "act_end": "datetime"
+    },
+    "s2PortToS6": {
       "begin": "datetime",
       "end": "datetime"
     },
-    "PRODUCED": {
+    "s2PortToOnt": {
       "begin": "datetime",
       "end": "datetime"
     },
-    "WROTE": {
+    "hasS3Port": {
       "occurence_begin": "datetime",
       "occurence_end": "datetime"
     },
-    "REVIEWED": {
+    "almBelongsToInv": {
       "begin": "datetime",
       "end": "datetime"
     },
-    "FOLLOWS": {
+    "hasS6": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "invToPort": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasS1": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasOLT": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasS3": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasS2Port": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "s1PortToS2": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "s1PortToS3": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "oltToS1": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "oltToS2": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "s6PortToOnt": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasS6Port": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasS1Port": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "ttBelongsToInv": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasOLTPort": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasBNG1Slot": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasBNG2Shell": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasBNG1Port": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasUplink2Port": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasUplink1Port": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasBNG2Slot": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasUplink2Slot": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasUplink1Slot": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasOLTSlot": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "BNG1ToOLT": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "BNG2ToOLT": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasBNG1Shell": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
+    "hasBNG2Port": {
       "begin": "datetime",
       "end": "datetime"
     }

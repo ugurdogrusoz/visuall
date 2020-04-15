@@ -17,9 +17,7 @@ import { ObjectTabComponent } from './operation-tabs/object-tab/object-tab.compo
 import { MapTabComponent } from './operation-tabs/map-tab/map-tab.component';
 import { SettingsTabComponent } from './operation-tabs/settings-tab/settings-tab.component';
 import { QueryTabComponent } from './operation-tabs/query-tab/query-tab.component';
-import { Query0Component } from './operation-tabs/query-tab/query0/query0.component';
 import { GroupTabComponent } from './operation-tabs/map-tab/group-tab/group-tab.component';
-import { Query1Component } from './operation-tabs/query-tab/query1/query1.component';
 import { TableViewComponent } from './table-view/table-view.component';
 import { TimebarMetricEditorComponent } from './operation-tabs/settings-tab/timebar-metric-editor/timebar-metric-editor.component';
 import { ColorPickerComponent } from './color-picker/color-picker.component';
@@ -47,9 +45,7 @@ import { SaveProfileModalComponent } from './popups/save-profile-modal/save-prof
     MapTabComponent,
     SettingsTabComponent,
     QueryTabComponent,
-    Query0Component,
     GroupTabComponent,
-    Query1Component,
     TableViewComponent,
     TimebarMetricEditorComponent,
     ColorPickerComponent,

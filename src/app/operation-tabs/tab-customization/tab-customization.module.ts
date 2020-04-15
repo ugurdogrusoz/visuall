@@ -1,15 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RecommendComponent } from '../recommend/recommend.component';
+
 // import statements for custom components should be here
 
 @NgModule({
   // custom components should be inside declarations
-  declarations: [],
+  declarations: [RecommendComponent],
   imports: [
     CommonModule
   ]
 })
 export class TabCustomizationModule {
   // static tabs: { component: any, text: string }[] = [{ component: DummyComponent, text: 'Dummy' }, { component: Dummy2Component, text: 'Dummy2' }];
-  static tabs: { component: any, text: string }[] = [];
+  static tabs: { component: any, text: string }[] = [{ component: RecommendComponent, text: 'Recommendation' }];
 }

@@ -1,0 +1,357 @@
+{
+  "appInfo": {
+    "name": "Huawei Explorer",
+    "html_header": "Visuall Sample App",
+    "icon": "assets/img/logo.png",
+    "version": "1.0.0 beta",
+    "company_name": "i-Vis at Bilkent",
+    "company_contact": "ivis@cs.bilkent.edu.tr"
+  },
+  "objects": {
+    "Person": {
+      "properties": {
+        "name": "string",
+        "born": "int",
+        "start_t": "datetime",
+        "end_t": "datetime"
+      },
+      "style": {
+        "label": "data(name)",
+        "color": "#e5ffb5",
+        "text-valign": "center",
+        "font-size": "11px",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "background-image": "assets/img/person.png",
+        "width": "58px",
+        "height": "58px"
+      }
+    },
+    "Movie": {
+      "properties": {
+        "title": "string",
+        "tagline": "string",
+        "released": "int",
+        "rating": "float",
+        "genre": "enum,string",
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "data(title)",
+        "color": "#ffc5a8",
+        "text-valign": "bottom",
+        "font-size": "9px",
+        "background-image": "assets/img/movie-roll.png",
+        "shape": "ellipse",
+        "background-fit": "contain",
+        "width": "mapData(rating, 0, 10, 20px, 60px)",
+        "height": "mapData(rating, 0, 10, 20px, 60px)"
+      }
+    }
+  },
+  "relations": {
+    "ACTED_IN": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "roles": "list",
+        "act_begin": "datetime",
+        "act_end": "datetime"
+      },
+      "style": {
+        "label": "acted in",
+        "width": "4px",
+        "font-size": "9px",
+        "line-color": "#abcaf2",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#abcaf2",
+        "text-rotation": "autorotate"
+      }
+    },
+    "DIRECTED": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "directed",
+        "width": "3px",
+        "font-size": "9px",
+        "line-color": "#1eead1",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#1eead1",
+        "text-rotation": "autorotate"
+      }
+    },
+    "PRODUCED": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "produced",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#ed9ca7",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "tee",
+        "target-arrow-color": "#ed9ca7",
+        "text-rotation": "autorotate"
+      }
+    },
+    "WROTE": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "occurence_begin": "datetime",
+        "occurence_end": "datetime"
+      },
+      "style": {
+        "label": "wrote",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#b5b74b",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "circle",
+        "target-arrow-color": "#b5b74b",
+        "text-rotation": "autorotate"
+      }
+    },
+    "REVIEWED": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "reviewed",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f997fc",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f997fc",
+        "text-rotation": "autorotate"
+      }
+    },
+    "FOLLOWS": {
+      "source": "Person",
+      "target": "Person",
+      "isBidirectional": false,
+      "properties": {
+        "begin": "datetime",
+        "end": "datetime"
+      },
+      "style": {
+        "label": "follows",
+        "width": "2px",
+        "font-size": "9px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    }
+  },
+  "timebarDataMapping": {
+    "Person": {
+      "begin_datetime": "start_t",
+      "end_datetime": "end_t"
+    },
+    "Movie": {
+      "begin_datetime": "begin",
+      "end_datetime": "end"
+    },
+    "ACTED_IN": {
+      "begin_datetime": "act_begin",
+      "end_datetime": "act_end"
+    },
+    "DIRECTED": {
+      "begin_datetime": "begin",
+      "end_datetime": "end"
+    },
+    "PRODUCED": {
+      "begin_datetime": "begin",
+      "end_datetime": "end"
+    },
+    "WROTE": {
+      "begin_datetime": "occurence_begin",
+      "end_datetime": "occurence_end"
+    },
+    "REVIEWED": {
+      "begin_datetime": "begin",
+      "end_datetime": "end"
+    },
+    "FOLLOWS": {
+      "begin_datetime": "begin",
+      "end_datetime": "end"
+    }
+  },
+  "enumMapping": {
+    "Movie": {
+      "genre": {
+        "Comedy": "Comedy",
+        "Adventure": "Adventure",
+        "Thriller": "Thriller",
+        "Crime": "Crime",
+        "Action": "Action",
+        "Drama": "Drama"
+      }
+    }
+  },
+  "generalStyles": [{
+      "selector": ".hidden",
+      "style": {
+        "display": "none"
+      }
+    },
+    {
+      "selector": "node",
+      "style": {
+        "background-opacity": 0,
+        "font-size": "13px",
+        "text-valign": "center",
+        "text-halign": "center",
+        "background-color": "#555",
+        "text-outline-color": "#555",
+        "text-outline-width": "2px",
+        "color": "#fff",
+        "overlay-padding": "6px",
+        "z-index": "10",
+        "text-wrap": "wrap",
+        "text-max-width": "58px"
+      }
+    },
+    {
+      "selector": "node:selected",
+      "style": {
+        "overlay-color": "#6c757d",
+        "overlay-opacity": 0.3,
+        "background-color": "#999999"
+      }
+    },
+    {
+      "selector": "edge:selected",
+      "style": {
+        "overlay-color": "#6c757d",
+        "overlay-opacity": 0.3,
+        "line-color": "#808080"
+      }
+    },
+    {
+      "selector": "edge",
+      "style": {
+        "font-size": "13px",
+        "text-outline-color": "#ffffff",
+        "text-outline-width": "2px"
+      }
+    },
+    {
+      "selector": "node.Cluster",
+      "style": {
+        "background-opacity": 0.1,
+        "background-color": "#555",
+        "shape": "barrel",
+        "border-color": "black",
+        "font-size": "9px"
+      }
+    },
+    {
+      "selector": "node.cy-expand-collapse-collapsed-node",
+      "style": {
+        "label": "data(name)",
+        "font-size": "9px",
+        "border-color": "black",
+        "border-width": 1,
+        "border-style": "dotted",
+        "background-opacity": 0,
+        "shape": "barrel"
+      }
+    },
+    {
+      "selector": ":compound",
+      "style": {
+        "padding": "5%"
+      }
+    }
+  ],
+  "appPreferences": {
+    "isAutoIncrementalLayoutOnChange": true,
+    "isHighlightOnHover": false,
+    "isShowOverviewWindow": true,
+    "isShowEdgeLabels": true,
+    "isFitLabels2Nodes": false,
+    "isIgnoreCaseInText": false,
+    "isOnlyHighlight4LatestQuery": false,
+    "isStoreUserProfile": true,
+
+    "dataPageSize": 15,
+    "queryHistoryLimit": 10,
+    "tableColumnLimit": 3,
+    "highlightStyles": [{"wid": 4.5, "color": "#F5E663"}],
+    "currHighlightIdx": 0,
+
+    "mergedElemIndicator": 1,
+
+    "compoundPadding": "5%",
+
+    "avgNodeSize": 40,
+
+    "timebar": {
+      "isEnabled": true,
+      "playingStep": 50,
+      "playingPeriod": 1350,
+      "zoomingStep": 50,
+      "graphInclusionType": 0,
+      "statsInclusionType": 0,
+      "isHideDisconnectedNodesOnAnim": false,
+      "min": -59011466152000,
+      "max": 32503669200000,
+      "isMaintainGraphRange": false
+    },
+    "style": {
+      ".va-title": {
+        "font-size": "20px"
+      },
+      ".va-heading1": {
+        "font-size": "14px",
+        "font-weight": "bold"
+      },
+      ".va-heading2": {
+        "font-size": "12px"
+      },
+      ".panel-heading": {
+        "height": "17px"
+      },
+      ".va-heading3": {
+        "font-size": "12px"
+      },
+      ".va-text": {
+        "font-size": "12px"
+      },
+      ".va-small-text": {
+        "font-size": "11px"
+      }
+    }
+  }
+}

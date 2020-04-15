@@ -172,12 +172,12 @@ export class GlobalVariableService {
     }
     for (let i = 0; i < cyIds.length; i++) {
       let curr = this.cy.$('#' + cyIds[i]);
-      let s = labelParent[curr.className()[0]]['style']['label'] as string;
+      let s = labelParent.S3Port.properties.label/*[curr.className()[0]]['style']['label'] as string*/;
       if (s.indexOf('(') < 0) {
         labels += s + ',';
       } else {
         let propName = s.slice(s.indexOf('(') + 1, s.indexOf(')'));
-        labels += curr.data(propName) + ',';
+        labels += propName + ',';
       }
     }
 

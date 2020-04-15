@@ -364,10 +364,15 @@ export class CytoscapeService {
   }
 
   loadElementsFromDatabase(data: GraphResponse, isIncremental: boolean) {
+    
+    if(!data.edges){
+      data.edges = []; 
+    }
     if (!data || !data.nodes || !data.edges) {
       console.error('Empty response from database!');
       return;
     }
+ 
     const nodes = data.nodes;
     const edges = data.edges;
 
@@ -455,7 +460,7 @@ export class CytoscapeService {
   }
 
   createCyEdge(edge, id) {
-    let properties = edge.properties;
+    let properties = edge.properties || {};
     properties.id = id;
     properties.source = 'n' + edge.startNode;
     properties.target = 'n' + edge.endNode;

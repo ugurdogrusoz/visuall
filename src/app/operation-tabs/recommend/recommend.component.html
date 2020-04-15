@@ -1,0 +1,24 @@
+<div *ngIf="recommendItems != null" id="recomTab" class="table-responsive">
+    <div id="recom-div">
+      <div class="container">
+        <h5 class="table-header"><b>Recommendations</b></h5>
+      </div>
+      <table class="table table-sm table-hover va-text">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Uri</th>
+            <th scope="col">Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let recommendItem of recommendItems">
+            <td style="color:black; font-weight: bold;">{{recommendItem.uri}}</td>
+            <td style="color: #007bff; font-weight: bold;">{{recommendItem.score}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <button (click)="recomRemove()" type="button" data-toggle="tooltip" data-placement="top"
+        title="Clear All Data">Clear</button>
+    </div>
+  </div>
+  

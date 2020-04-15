@@ -3,7 +3,8 @@ import { CytoscapeService } from '../cytoscape.service';
 import { DbAdapterService } from '../db-service/db-adapter.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
-import axios from 'axios';
+import { SharedService } from '../shared.service';
+import { DataContentService } from '../data-content.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,93 +25,46 @@ this._menu = [{
  **/
 export class ContextMenuCustomizationService {
   private _menu: ContextMenuItem[];
+  individuals = [];
+
   get menu(): ContextMenuItem[] {
     return this._menu;
   }
-  constructor(private _cyService: CytoscapeService, private _dbService: DbAdapterService, private _g: GlobalVariableService) {
+  constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _g: GlobalVariableService, private shrService: SharedService, private _ctexData: DataContentService) {
     this._menu = [
       {
         id: 'showMoviesOfPerson',
         content: 'Show All Movies Involving This Person',
-        selector: 'node.Person',
+        selector: 'node',
         onClickFunction: this.getNeighbors.bind(this)
       },
       {
-        id: 'getPoster',
-        content: 'Use Movie Poster',
-        selector: 'node.Movie',
-        onClickFunction: this.getPoster
-      },
-      {
-        id: 'go to IMDB',
-        content: 'Go to IMDB',
-        selector: 'node.Movie',
-        onClickFunction: this.goInfo
-      },
-      {
-        id: 'showActorsOfMovie',
-        content: 'Show All Persons Involved in This Movie',
-        selector: 'node.Movie',
-        onClickFunction: this.getNeighbors.bind(this)
-      },
-      {
-        id: 'displayAllPosters',
-        content: 'Use Movie Posters',
-        coreAsWell: true,
-        onClickFunction: this.useMoviePoster.bind(this)
-      },
+        id: 'recommend',
+        content: 'Recommend',
+        selector: 'node',
+        onClickFunction: this.showRecom.bind(this)
+      }
     ];
   }
-
   getNeighbors(event) {
     const ele = event.target || event.cyTarget;
     this._dbService.getNeighbors([ele.id().substr(1)], (x) => { this._cyService.loadElementsFromDatabase(x, true) })
   }
 
-  getPoster(event) {
-    const ele = event.target || event.cyTarget;
-    const movieTitle = ele._private.data.title;
-    axios.get(`https://www.omdbapi.com?s=${movieTitle}&apikey=9be27fce`)
-      .then((response) => {
-        const url = response.data.Search[0].Poster;
-        if (url != '') {
-          ele.style({ 'background-image': url });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  goInfo(event) {
-    const ele = event.target || event.cyTarget;
-    const movieTitle = ele._private.data.title;
-    axios.get(`https://www.omdbapi.com?s=${movieTitle}&apikey=9be27fce`)
-      .then((response) => {
-        const movieImdb = response.data.Search[0].imdbID;
-        if (movieImdb != '') {
-          window.open('https://www.imdb.com/title/' + movieImdb);
-        }
-
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  useMoviePoster() {
-    this._g.cy.nodes('.Movie').forEach(function (ele) {
-
-      const movieTitle = ele._private.data.title;
-      axios.get(`https://www.omdbapi.com?s=${movieTitle}&apikey=1c7dc496`)
-        .then((response) => {
-          const url = response.data.Search[0].Poster;
-          if (url != '')
-            ele.style({ 'background-image': url });
-        })
-        .catch((err) => {
-          console.log(err);
+  showRecom(event) {
+    this._g.operationTabChanged.next(4);
+    this.individuals.splice(this.individuals['']);
+    this._ctexData.getElemId(event);
+    this._ctexData.getMovieDb().subscribe(data => {
+      for (const d of (data as any)) {
+        this.individuals.push({
+          uri: d.uri,
+          score: d.score,
         });
-    });
+      }
+      this.shrService.setRecomDetails(this.individuals);
+    })
+    
   }
+
 }
