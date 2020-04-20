@@ -4,7 +4,6 @@
       "birth_year": "int",
       "death_year": "int",
       "primary_profession": "list",
-      "nconst": "string",
       "primary_name": "string",
       "start_t": "datetime",
       "end_t": "datetime"
@@ -23,7 +22,6 @@
       "shooting_start_date": "datetime",
       "production_end_date": "datetime",
       "production_start_date": "datetime",
-      "tconst": "string",
       "title_type": "string"
     }
   },

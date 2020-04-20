@@ -13,7 +13,6 @@
         "birth_year": "int",
         "death_year": "int",
         "primary_profession": "list",
-        "nconst": "string",
         "primary_name": "string",
         "start_t": "datetime",
         "end_t": "datetime"
@@ -46,7 +45,6 @@
         "shooting_start_date": "datetime",
         "production_end_date": "datetime",
         "production_start_date": "datetime",
-        "tconst": "string",
         "title_type": "string"
       },
       "style": {
@@ -310,13 +308,9 @@
   },
   "enumMapping": {
     "Movie": {
-      "genre": {
-        "Comedy": "Comedy",
-        "Adventure": "Adventure",
-        "Thriller": "Thriller",
-        "Crime": "Crime",
-        "Action": "Action",
-        "Drama": "Drama"
+      "is_adult": {
+        "0": "No",
+        "1": "Yes"
       }
     }
   },

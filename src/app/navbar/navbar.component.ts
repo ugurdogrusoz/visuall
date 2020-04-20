@@ -65,7 +65,6 @@ export class NavbarComponent implements OnInit {
       },
       {
         dropdown: 'Data', actions: [{ txt: 'Sample Data', id: 'nbi60', fn: 'getSampleData', isStd: true },
-        { txt: 'All Data', id: 'nbi61', fn: 'getAllData', isStd: true },
         { txt: 'Clear Data', id: 'nbi62', fn: 'clearData', isStd: true }]
       }
     ];
@@ -146,10 +145,6 @@ export class NavbarComponent implements OnInit {
 
   getSampleData() {
     this._dbService.getSampleData(x => { this._cyService.loadElementsFromDatabase(x, false) });
-  }
-
-  getAllData() {
-    this._dbService.getAllData(x => { this._cyService.loadElementsFromDatabase(x, false) });
   }
 
   clearData() {

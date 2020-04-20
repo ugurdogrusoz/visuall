@@ -33,11 +33,6 @@ export class DbAdapterService implements DbService {
     this._db.getSampleData(fn);
   }
 
-  getAllData(callback: (x: GraphResponse) => any) {
-    let fn = (x) => { callback(x); this._g.add2GraphHistory('Get all data'); };
-    this._db.getAllData(fn);
-  }
-
   getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     if (type == DbQueryType.std) {
       let s = 'Get ' + rule2str(rules);
