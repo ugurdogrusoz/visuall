@@ -333,15 +333,6 @@ export class MapTabComponent implements OnInit {
     this._g.performLayout(false);
   }
 
-  pageChanged(newPage: number) {
-    const skip = (newPage - 1) * this.tableInput.pageSize;
-    const limit = this.tableInput.pageSize;
-    const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
-    const arr = this._timebarService.getChartRange();
-    this.loadGraph(skip, limit, isMerge, this.maintainChartRange, arr);
-    this.loadTable(skip, limit);
-  }
-
   getDataForQueryResult(e: TableRowMeta) {
     let isNode = !this.filteringRule.isEdge;
     let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
@@ -369,6 +360,7 @@ export class MapTabComponent implements OnInit {
     this.getCountOfData(filter);
     let skip = filter.skip ? filter.skip : 0;
     this._dbService.filterTable(this.filteringRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
+    this.loadGraph(skip, limit, this.tableInput.isMergeGraph, this.maintainChartRange.bind(this), this._timebarService.getChartRange());
   }
 
   editRule(i: number) {
