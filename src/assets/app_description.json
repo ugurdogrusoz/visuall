@@ -10,13 +10,16 @@
   "objects": {
     "Person": {
       "properties": {
-        "name": "string",
-        "born": "int",
+        "birth_year": "int",
+        "death_year": "int",
+        "primary_profession": "list",
+        "nconst": "string",
+        "primary_name": "string",
         "start_t": "datetime",
         "end_t": "datetime"
       },
       "style": {
-        "label": "data(name)",
+        "label": "data(primary_name)",
         "color": "#e5ffb5",
         "text-valign": "bottom",
         "text-margin-y": "-10px",
@@ -30,16 +33,24 @@
     },
     "Movie": {
       "properties": {
-        "title": "string",
-        "tagline": "string",
-        "released": "int",
+        "end_year": "int",
+        "start_year": "int",
+        "count_votes": "int",
         "rating": "float",
-        "genre": "enum,string",
-        "begin": "datetime",
-        "end": "datetime"
+        "genres": "list",
+        "is_adult": "int",
+        "original_title": "string",
+        "primary_title": "string",
+        "runtime_minutes": "int",
+        "shooting_end_date": "datetime",
+        "shooting_start_date": "datetime",
+        "production_end_date": "datetime",
+        "production_start_date": "datetime",
+        "tconst": "string",
+        "title_type": "string"
       },
       "style": {
-        "label": "data(title)",
+        "label": "data(primary_title)",
         "color": "#ffc5a8",
         "text-valign": "bottom",
         "text-margin-y": "-10px",
@@ -53,37 +64,37 @@
     }
   },
   "relations": {
-    "ACTED_IN": {
+    "KNOWN_FOR": {
       "source": "Person",
       "target": "Movie",
       "isBidirectional": false,
-      "properties": {
-        "roles": "list",
-        "act_begin": "datetime",
-        "act_end": "datetime"
-      },
+      "properties": {},
       "style": {
-        "label": "acted in",
-        "width": "4px",
-        "font-size": "7px",
-        "line-color": "#abcaf2",
-        "line-style": "solid",
-        "curve-style": "bezier",
-        "target-arrow-shape": "triangle",
-        "target-arrow-color": "#abcaf2",
-        "text-rotation": "autorotate"
+        "label": "known for"
       }
     },
-    "DIRECTED": {
+    "SELF": {
       "source": "Person",
       "target": "Movie",
       "isBidirectional": false,
       "properties": {
-        "begin": "datetime",
-        "end": "datetime"
+        "job": "string",
+        "characters": "list"
       },
       "style": {
-        "label": "directed",
+        "label": "self"
+      }
+    },
+    "DIRECTOR": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "director",
         "width": "3px",
         "font-size": "7px",
         "line-color": "#1eead1",
@@ -94,16 +105,48 @@
         "text-rotation": "autorotate"
       }
     },
-    "PRODUCED": {
+    "CINEMATOGRAPHER": {
       "source": "Person",
       "target": "Movie",
       "isBidirectional": false,
       "properties": {
-        "begin": "datetime",
-        "end": "datetime"
+        "job": "string",
+        "characters": "list"
       },
       "style": {
-        "label": "produced",
+        "label": "cinematographer"
+      }
+    },
+    "ACTOR": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "actor",
+        "width": "4px",
+        "font-size": "7px",
+        "line-color": "#abcaf2",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#abcaf2",
+        "text-rotation": "autorotate"
+      }
+    },
+    "PRODUCER": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "producer",
         "width": "2px",
         "font-size": "7px",
         "line-color": "#ed9ca7",
@@ -114,16 +157,16 @@
         "text-rotation": "autorotate"
       }
     },
-    "WROTE": {
+    "WRITER": {
       "source": "Person",
       "target": "Movie",
       "isBidirectional": false,
       "properties": {
-        "occurence_begin": "datetime",
-        "occurence_end": "datetime"
+        "job": "string",
+        "characters": "list"
       },
       "style": {
-        "label": "wrote",
+        "label": "writer",
         "width": "2px",
         "font-size": "7px",
         "line-color": "#b5b74b",
@@ -134,16 +177,68 @@
         "text-rotation": "autorotate"
       }
     },
-    "REVIEWED": {
+    "ACTRESS": {
       "source": "Person",
       "target": "Movie",
       "isBidirectional": false,
       "properties": {
-        "begin": "datetime",
-        "end": "datetime"
+        "job": "string",
+        "characters": "list"
       },
       "style": {
-        "label": "reviewed",
+        "label": "actress",
+        "width": "4px",
+        "font-size": "7px",
+        "line-color": "#abcaf2",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#abcaf2",
+        "text-rotation": "autorotate"
+      }
+    },
+    "COMPOSER": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "composer",
+        "width": "2px",
+        "font-size": "7px",
+        "line-color": "#f7a67e",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#f7a67e",
+        "text-rotation": "autorotate"
+      }
+    },
+    "PRODUCTION_DESIGNER": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "cinematographer"
+      }
+    },
+    "EDITOR": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "editor",
         "width": "2px",
         "font-size": "7px",
         "line-color": "#f997fc",
@@ -154,24 +249,28 @@
         "text-rotation": "autorotate"
       }
     },
-    "FOLLOWS": {
+    "ARCHIVE_FOOTAGE": {
       "source": "Person",
-      "target": "Person",
+      "target": "Movie",
       "isBidirectional": false,
       "properties": {
-        "begin": "datetime",
-        "end": "datetime"
+        "job": "string",
+        "characters": "list"
       },
       "style": {
-        "label": "follows",
-        "width": "2px",
-        "font-size": "7px",
-        "line-color": "#f7a67e",
-        "line-style": "dashed",
-        "curve-style": "bezier",
-        "target-arrow-shape": "triangle",
-        "target-arrow-color": "#f7a67e",
-        "text-rotation": "autorotate"
+        "label": "archive footage"
+      }
+    },
+    "ARCHIVE_SOUND": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "archive sound"
       }
     }
   },

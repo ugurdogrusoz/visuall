@@ -1,46 +1,81 @@
 {
   "nodes": {
     "Person": {
-      "name": "string",
-      "born": "int",
+      "birth_year": "int",
+      "death_year": "int",
+      "primary_profession": "list",
+      "nconst": "string",
+      "primary_name": "string",
       "start_t": "datetime",
       "end_t": "datetime"
     },
     "Movie": {
-      "title": "string",
-      "tagline": "string",
-      "released": "int",
+      "end_year": "int",
+      "start_year": "int",
+      "count_votes": "int",
       "rating": "float",
-      "genre": "enum,string",
-      "begin": "datetime",
-      "end": "datetime"
+      "genres": "list",
+      "is_adult": "int",
+      "original_title": "string",
+      "primary_title": "string",
+      "runtime_minutes": "int",
+      "shooting_end_date": "datetime",
+      "shooting_start_date": "datetime",
+      "production_end_date": "datetime",
+      "production_start_date": "datetime",
+      "tconst": "string",
+      "title_type": "string"
     }
   },
   "edges": {
-    "ACTED_IN": {
-      "roles": "list",
-      "act_begin": "datetime",
-      "act_end": "datetime"
+    "KNOWN_FOR": {},
+    "SELF": {
+      "job": "string",
+      "characters": "list"
     },
-    "DIRECTED": {
-      "begin": "datetime",
-      "end": "datetime"
+    "DIRECTOR": {
+      "job": "string",
+      "characters": "list"
     },
-    "PRODUCED": {
-      "begin": "datetime",
-      "end": "datetime"
+    "CINEMATOGRAPHER": {
+      "job": "string",
+      "characters": "list"
     },
-    "WROTE": {
-      "occurence_begin": "datetime",
-      "occurence_end": "datetime"
+    "ACTOR": {
+      "job": "string",
+      "characters": "list"
     },
-    "REVIEWED": {
-      "begin": "datetime",
-      "end": "datetime"
+    "PRODUCER": {
+      "job": "string",
+      "characters": "list"
     },
-    "FOLLOWS": {
-      "begin": "datetime",
-      "end": "datetime"
+    "WRITER": {
+      "job": "string",
+      "characters": "list"
+    },
+    "ACTRESS": {
+      "job": "string",
+      "characters": "list"
+    },
+    "COMPOSER": {
+      "job": "string",
+      "characters": "list"
+    },
+    "PRODUCTION_DESIGNER": {
+      "job": "string",
+      "characters": "list"
+    },
+    "EDITOR": {
+      "job": "string",
+      "characters": "list"
+    },
+    "ARCHIVE_FOOTAGE": {
+      "job": "string",
+      "characters": "list"
+    },
+    "ARCHIVE_SOUND": {
+      "job": "string",
+      "characters": "list"
     }
   }
 }

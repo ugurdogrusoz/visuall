@@ -77,7 +77,7 @@
   {
     "selector": "node.Person",
     "style": {
-      "label": "data(name)",
+      "label": "data(primary_name)",
       "color": "#e5ffb5",
       "text-valign": "bottom",
       "text-margin-y": "-10px",
@@ -92,7 +92,7 @@
   {
     "selector": "node.Movie",
     "style": {
-      "label": "data(title)",
+      "label": "data(primary_title)",
       "color": "#ffc5a8",
       "text-valign": "bottom",
       "text-margin-y": "-10px",
@@ -105,23 +105,21 @@
     }
   },
   {
-    "selector": "edge.ACTED_IN",
+    "selector": "edge.KNOWN_FOR",
     "style": {
-      "label": "acted in",
-      "width": "4px",
-      "font-size": "7px",
-      "line-color": "#abcaf2",
-      "line-style": "solid",
-      "curve-style": "bezier",
-      "target-arrow-shape": "triangle",
-      "target-arrow-color": "#abcaf2",
-      "text-rotation": "autorotate"
+      "label": "known for"
     }
   },
   {
-    "selector": "edge.DIRECTED",
+    "selector": "edge.SELF",
     "style": {
-      "label": "directed",
+      "label": "self"
+    }
+  },
+  {
+    "selector": "edge.DIRECTOR",
+    "style": {
+      "label": "director",
       "width": "3px",
       "font-size": "7px",
       "line-color": "#1eead1",
@@ -133,9 +131,29 @@
     }
   },
   {
-    "selector": "edge.PRODUCED",
+    "selector": "edge.CINEMATOGRAPHER",
     "style": {
-      "label": "produced",
+      "label": "cinematographer"
+    }
+  },
+  {
+    "selector": "edge.ACTOR",
+    "style": {
+      "label": "actor",
+      "width": "4px",
+      "font-size": "7px",
+      "line-color": "#abcaf2",
+      "line-style": "solid",
+      "curve-style": "bezier",
+      "target-arrow-shape": "triangle",
+      "target-arrow-color": "#abcaf2",
+      "text-rotation": "autorotate"
+    }
+  },
+  {
+    "selector": "edge.PRODUCER",
+    "style": {
+      "label": "producer",
       "width": "2px",
       "font-size": "7px",
       "line-color": "#ed9ca7",
@@ -147,9 +165,9 @@
     }
   },
   {
-    "selector": "edge.WROTE",
+    "selector": "edge.WRITER",
     "style": {
-      "label": "wrote",
+      "label": "writer",
       "width": "2px",
       "font-size": "7px",
       "line-color": "#b5b74b",
@@ -161,9 +179,43 @@
     }
   },
   {
-    "selector": "edge.REVIEWED",
+    "selector": "edge.ACTRESS",
     "style": {
-      "label": "reviewed",
+      "label": "actress",
+      "width": "4px",
+      "font-size": "7px",
+      "line-color": "#abcaf2",
+      "line-style": "solid",
+      "curve-style": "bezier",
+      "target-arrow-shape": "triangle",
+      "target-arrow-color": "#abcaf2",
+      "text-rotation": "autorotate"
+    }
+  },
+  {
+    "selector": "edge.COMPOSER",
+    "style": {
+      "label": "composer",
+      "width": "2px",
+      "font-size": "7px",
+      "line-color": "#f7a67e",
+      "line-style": "dashed",
+      "curve-style": "bezier",
+      "target-arrow-shape": "triangle",
+      "target-arrow-color": "#f7a67e",
+      "text-rotation": "autorotate"
+    }
+  },
+  {
+    "selector": "edge.PRODUCTION_DESIGNER",
+    "style": {
+      "label": "cinematographer"
+    }
+  },
+  {
+    "selector": "edge.EDITOR",
+    "style": {
+      "label": "editor",
       "width": "2px",
       "font-size": "7px",
       "line-color": "#f997fc",
@@ -175,17 +227,15 @@
     }
   },
   {
-    "selector": "edge.FOLLOWS",
+    "selector": "edge.ARCHIVE_FOOTAGE",
     "style": {
-      "label": "follows",
-      "width": "2px",
-      "font-size": "7px",
-      "line-color": "#f7a67e",
-      "line-style": "dashed",
-      "curve-style": "bezier",
-      "target-arrow-shape": "triangle",
-      "target-arrow-color": "#f7a67e",
-      "text-rotation": "autorotate"
+      "label": "archive footage"
+    }
+  },
+  {
+    "selector": "edge.ARCHIVE_SOUND",
+    "style": {
+      "label": "archive sound"
     }
   }
 ]
