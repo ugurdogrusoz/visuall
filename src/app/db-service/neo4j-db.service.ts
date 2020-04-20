@@ -44,8 +44,8 @@ export class Neo4jDb implements DbService {
     this.runQuery(`MATCH (n) RETURN n UNION MATCH ()-[e]-() RETURN distinct e as n`, callback);
   }
 
-  getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    const cql = this.rule2cql(rules, skip, limit, type);
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+    const cql = this.rule2cql(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 

@@ -210,28 +210,28 @@ export class MapTabComponent implements OnInit {
     const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
 
     this.getCountOfData();
-    this.loadGraph(skip, limit, isMerge, cb, cbParams);
+    this.loadGraph(skip, limit, isMerge, cb, cbParams, null);
     this.loadTable(skip, limit);
   }
 
-  private loadGraph(skip: number, limit: number, isMerge: boolean, cb: (s: number, end: number) => void, cbParams: any[]) {
+  private loadGraph(skip: number, limit: number, isMerge: boolean, cb: (s: number, end: number) => void, cbParams: any[], filter: TableFiltering) {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
-    this._dbService.getFilteringResult(this.filteringRule, skip, limit, DbQueryType.std,
+    this._dbService.getFilteringResult(this.filteringRule, filter, skip, limit, DbQueryType.std,
       (x) => { this._cyService.loadElementsFromDatabase(x as GraphResponse, isMerge); cb.apply(this, cbParams); });
 
   }
 
-  private loadTable(skip: number, limit: number) {
-    this._dbService.getFilteringResult(this.filteringRule, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
+  private loadTable(skip: number, limit: number, filter: TableFiltering = null) {
+    this._dbService.getFilteringResult(this.filteringRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
   }
 
   private getCountOfData(filter: TableFiltering = null) {
     if (filter != null) {
       this._dbService.filterTable(this.filteringRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
     } else {
-      this._dbService.getFilteringResult(this.filteringRule, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
+      this._dbService.getFilteringResult(this.filteringRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
     }
   }
 
@@ -360,7 +360,7 @@ export class MapTabComponent implements OnInit {
     this.getCountOfData(filter);
     let skip = filter.skip ? filter.skip : 0;
     this._dbService.filterTable(this.filteringRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
-    this.loadGraph(skip, limit, this.tableInput.isMergeGraph, this.maintainChartRange.bind(this), this._timebarService.getChartRange());
+    this.loadGraph(skip, limit, this.tableInput.isMergeGraph, this.maintainChartRange.bind(this), this._timebarService.getChartRange(), filter);
   }
 
   editRule(i: number) {

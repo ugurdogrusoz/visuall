@@ -38,13 +38,13 @@ export class DbAdapterService implements DbService {
     this._db.getAllData(fn);
   }
 
-  getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     if (type == DbQueryType.std) {
       let s = 'Get ' + rule2str(rules);
       let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
-      this._db.getFilteringResult(rules, skip, limit, type, fn);
+      this._db.getFilteringResult(rules, filter, skip, limit, type, fn);
     } else {
-      this._db.getFilteringResult(rules, skip, limit, type, callback);
+      this._db.getFilteringResult(rules, filter, skip, limit, type, callback);
     }
   }
 

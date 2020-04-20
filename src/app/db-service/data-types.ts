@@ -5,7 +5,7 @@ export interface DbService {
   getNeighbors(elemIds: string[], callback: (x: GraphResponse) => any);
   getSampleData(callback: (x: GraphResponse) => any);
   getAllData(callback: (x: GraphResponse) => any);
-  getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
   filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
 }
 
