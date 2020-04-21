@@ -24,6 +24,9 @@ this._menu = [{
  **/
 export class ContextMenuCustomizationService {
   private _menu: ContextMenuItem[];
+  private _movie_api_url = 'https://www.omdbapi.com';
+  private _api_key_param = '&apikey=9be27fce';
+
   get menu(): ContextMenuItem[] {
     return this._menu;
   }
@@ -39,13 +42,13 @@ export class ContextMenuCustomizationService {
         id: 'getPoster',
         content: 'Use Movie Poster',
         selector: 'node.Movie',
-        onClickFunction: this.getPoster
+        onClickFunction: this.getPoster.bind(this)
       },
       {
         id: 'go to IMDB',
         content: 'Go to IMDB',
         selector: 'node.Movie',
-        onClickFunction: this.goInfo
+        onClickFunction: this.goInfo.bind(this)
       },
       {
         id: 'showActorsOfMovie',
@@ -69,48 +72,29 @@ export class ContextMenuCustomizationService {
 
   getPoster(event) {
     const ele = event.target || event.cyTarget;
-    const movieTitle = ele._private.data.title;
-    axios.get(`https://www.omdbapi.com?s=${movieTitle}&apikey=9be27fce`)
-      .then((response) => {
-        const url = response.data.Search[0].Poster;
-        if (url != '') {
-          ele.style({ 'background-image': url });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    this.setBgImg2MoviePoster(ele);
   }
 
   goInfo(event) {
     const ele = event.target || event.cyTarget;
-    const movieTitle = ele._private.data.title;
-    axios.get(`https://www.omdbapi.com?s=${movieTitle}&apikey=9be27fce`)
-      .then((response) => {
-        const movieImdb = response.data.Search[0].imdbID;
-        if (movieImdb != '') {
-          window.open('https://www.imdb.com/title/' + movieImdb);
-        }
+    const id = ele.data('tconst');
+    window.open('https://www.imdb.com/title/' + id);
+  }
 
+  useMoviePoster() {
+    this._g.cy.nodes('.Movie').forEach((e) => { this.setBgImg2MoviePoster(e) });
+  }
+
+  private setBgImg2MoviePoster(e) {
+    const id = e.data('tconst');
+    axios.get(this._movie_api_url + `?i=${id}` + this._api_key_param)
+      .then((response) => {
+        const url = response.data.Poster;
+        if (url != '')
+          e.style({ 'background-image': url });
       })
       .catch((err) => {
         console.log(err);
       });
-  }
-
-  useMoviePoster() {
-    this._g.cy.nodes('.Movie').forEach(function (ele) {
-
-      const movieTitle = ele._private.data.title;
-      axios.get(`https://www.omdbapi.com?s=${movieTitle}&apikey=1c7dc496`)
-        .then((response) => {
-          const url = response.data.Search[0].Poster;
-          if (url != '')
-            ele.style({ 'background-image': url });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
   }
 }

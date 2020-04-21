@@ -37,7 +37,7 @@ export class Neo4jDb implements DbService {
   }
 
   getSampleData(callback: (x: GraphResponse) => any) {
-    this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 33`, callback);
+    this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 100`, callback);
   }
 
   getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
