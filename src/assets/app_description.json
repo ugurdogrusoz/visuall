@@ -19,15 +19,15 @@
       },
       "style": {
         "label": "data(primary_name)",
-        "color": "#e5ffb5",
+        "color": "#a7d6eb",
         "text-valign": "bottom",
-        "text-margin-y": "-10px",
-        "font-size": "8px",
+        "text-margin-y": "-8px",
+        "font-size": "7px",
         "shape": "ellipse",
         "background-fit": "contain",
         "background-image": "assets/img/person.svg",
-        "width": "44px",
-        "height": "44px"
+        "width": "32px",
+        "height": "32px"
       }
     },
     "Movie": {
@@ -52,7 +52,7 @@
         "color": "#ffc5a8",
         "text-valign": "bottom",
         "text-margin-y": "-10px",
-        "font-size": "8px",
+        "font-size": "7px",
         "background-image": "assets/img/movie-roll.svg",
         "shape": "ellipse",
         "background-fit": "contain",
@@ -62,59 +62,6 @@
     }
   },
   "relations": {
-    "KNOWN_FOR": {
-      "source": "Person",
-      "target": "Movie",
-      "isBidirectional": false,
-      "properties": {},
-      "style": {
-        "label": "known for"
-      }
-    },
-    "SELF": {
-      "source": "Person",
-      "target": "Movie",
-      "isBidirectional": false,
-      "properties": {
-        "job": "string",
-        "characters": "list"
-      },
-      "style": {
-        "label": "self"
-      }
-    },
-    "DIRECTOR": {
-      "source": "Person",
-      "target": "Movie",
-      "isBidirectional": false,
-      "properties": {
-        "job": "string",
-        "characters": "list"
-      },
-      "style": {
-        "label": "director",
-        "width": "3px",
-        "font-size": "7px",
-        "line-color": "#1eead1",
-        "line-style": "solid",
-        "curve-style": "bezier",
-        "target-arrow-shape": "triangle",
-        "target-arrow-color": "#1eead1",
-        "text-rotation": "autorotate"
-      }
-    },
-    "CINEMATOGRAPHER": {
-      "source": "Person",
-      "target": "Movie",
-      "isBidirectional": false,
-      "properties": {
-        "job": "string",
-        "characters": "list"
-      },
-      "style": {
-        "label": "cinematographer"
-      }
-    },
     "ACTOR": {
       "source": "Person",
       "target": "Movie",
@@ -135,6 +82,46 @@
         "text-rotation": "autorotate"
       }
     },
+    "ACTRESS": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "actress",
+        "width": "4px",
+        "font-size": "7px",
+        "line-color": "#abcaf2",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "circle",
+        "target-arrow-color": "#abcaf2",
+        "text-rotation": "autorotate"
+      }
+    },
+    "DIRECTOR": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "director",
+        "width": "4px",
+        "font-size": "7px",
+        "line-color": "#1eead1",
+        "line-style": "dashed",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#1eead1",
+        "text-rotation": "autorotate"
+      }
+    },
     "PRODUCER": {
       "source": "Person",
       "target": "Movie",
@@ -145,10 +132,10 @@
       },
       "style": {
         "label": "producer",
-        "width": "2px",
+        "width": "3px",
         "font-size": "7px",
         "line-color": "#ed9ca7",
-        "line-style": "solid",
+        "line-style": "dashed",
         "curve-style": "bezier",
         "target-arrow-shape": "tee",
         "target-arrow-color": "#ed9ca7",
@@ -165,7 +152,7 @@
       },
       "style": {
         "label": "writer",
-        "width": "2px",
+        "width": "3px",
         "font-size": "7px",
         "line-color": "#b5b74b",
         "line-style": "dashed",
@@ -175,7 +162,7 @@
         "text-rotation": "autorotate"
       }
     },
-    "ACTRESS": {
+    "EDITOR": {
       "source": "Person",
       "target": "Movie",
       "isBidirectional": false,
@@ -184,14 +171,14 @@
         "characters": "list"
       },
       "style": {
-        "label": "actress",
-        "width": "4px",
+        "label": "editor",
+        "width": "3px",
         "font-size": "7px",
-        "line-color": "#abcaf2",
-        "line-style": "solid",
+        "line-color": "#f997fc",
+        "line-style": "dashed",
         "curve-style": "bezier",
         "target-arrow-shape": "triangle",
-        "target-arrow-color": "#abcaf2",
+        "target-arrow-color": "#f997fc",
         "text-rotation": "autorotate"
       }
     },
@@ -205,13 +192,70 @@
       },
       "style": {
         "label": "composer",
-        "width": "2px",
+        "width": "3px",
         "font-size": "7px",
-        "line-color": "#f7a67e",
+        "line-color": "#999999",
         "line-style": "dashed",
         "curve-style": "bezier",
         "target-arrow-shape": "triangle",
-        "target-arrow-color": "#f7a67e",
+        "target-arrow-color": "#999999",
+        "text-rotation": "autorotate"
+      }
+    },
+    "KNOWN_FOR": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {},
+      "style": {
+        "label": "known for",
+        "width": "2px",
+        "font-size": "7px",
+        "line-color": "#999999",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#999999",
+        "text-rotation": "autorotate"
+      }
+    },
+    "SELF": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "self",
+        "width": "2px",
+        "font-size": "7px",
+        "line-color": "#999999",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#999999",
+        "text-rotation": "autorotate"
+      }
+    },
+    "CINEMATOGRAPHER": {
+      "source": "Person",
+      "target": "Movie",
+      "isBidirectional": false,
+      "properties": {
+        "job": "string",
+        "characters": "list"
+      },
+      "style": {
+        "label": "cinematographer",
+        "width": "2px",
+        "font-size": "7px",
+        "line-color": "#999999",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#999999",
         "text-rotation": "autorotate"
       }
     },
@@ -224,26 +268,14 @@
         "characters": "list"
       },
       "style": {
-        "label": "cinematographer"
-      }
-    },
-    "EDITOR": {
-      "source": "Person",
-      "target": "Movie",
-      "isBidirectional": false,
-      "properties": {
-        "job": "string",
-        "characters": "list"
-      },
-      "style": {
-        "label": "editor",
+        "label": "production designer",
         "width": "2px",
         "font-size": "7px",
-        "line-color": "#f997fc",
+        "line-color": "#999999",
         "line-style": "solid",
         "curve-style": "bezier",
         "target-arrow-shape": "triangle",
-        "target-arrow-color": "#f997fc",
+        "target-arrow-color": "#999999",
         "text-rotation": "autorotate"
       }
     },
@@ -256,7 +288,15 @@
         "characters": "list"
       },
       "style": {
-        "label": "archive footage"
+        "label": "archive footage",
+        "width": "2px",
+        "font-size": "7px",
+        "line-color": "#999999",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#999999",
+        "text-rotation": "autorotate"
       }
     },
     "ARCHIVE_SOUND": {
@@ -268,7 +308,15 @@
         "characters": "list"
       },
       "style": {
-        "label": "archive sound"
+        "label": "archive sound",
+        "width": "2px",
+        "font-size": "7px",
+        "line-color": "#999999",
+        "line-style": "solid",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "target-arrow-color": "#999999",
+        "text-rotation": "autorotate"
       }
     }
   },
@@ -414,7 +462,7 @@
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
     "tableColumnLimit": 3,
-    "highlightStyles": [{"wid": 4.5, "color": "#F5E663"}],
+    "highlightStyles": [{"wid": 4.5, "color": "#FCE903"}],
     "currHighlightIdx": 0,
 
     "mergedElemIndicator": 1,

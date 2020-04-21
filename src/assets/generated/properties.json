@@ -26,20 +26,15 @@
     }
   },
   "edges": {
-    "KNOWN_FOR": {},
-    "SELF": {
+    "ACTOR": {
+      "job": "string",
+      "characters": "list"
+    },
+    "ACTRESS": {
       "job": "string",
       "characters": "list"
     },
     "DIRECTOR": {
-      "job": "string",
-      "characters": "list"
-    },
-    "CINEMATOGRAPHER": {
-      "job": "string",
-      "characters": "list"
-    },
-    "ACTOR": {
       "job": "string",
       "characters": "list"
     },
@@ -51,7 +46,7 @@
       "job": "string",
       "characters": "list"
     },
-    "ACTRESS": {
+    "EDITOR": {
       "job": "string",
       "characters": "list"
     },
@@ -59,11 +54,16 @@
       "job": "string",
       "characters": "list"
     },
-    "PRODUCTION_DESIGNER": {
+    "KNOWN_FOR": {},
+    "SELF": {
       "job": "string",
       "characters": "list"
     },
-    "EDITOR": {
+    "CINEMATOGRAPHER": {
+      "job": "string",
+      "characters": "list"
+    },
+    "PRODUCTION_DESIGNER": {
       "job": "string",
       "characters": "list"
     },
