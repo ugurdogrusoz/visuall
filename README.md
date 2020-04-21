@@ -14,15 +14,15 @@ Visu*all* is **not** an open source or free software. Please contact [i-Vis Rese
 
 `node style-generator.js {application description filename}` to generate customized application, this changes [styles.css](src/styles.css) and [index.html](src/index.html). Notice that the application description file is inside the `assets` folder.
 
-`ng serve` for development and debugging
+`npm run ng serve` for development and debugging
 
-`ng serve --host 0.0.0.0` for making development server accesible on network
+`npm run ng serve --host 0.0.0.0` for making development server accesible on network
 
-`ng test` for unit tests
+`npm run ng test` for unit tests
 
-`ng build` to generate a production build, `ng build --prod` to generate a minified, uglified production build
+`npm run ng build` to generate a production build, `npm run ng build --prod` to generate a minified, uglified production build
 
-`ng build` and `ng build --prod` commands generate files inside ***dist\ng-visuall*** folder. An HTTP server should serve these files. You can use [server.js](server.js) file to run a server with command `node server.js`. 
+`npm run ng build` and `npm run ng build --prod` commands generate files inside ***dist\ng-visuall*** folder. An HTTP server should serve these files. You can use [server.js](server.js) file to run a server with command `node server.js`. 
 
 ## User Guide
 
