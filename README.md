@@ -16,13 +16,13 @@ Visu*all* is **not** an open source or free software. Please contact [i-Vis Rese
 
 `npm run ng serve` for development and debugging
 
-`npm run ng serve --host 0.0.0.0` for making development server accesible on network
+`npm run serve-public` for making development server accesible on network
 
 `npm run ng test` for unit tests
 
-`npm run ng build` to generate a production build, `npm run ng build --prod` to generate a minified, uglified production build
+`npm run ng build` to generate a production build, `npm run build-prod` to generate a minified, uglified production build
 
-`npm run ng build` and `npm run ng build --prod` commands generate files inside ***dist\ng-visuall*** folder. An HTTP server should serve these files. You can use [server.js](server.js) file to run a server with command `node server.js`. 
+`npm run ng build` and `npm run build-prod` commands generate files inside ***dist\ng-visuall*** folder. An HTTP server should serve these files. You can use [server.js](server.js) file to run a server with command `node server.js`. 
 
 ## User Guide
 

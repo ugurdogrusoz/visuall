@@ -10,7 +10,9 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "heroku-postbuild": "ng build",
-    "prod": "ng build --prod && node server.js"
+    "prod": "ng build --prod && node server.js",
+    "serve-public": "ng serve --host 0.0.0.0",
+    "build-prod": "ng build --prod"
   },
   "private": true,
   "dependencies": {
