@@ -97,8 +97,10 @@ FOREACH (_ IN CASE WHEN category='archive_sound' THEN [1] ELSE [] END |
   MERGE (p)-[:ARCHIVE_SOUND {job: job, characters: characters}]->(m)
 )
 
-
-
-MATCH (p:Person {nconst:nconst})
-MATCH (m:Movie {tconst:tconst})
-MERGE (p)-[:DIRECTOR {}]->(m)
+// delete the duplicated WRITER and DIRECTOR edges
+match (n:Person)-[e:DIRECTOR]->(n2:Movie)
+where size((n)-[:DIRECTOR]->(n2)) > 1 and e.job is null
+delete e;
+match (n:Person)-[e:WRITER]->(n2:Movie)
+where size((n)-[:WRITER]->(n2)) > 1 and e.job is null
+delete e;
