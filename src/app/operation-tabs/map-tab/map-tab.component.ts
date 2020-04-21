@@ -243,15 +243,12 @@ export class MapTabComponent implements OnInit {
     }
 
     this.tableInput.isNodeData = !this.filteringRule.isEdge;
-    let keySet = new Set<string>();
 
-    for (let i = 0; i < data.data.length; i++) {
-      for (let [k, v] of Object.entries(data.data[i][1])) {
-        keySet.add(k);
-      }
+    if (this.tableInput.isNodeData) {
+      this.tableInput.columns = Object.keys(properties['nodes'][this.selectedClass]);
+    } else {
+      this.tableInput.columns = Object.keys(properties['edges'][this.selectedClass]);
     }
-
-    this.tableInput.columns = [...keySet];
 
     for (let i = 0; i < data.data.length; i++) {
       // first column is ID
