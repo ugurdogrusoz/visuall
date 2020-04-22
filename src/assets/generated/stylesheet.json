@@ -108,13 +108,13 @@
     "selector": "edge.ACTOR",
     "style": {
       "label": "actor",
-      "width": "4px",
+      "width": "3px",
       "font-size": "7px",
-      "line-color": "#abcaf2",
+      "line-color": "#ed9ca7",
       "line-style": "solid",
       "curve-style": "bezier",
       "target-arrow-shape": "triangle",
-      "target-arrow-color": "#abcaf2",
+      "target-arrow-color": "#ed9ca7",
       "text-rotation": "autorotate"
     }
   },
@@ -122,13 +122,13 @@
     "selector": "edge.ACTRESS",
     "style": {
       "label": "actress",
-      "width": "4px",
+      "width": "3px",
       "font-size": "7px",
-      "line-color": "#abcaf2",
+      "line-color": "#ed9ca7",
       "line-style": "solid",
       "curve-style": "bezier",
       "target-arrow-shape": "circle",
-      "target-arrow-color": "#abcaf2",
+      "target-arrow-color": "#ed9ca7",
       "text-rotation": "autorotate"
     }
   },
@@ -136,27 +136,13 @@
     "selector": "edge.DIRECTOR",
     "style": {
       "label": "director",
-      "width": "4px",
-      "font-size": "7px",
-      "line-color": "#1eead1",
-      "line-style": "dashed",
-      "curve-style": "bezier",
-      "target-arrow-shape": "triangle",
-      "target-arrow-color": "#1eead1",
-      "text-rotation": "autorotate"
-    }
-  },
-  {
-    "selector": "edge.PRODUCER",
-    "style": {
-      "label": "producer",
       "width": "3px",
       "font-size": "7px",
-      "line-color": "#ed9ca7",
-      "line-style": "dashed",
+      "line-color": "#8bf4e7",
+      "line-style": "solid",
       "curve-style": "bezier",
-      "target-arrow-shape": "tee",
-      "target-arrow-color": "#ed9ca7",
+      "target-arrow-shape": "triangle",
+      "target-arrow-color": "#8bf4e7",
       "text-rotation": "autorotate"
     }
   },
@@ -166,11 +152,25 @@
       "label": "writer",
       "width": "3px",
       "font-size": "7px",
-      "line-color": "#b5b74b",
-      "line-style": "dashed",
+      "line-color": "#8bf4e7",
+      "line-style": "solid",
       "curve-style": "bezier",
       "target-arrow-shape": "circle",
-      "target-arrow-color": "#b5b74b",
+      "target-arrow-color": "#8bf4e7",
+      "text-rotation": "autorotate"
+    }
+  },
+  {
+    "selector": "edge.PRODUCER",
+    "style": {
+      "label": "producer",
+      "width": "3px",
+      "font-size": "7px",
+      "line-color": "#8bf4e7",
+      "line-style": "solid",
+      "curve-style": "bezier",
+      "target-arrow-shape": "tee",
+      "target-arrow-color": "#8bf4e7",
       "text-rotation": "autorotate"
     }
   },
@@ -178,13 +178,13 @@
     "selector": "edge.EDITOR",
     "style": {
       "label": "editor",
-      "width": "3px",
+      "width": "2px",
       "font-size": "7px",
-      "line-color": "#f997fc",
-      "line-style": "dashed",
+      "line-color": "#abcaf2",
+      "line-style": "solid",
       "curve-style": "bezier",
       "target-arrow-shape": "triangle",
-      "target-arrow-color": "#f997fc",
+      "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
     }
   },
@@ -192,41 +192,13 @@
     "selector": "edge.COMPOSER",
     "style": {
       "label": "composer",
-      "width": "3px",
-      "font-size": "7px",
-      "line-color": "#999999",
-      "line-style": "dashed",
-      "curve-style": "bezier",
-      "target-arrow-shape": "triangle",
-      "target-arrow-color": "#999999",
-      "text-rotation": "autorotate"
-    }
-  },
-  {
-    "selector": "edge.KNOWN_FOR",
-    "style": {
-      "label": "known for",
       "width": "2px",
       "font-size": "7px",
-      "line-color": "#999999",
+      "line-color": "#abcaf2",
       "line-style": "solid",
       "curve-style": "bezier",
       "target-arrow-shape": "triangle",
-      "target-arrow-color": "#999999",
-      "text-rotation": "autorotate"
-    }
-  },
-  {
-    "selector": "edge.SELF",
-    "style": {
-      "label": "self",
-      "width": "2px",
-      "font-size": "7px",
-      "line-color": "#999999",
-      "line-style": "solid",
-      "curve-style": "bezier",
-      "target-arrow-shape": "triangle",
-      "target-arrow-color": "#999999",
+      "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
     }
   },
@@ -236,11 +208,11 @@
       "label": "cinematographer",
       "width": "2px",
       "font-size": "7px",
-      "line-color": "#999999",
+      "line-color": "#abcaf2",
       "line-style": "solid",
       "curve-style": "bezier",
       "target-arrow-shape": "triangle",
-      "target-arrow-color": "#999999",
+      "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
     }
   },
@@ -250,11 +222,11 @@
       "label": "production designer",
       "width": "2px",
       "font-size": "7px",
-      "line-color": "#999999",
+      "line-color": "#abcaf2",
       "line-style": "solid",
       "curve-style": "bezier",
       "target-arrow-shape": "triangle",
-      "target-arrow-color": "#999999",
+      "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
     }
   },
@@ -264,11 +236,11 @@
       "label": "archive footage",
       "width": "2px",
       "font-size": "7px",
-      "line-color": "#999999",
+      "line-color": "#abcaf2",
       "line-style": "solid",
       "curve-style": "bezier",
       "target-arrow-shape": "triangle",
-      "target-arrow-color": "#999999",
+      "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
     }
   },
@@ -278,11 +250,39 @@
       "label": "archive sound",
       "width": "2px",
       "font-size": "7px",
-      "line-color": "#999999",
+      "line-color": "#abcaf2",
       "line-style": "solid",
       "curve-style": "bezier",
       "target-arrow-shape": "triangle",
-      "target-arrow-color": "#999999",
+      "target-arrow-color": "#abcaf2",
+      "text-rotation": "autorotate"
+    }
+  },
+  {
+    "selector": "edge.KNOWN_FOR",
+    "style": {
+      "label": "known for",
+      "width": "2px",
+      "font-size": "7px",
+      "line-color": "#aaaaaa",
+      "line-style": "dashed",
+      "curve-style": "bezier",
+      "target-arrow-shape": "triangle",
+      "target-arrow-color": "#aaaaaa",
+      "text-rotation": "autorotate"
+    }
+  },
+  {
+    "selector": "edge.SELF",
+    "style": {
+      "label": "self",
+      "width": "2px",
+      "font-size": "7px",
+      "line-color": "#aaaaaa",
+      "line-style": "dashed",
+      "curve-style": "bezier",
+      "target-arrow-shape": "triangle",
+      "target-arrow-color": "#aaaaaa",
       "text-rotation": "autorotate"
     }
   }
