@@ -28,52 +28,79 @@
   "edges": {
     "ACTOR": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "act_begin": "datetime",
+      "act_end": "datetime"
     },
     "ACTRESS": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "act_begin": "datetime",
+      "act_end": "datetime"
     },
     "DIRECTOR": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     },
     "PRODUCER": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     },
     "WRITER": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     },
     "EDITOR": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     },
     "COMPOSER": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     },
-    "KNOWN_FOR": {},
+    "KNOWN_FOR": {
+      "begin": "datetime",
+      "end": "datetime"
+    },
     "SELF": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     },
     "CINEMATOGRAPHER": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     },
     "PRODUCTION_DESIGNER": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     },
     "ARCHIVE_FOOTAGE": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     },
     "ARCHIVE_SOUND": {
       "job": "string",
-      "characters": "list"
+      "characters": "list",
+      "begin": "datetime",
+      "end": "datetime"
     }
   }
 }

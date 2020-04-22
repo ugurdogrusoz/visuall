@@ -104,3 +104,23 @@ delete e;
 match (n:Person)-[e:WRITER]->(n2:Movie)
 where size((n)-[:WRITER]->(n2)) > 1 and e.job is null
 delete e;
+
+// update date times of Movie
+:auto
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM 'file:///injected_data.tsv' AS r FIELDTERMINATOR '\t'
+WITH r.tconst as id, toInteger(r.production_end_date) as p2, toInteger(r.production_start_date) as p1, toInteger(r.shooting_start_date) as s1, toInteger(r.shooting_end_date) as s2
+MATCH (n:Movie {tconst: id})
+set n.production_end_date = p2, n.production_start_date = p1, n.shooting_start_date = s1, n.shooting_end_date = s2
+
+// update date times of ACTOR and ACTRESS
+match(p:Person)-[e:ACTOR|ACTRESS]->(m:Movie)
+set e.act_begin = m.shooting_start_date, e.act_end = m.shooting_end_date
+
+// update date times of others
+match(p:Person)-[e:SELF|DIRECTOR|WRITER|ARCHIVE_SOUND|ARCHIVE_FOOTAGE|EDITOR|PRODUCTION_DESIGNER|COMPOSER|PRODUCER|CINEMATOGRAPHER]->(m:Movie)
+set e.begin = m.production_start_date, e.end = m.production_end_date
+
+// forgot to make known for, also that that this operation might require to set a higher "dbms.memory.heap.max_size=8G" in neo4j.conf
+match (:Person)-[e:KNOWN_FOR]->(m:Movie)
+set e.begin = m.production_start_date, e.end = m.production_end_date
