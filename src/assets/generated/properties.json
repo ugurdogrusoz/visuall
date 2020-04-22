@@ -28,79 +28,52 @@
   "edges": {
     "ACTOR": {
       "job": "string",
-      "characters": "list",
-      "act_begin": "datetime",
-      "act_end": "datetime"
+      "characters": "list"
     },
     "ACTRESS": {
       "job": "string",
-      "characters": "list",
-      "act_begin": "datetime",
-      "act_end": "datetime"
+      "characters": "list"
     },
     "DIRECTOR": {
       "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
-    },
-    "PRODUCER": {
-      "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
+      "characters": "list"
     },
     "WRITER": {
       "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
+      "characters": "list"
+    },
+    "PRODUCER": {
+      "job": "string",
+      "characters": "list"
     },
     "EDITOR": {
       "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
+      "characters": "list"
     },
     "COMPOSER": {
       "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
-    },
-    "KNOWN_FOR": {
-      "begin": "datetime",
-      "end": "datetime"
-    },
-    "SELF": {
-      "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
+      "characters": "list"
     },
     "CINEMATOGRAPHER": {
       "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
+      "characters": "list"
     },
     "PRODUCTION_DESIGNER": {
       "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
+      "characters": "list"
     },
     "ARCHIVE_FOOTAGE": {
       "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
+      "characters": "list"
     },
     "ARCHIVE_SOUND": {
       "job": "string",
-      "characters": "list",
-      "begin": "datetime",
-      "end": "datetime"
+      "characters": "list"
+    },
+    "KNOWN_FOR": {},
+    "SELF": {
+      "job": "string",
+      "characters": "list"
     }
   }
 }
