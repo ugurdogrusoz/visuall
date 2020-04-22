@@ -68,7 +68,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "act_begin": "datetime",	
+        "act_end": "datetime"
       },
       "style": {
         "label": "actor",
@@ -88,7 +90,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "act_begin": "datetime",	
+        "act_end": "datetime"
       },
       "style": {
         "label": "actress",
@@ -108,7 +112,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "director",
@@ -128,7 +134,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "writer",
@@ -148,7 +156,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "producer",
@@ -168,7 +178,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "editor",
@@ -188,7 +200,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "composer",
@@ -208,7 +222,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "cinematographer",
@@ -228,7 +244,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "production designer",
@@ -248,7 +266,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "archive footage",
@@ -268,7 +288,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "archive sound",
@@ -286,7 +308,10 @@
       "source": "Person",
       "target": "Movie",
       "isBidirectional": false,
-      "properties": {},
+      "properties": {
+        "begin": "datetime",	
+        "end": "datetime"
+      },
       "style": {
         "label": "known for",
         "width": "2px",
@@ -305,7 +330,9 @@
       "isBidirectional": false,
       "properties": {
         "job": "string",
-        "characters": "list"
+        "characters": "list",
+        "begin": "datetime",	
+        "end": "datetime"
       },
       "style": {
         "label": "self",
