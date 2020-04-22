@@ -54,7 +54,7 @@ export class TimebarService {
       },
       showOnlyElems: this.shownOnlyElems.bind(this),
       chartRendered: () => {
-        let isEnabled = this._g.userPrefs.timebar.isEnabled.getValue();
+        let isEnabled = this._g.userPrefs.timebar.isEnabled.getValue() && this._g.cy.$().length > 0;
         if (!isEnabled) {
           this.showHideFn(true);
         } else {
