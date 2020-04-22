@@ -124,3 +124,12 @@ set e.begin = m.production_start_date, e.end = m.production_end_date
 // forgot to make known for, also that that this operation might require to set a higher "dbms.memory.heap.max_size=8G" in neo4j.conf
 match (:Person)-[e:KNOWN_FOR]->(m:Movie)
 set e.begin = m.production_start_date, e.end = m.production_end_date
+
+// make empty properties empty
+match ()-[e]->()
+where e.characters[0] = '\\N'
+set e.characters = []
+
+match ()-[e]->()
+where e.job = '\\N'
+set e.job = ''
