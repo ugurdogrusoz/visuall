@@ -100,8 +100,8 @@
       "background-image": "assets/img/movie-roll.svg",
       "shape": "ellipse",
       "background-fit": "contain",
-      "width": "mapData(rating, 0, 10, 20px, 44px)",
-      "height": "mapData(rating, 0, 10, 20px, 44px)"
+      "width": "mapData(rating, 0, 10, 16px, 30px)",
+      "height": "mapData(rating, 0, 10, 16px, 30px)"
     }
   },
   {
