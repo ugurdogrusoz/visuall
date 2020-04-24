@@ -60,8 +60,8 @@ export class Neo4jDb implements DbService {
   }
 
   getCount4Q0(d1: number, d2: number, movieCount: number, callback: (x) => any, filter?: TableFiltering) {
-    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.name', 'degree']);
-    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Movie)
     WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${movieCount} ${txtCondition}
@@ -70,26 +70,31 @@ export class Neo4jDb implements DbService {
   }
 
   getTable4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, filter?: TableFiltering) {
-    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.name', 'degree']);
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
     let ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
     let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
 
-    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
+    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Movie)
     WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${movieCnt} ${txtCondition}
-    RETURN DISTINCT ID(n) as id, n.name as Actor, degree as Count 
+    RETURN DISTINCT ID(n) as id, n.primary_name as Actor, degree as Count 
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback, false);
   }
 
-  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids: string[] | number[]) {
-    let idFilter = this.buildIdFilter(ids);
-    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
+  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids: string[] | number[], filter: TableFiltering) {
+    let idFilter = this.buildIdFilter(ids, true);
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    let ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
+    let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
+
+    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Movie)
       WHERE ${idFilter} r.act_begin >= ${d1} AND r.act_end <= ${d2}  
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
-      WHERE degree >= ${movieCnt}
-      RETURN n, edges ORDER BY degree DESC SKIP ${skip} LIMIT ${limit}`;
+      WHERE degree >= ${movieCnt} ${txtCondition}
+      RETURN n, edges 
+      ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback);
   }
 
@@ -114,8 +119,8 @@ export class Neo4jDb implements DbService {
   }
 
   getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids: string[] | number[]) {
-    let idFilter = this.buildIdFilter(ids);
-    let cql = `MATCH (n:Movie {genre:'${genre}'})<-[r:ACTED_IN]-(:Person)
+    let idFilter = this.buildIdFilter(ids, true);
+    let cql = `MATCH (n:Movie {genre:'${genre}'})<-[r:ACTOR|ACTRESS]-(:Person)
     WHERE ${idFilter}  n.released > ${d1} AND n.released < ${d2}  
     WITH n, COLLECT(r) as edges
     RETURN  n, edges
@@ -125,7 +130,7 @@ export class Neo4jDb implements DbService {
 
   getDataForQ1(id: number, d1: number, d2: number, genre: string, callback: (x) => any) {
     let cql =
-      `MATCH p=(m:Movie{genre:'${genre}'})<-[:ACTED_IN]-(a:Person) WHERE ID(m) = ${id} 
+      `MATCH p=(m:Movie{genre:'${genre}'})<-[:ACTOR|ACTRESS]-(a:Person) WHERE ID(m) = ${id} 
      AND m.released > ${d1} AND m.released < ${d2}
      RETURN nodes(p), relationships(p)`;
     this.runQuery(cql, callback);

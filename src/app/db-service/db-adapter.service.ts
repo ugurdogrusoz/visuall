@@ -60,13 +60,13 @@ export class DbAdapterService implements DbService {
     this._db.getTable4Q0(d1, d2, movieCnt, skip, limit, callback, filter);
   }
 
-  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[], idxes?: number[]) {
+  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[], idxes?: number[], filter?: TableFiltering) {
     let s = `Get actors by movie counts with: "${new Date(d1).toLocaleString()}", "${new Date(d2).toLocaleString()}", "${movieCnt}"`;
     if (idxes) {
       s += ', ' + idxes.join(',');
     }
     let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
-    this._db.getGraph4Q0(d1, d2, movieCnt, skip, limit, fn, ids);
+    this._db.getGraph4Q0(d1, d2, movieCnt, skip, limit, fn, ids, filter);
   }
 
   getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any, filter?: TableFiltering) {
