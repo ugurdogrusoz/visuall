@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
-import { GraphResponse, TableResponse, DbService, DbQueryType } from './data-types';
+import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta } from './data-types';
 import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/filtering-types';
 import { GENERIC_TYPE } from '../constants';
 import AppDescription from '../../assets/app_description.json';
@@ -24,16 +24,24 @@ export class Neo4jDb implements DbService {
     this._g.getConfig().subscribe(x => { this.dbConfig = x['database'] }, error => console.log('getConfig err: ', error));
   }
 
-  getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any) {
-    let condition = '';
-    for (let i = 0; i < elemIds.length; i++) {
-      if (i == elemIds.length - 1) {
-        condition += ` ID(n) = ${elemIds[i]} `
-      } else {
-        condition += ` ID(n) = ${elemIds[i]} OR `
-      }
+  getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, meta?: DbQueryMeta) {
+    let idFilter = this.buildIdFilter(elemIds);
+    let edgeCql = '';
+    if (meta && meta.edgeType != undefined && typeof meta.edgeType == 'string' && meta.edgeType.length > 0) {
+      edgeCql = `-[:${meta.edgeType}`;
+    } else if (meta && meta.edgeType != undefined && typeof meta.edgeType == 'object') {
+      edgeCql = `-[:${meta.edgeType.join('|')}`;
+    } else {
+      edgeCql = `-[`;
     }
-    this.runQuery(`MATCH (n)-[e]-(n2) WHERE ${condition} RETURN n,n2,e`, callback);
+    let targetCql = '';
+    if (meta && meta.targetType != undefined && meta.targetType.length > 0) {
+      edgeCql += '*' + meta.depth;
+      targetCql = ':' + meta.targetType;
+    }
+    edgeCql += ']-';
+
+    this.runQuery(`MATCH p=(n)${edgeCql}(${targetCql}) WHERE ${idFilter} RETURN p`, callback);
   }
 
   getSampleData(callback: (x: GraphResponse) => any) {
@@ -359,7 +367,7 @@ export class Neo4jDb implements DbService {
     return orderBy + ' ' + orderDirection;
   }
 
-  private buildIdFilter(ids: string[] | number[]): string {
+  private buildIdFilter(ids: string[] | number[], hasEnd = false): string {
     if (ids === undefined) {
       return '';
     }
@@ -373,7 +381,11 @@ export class Neo4jDb implements DbService {
 
     if (ids.length > 0) {
       cql = cql.slice(0, -4);
-      cql += ') AND ';
+
+      cql += ')';
+      if (hasEnd) {
+        cql += ' AND ';
+      }
     }
     return cql;
   }

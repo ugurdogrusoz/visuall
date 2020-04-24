@@ -4,6 +4,7 @@ import { DbAdapterService } from '../db-service/db-adapter.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
 import axios from 'axios';
+import { DbQueryMeta, HistoryMetaData } from '../db-service/data-types';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,8 @@ export class ContextMenuCustomizationService {
   private _menu: ContextMenuItem[];
   private _movie_api_url = 'https://www.omdbapi.com';
   private _api_key_param = '&apikey=9be27fce';
+  private _act_types = ['ACTOR', 'ACTRESS'];
+  private _non_act_types = ['DIRECTOR', 'WRITER', 'PRODUCER', 'EDITOR', 'COMPOSER', 'CINEMATOGRAPHER', 'PRODUCTION_DESIGNER', 'ARCHIVE_FOOTAGE', 'ARCHIVE_SOUND'];
 
   get menu(): ContextMenuItem[] {
     return this._menu;
@@ -33,10 +36,22 @@ export class ContextMenuCustomizationService {
   constructor(private _cyService: CytoscapeService, private _dbService: DbAdapterService, private _g: GlobalVariableService) {
     this._menu = [
       {
-        id: 'showMoviesOfPerson',
-        content: 'Show All Movies Involving This Person',
+        id: 'showMoviesPlayedIn',
+        content: 'Show Movies Played In',
         selector: 'node.Person',
-        onClickFunction: this.getNeighbors.bind(this)
+        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Movies Played by: ' }, { edgeType: this._act_types }) }
+      },
+      {
+        id: 'showMoviesWorkedIn',
+        content: 'Show Movies Worked In',
+        selector: 'node.Person',
+        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Movies Worked by: ' }, { edgeType: this._non_act_types }) }
+      },
+      {
+        id: 'showMoviesOfPerson',
+        content: 'Show All Movies',
+        selector: 'node.Person',
+        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show All Movies of person: ' }, {}) }
       },
       {
         id: 'getPoster',
@@ -52,9 +67,21 @@ export class ContextMenuCustomizationService {
       },
       {
         id: 'showActorsOfMovie',
-        content: 'Show All Persons Involved in This Movie',
+        content: 'Show Actors/Actresses',
         selector: 'node.Movie',
-        onClickFunction: this.getNeighbors.bind(this)
+        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Actors/Actresses of movie: ' }, { edgeType: this._act_types }) }
+      },
+      {
+        id: 'showActorsOfMovie',
+        content: 'Show Other Staff',
+        selector: 'node.Movie',
+        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Other Staff of movie: ' }, { edgeType: this._non_act_types }) }
+      },
+      {
+        id: 'showActorsOfMovie',
+        content: 'Show All Persons',
+        selector: 'node.Movie',
+        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show All Persons of movie: ' }, {}) }
       },
       {
         id: 'displayAllPosters',
@@ -65,9 +92,9 @@ export class ContextMenuCustomizationService {
     ];
   }
 
-  getNeighbors(event) {
+  getNeighbors(event, historyMeta: HistoryMetaData, queryMeta: DbQueryMeta) {
     const ele = event.target || event.cyTarget;
-    this._dbService.getNeighbors([ele.id().substr(1)], (x) => { this._cyService.loadElementsFromDatabase(x, true) })
+    this._dbService.getNeighbors([ele.id().substr(1)], (x) => { this._cyService.loadElementsFromDatabase(x, true) }, historyMeta, queryMeta)
   }
 
   getPoster(event) {

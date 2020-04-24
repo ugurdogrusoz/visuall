@@ -10,7 +10,7 @@ import { ClassOption, ClassBasedRules, Rule, RuleSync, getBoolExpressionFromMetr
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta } from 'src/app/table-view/table-view-types';
-import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types';
+import { DbQueryType, GraphResponse, HistoryMetaData } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
 import { MergedElemIndicatorTypes } from 'src/app/user-preference.js';
 import { UserProfileService } from 'src/app/user-profile.service';
@@ -333,7 +333,8 @@ export class MapTabComponent implements OnInit {
   getDataForQueryResult(e: TableRowMeta) {
     let isNode = !this.filteringRule.isEdge;
     let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
-    this._dbService.getNeighbors(e.dbIds, fn, e.tableIdx.join(','), isNode, 'Loaded from table: ');
+    let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: isNode, labels: e.tableIdx.join(',') }
+    this._dbService.getNeighbors(e.dbIds, fn, historyMeta);
   }
 
   resetRule() {

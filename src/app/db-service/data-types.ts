@@ -24,10 +24,22 @@ export interface TableResponse {
 
 export enum DbQueryType {
   std = 0, table = 1, count = 2
-} 
+}
 
 export interface GraphHistoryItem {
   expo: string;
   base64png: string;
   json: string;
-} 
+}
+
+export interface HistoryMetaData {
+  labels?: string;
+  isNode?: boolean;
+  customTxt?: string;
+}
+
+export interface DbQueryMeta {
+  edgeType?: string | string[];
+  targetType?: string;
+  depth?: number;
+}

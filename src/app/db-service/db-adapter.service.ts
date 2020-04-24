@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DbService, GraphResponse, TableResponse, DbQueryType } from './data-types';
+import { DbService, GraphResponse, TableResponse, DbQueryType, HistoryMetaData, DbQueryMeta } from './data-types';
 import { Neo4jDb } from './neo4j-db.service';
 import { ClassBasedRules, rule2str } from '../operation-tabs/map-tab/filtering-types';
 import { TableFiltering } from '../table-view/table-view-types';
@@ -15,17 +15,21 @@ export class DbAdapterService implements DbService {
   }
 
   // ----------------------- DbService interface methods starts -------------------------------
-  getNeighbors(elemId: string[] | number[], callback: (x: GraphResponse) => any, labels: string = null, isNode: boolean = true, customTxt: string = null) {
-    let s = labels;
-    if (!labels) {
-      s = this._g.getLabels4Elems(elemId, isNode);
+  getNeighbors(elemId: string[] | number[], callback: (x: GraphResponse) => any, historyMeta?: HistoryMetaData, queryMeta?: DbQueryMeta) {
+    let s = '';
+    if (historyMeta) {
+      s = historyMeta.labels;
+      if (!historyMeta.labels) {
+        s = this._g.getLabels4Elems(elemId, historyMeta.isNode);
+      } 
     }
+
     let txt = 'Get neighbors of element(s): ';
-    if (customTxt) {
-      txt = customTxt;
+    if (historyMeta && historyMeta.customTxt) {
+      txt = historyMeta.customTxt;
     }
     let fn = (x) => { callback(x); this._g.add2GraphHistory(txt + s); };
-    this._db.getNeighbors(elemId, fn);
+    this._db.getNeighbors(elemId, fn, queryMeta);
   }
 
   getSampleData(callback: (x: GraphResponse) => any) {
