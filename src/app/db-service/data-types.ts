@@ -42,4 +42,5 @@ export interface DbQueryMeta {
   edgeType?: string | string[];
   targetType?: string;
   depth?: number;
+  isEdgeQuery?: boolean;
 }

@@ -25,14 +25,15 @@ export class Neo4jDb implements DbService {
   }
 
   getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, meta?: DbQueryMeta) {
-    let idFilter = this.buildIdFilter(elemIds);
+    let isEdgeQuery = meta && meta.isEdgeQuery;
+    let idFilter = this.buildIdFilter(elemIds, false, isEdgeQuery);
     let edgeCql = '';
     if (meta && meta.edgeType != undefined && typeof meta.edgeType == 'string' && meta.edgeType.length > 0) {
-      edgeCql = `-[:${meta.edgeType}`;
+      edgeCql = `-[e:${meta.edgeType}`;
     } else if (meta && meta.edgeType != undefined && typeof meta.edgeType == 'object') {
-      edgeCql = `-[:${meta.edgeType.join('|')}`;
+      edgeCql = `-[e:${meta.edgeType.join('|')}`;
     } else {
-      edgeCql = `-[`;
+      edgeCql = `-[e`;
     }
     let targetCql = '';
     if (meta && meta.targetType != undefined && meta.targetType.length > 0) {
@@ -367,16 +368,20 @@ export class Neo4jDb implements DbService {
     return orderBy + ' ' + orderDirection;
   }
 
-  private buildIdFilter(ids: string[] | number[], hasEnd = false): string {
+  private buildIdFilter(ids: string[] | number[], hasEnd = false, isEdgeQuery = false): string {
     if (ids === undefined) {
       return '';
+    }
+    let varName = 'n';
+    if (isEdgeQuery) {
+      varName = 'e';
     }
     let cql = '';
     if (ids.length > 0) {
       cql = '(';
     }
     for (let i = 0; i < ids.length; i++) {
-      cql += `ID(n)=${ids[i]} OR `
+      cql += `ID(${varName})=${ids[i]} OR `
     }
 
     if (ids.length > 0) {
