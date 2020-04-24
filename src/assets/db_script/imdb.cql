@@ -133,3 +133,15 @@ set e.characters = []
 match ()-[e]->()
 where e.job = '\\N'
 set e.job = ''
+
+// delete person with no deathYear AND no birthYear
+match (n:Person)
+where n.birth_year is null and n.death_year is null
+DETACH DELETE n 
+
+:auto
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM 'file:///name2-unix-times.tsv' AS r FIELDTERMINATOR '\t'
+with r.nconst as nconst, toInteger(r.start_t) as start_t, toInteger(r.end_t) as end_t
+match (n:Person {nconst: nconst})
+set n.start_t = start_t, n.end_t = end_t
