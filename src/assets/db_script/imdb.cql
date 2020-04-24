@@ -145,3 +145,8 @@ LOAD CSV WITH HEADERS FROM 'file:///name2-unix-times.tsv' AS r FIELDTERMINATOR '
 with r.nconst as nconst, toInteger(r.start_t) as start_t, toInteger(r.end_t) as end_t
 match (n:Person {nconst: nconst})
 set n.start_t = start_t, n.end_t = end_t
+
+// fix movies which does not contain genres
+MATCH (m:Movie) 
+where m.genres = ["\\N"] 
+set m.genres = []

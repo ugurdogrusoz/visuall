@@ -77,13 +77,13 @@ export class DbAdapterService implements DbService {
     this._db.getTable4Q1(d1, d2, genre, skip, limit, callback, filter);
   }
 
-  getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[], idxes?: number[]) {
+  getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[], idxes?: number[], filter?: TableFiltering) {
     let s = `Get movies by genre with parameters: "${d1}", "${d2}", "${genre}"`;
     if (idxes) {
       s += ', ' + idxes.join(',');
     }
     let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
-    this._db.getGraph4Q1(d1, d2, genre, skip, limit, fn, ids);
+    this._db.getGraph4Q1(d1, d2, genre, skip, limit, fn, ids, filter);
   }
 
   getMovieGenres(callback: (x: any) => any) {

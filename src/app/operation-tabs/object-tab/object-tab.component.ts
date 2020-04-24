@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce } from '../../constants';
 import properties from '../../../assets/generated/properties.json';
