@@ -117,8 +117,13 @@ export class ContextMenuCustomizationService {
     axios.get(this._movie_api_url + `?i=${id}` + this._api_key_param)
       .then((response) => {
         const url = response.data.Poster;
-        if (url != '')
-          e.style({ 'background-image': url });
+        if (url && url != '' && url != 'N/A') {
+          axios.get(url).then(() => {
+            e.style({ 'background-image': url });
+          }).catch((e) => {
+            console.log(' img url is falsy', e);
+          });
+        }
       })
       .catch((err) => {
         console.log(err);
