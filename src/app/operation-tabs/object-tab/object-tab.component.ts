@@ -92,7 +92,11 @@ export class ObjectTabComponent implements OnInit {
 
       const attributeType = findTypeOfAttribute(key, properties.nodes, properties.edges);
       if (attributeType === 'datetime') {
-        renderedValue = new Date(renderedValue).toLocaleString();
+        if (typeof renderedValue !== 'undefined') {
+          renderedValue = new Date(renderedValue).toLocaleString();
+        } else {
+          renderedValue = '';
+        }
       }
 
       if (key.toLowerCase() === DATE_PROP_START ||
