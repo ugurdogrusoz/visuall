@@ -39,8 +39,15 @@ body {
 }
 
 .toolbar-element {
-  height: 2.5vh;
-  min-height: 25px;
+  height: 2.0vh;
+  min-height: 24px;
+  cursor: pointer;
+}
+
+.toolbar-element-container {
+  padding: 1px;
+  margin-left: 4px;
+  float: left;
 }
 
 #cy {

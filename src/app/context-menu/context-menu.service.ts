@@ -25,12 +25,6 @@ export class ContextMenuService {
         onClickFunction: this.performLayout.bind(this)
       },
       {
-        id: 'deleteElement',
-        content: 'Delete',
-        selector: 'node,edge',
-        onClickFunction: this.deleteElem.bind(this)
-      },
-      {
         id: 'deleteSelected',
         content: 'Delete Selected',
         coreAsWell: true,
@@ -41,7 +35,13 @@ export class ContextMenuService {
         content: 'Select Objects of This Type',
         selector: 'node,edge',
         onClickFunction: this.selectAllThisType.bind(this)
-      }
+      },
+      {
+        id: 'deleteElement',
+        content: 'Delete',
+        selector: 'node,edge',
+        onClickFunction: this.deleteElem.bind(this)
+      },
     ];
   }
 
@@ -49,7 +49,7 @@ export class ContextMenuService {
 
     // register context menu extension
     cytoscape.use(contextMenus, $);
-    this.menu = this.menu.concat(this._customizationService.menu);
+    this.menu = this._customizationService.menu.concat(this.menu);
     this._g.cy.contextMenus({ menuItems: this.menu });
   }
 

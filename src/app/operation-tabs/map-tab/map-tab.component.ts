@@ -10,7 +10,7 @@ import { ClassOption, ClassBasedRules, Rule, RuleSync, getBoolExpressionFromMetr
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta } from 'src/app/table-view/table-view-types';
-import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types';
+import { DbQueryType, GraphResponse, HistoryMetaData } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
 import { MergedElemIndicatorTypes } from 'src/app/user-preference.js';
 import { UserProfileService } from 'src/app/user-profile.service';
@@ -210,28 +210,28 @@ export class MapTabComponent implements OnInit {
     const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
 
     this.getCountOfData();
-    this.loadGraph(skip, limit, isMerge, cb, cbParams);
+    this.loadGraph(skip, limit, isMerge, cb, cbParams, null);
     this.loadTable(skip, limit);
   }
 
-  private loadGraph(skip: number, limit: number, isMerge: boolean, cb: (s: number, end: number) => void, cbParams: any[]) {
+  private loadGraph(skip: number, limit: number, isMerge: boolean, cb: (s: number, end: number) => void, cbParams: any[], filter: TableFiltering) {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
-    this._dbService.getFilteringResult(this.filteringRule, skip, limit, DbQueryType.std,
+    this._dbService.getFilteringResult(this.filteringRule, filter, skip, limit, DbQueryType.std,
       (x) => { this._cyService.loadElementsFromDatabase(x as GraphResponse, isMerge); cb.apply(this, cbParams); });
 
   }
 
-  private loadTable(skip: number, limit: number) {
-    this._dbService.getFilteringResult(this.filteringRule, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
+  private loadTable(skip: number, limit: number, filter: TableFiltering = null) {
+    this._dbService.getFilteringResult(this.filteringRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
   }
 
   private getCountOfData(filter: TableFiltering = null) {
     if (filter != null) {
       this._dbService.filterTable(this.filteringRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
     } else {
-      this._dbService.getFilteringResult(this.filteringRule, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
+      this._dbService.getFilteringResult(this.filteringRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
     }
   }
 
@@ -243,31 +243,23 @@ export class MapTabComponent implements OnInit {
     }
 
     this.tableInput.isNodeData = !this.filteringRule.isEdge;
-    let keySet = new Set<string>();
 
-    for (let i = 0; i < data.data.length; i++) {
-      for (let [k, v] of Object.entries(data.data[i][1])) {
-        keySet.add(k);
-      }
+    if (this.tableInput.isNodeData) {
+      this.tableInput.columns = Object.keys(properties['nodes'][this.selectedClass]);
+    } else {
+      this.tableInput.columns = Object.keys(properties['edges'][this.selectedClass]);
     }
-
-    this.tableInput.columns = [...keySet];
 
     for (let i = 0; i < data.data.length; i++) {
       // first column is ID
       let d: TableData[] = [{ val: data.data[i][0], type: TableDataType.string }];
-      // j is column index
-      let j = 0;
       for (let [k, v] of Object.entries(data.data[i][1])) {
         let idx = this.tableInput.columns.indexOf(k);
         if (idx > -1) {
           d[idx + 1] = this.rawData2TableData(k, v);
-        } else {
-          d[j] = { val: '', type: TableDataType.string };
-        }
-        j++;
+        } 
       }
-      for (j = 0; j < d.length; j++) {
+      for (let j = 0; j < this.tableInput.columns.length + 1; j++) {
         if (!d[j]) {
           d[j] = { val: '', type: TableDataType.string };
         }
@@ -333,19 +325,10 @@ export class MapTabComponent implements OnInit {
     this._g.performLayout(false);
   }
 
-  pageChanged(newPage: number) {
-    const skip = (newPage - 1) * this.tableInput.pageSize;
-    const limit = this.tableInput.pageSize;
-    const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
-    const arr = this._timebarService.getChartRange();
-    this.loadGraph(skip, limit, isMerge, this.maintainChartRange, arr);
-    this.loadTable(skip, limit);
-  }
-
   getDataForQueryResult(e: TableRowMeta) {
-    let isNode = !this.filteringRule.isEdge;
     let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
-    this._dbService.getNeighbors(e.dbIds, fn, e.tableIdx.join(','), isNode, 'Loaded from table: ');
+    let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: !this.filteringRule.isEdge, labels: e.tableIdx.join(',') }
+    this._dbService.getNeighbors(e.dbIds, fn, historyMeta, { isEdgeQuery: this.filteringRule.isEdge });
   }
 
   resetRule() {
@@ -369,6 +352,7 @@ export class MapTabComponent implements OnInit {
     this.getCountOfData(filter);
     let skip = filter.skip ? filter.skip : 0;
     this._dbService.filterTable(this.filteringRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
+    this.loadGraph(skip, limit, this.tableInput.isMergeGraph, this.maintainChartRange.bind(this), this._timebarService.getChartRange(), filter);
   }
 
   editRule(i: number) {

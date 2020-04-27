@@ -29,8 +29,8 @@
           <th scope="col">
             #
           </th>
-          <th scope="col" *ngFor="let col of params.columns; let i = index;">
-            <a href="#" class="table-header" *ngIf="isDraggable || (i <= columnLimit-1)" (click)="columnClicked(i)">
+          <th scope="col" *ngFor="let col of params.columns | slice:0:columnLimit; let i = index;">
+            <a href="#" class="table-header" (click)="columnClicked(i)">
               {{col}}
               <span *ngIf="sortingIdx == i">
                 <span *ngIf="sortDirection == 'asc'">&#9650;</span>
@@ -50,14 +50,12 @@
         <tr *ngFor="let r of params.results; let i = index;" (mouseenter)="onMouseEnter(r[0].val)"
           (mouseleave)="onMouseExit(r[0].val)">
           <td scope="row">{{ (params.currPage - 1) * params.pageSize + i + 1 }}</td>
-          <td *ngFor="let e of r | slice:1; let j = index;">
-            <span *ngIf="isDraggable || (j <= columnLimit-1)">
-              <span *ngIf="e.type == 0 || e.type == 3">
-                <ngb-highlight [result]="e.val" [term]="filterTxt"></ngb-highlight>
-              </span>
-              <span *ngIf="e.type == 1 && (e.val != 0 || !params.isHide0)">{{e.val | number:'1.0-2'}}</span>
-              <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
+          <td *ngFor="let e of r | slice:1:columnLimit+1; let j = index;">
+            <span *ngIf="e.type == 0 || e.type == 3">
+              <ngb-highlight [result]="e.val" [term]="filterTxt"></ngb-highlight>
             </span>
+            <span *ngIf="e.type == 1 && (e.val != 0 || !params.isHide0)">{{e.val | number:'1.0-2'}}</span>
+            <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
           </td>
           <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
           <td [hidden]="params.isLoadGraph">

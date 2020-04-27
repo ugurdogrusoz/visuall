@@ -7,7 +7,6 @@ import expandCollapse from 'cytoscape-expand-collapse';
 import viewUtilities from 'cytoscape-view-utilities';
 import layoutUtilities from 'cytoscape-layout-utilities';
 import stylesheet from '../assets/generated/stylesheet.json';
-import AppDescription from '../assets/app_description.json';
 import * as C from './constants';
 import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
@@ -159,7 +158,7 @@ export class CytoscapeService {
     (<any>window).cy = this._g.cy;
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
     this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
-    this._g.cy.on('add', C.debounce(this.fitLabel2Node, 1000, false).bind(this));
+    this._g.cy.on('add', C.debounce(this.applyStyle4NewElements, 1000, false).bind(this));
     this._timebarService.init();
     this.userPrefHelper.listen4UserPref();
   }
@@ -188,6 +187,7 @@ export class CytoscapeService {
    * or they should e added last to overrite some of the previously added
    */
   private addOtherStyles() {
+    this._g.cy.startBatch();
     this._g.cy.style().selector('node.fitlabel')
       .style({ 'text-wrap': 'ellipsis', 'text-max-width': function (ele) { return ele.width() + 'px'; } })
       .update();
@@ -195,6 +195,14 @@ export class CytoscapeService {
     this._g.cy.style().selector('edge.nolabel')
       .style({ 'label': '' })
       .update();
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
+  }
+
+  private applyStyle4NewElements() {
+    this._g.cy.startBatch();
+    this.fitLabel2Node();
+    this.showHideEdgeLabels();
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   setNodeSizeOnGraphTheoreticProp(maxVal: number, avgSize: number) {
@@ -368,6 +376,7 @@ export class CytoscapeService {
       console.error('Empty response from database!');
       return;
     }
+    this._g.cy.startBatch();
     const nodes = data.nodes;
     const edges = data.edges;
 
@@ -417,6 +426,7 @@ export class CytoscapeService {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   highlightElems(isIncremental: boolean, elemIds: string[]) {
@@ -463,18 +473,22 @@ export class CytoscapeService {
     return { data: properties, classes: edge.type };
   }
 
-  showHideEdgeLabelCheckBoxClicked(isChecked: boolean) {
+  showHideEdgeLabels() {
+    this._g.cy.startBatch();
     this._g.cy.edges().removeClass('nolabel');
-    if (!isChecked) {
+    if (!this._g.userPrefs.isShowEdgeLabels.getValue()) {
       this._g.cy.edges().addClass('nolabel');
     }
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   fitLabel2Node() {
+    this._g.cy.startBatch();
     this._g.cy.nodes().removeClass('fitlabel');
     if (this._g.userPrefs.isFitLabels2Nodes.getValue()) {
       this._g.cy.nodes().addClass('fitlabel');
     }
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   bindHighlightOnHoverListeners() {
@@ -524,7 +538,9 @@ export class CytoscapeService {
   }
 
   setOtherElementsOpacity(elements, opacity) {
+    this._g.cy.startBatch();
     this._g.cy.elements().difference(elements).style({ opacity: opacity });
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   highlightSelected() {
@@ -573,6 +589,7 @@ export class CytoscapeService {
       return;
     }
     this.cyNavi.destroy();
+    this.cyNavi._removeCyListeners();
     this.cyNavi = null;
   }
 

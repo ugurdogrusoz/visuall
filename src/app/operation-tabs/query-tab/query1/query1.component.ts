@@ -63,13 +63,12 @@ export class Query1Component implements OnInit, AfterViewInit {
     this._dbService.getTable4Q1(d1, d2, this.selectedGenre, skip, this.tableInput.pageSize, (x) => this.fillTable(x), filter);
   }
 
-  loadGraph(d1: number, d2: number, skip: number) {
+  loadGraph(d1: number, d2: number, skip: number, filter?: TableFiltering) {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
-
-    this._dbService.getGraph4Q1(d1, d2, this.selectedGenre, skip, this.tableInput.pageSize,
-      (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph));
+    let cb = (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph)
+    this._dbService.getGraph4Q1(d1, d2, this.selectedGenre, skip, this.tableInput.pageSize, cb, undefined, undefined, filter);
   }
 
   fillTable(data) {
@@ -103,5 +102,8 @@ export class Query1Component implements OnInit, AfterViewInit {
     this.getCountOfData(d1, d2, filter);
     let skip = filter.skip ? filter.skip : 0;
     this.loadTable(d1, d2, skip, filter);
+    if (this.tableInput.isLoadGraph) {
+      this.loadGraph(d1, d2, skip, filter);
+    }
   }
 }

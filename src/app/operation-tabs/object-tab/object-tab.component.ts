@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce } from '../../constants';
 import properties from '../../../assets/generated/properties.json';
@@ -92,7 +92,11 @@ export class ObjectTabComponent implements OnInit {
 
       const attributeType = findTypeOfAttribute(key, properties.nodes, properties.edges);
       if (attributeType === 'datetime') {
-        renderedValue = new Date(renderedValue).toLocaleString();
+        if (typeof renderedValue !== 'undefined') {
+          renderedValue = new Date(renderedValue).toLocaleString();
+        } else {
+          renderedValue = '';
+        }
       }
 
       if (key.toLowerCase() === DATE_PROP_START ||
@@ -214,9 +218,9 @@ export class ObjectTabComponent implements OnInit {
     let stat = {};
 
     let classSet = new Set<string>();
-
-    for (let i = 0; i < this._g.cy.$().length; i++) {
-      let curr = this._g.cy.$()[i];
+    let elems = this._g.cy.$();
+    for (let i = 0; i < elems.length; i++) {
+      let curr = elems[i];
       let c = curr.classes();
       let isSelected = curr.selected();
       let isVisible = curr.visible();
