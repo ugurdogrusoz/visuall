@@ -1,6 +1,6 @@
 # Visu*all* User Guide
 
-This guide shows how Visu*all* sample application can be used to analyze movie dataset available in this application. This sample app assumes a Neo4j databasase installed on a server side with free and openly available movie dataset. The client side on the other hand is a web page with main components of a menubar and a toolbar on top, a drawing canvas to show relations as a graph / map and a collection of panels on the right.
+This guide shows how Visu*all* sample application can be used to analyze movie dataset available in this application. This sample app assumes a Neo4j database installed on a server side with free and openly available movie dataset. The client side on the other hand is a web page with main components of a menubar and a toolbar on top, a drawing canvas to show relations as a graph / map and a collection of panels on the right.
 
 <p align="center">
   <img src="image/visuall-ss.png" title="Visuall and its various components"/>
@@ -26,7 +26,7 @@ The user may use this menu to highlight map objects that contain a specified sub
   <img src="image/search-example.png" width="480" title="Result of search for Neo in a sample map highlighted in yellow"/>
 </p>
 
-The layout operations may be used to either "tidy up" the layout of the current map using `Layout > Perform Layout`. This operation takes current locations of map objects into account and performs an *incremental layout* by optimizing their geometric distances to be in line with their graph theoretic distances. However, if you think that you're not happy with the current layout and would like a new one to be calculated *from sctratch*, they you should perform `Layout > Recalculate Layout`. Notice that an incremental layout is applied on some interactive operations where the result of a query is *merged* into the current map instead of replacing it. When, however, the result of an operation is to *replace* the current map content, layout is recalculated from scratch. Below is the same movie network laid out randomly (left), and automatically by Visuall (right).
+The layout operations may be used to either "tidy up" the layout of the current map using `Layout > Perform Layout`. This operation takes current locations of map objects into account and performs an *incremental layout* by optimizing their geometric distances to be in line with their graph theoretic distances. However, if you think that you're not happy with the current layout and would like a new one to be calculated *from scratch*then you should perform `Layout > Recalculate Layout`. Notice that an incremental layout is applied on some interactive operations where the result of a query is *merged* into the current map instead of replacing it. When, however, the result of an operation is to *replace* the current map content, layout is recalculated from scratch. Below is the same movie network laid out randomly (left), and automatically by Visuall (right).
 
 <p align="center">
   <img src="image/layout-before.png" height="220"/>&emsp;&emsp;&emsp;&emsp;
@@ -37,7 +37,7 @@ A quick help is available under the Help menu to quickly enumerate some gestures
 
 ### Context menus
 
-Visu*all* has some context dependant operations per node and edge type as well as for the map. To enable the context menu of a specific map object, simply right click on that object. For instance, when you click on a movie, you'll be presented with a set of operations that are specific to movies such as "Use Movie Poster", which brings and uses the poster of the associated movie in the map from a public web service. To pop up the graph menu, right-click on the canvas, where there is no node or edge.
+Visu*all* has some context dependent operations per node and edge type as well as for the map. To enable the context menu of a specific map object, simply right click on that object. For instance, when you click on a movie, you'll be presented with a set of operations that are specific to movies such as "Use Movie Poster", which brings and uses the poster of the associated movie in the map from a public web service. To pop up the graph menu, right-click on the canvas, where there is no node or edge.
 
 <p align="center">
   <img src="image/context-menu-example.png" width="320"/>
@@ -45,7 +45,7 @@ Visu*all* has some context dependant operations per node and edge type as well a
 
 ## Toolbar
 
-A toolbar is available right under the menubar to lists some frequently needed operations grouped in the same manner as the menu.
+A toolbar is available right under the menubar to list some frequently needed operations grouped in the same manner as the menu.
 
 ## Object Inspection
 
@@ -80,7 +80,7 @@ One important way to reduce complexity of a drawing is to filter out certain typ
 
 ### Filtering by rule
 
-Often times, the user will like to filter the content available in the database or in the client side by some rules. Visu*all* facilitates this by letting the user to put together some rules via relational and logical operators.
+Oftentimes, the user will like to filter the content available in the database or in the client side by some rules. Visu*all* facilitates this by letting the user to put together some rules via relational and logical operators.
 
 First, the user chooses an object type, followed by a property of that object type, a relational operator, and a value. For instance, if we are interested in movies whose rating is greater than 8, we should choose the object type `Movie`, choose the property `rating`, select >, and input 8 as the value. Then, upon clicking the + icon, the rule is added as shown below.
 
@@ -88,7 +88,7 @@ First, the user chooses an object type, followed by a property of that object ty
   <img src="image/filter-by-rule-example-1.png" width="300"/>
 </p>
 
-In case the chosen object type is a node, the user may also choose an incident edge type on that particular node type. For instance, when the object type is `Person`, along with the properties of `Person` objects such as name, compatible edge types such as `ACTED_IN` will be listed to construct a rule. When an edge type is chosen for a selected node type, the rules will be based on edge count (degree of that node type for that particular edge type). As an example, if we're interested in all persons who acted in more than 5 movies, then we first choose the edge type as `Person`. Then, since the rule is to depend on degree of `Person` nodes, on `ACTED_IN` edges, we select `ACTED_IN` from the dropdown menu. Finally, we select > as the logical operator, 5 as the value, and hit the + sign to add the rule as shown below.
+In case the chosen object type is a node, the user may also choose an incident edge type on that particular node type. For instance, when the object type is `Person`, along with the properties of `Person` objects such as name, compatible edge types such as `ACTED_IN` will be listed to construct a rule. When an edge type is chosen for a selected node type, the rules will be based on edge count (degree of that node type for that particular edge type). As an example, if we're interested in all persons who acted in more than 5 movies, then we first choose the edge type as `Person`. Then, since the rule is to depend on the degree of `Person` nodes, on `ACTED_IN` edges, we select `ACTED_IN` from the dropdown menu. Finally, we select > as the logical operator, 5 as the value, and hit the + sign to add the rule as shown below.
 
 <p align="center">
   <img src="image/filter-by-rule-example-2.png" width="300"/>
@@ -124,17 +124,17 @@ Before we actually run and obtain the result of the rule, we have some options w
 
 - **Merge**: When this option is enabled, the graph currently in the canvas stays and the result is *merged* into it, without avoiding duplication. For example, if the movie "The Matrix" was already in the graph and the query result contains this movie, we do not redundantly display "The Matrix" movie as a separate node. This should better enable the user to *connect the dots* between objects under analysis.
 
-The user may change the limit for number of objects to be displayed at once (in the table or in the graph) from the Settings tab in the right panel using the option titled "Query result limit".
+The user may change the limit for the number of objects to be displayed at once (in the table or in the graph) from the Settings tab in the right panel using the option titled "Query result limit".
 
-- <img src="../src/assets/img/maximize.svg" width="16"/> / <img src="../src/assets/img/minimize.svg" width="16"/>: When the user clicks this button the table is maximized or expanded, and can be moved around. It becomes easier to see the full contents in this state. Clicking the icon at the same location again minimizes or docks the table back to the panel. When in minimized state, the number of columns shown in the table can be configured by the user under Settings ("Maximum number of columns in tables"). 
+- <img src="../src/assets/img/maximize.svg" width="16"/> / <img src="../src/assets/img/minimize.svg" width="16"/>: When the user clicks this button the table is maximized or expanded, and can be moved around. It becomes easier to see the full contents in this state. Clicking the icon at the same location again minimizes or docks the table back to the panel. When in a minimized state, the number of columns shown in the table can be configured by the user under Settings ("Maximum number of columns in tables"). 
 
 ## Querying
 
-Filter tab facilitates composition of some useful rules to bring a graph of interest for analysis. However, some specialized queries resulting in more advanced Cypher scripts are needed for most applications. Visu*all* dedicates the Query tab to fulfilling this aim. In our sample application for instance, using the query named "Get actors by movie counts" allows the user to get all actors (and the movies that they played in) who played in at least specified number of movies during the specified time range. The query interface is similar to the "Filter By Rules" interface and allows users to choose whether or not the result is to displayed in the graph canvas and whether or not the result should be merged to the current map or replace it.
+Filter tab facilitates composition of some useful rules to bring a graph of interest for analysis. However, some specialized queries resulting in more advanced Cypher scripts are needed for most applications. Visu*all* dedicates the Query tab to fulfilling this aim. In our sample application for instance, using the query named "Get actors by movie counts" allows the user to get all actors (and the movies that they played in) who played in at least specified number of movies during the specified time range. The query interface is similar to the "Filter By Rules" interface and allows users to choose whether or not the result is to be displayed in the graph canvas and whether or not the result should be merged to the current map or replace it.
 
 In any case, the results are also displayed as a table to enable faster inspection of graph objects.
 
-Below is an example query for finding all actors who played in at least 3 movies between speficific dates from 1960 to 2020.
+Below is an example query for finding all actors who played in at least 3 movies between specific dates from 1960 to 2020.
 
 <p align="center">
     <img src="image/query-example.png" width="720"/>
@@ -161,14 +161,14 @@ First, let's define our terminology:
 
 - **Graph range**, on the other hand, is a constant proportion of the stats range and determines what gets displayed in the graph drawing canvas. 
 
-In below example, three different statistics were configured and is collected for the current graph.
+In below example, three different statistics were configured and are collected for the current graph.
 
 <p align="center">
     <img src="image/timebar-parts.png" width="800"/>
 </p>
 
 ### Unit time
-Depending on the length of the stats range, we determine a *unit time* (e.g. hour or month) and display the time and the corresponding statistics in increments of that unit time. For instance, if the stats range is March 1, 2019 11am to March 2, 2019, 2pm then the unit time is hours by default. However, if the user zooms in to see more refined situation, then the unit would be gradually adjusted to be first minutes, and then seconds if needed. Options for unit time could be as follows: *century*, *decade*, *year*, *quarter* (3 months), *month*, *week*, *day*, *hour*, *minute*, *second*, and *millisecond*. The unit time is also to be used to collect statistics during the current stats range displayed as line and bar charts. Notice that a unit time is to include the beginning of that unit but exclude the end of that unit time. For instance, if the unit time is a year, then each year is to be formed as [12:00:00AM in 1/1/1980,12:00:00AM in 1/1/1981), [12:00:00AM in 1/1/1981, 12:00:00AM in 1/1/1982), and so on.
+Depending on the length of the stats range, we determine a *unit time* (e.g. hour or month) and display the time and the corresponding statistics in increments of that unit time. For instance, if the stats range is March 1, 2019 11am to March 2, 2019, 2pm then the unit time is hours by default. However, if the user zooms in to see a more refined situation, then the unit would be gradually adjusted to be first minutes, and then seconds if needed. Options for unit time could be as follows: *century*, *decade*, *year*, *quarter* (3 months), *month*, *week*, *day*, *hour*, *minute*, *second*, and *millisecond*. The unit time is also to be used to collect statistics during the current stats range displayed as line and bar charts. Notice that a unit time is to include the beginning of that unit but exclude the end of that unit time. For instance, if the unit time is a year, then each year is to be formed as [12:00:00AM in 1/1/1980,12:00:00AM in 1/1/1981), [12:00:00AM in 1/1/1981, 12:00:00AM in 1/1/1982), and so on.
 
 In the above example current unit time is a year. Hence, each stat to be shown (# of nodes, edges, and nodes + edges) is calculated and displayed for each year.
 
@@ -204,7 +204,7 @@ General properties of the map displayed as well as various options on filtering,
 
 - **Show overview window**: Whether or not an overview window (a smaller graph view) is to be shown. This is especially useful with large graphs to navigate the user.
 
-- **Show edge labels**: Whether or not edge labels (types) should be displayed over edges in the map. If there is up to only a few edge types, the user might not need the labels to differentitate the relation types.
+- **Show edge labels**: Whether or not edge labels (types) should be displayed over edges in the map. If there is up to only a few edge types, the user might not need the labels to differentiate the relation types.
 
 - **Fit labels to nodes**: Whether or not the node labels are to fit the node width. If enabled, longer labels will be truncated with ellipses.
 
@@ -212,9 +212,9 @@ General properties of the map displayed as well as various options on filtering,
 
 - **Show query results using**: When a query's result is shown in the graph canvas, if the user enabled merge, do we use *selection* or *highlight* to emphasize the map objects in the result.
 
-- **Query result limit**: Limit for the number of object to be shown at once to the user (as a table and/or as a graph). 
+- **Query result limit**: Limit for the number of objects to be shown at once to the user (as a table and/or as a graph). 
 
-- **Maximum number of columns in tables**: Maximum number of columns in a table resulting from a filter or query operation. Since the right panel has limited width, the users might like to adjust how many columns usually fit in this panel. In any case, as described earlier, the user has the option to expand the table and show in its entirity as a floating dialog.
+- **Maximum number of columns in tables**: Maximum number of columns in a table resulting from a filter or query operation. Since the right panel has limited width, the users might like to adjust how many columns usually fit in this panel. In any case, as described earlier, the user has the option to expand the table and show in its entirety as a floating dialog.
 
 - **Highlight width**: The width (edge or node border thickness) of the highlight operation
 
@@ -250,7 +250,7 @@ General properties of the timebar may be configured through the Settings tab in 
 
 - **Configure Statistics**:
 
-The value(s) to display in line/bar charts are customizable under the Settings tab in section named "Configure Stats".
+The value(s) to display in line/bar charts are customizable under the Settings tab in the section named "Configure Stats".
 
 The user may define which type of objects are to contribute to the statistics and under what conditions/rules with the provided interface. You may choose a proper name for your stat and assign a desired color (in case you don't like the automatically assigned one).
 
