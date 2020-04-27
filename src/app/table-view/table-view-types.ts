@@ -22,6 +22,7 @@ export interface TableViewInput {
   isHide0?: boolean;
   isUseCySelector4Highlight?: boolean;
   isHideLoadGraph?: boolean;
+  isReplace_inHeaders?: boolean;
 }
 
 export interface TableFiltering {

@@ -51,6 +51,9 @@ export class TableViewComponent implements OnInit {
     if (this.inpElem && this.params.results && this.params.results.length > 0) {
       setTimeout(() => { this.inpElem.nativeElement.focus(); }, 0);
     }
+    if (!this.params.isReplace_inHeaders) {
+      this.params.columns = this.params.columns.map(x => x.replace('_', ' '));
+    }
   }
 
   filterBy() {
@@ -96,8 +99,10 @@ export class TableViewComponent implements OnInit {
     this.isDraggable = isDraggable;
     if (this.isDraggable) {
       this.position = { x: -130, y: 0 };
+      this.columnLimit = this.params.columns.length;
     } else {
       this.position = { x: 0, y: 0 };
+      this.columnLimit = this._g.userPrefs.tableColumnLimit.getValue();
     }
   }
 
