@@ -111,7 +111,7 @@ export class Neo4jDb implements DbService {
     let ui2Db = { 'Movie': 'm.primary_title' };
     let orderExpr = this.getOrderByExpression4Query(filter, 'm.primary_title', 'desc', ui2Db);
 
-    let cql = ` MATCH (m:Movie)
+    let cql = ` MATCH (m:Movie)<-[r:ACTOR|ACTRESS]-(:Person)
     WHERE '${genre}' IN m.genres AND m.start_year > ${d1} AND m.start_year < ${d2} ${txtCondition} 
     RETURN DISTINCT ID(m) as id, m.primary_title
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
