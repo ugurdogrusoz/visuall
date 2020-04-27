@@ -86,23 +86,23 @@ export class Neo4jDb implements DbService {
   getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids: string[] | number[], filter: TableFiltering) {
     let idFilter = this.buildIdFilter(ids, true);
     let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
-    let ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
+    let ui2Db = { 'Actor': 'n.primary_name', 'Count': 'degree' };
     let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
 
     let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Movie)
       WHERE ${idFilter} r.act_begin >= ${d1} AND r.act_end <= ${d2}  
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
       WHERE degree >= ${movieCnt} ${txtCondition}
-      RETURN DISTINCT n, edges 
+      RETURN DISTINCT n, edges, degree 
       ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback);
   }
 
   getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any, filter?: TableFiltering) {
     let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.primary_title']);
-    let cql = ` MATCH (m:Movie)
+    let cql = ` MATCH (m:Movie)<-[:ACTOR|ACTRESS]-(:Person)
     WHERE '${genre}' IN m.genres AND m.start_year> ${d1} AND m.start_year < ${d2} ${txtCondition} 
-    RETURN DISTINCT COUNT(*)`;
+    RETURN COUNT( DISTINCT m)`;
     this.runQuery(cql, callback, false);
   }
 
@@ -121,7 +121,7 @@ export class Neo4jDb implements DbService {
   getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids: string[] | number[], filter: TableFiltering) {
     let idFilter = this.buildIdFilter(ids, true);
     let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_title']);
-    let ui2Db = { 'Movie': 'm.primary_title' };
+    let ui2Db = { 'Movie': 'n.primary_title' };
     let orderExpr = this.getOrderByExpression4Query(filter, 'n.primary_title', 'desc', ui2Db);
 
     let cql = `MATCH (n:Movie)<-[r:ACTOR|ACTRESS]-(:Person)
