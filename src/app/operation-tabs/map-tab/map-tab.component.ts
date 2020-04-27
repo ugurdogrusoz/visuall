@@ -253,18 +253,13 @@ export class MapTabComponent implements OnInit {
     for (let i = 0; i < data.data.length; i++) {
       // first column is ID
       let d: TableData[] = [{ val: data.data[i][0], type: TableDataType.string }];
-      // j is column index
-      let j = 0;
       for (let [k, v] of Object.entries(data.data[i][1])) {
         let idx = this.tableInput.columns.indexOf(k);
         if (idx > -1) {
           d[idx + 1] = this.rawData2TableData(k, v);
-        } else {
-          d[j] = { val: '', type: TableDataType.string };
-        }
-        j++;
+        } 
       }
-      for (j = 0; j < d.length; j++) {
+      for (let j = 0; j < this.tableInput.columns.length + 1; j++) {
         if (!d[j]) {
           d[j] = { val: '', type: TableDataType.string };
         }
