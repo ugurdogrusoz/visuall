@@ -69,7 +69,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "act_begin": "datetime",	
+        "act_begin": "datetime",
         "act_end": "datetime"
       },
       "style": {
@@ -91,7 +91,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "act_begin": "datetime",	
+        "act_begin": "datetime",
         "act_end": "datetime"
       },
       "style": {
@@ -113,7 +113,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -135,7 +135,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -157,7 +157,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -179,7 +179,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -201,7 +201,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -223,7 +223,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -245,7 +245,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -267,7 +267,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -289,7 +289,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -309,7 +309,7 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -331,7 +331,7 @@
       "properties": {
         "job": "string",
         "characters": "list",
-        "begin": "datetime",	
+        "begin": "datetime",
         "end": "datetime"
       },
       "style": {
@@ -502,6 +502,16 @@
       "style": {
         "padding": "5%"
       }
+    },
+    {
+      "selector": "edge.cy-expand-collapse-collapsed-edge",
+      "style": {
+        "font-size": "7px",
+        "line-style": "dotted",
+        "curve-style": "bezier",
+        "target-arrow-shape": "triangle",
+        "text-rotation": "autorotate"
+      }
     }
   ],
   "appPreferences": {
@@ -513,6 +523,7 @@
     "isIgnoreCaseInText": false,
     "isOnlyHighlight4LatestQuery": false,
     "isStoreUserProfile": true,
+    "isCollapseEdgesBasedOnType": false,
 
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
@@ -526,6 +537,8 @@
     "mergedElemIndicator": 1,
 
     "compoundPadding": "5%",
+
+    "edgeCollapseLimit": 2,
 
     "avgNodeSize": 40,
 

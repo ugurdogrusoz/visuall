@@ -195,6 +195,35 @@ export class CytoscapeService {
     this._g.cy.style().selector('edge.nolabel')
       .style({ 'label': '' })
       .update();
+
+    this._g.cy.style().selector('edge.cy-expand-collapse-collapsed-edge')
+      .style({
+        'label': (e) => {
+          let d = {};
+          let collapsed = e.data('collapsedEdges');
+          for (let i = 0; i < collapsed.length; i++) {
+            let c = collapsed[i].classes().join();
+            if (d[c]) {
+              d[c] += 1;
+            } else {
+              d[c] = 1;
+            }
+          }
+          let s = '';
+          for (let k in d) {
+            s += k + `(${d[k]}) `
+          }
+          return s.toLowerCase().replace('_', ' ');
+        },
+        'width': (e) => {
+          let n = e.data('collapsedEdges').length;
+          return (3 + Math.log2(n)) + 'px';
+        },
+        'line-color': '#ed9ca7',
+        'target-arrow-color': '#ed9ca7',
+      })
+      .update();
+
     setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
@@ -426,7 +455,35 @@ export class CytoscapeService {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
+    this.handleMultipleEdges();
     setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
+  }
+
+  handleMultipleEdges() {
+    let allEdges = this._g.cy.edges().not('.cy-expand-collapse-collapsed-edge');
+    let sourceTargetPairs = {};
+    for (let i = 0; i < allEdges.length; i++) {
+      let e = allEdges[i];
+      const s = e.data('source');
+      const t = e.data('target');
+      let edgeId = s + t;
+      if (this._g.userPrefs.isCollapseEdgesBasedOnType.getValue()) {
+        edgeId = e.classes().join() + s + t;
+      }
+      if (!sourceTargetPairs[edgeId]) {
+        sourceTargetPairs[edgeId] = { cnt: 1, s: s, t: t };
+      } else {
+        sourceTargetPairs[edgeId]['cnt'] += 1;
+      }
+    }
+    for (let i in sourceTargetPairs) {
+      let curr = sourceTargetPairs[i];
+      if (curr.cnt < this._g.userPrefs.edgeCollapseLimit) {
+        continue;
+      }
+      let nodes = this._g.cy.nodes(`#${curr.s},#${curr.t}`);
+      this._g.expandCollapseApi.collapseEdgesBetweenNodes(nodes);
+    }
   }
 
   highlightElems(isIncremental: boolean, elemIds: string[]) {

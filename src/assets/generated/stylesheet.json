@@ -75,6 +75,16 @@
     }
   },
   {
+    "selector": "edge.cy-expand-collapse-collapsed-edge",
+    "style": {
+      "font-size": "7px",
+      "line-style": "dotted",
+      "curve-style": "bezier",
+      "target-arrow-shape": "triangle",
+      "text-rotation": "autorotate"
+    }
+  },
+  {
     "selector": "node.Person",
     "style": {
       "label": "data(primary_name)",

@@ -260,7 +260,6 @@ export class TimebarMetricEditorComponent implements OnInit {
       }
       fnStr += ' return 0;'
       m.incrementFn = new Function('x', fnStr) as (x: any) => number;
-      console.log(fnStr);
     }
   }
 

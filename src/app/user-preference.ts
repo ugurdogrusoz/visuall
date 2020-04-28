@@ -11,6 +11,7 @@ export interface UserPref {
   isIgnoreCaseInText: BehaviorSubject<boolean>;
   isOnlyHighlight4LatestQuery: BehaviorSubject<boolean>;
   isStoreUserProfile: BehaviorSubject<boolean>;
+  isCollapseEdgesBasedOnType: BehaviorSubject<boolean>;
 
   // Show query results using 'Selection', 'Highlight'
   mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
@@ -20,6 +21,7 @@ export interface UserPref {
   highlightStyles: { wid: BehaviorSubject<number>, color: BehaviorSubject<string> }[];
   currHighlightIdx: BehaviorSubject<number>;
   compoundPadding: BehaviorSubject<string>;
+  edgeCollapseLimit: BehaviorSubject<number>
 
   timebar: {
     isEnabled: BehaviorSubject<boolean>;

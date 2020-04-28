@@ -45,8 +45,10 @@ export class NavbarComponent implements OnInit {
       {
         dropdown: 'View', actions: [
           { txt: 'Hide Selected', id: 'nbi20', fn: 'hideSelected', isStd: true },
-          { txt: 'Hide Unselected', id: 'nbi20', fn: 'hideUnselected', isStd: true },
-          { txt: 'Show All', id: 'nbi21', fn: 'showAll', isStd: true }
+          { txt: 'Hide Unselected', id: 'nbi21', fn: 'hideUnselected', isStd: true },
+          { txt: 'Show All', id: 'nbi22', fn: 'showAll', isStd: true },
+          { txt: 'Expand All Edges', id: 'nbi23', fn: 'expandAllEdges', isStd: true },
+          { txt: 'Collapse All Edges', id: 'nbi24', fn: 'collapseAllEdges', isStd: true }
         ]
       },
       {
@@ -95,7 +97,7 @@ export class NavbarComponent implements OnInit {
     if (this.isLoadFile4Graph) {
       this._cyService.loadFile(this.file.nativeElement.files[0]);
     } else {
-      readTxtFile(this.file.nativeElement.files[0], (s) => { 
+      readTxtFile(this.file.nativeElement.files[0], (s) => {
         this._profile.setUserProfile(s);
         // this._g.operationTabChanged.next(3);
       });
@@ -142,6 +144,10 @@ export class NavbarComponent implements OnInit {
   openQuickHelp() { this._modalService.open(QuickHelpModalComponent); }
 
   openAbout() { this._modalService.open(AboutModalComponent); }
+
+  collapseAllEdges() { this._g.expandCollapseApi.collapseAllEdges() };
+
+  expandAllEdges() { this._g.expandCollapseApi.expandAllEdges() };
 
   getSampleData() {
     this._dbService.getSampleData(x => { this._cyService.loadElementsFromDatabase(x, false) });

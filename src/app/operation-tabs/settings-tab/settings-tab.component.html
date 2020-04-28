@@ -78,6 +78,15 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
+        <label class="form-check-label va-text">Multiple edge collapse limit</label>
+        <div class="mx-1">
+          <input type="number" max="100" min="1" (keydown.enter)="settingChanged(edgeCollapseLimit, 'edgeCollapseLimit')"
+            [(ngModel)]="edgeCollapseLimit" class="form-control inp-3-char va-text">
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
         <label class="form-check-label va-text">Compound padding</label>
         <div class="mx-1">
           <input type="text" (keydown.enter)="settingChanged(compoundPadding, 'compoundPadding')"
