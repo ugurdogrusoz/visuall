@@ -130,7 +130,7 @@ The user may change the limit for the number of objects to be displayed at once 
 
 ## Querying
 
-Filter tab facilitates composition of some useful rules to bring a graph of interest for analysis. However, some specialized queries resulting in more advanced Cypher scripts are needed for most applications. Visu*all* dedicates the Query tab to fulfilling this aim. In our sample application for instance, using the query named "Get actors by movie counts" allows the user to get all actors (and the movies that they played in) who played in at least specified number of movies during the specified time range. The query interface is similar to the "Filter By Rules" interface and allows users to choose whether or not the result is to be displayed in the graph canvas and whether or not the result should be merged to the current map or replace it.
+Filter tab facilitates composition of some useful rules to bring a graph of interest for analysis. However, some specialized queries resulting in more advanced Cypher scripts are needed for most applications. Visu*all* dedicates the Query tab to fulfilling this aim. In our sample application for instance, using the query named "Get actors by title counts" allows the user to get all actors (and the movies that they played in) who played in at least specified number of movies during the specified time range. The query interface is similar to the "Filter By Rules" interface and allows users to choose whether or not the result is to be displayed in the graph canvas and whether or not the result should be merged to the current map or replace it.
 
 In any case, the results are also displayed as a table to enable faster inspection of graph objects.
 

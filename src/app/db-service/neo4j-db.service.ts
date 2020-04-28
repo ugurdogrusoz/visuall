@@ -61,7 +61,7 @@ export class Neo4jDb implements DbService {
 
   getCount4Q0(d1: number, d2: number, movieCount: number, callback: (x) => any, filter?: TableFiltering) {
     let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
-    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Movie)
+    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
     WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${movieCount} ${txtCondition}
@@ -74,7 +74,7 @@ export class Neo4jDb implements DbService {
     let ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
     let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
 
-    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Movie)
+    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
     WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${movieCnt} ${txtCondition}
@@ -89,7 +89,7 @@ export class Neo4jDb implements DbService {
     let ui2Db = { 'Actor': 'n.primary_name', 'Count': 'degree' };
     let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
 
-    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Movie)
+    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
       WHERE ${idFilter} r.act_begin >= ${d1} AND r.act_end <= ${d2}  
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
       WHERE degree >= ${movieCnt} ${txtCondition}
@@ -100,7 +100,7 @@ export class Neo4jDb implements DbService {
 
   getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any, filter?: TableFiltering) {
     let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.primary_title']);
-    let cql = ` MATCH (m:Movie)<-[:ACTOR|ACTRESS]-(:Person)
+    let cql = ` MATCH (m:Title)<-[:ACTOR|ACTRESS]-(:Person)
     WHERE '${genre}' IN m.genres AND m.start_year> ${d1} AND m.start_year < ${d2} ${txtCondition} 
     RETURN COUNT( DISTINCT m)`;
     this.runQuery(cql, callback, false);
@@ -108,10 +108,10 @@ export class Neo4jDb implements DbService {
 
   getTable4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, filter?: TableFiltering) {
     let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.primary_title']);
-    let ui2Db = { 'Movie': 'm.primary_title' };
+    let ui2Db = { 'Title': 'm.primary_title' };
     let orderExpr = this.getOrderByExpression4Query(filter, 'm.primary_title', 'desc', ui2Db);
 
-    let cql = ` MATCH (m:Movie)<-[r:ACTOR|ACTRESS]-(:Person)
+    let cql = ` MATCH (m:Title)<-[r:ACTOR|ACTRESS]-(:Person)
     WHERE '${genre}' IN m.genres AND m.start_year > ${d1} AND m.start_year < ${d2} ${txtCondition} 
     RETURN DISTINCT ID(m) as id, m.primary_title
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
@@ -121,10 +121,10 @@ export class Neo4jDb implements DbService {
   getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids: string[] | number[], filter: TableFiltering) {
     let idFilter = this.buildIdFilter(ids, true);
     let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_title']);
-    let ui2Db = { 'Movie': 'n.primary_title' };
+    let ui2Db = { 'Title': 'n.primary_title' };
     let orderExpr = this.getOrderByExpression4Query(filter, 'n.primary_title', 'desc', ui2Db);
 
-    let cql = `MATCH (n:Movie)<-[r:ACTOR|ACTRESS]-(:Person)
+    let cql = `MATCH (n:Title)<-[r:ACTOR|ACTRESS]-(:Person)
     WHERE '${genre}' IN n.genres AND ${idFilter}  n.start_year > ${d1} AND n.start_year < ${d2}  ${txtCondition}
     WITH n, COLLECT(r) as edges
     RETURN  DISTINCT n, edges
@@ -134,14 +134,14 @@ export class Neo4jDb implements DbService {
 
   getDataForQ1(id: number, d1: number, d2: number, genre: string, callback: (x) => any) {
     let cql =
-      `MATCH p=(m:Movie)<-[:ACTOR|ACTRESS]-(a:Person) 
+      `MATCH p=(m:Title)<-[:ACTOR|ACTRESS]-(a:Person) 
       WHERE '${genre}' IN m.genres AND ID(m) = ${id} AND m.start_year > ${d1} AND m.start_year < ${d2}
      RETURN nodes(p), relationships(p)`;
     this.runQuery(cql, callback);
   }
 
   getMovieGenres(callback: (x: any) => any) {
-    this.runQuery('MATCH (m:Movie) UNWIND m.genres as g return distinct g', callback, false);
+    this.runQuery('MATCH (m:Title) UNWIND m.genres as g return distinct g', callback, false);
   }
 
   private runQuery(query: string, callback: (x: any) => any, isGraphResponse = true) {

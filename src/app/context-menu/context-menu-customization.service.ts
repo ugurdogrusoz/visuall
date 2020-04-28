@@ -37,55 +37,55 @@ export class ContextMenuCustomizationService {
     this._menu = [
       {
         id: 'showMoviesPlayedIn',
-        content: 'Show Movies Played In',
+        content: 'Show Titles Played In',
         selector: 'node.Person',
-        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Movies Played by: ' }, { edgeType: this._act_types }) }
+        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Titles Played by: ' }, { edgeType: this._act_types }) }
       },
       {
         id: 'showMoviesWorkedIn',
-        content: 'Show Movies Worked In',
+        content: 'Show Titles Worked In',
         selector: 'node.Person',
-        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Movies Worked by: ' }, { edgeType: this._non_act_types }) }
+        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Titles Worked by: ' }, { edgeType: this._non_act_types }) }
       },
       {
         id: 'showMoviesOfPerson',
-        content: 'Show All Movies',
+        content: 'Show All Titles',
         selector: 'node.Person',
-        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show All Movies of person: ' }, {}) }
+        onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show All Titles of person: ' }, {}) }
       },
       {
         id: 'getPoster',
-        content: 'Use Movie Poster',
-        selector: 'node.Movie',
+        content: 'Use Title Poster',
+        selector: 'node.Title',
         onClickFunction: this.getPoster.bind(this)
       },
       {
         id: 'go to IMDB',
         content: 'Go to IMDB',
-        selector: 'node.Movie',
+        selector: 'node.Title',
         onClickFunction: this.goInfo.bind(this)
       },
       {
         id: 'showActorsOfMovie',
         content: 'Show Actors/Actresses',
-        selector: 'node.Movie',
+        selector: 'node.Title',
         onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Actors/Actresses of movie: ' }, { edgeType: this._act_types }) }
       },
       {
         id: 'showActorsOfMovie',
         content: 'Show Other Staff',
-        selector: 'node.Movie',
+        selector: 'node.Title',
         onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Other Staff of movie: ' }, { edgeType: this._non_act_types }) }
       },
       {
         id: 'showActorsOfMovie',
         content: 'Show All Persons',
-        selector: 'node.Movie',
+        selector: 'node.Title',
         onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show All Persons of movie: ' }, {}) }
       },
       {
         id: 'displayAllPosters',
-        content: 'Use Movie Posters',
+        content: 'Use Title Posters',
         coreAsWell: true,
         onClickFunction: this.useMoviePoster.bind(this)
       },
@@ -109,7 +109,7 @@ export class ContextMenuCustomizationService {
   }
 
   useMoviePoster() {
-    this._g.cy.nodes('.Movie').forEach((e) => { this.setBgImg2MoviePoster(e) });
+    this._g.cy.nodes('.Title').forEach((e) => { this.setBgImg2MoviePoster(e) });
   }
 
   private setBgImg2MoviePoster(e) {

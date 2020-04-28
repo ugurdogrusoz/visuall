@@ -150,3 +150,8 @@ set n.start_t = start_t, n.end_t = end_t
 MATCH (m:Movie) 
 where m.genres = ["\\N"] 
 set m.genres = []
+
+// rename Movie to Title
+MATCH (n:Movie)
+SET n:Title
+REMOVE n:Movie

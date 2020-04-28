@@ -61,7 +61,7 @@ export class DbAdapterService implements DbService {
   }
 
   getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[], idxes?: number[], filter?: TableFiltering) {
-    let s = `Get actors by movie counts with: "${new Date(d1).toLocaleString()}", "${new Date(d2).toLocaleString()}", "${movieCnt}"`;
+    let s = `Get actors by title counts with: "${new Date(d1).toLocaleString()}", "${new Date(d2).toLocaleString()}", "${movieCnt}"`;
     if (idxes) {
       s += ', ' + idxes.join(',');
     }
@@ -78,7 +78,7 @@ export class DbAdapterService implements DbService {
   }
 
   getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids?: number[] | string[], idxes?: number[], filter?: TableFiltering) {
-    let s = `Get movies by genre with parameters: "${d1}", "${d2}", "${genre}"`;
+    let s = `Get titles by genre with parameters: "${d1}", "${d2}", "${genre}"`;
     if (idxes) {
       s += ', ' + idxes.join(',');
     }

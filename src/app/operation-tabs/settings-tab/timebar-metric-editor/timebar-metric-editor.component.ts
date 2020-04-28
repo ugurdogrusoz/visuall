@@ -38,8 +38,8 @@ export class TimebarMetricEditorComponent implements OnInit {
     let rulesHi = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '>=' }];
     let rulesLo = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '<=' }];
     this.currMetrics = [
-      { incrementFn: null, name: 'lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
-      { incrementFn: null, name: 'highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }];
+      { incrementFn: null, name: 'lowly rated comedies', className: 'Title', rules: rulesLo, color: '#3366cc' },
+      { incrementFn: null, name: 'highly rated comedies', className: 'Title', rules: rulesHi, color: '#ff9900' }];
 
     this.setCurrMetricsFromLocalStorage();
     this.setFnsForMetrics();

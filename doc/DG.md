@@ -44,13 +44,13 @@ One of the essential definitions in this file is the structure of the data: the 
 
 ### Objects
 
-The section named "objects" contains the stucture of different kinds of objects in your graphs. In other words, each *object* corresponds to a *node* type in your graph. For instance, in the sample movie application, there are two classes of nodes: `Person` and `Movie`. 
+The section named "objects" contains the stucture of different kinds of objects in your graphs. In other words, each *object* corresponds to a *node* type in your graph. For instance, in the sample movie application, there are two classes of nodes: `Person` and `Title`. 
 
 Each node has a set of associated *properties* and *style*. Each property has a name and data type. For example, `Person` class has the following properties: `name`, `born`, `start_t`, and `end_t`.  
 
 Each *property* is one of the following data types: `string`, `int`, `float`, `datetime`, `list` and `enum`. Here, `string`, `float`, `int` are standard data types as described by most programming languages. `datetime`, on the other hand, is an integer which represents the date (and time in that date) in [Unix time stamp in milliseconds](https://currentmillis.com/). 
 
-`list` is used to represent a *set of values* for a property. For instance, in our sample application, the `roles` property of `ACTED_IN` assumes a list of values corresponding to the list of roles assumed by the source `Person` in the target `Movie`. When the type of a property is `List`, binary operator used to specify values for it will be `in`. In the example below, we see that Hugo Weaving acted in a number of roles in Cloud Atlas.
+`list` is used to represent a *set of values* for a property. For instance, in our sample application, the `roles` property of `ACTED_IN` assumes a list of values corresponding to the list of roles assumed by the source `Person` in the target `Title`. When the type of a property is `List`, binary operator used to specify values for it will be `in`. In the example below, we see that Hugo Weaving acted in a number of roles in Cloud Atlas.
 
 <p align="center">
     <img src="image/list-example.png" width="480"/>
@@ -220,7 +220,7 @@ As explained in the [User Guide](UG.md), this tab is used to filter the graph ba
 
 The queries defined in [the Query tab](../src/app/operation-tabs/query-tab/query-tab.component.ts) are all application specific ones. Each query here should be an *angular component* with the path `../src/app/operation-tabs/query-tab/`. In Visu*all* sample app, there are two movie related queries:
 - [Get actors with movie counts](../src/app/operation-tabs/query-tab/query0/query0.component.ts) and
-- [Get movies by genre](../src/app/operation-tabs/query-tab/query1/query1.component.ts).
+- [Get titles by genre](../src/app/operation-tabs/query-tab/query1/query1.component.ts).
 
 Name of such components do not have to follow a certain format but in order for them to be visible, they should be inside [the query tab component html file](../src/app/operation-tabs/query-tab/query-tab.component.ts) formatted like
 ```
@@ -228,7 +228,7 @@ Name of such components do not have to follow a certain format but in order for 
 ```
 Also, their display names should be added to [the Query tab component file](../src/app/operation-tabs/query-tab/query-tab.component.ts). For the sample app, we have the following two queries in this file:
 
-`this.queryTypes = ['Get actors by movie counts', 'Get movies by genre'];`
+`this.queryTypes = ['Get actors by title counts', 'Get titles by genre'];`
 
 ### Settings tab
 

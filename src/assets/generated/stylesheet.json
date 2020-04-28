@@ -90,7 +90,7 @@
     }
   },
   {
-    "selector": "node.Movie",
+    "selector": "node.Title",
     "style": {
       "label": "data(primary_title)",
       "color": "#ffc5a8",

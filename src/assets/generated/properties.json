@@ -8,7 +8,7 @@
       "start_t": "datetime",
       "end_t": "datetime"
     },
-    "Movie": {
+    "Title": {
       "end_year": "int",
       "start_year": "int",
       "count_votes": "int",

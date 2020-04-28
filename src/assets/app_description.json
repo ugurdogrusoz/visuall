@@ -30,7 +30,7 @@
         "height": "32px"
       }
     },
-    "Movie": {
+    "Title": {
       "properties": {
         "end_year": "int",
         "start_year": "int",
@@ -64,7 +64,7 @@
   "relations": {
     "ACTOR": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -86,7 +86,7 @@
     },
     "ACTRESS": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -108,7 +108,7 @@
     },
     "DIRECTOR": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -130,7 +130,7 @@
     },
     "WRITER": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -152,7 +152,7 @@
     },
     "PRODUCER": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -174,7 +174,7 @@
     },
     "EDITOR": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -196,7 +196,7 @@
     },
     "COMPOSER": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -218,7 +218,7 @@
     },
     "CINEMATOGRAPHER": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -240,7 +240,7 @@
     },
     "PRODUCTION_DESIGNER": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -262,7 +262,7 @@
     },
     "ARCHIVE_FOOTAGE": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -284,7 +284,7 @@
     },
     "ARCHIVE_SOUND": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -306,7 +306,7 @@
     },
     "KNOWN_FOR": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "begin": "datetime",	
@@ -326,7 +326,7 @@
     },
     "SELF": {
       "source": "Person",
-      "target": "Movie",
+      "target": "Title",
       "isBidirectional": false,
       "properties": {
         "job": "string",
@@ -352,7 +352,7 @@
       "begin_datetime": "start_t",
       "end_datetime": "end_t"
     },
-    "Movie": {
+    "Title": {
       "begin_datetime": "production_start_date",
       "end_datetime": "production_end_date"
     },
@@ -410,14 +410,14 @@
     }
   },
   "enumMapping": {
-    "Movie": {
+    "Title": {
       "is_adult": {
         "0": "No",
         "1": "Yes"
       },
       "title_type": {
         "short": "Short movie",
-        "movie": "Movie",
+        "Title": "Title",
         "tvSeries": "TV series",
         "tvEpisode": "TV episode",
         "tvMiniSeries": "TV mini-series",
