@@ -144,12 +144,11 @@ export class GlobalVariableService {
       const options = { bg: 'white', scale: 3, full: true };
       const base64png: string = this.cy.png(options);
       const elements = this.cy.json().elements;
-      const txt = JSON.stringify(elements, undefined, 4);
 
       let g: GraphHistoryItem = {
         expo: expo,
         base64png: base64png,
-        json: txt
+        json: elements
       };
       this.graphHistory.push(g);
       this.addNewGraphHistoryItem.next(true);

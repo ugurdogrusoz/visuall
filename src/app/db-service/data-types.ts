@@ -29,7 +29,7 @@ export enum DbQueryType {
 export interface GraphHistoryItem {
   expo: string;
   base64png: string;
-  json: string;
+  json: any;
 }
 
 export interface HistoryMetaData {
