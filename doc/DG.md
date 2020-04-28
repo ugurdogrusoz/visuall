@@ -4,9 +4,10 @@ This guide details how a custom application can be built using Visu*all*. We ass
 
 Many of the things from the name and logo of your application to the type and style of nodes and edges to default values of various settings are defined in a so-called [description file](../src/assets/app_description.json). The description file contains many sections as detailed throughout this guide. 
 
-Once this file is prepared, the [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json), resulting in the desired customization, using the command :
-First navigate to ‘src’ file
-`node style-generator.js assets/app_description.json`
+Once this file is prepared, the [style generator](../src/style-generator.js) file modifies [index.html](../src/index.html) file, [styles.css](../src/styles.css) file, [properties.json](../src/assets/generated/properties.json) file and [stylesheet.json](../src/assets/generated/stylesheet.json) file, resulting in the desired customization, using the command:
+- First navigate to `src` folder
+- Then execute `node style-generator.js assets/app_description.json`
+
 Note that some of the changes made in the description file will automatically be shown on the web page without executing the above command. However, it is not always the case. So it is recommended to always run the style generation command after changing the description file.
 
 Here is the overall look of the sample application on movies and people taking part in these movies:
