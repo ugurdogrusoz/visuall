@@ -22,7 +22,7 @@ export class Query0Component implements OnInit {
   }
 
   ngOnInit() {
-    this.movieCnt = 30;
+    this.movieCnt = 40;
     let opt = {
       defaultDate: new Date(1960, 0, 1, 0, 0, 0), enableTime: true, enableSeconds: true, time_24hr: true,
     };
