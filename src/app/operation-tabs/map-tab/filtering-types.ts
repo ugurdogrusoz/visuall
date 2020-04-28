@@ -82,7 +82,7 @@ export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules):
   for (let [i, r] of m.rules.entries()) {
     let boolExp = '';
     // apply property condition
-    if (r.operator && r.inputOperand) {
+    if (r.operator != null && r.operator != undefined && r.inputOperand != null && r.inputOperand != undefined) {
       boolExp = getJsExpressionForMetricRule(r);
     }
     if (i > 0 && prevBoolExp.length > 0) {
@@ -112,34 +112,34 @@ function getJsExpressionForMetricRule(r: Rule) {
     if (r.propertyType == 'edge') {
       return `[${s}].includes(x.connectedEdges('.${r.propertyOperand}').length)`;
     }
-    return `[${s}].includes(x.data().${r.propertyOperand})`;
+    return `[${s}].includes(x.data('${r.propertyOperand}'))`;
   }
   if (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'datetime' || r.propertyType == 'edge') {
     let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
     if (r.propertyType == 'datetime') {
-      return `x.data().${r.propertyOperand} ${op} ${r.rawInput}`;
+      return `x.data('${r.propertyOperand}') ${op} ${r.rawInput}`;
     }
     if (r.propertyType == 'edge') {
       return `x.connectedEdges('.${r.propertyOperand}').length ${op} ${r.inputOperand}`;
     }
-    return `x.data().${r.propertyOperand} ${op} ${r.inputOperand}`;
+    return `x.data('${r.propertyOperand}') ${op} ${r.inputOperand}`;
   }
   if (r.propertyType == 'string') {
     if (r.operator === '=') {
-      return `x.data().${r.propertyOperand} === '${r.inputOperand}'`;
+      return `x.data('${r.propertyOperand}') === '${r.inputOperand}'`;
     }
     let op = NEO4J_2_JS_STR_OPERATORS[r.operator];
-    return `x.data().${r.propertyOperand}.${op}('${r.inputOperand}')`;
+    return `x.data('${r.propertyOperand}').${op}('${r.inputOperand}')`;
   }
   if (r.propertyType == 'list') {
-    return `x.data().${r.propertyOperand}.includes('${r.inputOperand}')`;
+    return `x.data('${r.propertyOperand}').includes('${r.inputOperand}')`;
   }
   if (r.propertyType.startsWith('enum')) {
     let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
     if (r.propertyType.endsWith('string')) {
-      return `x.data().${r.propertyOperand} ${op} '${r.inputOperand}'`;
+      return `x.data('${r.propertyOperand}') ${op} '${r.inputOperand}'`;
     } else {
-      return `x.data().${r.propertyOperand} ${op} ${r.inputOperand}`;
+      return `x.data('${r.propertyOperand}') ${op} ${r.inputOperand}`;
     }
   }
 }

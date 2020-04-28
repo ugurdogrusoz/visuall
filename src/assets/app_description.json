@@ -37,7 +37,7 @@
         "count_votes": "int",
         "rating": "float",
         "genres": "list",
-        "is_adult": "int",
+        "is_adult": "enum,int",
         "original_title": "string",
         "primary_title": "string",
         "runtime_minutes": "int",

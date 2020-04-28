@@ -255,7 +255,7 @@ export class TimebarMetricEditorComponent implements OnInit {
         if (r.propertyType == 'edge') {
           fnStr += `return x.connectedEdges('.${r.propertyOperand}').length;`
         } else {
-          fnStr += `return x.data().${r.propertyOperand};`
+          fnStr += `return x.data('${r.propertyOperand}');`
         }
       }
       fnStr += ' return 0;'
