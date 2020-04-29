@@ -44,12 +44,6 @@ export class ContextMenuService {
         onClickFunction: this.selectAllThisType.bind(this)
       },
       {
-        id: 'deleteElement',
-        content: 'Delete',
-        selector: 'node,edge',
-        onClickFunction: this.deleteElem.bind(this)
-      },
-      {
         id: 'collapseEdge',
         content: 'Collapse',
         selector: this.getCySelector4AllDefinedEdges(),
@@ -61,6 +55,12 @@ export class ContextMenuService {
         selector: 'edge.' + COMPOUND_ELEM_EDGE_CLASS,
         onClickFunction: this.expandEdge.bind(this)
       },
+      {
+        id: 'deleteElement',
+        content: 'Delete',
+        selector: 'node,edge',
+        onClickFunction: this.deleteElem.bind(this)
+      }
     ];
   }
 
@@ -104,7 +104,7 @@ export class ContextMenuService {
     if (!ele) {
       return;
     }
-    this._cyService.collapseMultiEdges(ele.parallelEdges());
+    this._g.expandCollapseApi.collapseEdges(ele.parallelEdges('.' + ele.classes().join()));
   }
 
   expandEdge(event) {

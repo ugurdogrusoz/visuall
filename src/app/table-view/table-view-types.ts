@@ -1,3 +1,5 @@
+import properties from '../../assets/generated/properties.json';
+import AppDescription from '../../assets/app_description.json';
 
 export enum TableDataType {
   string = 0, number = 1, datetime = 2, enum = 3
@@ -23,6 +25,7 @@ export interface TableViewInput {
   isUseCySelector4Highlight?: boolean;
   isHideLoadGraph?: boolean;
   isReplace_inHeaders?: boolean;
+  isDisableHover?: boolean;
 }
 
 export interface TableFiltering {
@@ -33,6 +36,73 @@ export interface TableFiltering {
 }
 
 export interface TableRowMeta {
-  dbIds: number[] | string[]; 
+  dbIds: number[] | string[];
   tableIdx: number[];
+}
+
+export function property2TableData(propName: string, propVal: any, className: string, isEdge: boolean): TableData {
+  let t = '';
+  if (isEdge) {
+    t = properties.edges[className][propName];
+  } else {
+    t = properties.nodes[className][propName];
+  }
+  if (t === undefined || t == null) {
+    return { val: propVal, type: TableDataType.string };
+  } else if (t.startsWith('enum')) {
+    return { val: AppDescription.enumMapping[className][propName][propVal], type: TableDataType.enum };
+  } else if (t == 'string') {
+    return { val: propVal, type: TableDataType.string };
+  } else if (t == 'list') {
+    return { val: propVal.join(), type: TableDataType.string };
+  } else if (t == 'datetime') {
+    return { val: propVal, type: TableDataType.datetime };
+  } else if (t == 'float' || t == 'int') {
+    return { val: propVal, type: TableDataType.number };
+  } else {
+    return { val: 'see rawData2TableData function', type: TableDataType.string };
+  }
+}
+
+export function filterTableDatas(filter: TableFiltering, inp: TableViewInput, isIgnoreCaseInText: boolean) {
+  inp.currPage = 1;
+  let idxHide = [];
+  // filter by text
+  for (let i = 0; i < inp.results.length; i++) {
+    let isMatch = false;
+    // first column is ID
+    for (let j = 1; j < inp.results[i].length; j++) {
+      let curr = inp.results[i][j].val;
+      if (isIgnoreCaseInText) {
+        if ((curr + '').toLowerCase().includes(filter.txt.toLowerCase())) {
+          isMatch = true;
+          break;
+        }
+      } else {
+        if ((curr + '').includes(filter.txt)) {
+          isMatch = true;
+          break;
+        }
+      }
+    }
+    if (!isMatch) {
+      idxHide.push(i);
+    }
+  }
+
+  inp.results = inp.results.filter((_, i) => !idxHide.includes(i));
+
+  // order by
+  if (filter.orderDirection.length > 0) {
+    let i = inp.columns.findIndex(x => x == filter.orderBy);
+    if (i < 0) {
+      console.error('i < 0 !');
+    }
+    i++; // first column is for ID or for highlight
+    if (filter.orderDirection == 'asc') {
+      inp.results = inp.results.sort((a, b) => { if (a[i].val > b[i].val) return 1; if (b[i].val > a[i].val) return -1; return 0 });
+    } else {
+      inp.results = inp.results.sort((a, b) => { if (a[i].val < b[i].val) return 1; if (b[i].val < a[i].val) return -1; return 0 });
+    }
+  }
 }

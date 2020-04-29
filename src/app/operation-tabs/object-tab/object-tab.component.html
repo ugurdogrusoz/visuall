@@ -11,6 +11,10 @@
           <div class="col-8 text-left px-1 va-text">{{item.val}}</div>
         </div>
       </div>
+
+      <app-table-view [params]="compoundEdgeTableInp" [tableFilled]="compoundEdgeTableFilled"
+        (onFilteringChanged)="filterCompoundEdgeTable($event)">
+      </app-table-view>
     </div>
   </div>
 

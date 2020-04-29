@@ -9,7 +9,7 @@ import { TimebarService } from '../../timebar.service';
 import { ClassOption, ClassBasedRules, Rule, RuleSync, getBoolExpressionFromMetric, FilteringRule } from './filtering-types';
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
-import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from 'src/app/table-view/table-view-types';
 import { DbQueryType, GraphResponse, HistoryMetaData } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
 import { MergedElemIndicatorTypes } from 'src/app/user-preference.js';
@@ -33,7 +33,7 @@ export class MapTabComponent implements OnInit {
   filteringRule: ClassBasedRules;
   isFilterOnDb: boolean;
   currProperties: Subject<RuleSync> = new Subject();
-  tableInput: TableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  tableInput: TableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true };
   tableFilled = new Subject<boolean>();
   isClassTypeLocked: boolean;
   private isGroupTabOpen = false;
@@ -256,7 +256,7 @@ export class MapTabComponent implements OnInit {
       for (let [k, v] of Object.entries(data.data[i][1])) {
         let idx = this.tableInput.columns.indexOf(k);
         if (idx > -1) {
-          d[idx + 1] = this.rawData2TableData(k, v);
+          d[idx + 1] = property2TableData(k,v,this.filteringRule.className, this.filteringRule.isEdge)
         } 
       }
       for (let j = 0; j < this.tableInput.columns.length + 1; j++) {
@@ -267,27 +267,6 @@ export class MapTabComponent implements OnInit {
       this.tableInput.results.push(d)
     }
     this.tableFilled.next(true);
-  }
-
-  private rawData2TableData(key: string, val: any): TableData {
-    let t = '';
-    let cName = this.filteringRule.className;
-    if (this.filteringRule.isEdge) {
-      t = properties.edges[cName][key];
-    } else {
-      t = properties.nodes[cName][key];
-    }
-    if (t.startsWith('enum')) {
-      return { val: AppDescription.enumMapping[cName][key][val], type: TableDataType.enum };
-    } else if (t == 'string' || t == 'list') {
-      return { val: val, type: TableDataType.string };
-    } else if (t == 'datetime') {
-      return { val: val, type: TableDataType.datetime };
-    } else if (t == 'float' || t == 'int') {
-      return { val: val, type: TableDataType.number };
-    } else {
-      return { val: 'see rawData2TableData function', type: TableDataType.string };
-    }
   }
 
   maintainChartRange(s: number, e: number) {
@@ -333,7 +312,7 @@ export class MapTabComponent implements OnInit {
 
   resetRule() {
     this.filteringRule = null;
-    this.tableInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+    this.tableInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true };
     this.isClassTypeLocked = false;
     this.selectedClass = this.classOptions[0].text;
     this.changeSelectedClass();

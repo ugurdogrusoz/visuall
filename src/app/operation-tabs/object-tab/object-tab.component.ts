@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
-import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce } from '../../constants';
+import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COMPOUND_ELEM_EDGE_CLASS } from '../../constants';
 import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
 import AppDescription from '../../../assets/app_description.json';
-import { TableViewInput, TableData, TableDataType, TableFiltering } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableData, TableDataType, TableFiltering, property2TableData, filterTableDatas } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 
@@ -20,9 +20,14 @@ export class ObjectTabComponent implements OnInit {
   selectedClasses: string;
   selectedItemProps: any[];
   tableFilled = new Subject<boolean>();
+  compoundEdgeTableFilled = new Subject<boolean>();
 
   tableInput: TableViewInput = {
     columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20,
+    isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
+  };
+  compoundEdgeTableInp: TableViewInput = {
+    columns: ['Type'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, isReplace_inHeaders: true,
     isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
   private NODE_TYPE = '_NODE_';
@@ -52,8 +57,12 @@ export class ObjectTabComponent implements OnInit {
   }
 
   showObjectProps() {
-    const selectedItems = this._g.cy.$(':selected');
-    let props, classNames;
+    if (this._g.cy.$(':selected').filter('.' + COMPOUND_ELEM_EDGE_CLASS).length > 0) {
+      this.showCompoundEdgeProps();
+      return;
+    }
+    const selectedItems = this._g.cy.$(':selected').not('.' + COMPOUND_ELEM_EDGE_CLASS);
+    let props: { [x: string]: any; }, classNames: any[];
     [props, classNames] = this.getCommonObjectProps(selectedItems);
 
     // remove undefined but somehow added properties (cuz of extensions)
@@ -68,6 +77,57 @@ export class ObjectTabComponent implements OnInit {
     classNames = classNames.filter(x => this.nodeClasses.has(x) || this.edgeClasses.has(x));
 
     this.renderObjectProps(props, classNames, selectedItems.length);
+  }
+
+  showCompoundEdgeProps() {
+    const compoundEdges = this._g.cy.edges(':selected').filter('.' + COMPOUND_ELEM_EDGE_CLASS);
+    if (compoundEdges.length < 1) {
+      return;
+    }
+    this.selectedItemProps.length = 0;
+    let idMappingForHighlight = {};
+    let edges = this._g.cy.collection();
+    for (let i = 0; i < compoundEdges.length; i++) {
+      let collapsed = compoundEdges[i].data('collapsedEdges');
+      edges = edges.union(collapsed);
+      for (let j = 0; j < collapsed.length; j++) {
+        idMappingForHighlight[collapsed[j].id()] = compoundEdges[i].id();
+      }
+    }
+    let stdSelectedEdges = this._g.cy.$(':selected').not('.' + COMPOUND_ELEM_EDGE_CLASS)
+    for (let i = 0; i < stdSelectedEdges.length; i++) {
+      idMappingForHighlight[stdSelectedEdges[i].id()] = stdSelectedEdges[i].id();
+    }
+    edges = edges.union(stdSelectedEdges);
+
+    let edgeTypes = edges.map(x => x.classes().join());
+    let definedProperties = [];
+    for (let i = 0; i < edgeTypes.length; i++) {
+      definedProperties.push(...Object.keys(properties.edges[edgeTypes[i]]));
+    }
+    this.compoundEdgeTableInp.columns = ['Type'].concat(Array.from(definedProperties));
+    this.compoundEdgeTableInp.results = [];
+
+    let edgeTypeCnt = {};
+    for (let i = 0; i < edges.length; i++) {
+      let className = edges[i].classes().join();
+      if (edgeTypeCnt[className]) {
+        edgeTypeCnt[className] += 1;
+      } else {
+        edgeTypeCnt[className] = 1;
+      }
+      let row: TableData[] = [{ type: TableDataType.string, val: '#' + idMappingForHighlight[edges[i].id()] }, { type: TableDataType.string, val: className }];
+      for (let j = 0; j < definedProperties.length; j++) {
+        row.push(property2TableData(definedProperties[j], edges[i].data(definedProperties[j]) ?? '', className, true));
+      }
+      this.compoundEdgeTableInp.results.push(row);
+    }
+    this.selectedClasses = '';
+    for (let k in edgeTypeCnt) {
+      this.selectedClasses += k + '(' + edgeTypeCnt[k] + ') ';
+    }
+    this.compoundEdgeTableInp.pageSize = this._g.userPrefs.dataPageSize.getValue();
+    setTimeout(() => this.compoundEdgeTableFilled.next(true), 100);
   }
 
   renderObjectProps(props, classNames, selectedCount) {
@@ -281,6 +341,8 @@ export class ObjectTabComponent implements OnInit {
       }
       this.tableInput.results.push(row);
     }
+    this.tableInput.pageSize = this._g.userPrefs.dataPageSize.getValue();
+
     // let tableView ngOnInit finish
     setTimeout(() => this.tableFilled.next(true), 100);
   }
@@ -300,47 +362,13 @@ export class ObjectTabComponent implements OnInit {
 
   filterTable(filter: TableFiltering) {
     this.showStats();
-    this.tableInput.currPage = 1;
-    let idxHide = [];
-    // filter by text
-    for (let i = 0; i < this.tableInput.results.length; i++) {
-      let isMatch = false;
-      // first column is ID
-      for (let j = 1; j < this.tableInput.results[i].length; j++) {
-        let curr = this.tableInput.results[i][j].val;
-        if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
-          if ((curr + '').toLowerCase().includes(filter.txt.toLowerCase())) {
-            isMatch = true;
-            break;
-          }
-        } else {
-          if ((curr + '').includes(filter.txt)) {
-            isMatch = true;
-            break;
-          }
-        }
-      }
-      if (!isMatch) {
-        idxHide.push(i);
-      }
-    }
-
-    this.tableInput.results = this.tableInput.results.filter((_, i) => !idxHide.includes(i));
-
-    // order by
-    if (filter.orderDirection.length > 0) {
-      let i = this.tableInput.columns.findIndex(x => x == filter.orderBy);
-      if (i < 0) {
-        console.error('i < 0 !');
-      }
-      i++; // first column is for ID or for highlight
-      if (filter.orderDirection == 'asc') {
-        this.tableInput.results = this.tableInput.results.sort((a, b) => { if (a[i].val > b[i].val) return 1; if (b[i].val > a[i].val) return -1; return 0 });
-      } else {
-        this.tableInput.results = this.tableInput.results.sort((a, b) => { if (a[i].val < b[i].val) return 1; if (b[i].val < a[i].val) return -1; return 0 });
-      }
-    }
-    // let tableView ngOnInit finish
+    filterTableDatas(filter, this.tableInput, this._g.userPrefs.isIgnoreCaseInText.getValue());
     setTimeout(() => this.tableFilled.next(true), 100);
+  }
+
+  filterCompoundEdgeTable(filter: TableFiltering) {
+    this.showCompoundEdgeProps();
+    filterTableDatas(filter, this.compoundEdgeTableInp, this._g.userPrefs.isIgnoreCaseInText.getValue());
+    setTimeout(() => this.compoundEdgeTableFilled.next(true), 100);
   }
 }
