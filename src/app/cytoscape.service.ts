@@ -196,7 +196,7 @@ export class CytoscapeService {
       .style({ 'label': '' })
       .update();
 
-    this._g.cy.style().selector('edge.cy-expand-collapse-collapsed-edge')
+    this._g.cy.style().selector('edge.' + C.COMPOUND_ELEM_EDGE_CLASS)
       .style({
         'label': (e) => {
           let d = {};
@@ -219,12 +219,31 @@ export class CytoscapeService {
           let n = e.data('collapsedEdges').length;
           return (3 + Math.log2(n)) + 'px';
         },
-        'line-color': '#ed9ca7',
-        'target-arrow-color': '#ed9ca7',
+        'line-color': this.setColor4CompoundEdge.bind(this),
+        'target-arrow-color': this.setColor4CompoundEdge.bind(this)
       })
       .update();
 
     setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
+  }
+
+  private doElemsMultiClasses(elems) {
+    let classDict = {};
+    for (let i = 0; i < elems.length; i++) {
+      let classes = elems[i].classes();
+      for (let j = 0; j < classes.length; j++) {
+        classDict[classes[j]] = true;
+      }
+    }
+    return Object.keys(classDict).length > 1;
+  }
+
+  private setColor4CompoundEdge(e) {
+    let collapsedEdges = e.data('collapsedEdges');
+    if (this.doElemsMultiClasses(collapsedEdges)) {
+      return '#b3b3b3';
+    }
+    return collapsedEdges[0].style('line-color')
   }
 
   private applyStyle4NewElements() {
@@ -455,19 +474,22 @@ export class CytoscapeService {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
-    this.handleMultipleEdges();
     setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
-  handleMultipleEdges() {
-    let allEdges = this._g.cy.edges().not('.cy-expand-collapse-collapsed-edge');
+  collapseMultiEdges(edges2collapse?: any) {
+    if (!edges2collapse) {
+      edges2collapse = this._g.cy.edges().not('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+    }
     let sourceTargetPairs = {};
-    for (let i = 0; i < allEdges.length; i++) {
-      let e = allEdges[i];
+    let isCollapseBasedOnType = this._g.userPrefs.isCollapseEdgesBasedOnType.getValue();
+    let edgeCollapseLimit = this._g.userPrefs.edgeCollapseLimit.getValue();
+    for (let i = 0; i < edges2collapse.length; i++) {
+      let e = edges2collapse[i];
       const s = e.data('source');
       const t = e.data('target');
       let edgeId = s + t;
-      if (this._g.userPrefs.isCollapseEdgesBasedOnType.getValue()) {
+      if (isCollapseBasedOnType) {
         edgeId = e.classes().join() + s + t;
       }
       if (!sourceTargetPairs[edgeId]) {
@@ -478,7 +500,7 @@ export class CytoscapeService {
     }
     for (let i in sourceTargetPairs) {
       let curr = sourceTargetPairs[i];
-      if (curr.cnt < this._g.userPrefs.edgeCollapseLimit) {
+      if (curr.cnt < edgeCollapseLimit) {
         continue;
       }
       let nodes = this._g.cy.nodes(`#${curr.s},#${curr.t}`);

@@ -7,6 +7,7 @@ import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
 import { ContextMenuCustomizationService } from './context-menu-customization.service';
 import properties from '../../assets/generated/properties.json';
+import { COMPOUND_ELEM_EDGE_CLASS } from './../constants';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,12 @@ export class ContextMenuService {
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _customizationService: ContextMenuCustomizationService) {
 
     this.menu = [
+      {
+        id: 'collapseAllEdges',
+        content: 'Collapse All Edges',
+        coreAsWell: true,
+        onClickFunction: () => { this._cyService.collapseMultiEdges(); }
+      },
       {
         id: 'performLayout',
         content: 'Perform Layout',
@@ -41,6 +48,18 @@ export class ContextMenuService {
         content: 'Delete',
         selector: 'node,edge',
         onClickFunction: this.deleteElem.bind(this)
+      },
+      {
+        id: 'collapseEdge',
+        content: 'Collapse',
+        selector: this.getCySelector4AllDefinedEdges(),
+        onClickFunction: this.collapseEdges.bind(this)
+      },
+      {
+        id: 'expandEdge',
+        content: 'Expand',
+        selector: 'edge.' + COMPOUND_ELEM_EDGE_CLASS,
+        onClickFunction: this.expandEdge.bind(this)
       },
     ];
   }
@@ -70,6 +89,30 @@ export class ContextMenuService {
         this._g.cy.$('.' + c).select();
       }
     }
+  }
+
+  getCySelector4AllDefinedEdges() {
+    let s = [];
+    for (let i in properties.edges) {
+      s.push('edge.' + i)
+    }
+    return s.join(',');
+  }
+
+  collapseEdges(event) {
+    const ele = event.target || event.cyTarget;
+    if (!ele) {
+      return;
+    }
+    this._cyService.collapseMultiEdges(ele.parallelEdges());
+  }
+
+  expandEdge(event) {
+    const ele = event.target || event.cyTarget;
+    if (!ele) {
+      return;
+    }
+    this._g.expandCollapseApi.expandEdges(ele);
   }
 
 }

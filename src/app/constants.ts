@@ -10,6 +10,7 @@ export const MIN_DATE = -59011466152000; // Fri Jan 01 0100 00:00:00 GMT+0155
 export const MAX_DATE = 32503669200000;  // Wed Jan 01 3000 00:00:00 GMT+0300
 export const CY_BATCH_END_DELAY = 100;
 
+export const COMPOUND_ELEM_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge'; // defined in expand-collapse extension
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
 export const FILTER_CLASS_HIDE = 'filter-class-disabled';
 export const MAX_HIGHTLIGHT_WIDTH = 20;

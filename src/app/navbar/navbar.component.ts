@@ -47,8 +47,8 @@ export class NavbarComponent implements OnInit {
           { txt: 'Hide Selected', id: 'nbi20', fn: 'hideSelected', isStd: true },
           { txt: 'Hide Unselected', id: 'nbi21', fn: 'hideUnselected', isStd: true },
           { txt: 'Show All', id: 'nbi22', fn: 'showAll', isStd: true },
-          { txt: 'Expand All Edges', id: 'nbi23', fn: 'expandAllEdges', isStd: true },
-          { txt: 'Collapse All Edges', id: 'nbi24', fn: 'collapseAllEdges', isStd: true }
+          { txt: 'Collapse All Edges', id: 'nbi24', fn: 'collapseAllEdges', isStd: true },
+          { txt: 'Expand All Edges', id: 'nbi23', fn: 'expandAllEdges', isStd: true }
         ]
       },
       {
@@ -145,9 +145,9 @@ export class NavbarComponent implements OnInit {
 
   openAbout() { this._modalService.open(AboutModalComponent); }
 
-  collapseAllEdges() { this._g.expandCollapseApi.collapseAllEdges() };
+  collapseAllEdges() { this._g.expandCollapseApi.collapseAllEdges(); }
 
-  expandAllEdges() { this._g.expandCollapseApi.expandAllEdges() };
+  expandAllEdges() { this._g.expandCollapseApi.expandAllEdges(); }
 
   getSampleData() {
     this._dbService.getSampleData(x => { this._cyService.loadElementsFromDatabase(x, false) });
