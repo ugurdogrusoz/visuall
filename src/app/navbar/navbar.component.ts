@@ -145,7 +145,7 @@ export class NavbarComponent implements OnInit {
 
   openAbout() { this._modalService.open(AboutModalComponent); }
 
-  collapseAllEdges() { this._g.expandCollapseApi.collapseAllEdges(); }
+  collapseAllEdges() { this._cyService.collapseMultiEdges(); }
 
   expandAllEdges() { this._g.expandCollapseApi.expandAllEdges(); }
 
