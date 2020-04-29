@@ -199,21 +199,7 @@ export class CytoscapeService {
     this._g.cy.style().selector('edge.' + C.COMPOUND_ELEM_EDGE_CLASS)
       .style({
         'label': (e) => {
-          let d = {};
-          let collapsed = e.data('collapsedEdges');
-          for (let i = 0; i < collapsed.length; i++) {
-            let c = collapsed[i].classes().join();
-            if (d[c]) {
-              d[c]['cnt'] += 1;
-            } else {
-              d[c] = { cnt: 1, label: collapsed[i].style('label') };
-            }
-          }
-          let s = '';
-          for (let k in d) {
-            s += d[k]['label'] + `(${d[k]['cnt']}) `
-          }
-          return s.toLowerCase().replace('_', ' ');
+          return '(' + e.data('collapsedEdges').length + ')';
         },
         'width': (e) => {
           let n = e.data('collapsedEdges').length;

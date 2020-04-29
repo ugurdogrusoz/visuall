@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Pipe, PipeTransform } from '@angular/core';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../constants';
@@ -6,6 +6,17 @@ import { TableViewInput, TableFiltering } from './table-view-types';
 import { IPosition } from 'angular2-draggable';
 import { Subject } from 'rxjs';
 
+@Pipe({ name: 'replace' })
+export class ReplacePipe implements PipeTransform {
+  transform(value: string, strToReplace: string, replacementStr: string): string {
+
+    if (!value || !strToReplace || !replacementStr) {
+      return value;
+    }
+
+    return value.replace(new RegExp(strToReplace, 'g'), replacementStr);
+  }
+}
 @Component({
   selector: 'app-table-view',
   templateUrl: './table-view.component.html',
@@ -51,9 +62,6 @@ export class TableViewComponent implements OnInit {
     if (this.inpElem && this.params.results && this.params.results.length > 0) {
       setTimeout(() => { this.inpElem.nativeElement.focus(); }, 0);
     }
-    if (!this.params.isReplace_inHeaders) {
-      this.params.columns = this.params.columns.map(x => x.replace('_', ' '));
-    }
   }
 
   filterBy() {
@@ -62,6 +70,9 @@ export class TableViewComponent implements OnInit {
   }
 
   onMouseEnter(id: string) {
+    if (this.params.isDisableHover) {
+      return;
+    }
     if (this.params.isUseCySelector4Highlight) {
       this.highlighterFn({ target: null, type: EV_MOUSE_ON, cySelector: id });
     } else {
@@ -74,6 +85,9 @@ export class TableViewComponent implements OnInit {
   }
 
   onMouseExit(id: string) {
+    if (this.params.isDisableHover) {
+      return;
+    }
     if (this.params.isUseCySelector4Highlight) {
       this.highlighterFn({ target: null, type: EV_MOUSE_OFF, cySelector: id });
     } else {

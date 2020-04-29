@@ -31,7 +31,7 @@
           </th>
           <th scope="col" *ngFor="let col of params.columns | slice:0:columnLimit; let i = index;">
             <a href="#" class="table-header" (click)="columnClicked(i)">
-              {{col}}
+              {{params.isReplace_inHeaders ? (col | replace : '[_]' : ' ') : col }}
               <span *ngIf="sortingIdx == i">
                 <span *ngIf="sortDirection == 'asc'">&#9650;</span>
                 <span *ngIf="sortDirection == 'desc'">&#9660;</span>
