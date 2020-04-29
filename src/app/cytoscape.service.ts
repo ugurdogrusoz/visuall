@@ -204,14 +204,14 @@ export class CytoscapeService {
           for (let i = 0; i < collapsed.length; i++) {
             let c = collapsed[i].classes().join();
             if (d[c]) {
-              d[c] += 1;
+              d[c]['cnt'] += 1;
             } else {
-              d[c] = 1;
+              d[c] = { cnt: 1, label: collapsed[i].style('label') };
             }
           }
           let s = '';
           for (let k in d) {
-            s += k + `(${d[k]}) `
+            s += d[k]['label'] + `(${d[k]['cnt']}) `
           }
           return s.toLowerCase().replace('_', ' ');
         },
