@@ -102,12 +102,18 @@ export class ObjectTabComponent implements OnInit {
     }
     edges = edges.union(stdSelectedEdges);
 
-    let edgeTypes = edges.map(x => x.classes()[0]);
-    let definedProperties = [];
-    for (let i = 0; i < edgeTypes.length; i++) {
-      definedProperties.push(...Object.keys(properties.edges[edgeTypes[i]]));
+    let edgeTypesArr = edges.map(x => x.classes()[0]);
+    let edgeTypes = {};
+    for (let i = 0; i < edgeTypesArr.length; i++) {
+      edgeTypes[edgeTypesArr[i]] = true;
     }
-    this.compoundEdgeTableInp.columns = ['Type'].concat(Array.from(definedProperties));
+    let definedProperties = {};
+    for (let edgeType in edgeTypes) {
+      for (let j in properties.edges[edgeType]) {
+        definedProperties[j] = true;
+      }
+    }
+    this.compoundEdgeTableInp.columns = ['Type'].concat(Object.keys(definedProperties));
     this.compoundEdgeTableInp.results = [];
 
     let edgeTypeCnt = {};
@@ -119,8 +125,8 @@ export class ObjectTabComponent implements OnInit {
         edgeTypeCnt[className] = 1;
       }
       let row: TableData[] = [{ type: TableDataType.string, val: '#' + idMappingForHighlight[edges[i].id()] }, { type: TableDataType.string, val: className }];
-      for (let j = 0; j < definedProperties.length; j++) {
-        row.push(property2TableData(definedProperties[j], edges[i].data(definedProperties[j]) ?? '', className, true));
+      for (let j in definedProperties) {
+        row.push(property2TableData(j, edges[i].data(j) ?? '', className, true));
       }
       this.compoundEdgeTableInp.results.push(row);
     }

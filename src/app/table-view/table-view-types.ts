@@ -112,5 +112,4 @@ export function filterTableDatas(filter: TableFiltering, inp: TableViewInput, is
     inp.resultCnt = inp.results.length;
   }
   inp.results = inp.results.slice(skip, skip + inp.pageSize);
-  console.log('filterTableDatas filter:', filter, ' pageSize: ', inp.pageSize, ' currPage: ', inp.currPage);
 }
