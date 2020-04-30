@@ -416,16 +416,22 @@ export class CytoscapeService {
 
     let current = this._g.cy.nodes(':visible');
     let elemIds: string[] = [];
-    let cy_nodes = [];
+    let cyNodes = [];
     for (let i = 0; i < nodes.length; i++) {
-      cy_nodes.push(this.createCyNode(nodes[i], 'n' + nodes[i].id));
-      elemIds.push('n' + nodes[i].id);
+      let cyNodeId = 'n' + nodes[i].id;
+      cyNodes.push(this.createCyNode(nodes[i], cyNodeId));
+      elemIds.push(cyNodeId);
     }
 
-    let cy_edges = [];
+    let cyEdges = [];
+    let collapsedEdgeIds = this.getCollapsedEdgeIds();
     for (let i = 0; i < edges.length; i++) {
-      cy_edges.push(this.createCyEdge(edges[i], 'e' + edges[i].id));
-      elemIds.push('e' + edges[i].id)
+      let cyEdgeId = 'e' + edges[i].id;
+      if (collapsedEdgeIds[cyEdgeId]) {
+        continue;
+      }
+      cyEdges.push(this.createCyEdge(edges[i], cyEdgeId));
+      elemIds.push(cyEdgeId)
     }
 
     this._g.switchLayoutRandomization(!isIncremental);
@@ -435,8 +441,8 @@ export class CytoscapeService {
     }
     const wasEmpty = this._g.cy.elements().length < 2;
 
-    this._g.cy.add(cy_nodes);
-    this._g.cy.add(cy_edges);
+    this._g.cy.add(cyNodes);
+    this._g.cy.add(cyEdges);
     // elements might already exist but hidden, so show them
     this._g.viewUtils.show(this._g.cy.$(elemIds.map(x => '#' + x).join(',')));
 
@@ -444,8 +450,8 @@ export class CytoscapeService {
 
     if (isIncremental && !wasEmpty) {
       let collection = this._g.cy.collection();
-      for (let i = 0; i < cy_nodes.length; i++) {
-        let node = this._g.cy.getElementById(cy_nodes[i].data.id);
+      for (let i = 0; i < cyNodes.length; i++) {
+        let node = this._g.cy.getElementById(cyNodes[i].data.id);
         if (!current.contains(node)) {
           collection = collection.union(node);
         }
@@ -492,6 +498,18 @@ export class CytoscapeService {
       let nodes = this._g.cy.nodes(`#${curr.s},#${curr.t}`);
       this._g.expandCollapseApi.collapseEdgesBetweenNodes(nodes);
     }
+  }
+
+  getCollapsedEdgeIds(): any {
+    let compoundEdges = this._g.cy.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+    let collapsedEdgeIds = {};
+    for (let i = 0; i < compoundEdges.length; i++) {
+      let collapsed = compoundEdges[i].data('collapsedEdges');
+      for (let j = 0; j < collapsed.length; j++) {
+        collapsedEdgeIds[collapsed[j].id()] = true;
+      }
+    }
+    return collapsedEdgeIds;
   }
 
   highlightElems(isIncremental: boolean, elemIds: string[]) {
