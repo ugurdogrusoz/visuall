@@ -102,7 +102,7 @@ export class ObjectTabComponent implements OnInit {
     }
     edges = edges.union(stdSelectedEdges);
 
-    let edgeTypes = edges.map(x => x.classes().join());
+    let edgeTypes = edges.map(x => x.classes()[0]);
     let definedProperties = [];
     for (let i = 0; i < edgeTypes.length; i++) {
       definedProperties.push(...Object.keys(properties.edges[edgeTypes[i]]));
@@ -112,7 +112,7 @@ export class ObjectTabComponent implements OnInit {
 
     let edgeTypeCnt = {};
     for (let i = 0; i < edges.length; i++) {
-      let className = edges[i].classes().join();
+      let className = edges[i].classes()[0];
       if (edgeTypeCnt[className]) {
         edgeTypeCnt[className] += 1;
       } else {

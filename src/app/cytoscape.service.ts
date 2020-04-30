@@ -482,7 +482,7 @@ export class CytoscapeService {
       const t = e.data('target');
       let edgeId = s + t;
       if (isCollapseBasedOnType) {
-        edgeId = e.classes().join() + s + t;
+        edgeId = e.classes()[0] + s + t;
       }
       if (!sourceTargetPairs[edgeId]) {
         sourceTargetPairs[edgeId] = { cnt: 1, s: s, t: t };
