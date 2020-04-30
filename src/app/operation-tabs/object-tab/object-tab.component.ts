@@ -58,7 +58,7 @@ export class ObjectTabComponent implements OnInit {
 
   showObjectProps() {
     if (this._g.cy.$(':selected').filter('.' + COMPOUND_ELEM_EDGE_CLASS).length > 0) {
-      this.showCompoundEdgeProps();
+      this.showCompoundEdgeProps(true);
       return;
     }
     const selectedItems = this._g.cy.$(':selected').not('.' + COMPOUND_ELEM_EDGE_CLASS);
@@ -79,9 +79,11 @@ export class ObjectTabComponent implements OnInit {
     this.renderObjectProps(props, classNames, selectedItems.length);
   }
 
-  showCompoundEdgeProps() {
+  showCompoundEdgeProps(isNeed2Filter: boolean) {
     const compoundEdges = this._g.cy.edges(':selected').filter('.' + COMPOUND_ELEM_EDGE_CLASS);
-    if (compoundEdges.length < 1) {
+    const selectedNodeCnt = this._g.cy.nodes(':selected').length;
+    this.selectedClasses = '';
+    if (compoundEdges.length < 1 || selectedNodeCnt > 0) {
       return;
     }
     this.selectedItemProps.length = 0;
@@ -94,7 +96,7 @@ export class ObjectTabComponent implements OnInit {
         idMappingForHighlight[collapsed[j].id()] = compoundEdges[i].id();
       }
     }
-    let stdSelectedEdges = this._g.cy.$(':selected').not('.' + COMPOUND_ELEM_EDGE_CLASS)
+    let stdSelectedEdges = this._g.cy.edges(':selected').not('.' + COMPOUND_ELEM_EDGE_CLASS)
     for (let i = 0; i < stdSelectedEdges.length; i++) {
       idMappingForHighlight[stdSelectedEdges[i].id()] = stdSelectedEdges[i].id();
     }
@@ -122,12 +124,19 @@ export class ObjectTabComponent implements OnInit {
       }
       this.compoundEdgeTableInp.results.push(row);
     }
-    this.selectedClasses = '';
     for (let k in edgeTypeCnt) {
       this.selectedClasses += k + '(' + edgeTypeCnt[k] + ') ';
     }
     this.compoundEdgeTableInp.pageSize = this._g.userPrefs.dataPageSize.getValue();
-    setTimeout(() => this.compoundEdgeTableFilled.next(true), 100);
+    this.compoundEdgeTableInp.currPage = 1;
+    this.compoundEdgeTableInp.resultCnt = this.compoundEdgeTableInp.results.length;
+    // if too many edges need to be shown, we should make pagination
+    if (isNeed2Filter) {
+      filterTableDatas({ orderBy: '', orderDirection: '', txt: '' }, this.compoundEdgeTableInp, this._g.userPrefs.isIgnoreCaseInText.getValue());
+    }
+    setTimeout(() => {
+      this.compoundEdgeTableFilled.next(true);
+    }, 100);
   }
 
   renderObjectProps(props, classNames, selectedCount) {
@@ -367,7 +376,7 @@ export class ObjectTabComponent implements OnInit {
   }
 
   filterCompoundEdgeTable(filter: TableFiltering) {
-    this.showCompoundEdgeProps();
+    this.showCompoundEdgeProps(false);
     filterTableDatas(filter, this.compoundEdgeTableInp, this._g.userPrefs.isIgnoreCaseInText.getValue());
     setTimeout(() => this.compoundEdgeTableFilled.next(true), 100);
   }

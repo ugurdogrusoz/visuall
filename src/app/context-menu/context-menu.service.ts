@@ -104,7 +104,7 @@ export class ContextMenuService {
     if (!ele) {
       return;
     }
-    this._g.expandCollapseApi.collapseEdges(ele.parallelEdges('.' + ele.classes().join()));
+    this._cyService.collapseMultiEdges(ele.parallelEdges());
   }
 
   expandEdge(event) {

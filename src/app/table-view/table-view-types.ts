@@ -54,6 +54,9 @@ export function property2TableData(propName: string, propVal: any, className: st
   } else if (t == 'string') {
     return { val: propVal, type: TableDataType.string };
   } else if (t == 'list') {
+    if (typeof propVal === 'string') {
+      return { val: propVal, type: TableDataType.string };
+    }
     return { val: propVal.join(), type: TableDataType.string };
   } else if (t == 'datetime') {
     return { val: propVal, type: TableDataType.datetime };
@@ -65,7 +68,6 @@ export function property2TableData(propName: string, propVal: any, className: st
 }
 
 export function filterTableDatas(filter: TableFiltering, inp: TableViewInput, isIgnoreCaseInText: boolean) {
-  inp.currPage = 1;
   let idxHide = [];
   // filter by text
   for (let i = 0; i < inp.results.length; i++) {
@@ -105,4 +107,10 @@ export function filterTableDatas(filter: TableFiltering, inp: TableViewInput, is
       inp.results = inp.results.sort((a, b) => { if (a[i].val < b[i].val) return 1; if (b[i].val < a[i].val) return -1; return 0 });
     }
   }
+  let skip = filter.skip ?? 0;
+  if (filter.txt.length > 0) {
+    inp.resultCnt = inp.results.length;
+  }
+  inp.results = inp.results.slice(skip, skip + inp.pageSize);
+  console.log('filterTableDatas filter:', filter, ' pageSize: ', inp.pageSize, ' currPage: ', inp.currPage);
 }
