@@ -19,7 +19,7 @@ export class TimebarService {
   constructor(private _g: GlobalVariableService) { }
 
   // this function should show only the provided elements, then should make layout
-  private shownOnlyElems(elems, isRandomize: boolean) {
+  private shownOnlyElems(elems) {
     let alreadyVisible = this._g.cy.nodes(':visible');
     if (alreadyVisible.length > 0) {
       let shownNodes = elems.nodes().difference(alreadyVisible);
@@ -31,11 +31,12 @@ export class TimebarService {
       this._g.performLayout(true, false, this._playingPeriod);
       this.isRandomizedLayout = false;
     } else {
-      if (!this._g.isLoadFromHistory) {
+      if (!this._g.isLoadFromHistory && !this._g.isLoadFromExpandCollapse) {
         this._g.performLayout(false, false, this._playingPeriod);
       } else {
         this._g.cy.fit();
         this._g.isLoadFromHistory = false;
+        this._g.isLoadFromExpandCollapse = false;
       }
     }
     this._g.shownElemsChanged.next(true);

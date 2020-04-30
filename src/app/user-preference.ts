@@ -12,7 +12,8 @@ export interface UserPref {
   isOnlyHighlight4LatestQuery: BehaviorSubject<boolean>;
   isStoreUserProfile: BehaviorSubject<boolean>;
   isCollapseEdgesBasedOnType: BehaviorSubject<boolean>;
-
+  isCollapseMultiEdgesOnLoad: BehaviorSubject<boolean>;
+  
   // Show query results using 'Selection', 'Highlight'
   mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
   dataPageSize: BehaviorSubject<number>;

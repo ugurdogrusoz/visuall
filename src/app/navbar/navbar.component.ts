@@ -147,7 +147,7 @@ export class NavbarComponent implements OnInit {
 
   collapseAllEdges() { this._cyService.collapseMultiEdges(); }
 
-  expandAllEdges() { this._g.expandCollapseApi.expandAllEdges(); }
+  expandAllEdges() { this._cyService.expandMultiEdges(); }
 
   getSampleData() {
     this._dbService.getSampleData(x => { this._cyService.loadElementsFromDatabase(x, false) });

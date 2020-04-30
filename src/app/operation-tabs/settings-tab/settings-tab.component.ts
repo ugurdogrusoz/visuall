@@ -56,6 +56,7 @@ export class SettingsTabComponent implements OnInit {
       { text: 'Ignore case in text operations', isEnable: false, path2userPref: 'isIgnoreCaseInText' },
       { text: 'Show results of latest query only', isEnable: false, path2userPref: 'isOnlyHighlight4LatestQuery' },
       { text: 'Collapse multiple edges based on type', isEnable: false, path2userPref: 'isCollapseEdgesBasedOnType' },
+      { text: 'Collapse multiple edges on load', isEnable: false, path2userPref: 'isCollapseMultiEdgesOnLoad' },
     ];
 
     this.timebarBoolSettings = [
@@ -85,7 +86,8 @@ export class SettingsTabComponent implements OnInit {
     this.generalBoolSettings[4].isEnable = up.isFitLabels2Nodes.getValue();
     this.generalBoolSettings[5].isEnable = up.isIgnoreCaseInText.getValue();
     this.generalBoolSettings[6].isEnable = up.isOnlyHighlight4LatestQuery.getValue();
-    this.generalBoolSettings[6].isEnable = up.isOnlyHighlight4LatestQuery.getValue();
+    this.generalBoolSettings[7].isEnable = up.isCollapseEdgesBasedOnType.getValue();
+    this.generalBoolSettings[8].isEnable = up.isCollapseMultiEdgesOnLoad.getValue();
 
     this.mergedElemIndicator = up.mergedElemIndicator.getValue();
     this.dataPageSize = up.dataPageSize.getValue();

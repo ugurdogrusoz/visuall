@@ -410,7 +410,6 @@ export class CytoscapeService {
       console.error('Empty response from database!');
       return;
     }
-    this._g.cy.startBatch();
     const nodes = data.nodes;
     const edges = data.edges;
 
@@ -428,6 +427,7 @@ export class CytoscapeService {
     for (let i = 0; i < edges.length; i++) {
       let cyEdgeId = 'e' + edges[i].id;
       if (collapsedEdgeIds[cyEdgeId]) {
+        elemIds.push(collapsedEdgeIds[cyEdgeId]);
         continue;
       }
       cyEdges.push(this.createCyEdge(edges[i], cyEdgeId));
@@ -443,6 +443,9 @@ export class CytoscapeService {
 
     this._g.cy.add(cyNodes);
     this._g.cy.add(cyEdges);
+    if (this._g.userPrefs.isCollapseMultiEdgesOnLoad.getValue()) {
+      this.collapseMultiEdges();
+    }
     // elements might already exist but hidden, so show them
     this._g.viewUtils.show(this._g.cy.$(elemIds.map(x => '#' + x).join(',')));
 
@@ -466,7 +469,6 @@ export class CytoscapeService {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
-    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   collapseMultiEdges(edges2collapse?: any) {
@@ -498,6 +500,15 @@ export class CytoscapeService {
       let nodes = this._g.cy.nodes(`#${curr.s},#${curr.t}`);
       this._g.expandCollapseApi.collapseEdgesBetweenNodes(nodes);
     }
+    this._g.isLoadFromExpandCollapse = true;
+  }
+
+  expandMultiEdges(edges2expand?: any) {
+    if (!edges2expand) {
+      edges2expand = this._g.cy.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+    }
+    this._g.expandCollapseApi.expandEdges(edges2expand);
+    this._g.isLoadFromExpandCollapse = true;
   }
 
   getCollapsedEdgeIds(): any {
@@ -506,7 +517,7 @@ export class CytoscapeService {
     for (let i = 0; i < compoundEdges.length; i++) {
       let collapsed = compoundEdges[i].data('collapsedEdges');
       for (let j = 0; j < collapsed.length; j++) {
-        collapsedEdgeIds[collapsed[j].id()] = true;
+        collapsedEdgeIds[collapsed[j].id()] = compoundEdges[i].id();
       }
     }
     return collapsedEdgeIds;

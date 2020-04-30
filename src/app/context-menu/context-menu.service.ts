@@ -112,7 +112,7 @@ export class ContextMenuService {
     if (!ele) {
       return;
     }
-    this._g.expandCollapseApi.expandEdges(ele);
+    this._cyService.expandMultiEdges(ele);
   }
 
 }

@@ -524,7 +524,8 @@
     "isOnlyHighlight4LatestQuery": false,
     "isStoreUserProfile": true,
     "isCollapseEdgesBasedOnType": false,
-
+    "isCollapseMultiEdgesOnLoad": true,
+    
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
     "tableColumnLimit": 3,

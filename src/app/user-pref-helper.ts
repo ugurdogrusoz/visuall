@@ -1,7 +1,7 @@
 import { CytoscapeService } from './cytoscape.service';
 import { TimebarService } from './timebar.service';
 import { GlobalVariableService } from './global-variable.service';
-import { MIN_HIGHTLIGHT_WIDTH, MAX_DATA_PAGE_SIZE, MAX_HIGHTLIGHT_WIDTH, MIN_DATA_PAGE_SIZE, MAX_TABLE_COLUMN_COUNT, MIN_TABLE_COLUMN_COUNT } from './constants';
+import { MAX_DATA_PAGE_SIZE, MIN_DATA_PAGE_SIZE, MAX_TABLE_COLUMN_COUNT, MIN_TABLE_COLUMN_COUNT } from './constants';
 import { UserProfileService } from './user-profile.service';
 
 export class UserPrefHelper {
