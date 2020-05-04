@@ -20,13 +20,14 @@ export class ObjectTabComponent implements OnInit {
   selectedClasses: string;
   selectedItemProps: any[];
   tableFilled = new Subject<boolean>();
-  compoundEdgeTableFilled = new Subject<boolean>();
+  multiObjTableFilled = new Subject<boolean>();
+  isShowTableViewProperties: boolean = false;
 
   tableInput: TableViewInput = {
     columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20,
     isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
-  compoundEdgeTableInp: TableViewInput = {
+  multiObjTableInp: TableViewInput = {
     columns: ['Type'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, isReplace_inHeaders: true,
     isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
@@ -57,13 +58,21 @@ export class ObjectTabComponent implements OnInit {
   }
 
   showObjectProps() {
-    if (this._g.cy.$(':selected').filter('.' + COMPOUND_ELEM_EDGE_CLASS).length > 0) {
+    let selected = this._g.cy.$(':selected');
+    if (selected.filter('.' + COMPOUND_ELEM_EDGE_CLASS).length > 0) {
+      this.isShowTableViewProperties = true;
       this.showCompoundEdgeProps(true);
       return;
     }
-    const selectedItems = this._g.cy.$(':selected').not('.' + COMPOUND_ELEM_EDGE_CLASS);
+    if (selected.length > 1 && (selected.length == selected.filter('node').length || selected.length == selected.filter('edge').length)) {
+      this.isShowTableViewProperties = true;
+      this.showMultiObjTable(true);
+      return;
+    }
+    this.isShowTableViewProperties = false;
+    const selectedNonMeta = selected.not('.' + COMPOUND_ELEM_EDGE_CLASS);
     let props: { [x: string]: any; }, classNames: any[];
-    [props, classNames] = this.getCommonObjectProps(selectedItems);
+    [props, classNames] = this.getCommonObjectProps(selectedNonMeta);
 
     // remove undefined but somehow added properties (cuz of extensions)
     let definedProperties = getPropNamesFromObj([properties.nodes, properties.edges], false);
@@ -75,18 +84,17 @@ export class ObjectTabComponent implements OnInit {
 
     // remove classes added from extensions and other stuff
     classNames = classNames.filter(x => this.nodeClasses.has(x) || this.edgeClasses.has(x));
-
-    this.renderObjectProps(props, classNames, selectedItems.length);
+    this.renderObjectProps(props, classNames, selectedNonMeta.length);
   }
 
   showCompoundEdgeProps(isNeed2Filter: boolean) {
     const compoundEdges = this._g.cy.edges(':selected').filter('.' + COMPOUND_ELEM_EDGE_CLASS);
     const selectedNodeCnt = this._g.cy.nodes(':selected').length;
     this.selectedClasses = '';
+    this.selectedItemProps.length = 0;
     if (compoundEdges.length < 1 || selectedNodeCnt > 0) {
       return;
     }
-    this.selectedItemProps.length = 0;
     let idMappingForHighlight = {};
     let edges = this._g.cy.collection();
     for (let i = 0; i < compoundEdges.length; i++) {
@@ -101,48 +109,73 @@ export class ObjectTabComponent implements OnInit {
       idMappingForHighlight[stdSelectedEdges[i].id()] = stdSelectedEdges[i].id();
     }
     edges = edges.union(stdSelectedEdges);
+    this.fillMultiObjTable(edges, false, idMappingForHighlight, isNeed2Filter);
+  }
 
-    let edgeTypesArr = edges.map(x => x.classes()[0]);
-    let edgeTypes = {};
-    for (let i = 0; i < edgeTypesArr.length; i++) {
-      edgeTypes[edgeTypesArr[i]] = true;
+  private fillMultiObjTable(elems, isNode: boolean, idMappingForHighlight: any, isNeed2Filter: boolean) {
+    let elemTypesArr = elems.map(x => x.classes()[0]);
+    let elemTypes = {};
+    for (let i = 0; i < elemTypesArr.length; i++) {
+      elemTypes[elemTypesArr[i]] = true;
     }
     let definedProperties = {};
-    for (let edgeType in edgeTypes) {
-      for (let j in properties.edges[edgeType]) {
-        definedProperties[j] = true;
-      }
-    }
-    this.compoundEdgeTableInp.columns = ['Type'].concat(Object.keys(definedProperties));
-    this.compoundEdgeTableInp.results = [];
-
-    let edgeTypeCnt = {};
-    for (let i = 0; i < edges.length; i++) {
-      let className = edges[i].classes()[0];
-      if (edgeTypeCnt[className]) {
-        edgeTypeCnt[className] += 1;
+    for (let edgeType in elemTypes) {
+      if (isNode) {
+        for (let j in properties.nodes[edgeType]) {
+          definedProperties[j] = true;
+        }
       } else {
-        edgeTypeCnt[className] = 1;
+        for (let j in properties.edges[edgeType]) {
+          definedProperties[j] = true;
+        }
       }
-      let row: TableData[] = [{ type: TableDataType.string, val: '#' + idMappingForHighlight[edges[i].id()] }, { type: TableDataType.string, val: className }];
+    }
+    this.multiObjTableInp.columns = ['Type'].concat(Object.keys(definedProperties));
+    this.multiObjTableInp.results = [];
+
+    let elemTypeCnt = {};
+    for (let i = 0; i < elems.length; i++) {
+      let className = elems[i].classes()[0];
+      if (elemTypeCnt[className]) {
+        elemTypeCnt[className] += 1;
+      } else {
+        elemTypeCnt[className] = 1;
+      }
+      let row: TableData[] = [{ type: TableDataType.string, val: '#' + idMappingForHighlight[elems[i].id()] }, { type: TableDataType.string, val: className }];
       for (let j in definedProperties) {
-        row.push(property2TableData(j, edges[i].data(j) ?? '', className, true));
+        row.push(property2TableData(j, elems[i].data(j) ?? '', className, !isNode));
       }
-      this.compoundEdgeTableInp.results.push(row);
+      this.multiObjTableInp.results.push(row);
     }
-    for (let k in edgeTypeCnt) {
-      this.selectedClasses += k + '(' + edgeTypeCnt[k] + ') ';
+    for (let k in elemTypeCnt) {
+      this.selectedClasses += k + '(' + elemTypeCnt[k] + ') ';
     }
-    this.compoundEdgeTableInp.pageSize = this._g.userPrefs.dataPageSize.getValue();
-    this.compoundEdgeTableInp.currPage = 1;
-    this.compoundEdgeTableInp.resultCnt = this.compoundEdgeTableInp.results.length;
+    this.multiObjTableInp.pageSize = this._g.userPrefs.dataPageSize.getValue();
+    this.multiObjTableInp.currPage = 1;
+    this.multiObjTableInp.resultCnt = this.multiObjTableInp.results.length;
     // if too many edges need to be shown, we should make pagination
     if (isNeed2Filter) {
-      filterTableDatas({ orderBy: '', orderDirection: '', txt: '' }, this.compoundEdgeTableInp, this._g.userPrefs.isIgnoreCaseInText.getValue());
+      filterTableDatas({ orderBy: '', orderDirection: '', txt: '' }, this.multiObjTableInp, this._g.userPrefs.isIgnoreCaseInText.getValue());
     }
     setTimeout(() => {
-      this.compoundEdgeTableFilled.next(true);
+      this.multiObjTableFilled.next(true);
     }, 100);
+  }
+
+  showMultiObjTable(isNeed2Filter: boolean) {
+    let selected = this._g.cy.$(':selected');
+    this.selectedClasses = '';
+    this.selectedItemProps.length = 0;
+    let hasNode = selected.filter('node').length > 0;
+    if (hasNode && selected.filter('edge').length > 0) {
+      return;
+    }
+    let idMappingForHighlight = {};
+    for (let i = 0; i < selected.length; i++) {
+      let id = selected[i].id();
+      idMappingForHighlight[id] = id;
+    }
+    this.fillMultiObjTable(selected, hasNode, idMappingForHighlight, isNeed2Filter);
   }
 
   renderObjectProps(props, classNames, selectedCount) {
@@ -291,7 +324,6 @@ export class ObjectTabComponent implements OnInit {
 
   showStats() {
     let stat = {};
-
     let classSet = new Set<string>();
     let elems = this._g.cy.$();
     for (let i = 0; i < elems.length; i++) {
@@ -381,9 +413,13 @@ export class ObjectTabComponent implements OnInit {
     setTimeout(() => this.tableFilled.next(true), 100);
   }
 
-  filterCompoundEdgeTable(filter: TableFiltering) {
-    this.showCompoundEdgeProps(false);
-    filterTableDatas(filter, this.compoundEdgeTableInp, this._g.userPrefs.isIgnoreCaseInText.getValue());
-    setTimeout(() => this.compoundEdgeTableFilled.next(true), 100);
+  filterMultiObjTable(filter: TableFiltering) {
+    if (this._g.cy.edges(':selected').filter('.' + COMPOUND_ELEM_EDGE_CLASS).length > 0) {
+      this.showCompoundEdgeProps(false);
+    } else {
+      this.showMultiObjTable(false);
+    }
+    filterTableDatas(filter, this.multiObjTableInp, this._g.userPrefs.isIgnoreCaseInText.getValue());
+    setTimeout(() => this.multiObjTableFilled.next(true), 100);
   }
 }

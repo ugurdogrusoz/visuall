@@ -12,8 +12,8 @@
         </div>
       </div>
 
-      <app-table-view [params]="compoundEdgeTableInp" [tableFilled]="compoundEdgeTableFilled"
-        (onFilteringChanged)="filterCompoundEdgeTable($event)">
+      <app-table-view *ngIf="isShowTableViewProperties" [params]="multiObjTableInp" [tableFilled]="multiObjTableFilled"
+        (onFilteringChanged)="filterMultiObjTable($event)">
       </app-table-view>
     </div>
   </div>
