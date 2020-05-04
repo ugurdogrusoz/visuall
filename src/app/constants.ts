@@ -374,3 +374,18 @@ export function readTxtFile(file: File, cb: (s: string) => void) {
   };
   fileReader.readAsText(file);
 }
+
+export function arrayDiff(smallArr: string[], bigArr: string[]): string[] {
+  let diff: string[] = [];
+  let d = {};
+  for (let i = 0; i < smallArr.length; i++) {
+    d[smallArr[i]] = true;
+  }
+
+  for (let i = 0; i < bigArr.length; i++) {
+    if (!d[bigArr[i]]) {
+      diff.push(bigArr[i]);
+    }
+  }
+  return diff;
+}

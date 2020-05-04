@@ -206,7 +206,8 @@ export class CytoscapeService {
           return (3 + Math.log2(n)) + 'px';
         },
         'line-color': this.setColor4CompoundEdge.bind(this),
-        'target-arrow-color': this.setColor4CompoundEdge.bind(this)
+        'target-arrow-color': this.setColor4CompoundEdge.bind(this),
+        'target-arrow-shape': this.setTargetArrowShape.bind(this),
       })
       .update();
 
@@ -230,6 +231,14 @@ export class CytoscapeService {
       return '#b3b3b3';
     }
     return collapsedEdges[0].style('line-color')
+  }
+
+  private setTargetArrowShape(e) {
+    let collapsedEdges = e.data('collapsedEdges');
+    if (this.doElemsMultiClasses(collapsedEdges)) {
+      return 'triangle';
+    }
+    return collapsedEdges[0].style('target-arrow-shape')
   }
 
   private applyStyle4NewElements() {
@@ -444,9 +453,12 @@ export class CytoscapeService {
 
     this._g.cy.add(cyNodes);
     this._g.cy.add(cyEdges);
+    let compoundEdgeIds = Object.values(collapsedEdgeIds) as string[];
     if (this._g.userPrefs.isCollapseMultiEdgesOnLoad.getValue()) {
       this.collapseMultiEdges();
     }
+    let compoundEdgeIds2 = this._g.cy.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS).map(x => x.id());
+    elemIds.push(...C.arrayDiff(compoundEdgeIds, compoundEdgeIds2));
     // elements might already exist but hidden, so show them
     this._g.viewUtils.show(this._g.cy.$(elemIds.map(x => '#' + x).join(',')));
 
@@ -498,8 +510,8 @@ export class CytoscapeService {
       if (curr.cnt < edgeCollapseLimit) {
         continue;
       }
-      let nodes = this._g.cy.nodes(`#${curr.s},#${curr.t}`);
-      this._g.expandCollapseApi.collapseEdgesBetweenNodes(nodes);
+      let edges = this._g.cy.edges(`[source="${curr.s}"][target="${curr.t}"]`);
+      this._g.expandCollapseApi.collapseEdges(edges);
     }
     this._g.isLoadFromExpandCollapse = true;
   }
