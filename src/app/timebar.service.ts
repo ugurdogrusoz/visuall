@@ -34,7 +34,9 @@ export class TimebarService {
       if (!this._g.isLoadFromHistory && !this._g.isLoadFromExpandCollapse) {
         this._g.performLayout(false, false, this._playingPeriod);
       } else {
-        this._g.cy.fit();
+        if (!this._g.isLoadFromExpandCollapse) {
+          this._g.cy.fit();
+        }
         this._g.isLoadFromHistory = false;
         this._g.isLoadFromExpandCollapse = false;
       }

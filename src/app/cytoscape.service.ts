@@ -380,7 +380,8 @@ export class CytoscapeService {
       expandCollapseCueLineSize: 8, // size of lines used for drawing plus-minus icons
       expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
       collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
-      expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
+      expandCollapseCueSensitivity: 1, // sensitivity of expand-collapse cues
+      allowNestedEdgeCollapse: false
     });
 
     this._g.expandCollapseApi = this._g.cy.expandCollapse('get');
