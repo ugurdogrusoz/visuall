@@ -1,15 +1,25 @@
-<div class="select-query">
-  <p>
-    <div class="va-text">
-      <div class="d-flex align-items-center justify-content-center">
-        <select id="chooseQ" class="custom-select filter-form va-small-text" [(ngModel)]="selectedQuery"
-          (change)="changeQuery($event)">
-          <option ng-hide="model" value="">Please choose a query</option>
-          <option *ngFor="let p of queryTypes" [value]="p">{{p}}</option>
-        </select>
-      </div>
+<div class="panel-group">
+  <div class="panel mx-1">
+    <div class="panel-heading" data-toggle="collapse" data-target="#prop-tab" aria-expanded="true">
+      <span class="panel-title accordion-toggle"><b class="va-heading2">Database Query</b></span>
     </div>
-</div>
 
-<app-query0 *ngIf="selectedIdx==0"></app-query0>
-<app-query1 *ngIf="selectedIdx==1"></app-query1>
+    <div id="prop-tab" class="collapse show text-center m-1">
+      <div class="select-query">
+        <p>
+          <div class="va-text">
+            <div class="d-flex align-items-center justify-content-center">
+              <select id="chooseQ" class="custom-select filter-form va-small-text" [(ngModel)]="selectedQuery"
+                (change)="changeQuery($event)">
+                <option ng-hide="model" value="">Please choose a query</option>
+                <option *ngFor="let p of queryTypes" [value]="p">{{p}}</option>
+              </select>
+            </div>
+          </div>
+      </div>
+
+      <app-query0 *ngIf="selectedIdx==0"></app-query0>
+      <app-query1 *ngIf="selectedIdx==1"></app-query1>
+    </div>
+  </div>
+</div>

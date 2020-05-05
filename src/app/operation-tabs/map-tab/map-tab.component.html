@@ -3,7 +3,6 @@
     <div class="panel-heading" data-toggle="collapse" data-target="#filter-class" aria-expanded="true">
       <span class="panel-title accordion-toggle"><b class="va-heading2">Filter by Node/Edge Type</b></span>
     </div>
-
     <div id="filter-class" class="collapse show text-center m-1">
       <a class="btn btn-sm btn-outline-dark filter-node-class d-inline-flex justify-content-center va-text"
         *ngFor="let nc of nodeClasses" href="#" role="button" (click)="filterElesByClass($event)">{{nc}}</a>

@@ -22,6 +22,7 @@ export class ObjectTabComponent implements OnInit {
   tableFilled = new Subject<boolean>();
   multiObjTableFilled = new Subject<boolean>();
   isShowTableViewProperties: boolean = false;
+  isShowStatsTable: boolean = false;
 
   tableInput: TableViewInput = {
     columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20,
@@ -353,6 +354,7 @@ export class ObjectTabComponent implements OnInit {
     classSet.add(this.NODE_TYPE);
     classSet.add(this.EDGE_TYPE);
     this.setStatStrFromObj(stat, classSet);
+    this.isShowStatsTable = elems.length > 0;
   }
 
   private setStatStrFromObj(stat, classSet: Set<string>) {

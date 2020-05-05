@@ -23,7 +23,7 @@
       <span class="panel-title accordion-toggle"><b class="va-heading2">Statistics</b></span>
     </div>
     <div id="stat-tab" class="collapse">
-      <app-table-view [params]="tableInput" [tableFilled]="tableFilled" (onFilteringChanged)="filterTable($event)">
+      <app-table-view *ngIf="isShowStatsTable" [params]="tableInput" [tableFilled]="tableFilled" (onFilteringChanged)="filterTable($event)">
       </app-table-view>
     </div>
   </div>
