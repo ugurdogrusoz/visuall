@@ -31,7 +31,7 @@ export class CytoscapeComponent implements OnInit {
     if (document.activeElement.tagName == 'INPUT') {
       return;
     }
-    this._g.cy.remove(':selected');
+    this._cyService.deleteSelected(false);
   }
 
   @HostListener('document:keydown.control.a', ['$event'])
