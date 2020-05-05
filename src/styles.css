@@ -118,6 +118,8 @@ body {
   cursor: pointer;
   text-align: center;
   background-color: #eaeaea;
+  /*for setting height of div*/
+  line-height: 1.1;
 }
 
 .subpanel-heading {
