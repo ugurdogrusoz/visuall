@@ -159,8 +159,15 @@ export class CytoscapeService {
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
     this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
     this._g.cy.on('add', C.debounce(this.applyStyle4NewElements, 1000, false).bind(this));
+    this._g.cy.on('remove', C.debounce(this.runLayoutIfNoTimebar, 100, false).bind(this));
     this._timebarService.init();
     this.userPrefHelper.listen4UserPref();
+  }
+
+  private runLayoutIfNoTimebar() {
+    if (!this._g.userPrefs.timebar.isEnabled.getValue()) {
+      this._g.performLayout(false);
+    }
   }
 
   private elemSelected(e) {
