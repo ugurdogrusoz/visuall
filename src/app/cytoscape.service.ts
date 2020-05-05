@@ -492,7 +492,7 @@ export class CytoscapeService {
 
   collapseMultiEdges(edges2collapse?: any) {
     if (!edges2collapse) {
-      edges2collapse = this._g.cy.edges().not('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+      edges2collapse = this._g.cy.edges();
     }
     let sourceTargetPairs = {};
     let isCollapseBasedOnType = this._g.userPrefs.isCollapseEdgesBasedOnType.getValue();
