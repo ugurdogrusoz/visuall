@@ -116,14 +116,12 @@ body {
 
 .panel-heading {
   cursor: pointer;
-  height: 17px;
   text-align: center;
   background-color: #eaeaea;
 }
 
 .subpanel-heading {
   cursor: pointer;
-  height: 17px;
   text-align: center;
   background-color: #eaeaea40;
 }
