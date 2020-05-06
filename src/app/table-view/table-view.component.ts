@@ -41,6 +41,7 @@ export class TableViewComponent implements OnInit {
 
   @Input() params: TableViewInput;
   @Input() tableFilled = new Subject<boolean>();
+  @Input() clearFilter = new Subject<boolean>();
   @Output() onFilteringChanged = new EventEmitter<TableFiltering>();
   @Output() onDataForQueryResult = new EventEmitter<{ dbIds: number[] | string[], tableIdx: number[] }>();
 
@@ -48,6 +49,7 @@ export class TableViewComponent implements OnInit {
 
   ngOnInit() {
     this.tableFilled.subscribe(this.onTableFilled.bind(this));
+    this.clearFilter.subscribe(this.onClearFilter.bind(this));
     this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; if (this.params.columnLimit) { this.columnLimit = this.params.columnLimit; } });
     this.highlighterFn = this._cyService.highlightNeighbors();
     this.position.x = 0;
@@ -62,6 +64,12 @@ export class TableViewComponent implements OnInit {
     if (this.inpElem && this.params.results && this.params.results.length > 0) {
       setTimeout(() => { this.inpElem.nativeElement.focus(); }, 0);
     }
+  }
+
+  private onClearFilter() {
+    this.filterTxt = '';
+    this.sortingIdx = -1;
+    this.sortDirection = '';
   }
 
   filterBy() {

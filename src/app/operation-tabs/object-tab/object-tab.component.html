@@ -12,7 +12,7 @@
         </div>
       </div>
 
-      <app-table-view *ngIf="isShowTableViewProperties" [params]="multiObjTableInp" [tableFilled]="multiObjTableFilled"
+      <app-table-view *ngIf="isShowTableViewProperties" [params]="multiObjTableInp" [tableFilled]="multiObjTableFilled" [clearFilter]="clearMultiObjTableFilter"
         (onFilteringChanged)="filterMultiObjTable($event)">
       </app-table-view>
     </div>

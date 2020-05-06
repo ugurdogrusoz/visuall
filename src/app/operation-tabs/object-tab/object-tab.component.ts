@@ -21,6 +21,7 @@ export class ObjectTabComponent implements OnInit {
   selectedItemProps: any[];
   tableFilled = new Subject<boolean>();
   multiObjTableFilled = new Subject<boolean>();
+  clearMultiObjTableFilter = new Subject<boolean>();
   isShowTableViewProperties: boolean = false;
   isShowStatsTable: boolean = false;
 
@@ -156,6 +157,7 @@ export class ObjectTabComponent implements OnInit {
     this.multiObjTableInp.resultCnt = this.multiObjTableInp.results.length;
     // if too many edges need to be shown, we should make pagination
     if (isNeed2Filter) {
+      this.clearMultiObjTableFilter.next(true);
       filterTableDatas({ orderBy: '', orderDirection: '', txt: '' }, this.multiObjTableInp, this._g.userPrefs.isIgnoreCaseInText.getValue());
     }
     setTimeout(() => {
