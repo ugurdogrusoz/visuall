@@ -295,5 +295,18 @@
       "target-arrow-color": "#aaaaaa",
       "text-rotation": "autorotate"
     }
+  },
+  {
+    "selector": "node.fitlabel",
+    "style": {
+      "text-wrap": "ellipsis",
+      "text-max-width": "data(__wid__)"
+    }
+  },
+  {
+    "selector": "edge.nolabel",
+    "style": {
+      "label": ""
+    }
   }
 ]

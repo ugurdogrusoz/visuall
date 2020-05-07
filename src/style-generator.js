@@ -27,6 +27,9 @@ function parseAppDescription(model) {
   setCyStyles(data['objects'], stylesheet, properties, false);
   setCyStyles(data['relations'], stylesheet, properties);
 
+  // Apply styles that should override existing styles
+  setFixedStyles(stylesheet, data['overrideStyles']);
+
   let path = 'assets/generated/';
   // Beautify JSON output with 2 space tabs and write to file
   writeFile(path + 'stylesheet.json', JSON.stringify(stylesheet, null, 2));

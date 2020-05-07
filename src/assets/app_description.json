@@ -514,6 +514,20 @@
       }
     }
   ],
+  "overrideStyles": [{
+      "selector": "node.fitlabel",
+      "style": {
+        "text-wrap": "ellipsis",
+        "text-max-width": "data(__wid__)"
+      }
+    },
+    {
+      "selector": "edge.nolabel",
+      "style": {
+        "label": ""
+      }
+    }
+  ],
   "appPreferences": {
     "isAutoIncrementalLayoutOnChange": true,
     "isHighlightOnHover": false,
@@ -525,7 +539,7 @@
     "isStoreUserProfile": true,
     "isCollapseEdgesBasedOnType": false,
     "isCollapseMultiEdgesOnLoad": true,
-    
+
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
     "tableColumnLimit": 3,

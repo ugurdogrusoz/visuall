@@ -158,7 +158,7 @@ export class CytoscapeService {
     (<any>window).cy = this._g.cy;
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
     this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
-    this._g.cy.on('add', C.debounce(this.applyStyle4NewElements, 1000, false).bind(this));
+    this._g.cy.on('add', C.debounce(this.applyStyle4NewElements, C.CY_BATCH_END_DELAY, false).bind(this));
     this._timebarService.init();
     this.userPrefHelper.listen4UserPref();
   }
@@ -189,18 +189,9 @@ export class CytoscapeService {
     }
   }
 
-  /** some styles uses functions, so they can't be added using JSON
-   * or they should e added last to overrite some of the previously added
-   */
+  // some styles uses functions, so they can't be added using JSON
   private addOtherStyles() {
     this._g.cy.startBatch();
-    this._g.cy.style().selector('node.fitlabel')
-      .style({ 'text-wrap': 'ellipsis', 'text-max-width': function (ele) { return ele.width() + 'px'; } })
-      .update();
-
-    this._g.cy.style().selector('edge.nolabel')
-      .style({ 'label': '' })
-      .update();
 
     this._g.cy.style().selector('edge.' + C.COMPOUND_ELEM_EDGE_CLASS)
       .style({
@@ -597,6 +588,10 @@ export class CytoscapeService {
 
   fitLabel2Node() {
     this._g.cy.startBatch();
+    let nodes = this._g.cy.nodes();
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i].data('__wid__', nodes[i].width() + 'px');
+    }
     this._g.cy.nodes().removeClass('fitlabel');
     if (this._g.userPrefs.isFitLabels2Nodes.getValue()) {
       this._g.cy.nodes().addClass('fitlabel');

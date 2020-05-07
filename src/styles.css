@@ -160,6 +160,7 @@ body {
 }
 
 /* CSS Method for adding Font Awesome Chevron Icons  symbol for "opening" panels*/
+
 .accordion-toggle:after {
   font-family: 'FontAwesome', sans-serif;
   content: "\f077";
@@ -169,17 +170,19 @@ body {
 }
 
 /* symbol for "collapsed" panels */
+
 .panel-heading.collapsed .accordion-toggle:after {
   content: "\f078";
 }
 
 /* symbol for "collapsed" panels */
+
 .subpanel-heading.collapsed .accordion-toggle:after {
   content: "\f078";
 }
 
-
 /* borders for navigator and map */
+
 .cytoscape-navigator-wrapper {
   position: fixed;
   width: 300px;
