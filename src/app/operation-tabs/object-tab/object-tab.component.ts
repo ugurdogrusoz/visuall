@@ -31,7 +31,7 @@ export class ObjectTabComponent implements OnInit {
   };
   multiObjTableInp: TableViewInput = {
     columns: ['Type'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, isReplace_inHeaders: true,
-    isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
+    isLoadGraph: true, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
   private NODE_TYPE = '_NODE_';
   private EDGE_TYPE = '_EDGE_';
