@@ -28,6 +28,7 @@ export class GlobalVariableService {
   isLoadFromHistory: boolean = false;
   isLoadFromExpandCollapse: boolean = false;
   isUserPrefReady = new BehaviorSubject<boolean>(false);
+  statusMsg = new BehaviorSubject<string>('');
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
@@ -78,7 +79,10 @@ export class GlobalVariableService {
   }
 
   runLayout() {
+    this.statusMsg.next('Performing layout');
+    this.setLoadingStatus(true);
     this.cy.elements().not(':hidden, :transparent').layout(this.layout).run();
+    this.statusMsg.next('Rendering graph');
   }
 
   performLayout(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = 1000) {
@@ -182,5 +186,12 @@ export class GlobalVariableService {
     }
 
     return labels.slice(0, -1);
+  }
+
+  listen4graphEvents() {
+    this.cy.on('layoutstop', () => {
+      this.statusMsg.next('Graph rendered!');
+      this.setLoadingStatus(false);
+    });
   }
 }

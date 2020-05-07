@@ -19,6 +19,7 @@ export class ToolbarComponent implements OnInit {
   @ViewChild('file', { static: false }) file;
   private searchTxt: string;
   menu: ToolbarDiv[];
+  statusMsg: string = '';
 
   constructor(private _cyService: CytoscapeService, private modalService: NgbModal,
     private _g: GlobalVariableService, private _customizationService: ToolbarCustomizationService) {
@@ -55,6 +56,7 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit() {
     this.mergeCustomMenu();
+    this._g.statusMsg.subscribe(x => { this.statusMsg = x });
   }
 
   ngAfterViewInit() {

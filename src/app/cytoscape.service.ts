@@ -161,6 +161,7 @@ export class CytoscapeService {
     this._g.cy.on('add', C.debounce(this.applyStyle4NewElements, C.CY_BATCH_END_DELAY, false).bind(this));
     this._timebarService.init();
     this.userPrefHelper.listen4UserPref();
+    this._g.listen4graphEvents();
   }
 
   private runLayoutIfNoTimebar() {

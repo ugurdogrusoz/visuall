@@ -151,6 +151,7 @@ export class Neo4jDb implements DbService {
     let requestType = isGraphResponse ? 'graph' : 'row';
     console.log(query);
     this._g.setLoadingStatus(true);
+    this._g.statusMsg.next('Executing database query')
     const requestBody = {
       'statements': [{
         'statement': query,
@@ -165,6 +166,7 @@ export class Neo4jDb implements DbService {
         'Authorization': 'Basic ' + btoa(username + ':' + password)
       }
     }).subscribe(x => {
+      this._g.statusMsg.next('Database query results are ready!');
       this._g.setLoadingStatus(false);
       if (isGraphResponse) {
         callback(this.extractGraph(x));
