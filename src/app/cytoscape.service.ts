@@ -422,6 +422,7 @@ export class CytoscapeService {
     const edges = data.edges;
 
     let current = this._g.cy.nodes(':visible');
+    let prevElems = this._g.cy.$(':visible');
     let elemIds: string[] = [];
     let cyNodes = [];
     for (let i = 0; i < nodes.length; i++) {
@@ -474,12 +475,28 @@ export class CytoscapeService {
     }
 
     const shouldRandomize = !isIncremental || wasEmpty;
+    const hasNew = this.hasNewElem(elemIds, prevElems);
     if (this._g.userPrefs.timebar.isEnabled.getValue()) {
       this._timebarService.isRandomizedLayout = shouldRandomize; // make randomized layout on the next load
-    } else {
+    } else if (hasNew) {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
+  }
+
+  hasNewElem(newElemIds: string[], prevElems: any) {
+    let d = {};
+
+    for (let i = 0; i < prevElems.length; i++) {
+      d[prevElems[i].id()] = true;
+    }
+
+    for (let i = 0; i < newElemIds.length; i++) {
+      if (!d[newElemIds[i]]) {
+        return true;
+      }
+    }
+    return false;
   }
 
   collapseMultiEdges(edges2collapse?: any) {
@@ -602,9 +619,9 @@ export class CytoscapeService {
 
   bindHighlightOnHoverListeners() {
     let highlighterFn = this.highlightNeighbors();
-    this._g.cy.on(
-      `${C.EV_MOUSE_ON} ${C.EV_MOUSE_OFF}`, 'node, edge',
-      highlighterFn.bind(this));
+    let events = `${C.EV_MOUSE_ON} ${C.EV_MOUSE_OFF}`;
+    let targets = 'node, edge'
+    this._g.cy.on(events, targets, highlighterFn.bind(this));
   }
 
   highlightNeighbors() {
@@ -854,7 +871,7 @@ export class CytoscapeService {
   bindComponentSelector() {
     let isSelectionLocked: boolean = false;
 
-    this._g.cy.on('taphold', 'node', function (e) {
+    this._g.cy.on('taphold', 'node', (e) => {
       if (!e.originalEvent.shiftKey) {
         return;
       }
@@ -862,9 +879,9 @@ export class CytoscapeService {
       // it selects current node again to prevent that, disable selection until next tap event
       this._g.cy.autounselectify(true);
       isSelectionLocked = true;
-    }.bind(this));
+    });
 
-    this._g.cy.on('free', 'node', function (e) {
+    this._g.cy.on('free', 'node', () => {
       if (!isSelectionLocked) {
         return;
       }
@@ -873,8 +890,7 @@ export class CytoscapeService {
         this._g.cy.autounselectify(false);
         isSelectionLocked = false;
       }, 100);
-
-    }.bind(this));
+    });
   }
 
   setRemovePoppersFn(fn) {
