@@ -14,6 +14,7 @@ export class TimebarService {
   isRandomizedLayout: boolean = false;
   private _timebarExt: Timebar;
   private _playingPeriod: number;
+  private _prevElems: any = null;
   showHideFn: (isHide: boolean) => void;
 
   constructor(private _g: GlobalVariableService) { }
@@ -27,6 +28,12 @@ export class TimebarService {
     }
     this._g.viewUtils.show(elems);
     this._g.viewUtils.hide(this._g.cy.elements().difference(elems));
+
+    const isChanged = this.hasElemsChanged(this._prevElems, elems);
+    this._prevElems = elems;
+    if (!isChanged) {
+      return;
+    }
     if (this.isRandomizedLayout) {
       this._g.performLayout(true, false, this._playingPeriod);
       this.isRandomizedLayout = false;
@@ -42,6 +49,33 @@ export class TimebarService {
       }
     }
     this._g.shownElemsChanged.next(true);
+  }
+
+  private hasElemsChanged(prev: any, curr: any) {
+    if (prev == null || curr == null) {
+      return true;
+    }
+
+    let d1 = {};
+    for (let i = 0; i < prev.length; i++) {
+      d1[prev[i].id()] = true;
+    }
+    for (let i = 0; i < curr.length; i++) {
+      if (!d1[curr[i].id()]) {
+        return true;
+      }
+    }
+
+    let d2 = {};
+    for (let i = 0; i < curr.length; i++) {
+      d2[curr[i].id()] = true;
+    }
+    for (let i = 0; i < prev.length; i++) {
+      if (!d2[prev[i].id()]) {
+        return true;
+      }
+    }
+    return false;
   }
 
   setShowHideFn(fn: (isHide: boolean) => void) {
