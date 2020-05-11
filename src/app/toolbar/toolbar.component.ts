@@ -20,8 +20,9 @@ export class ToolbarComponent implements OnInit {
   private searchTxt: string;
   menu: ToolbarDiv[];
   statusMsg: string = '';
-  statusMsgStack: string[] = [];
+  statusMsgQueue: string[] = [];
   MIN_MSG_DURATION = 1000;
+  msgQueueUpdater = null;
 
   constructor(private _cyService: CytoscapeService, private modalService: NgbModal,
     private _g: GlobalVariableService, private _customizationService: ToolbarCustomizationService) {
@@ -59,18 +60,27 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {
     this.mergeCustomMenu();
     this._g.statusMsg.subscribe(x => {
-      this.statusMsgStack.push(x);
-    });
-    setInterval(() => {
-      if (this.statusMsgStack.length < 1) {
+      this.statusMsgQueue.push(x);
+      if (this.msgQueueUpdater) {
         return;
       }
-      this.statusMsg = this.statusMsgStack.shift();
-      // skip empty string if possbile
-      if (this.statusMsg.length < 1 && this.statusMsgStack.length > 0) {
-        this.statusMsg = this.statusMsgStack.shift();
-      }
-    }, this.MIN_MSG_DURATION);
+      this.processMsgQueue();
+      this.msgQueueUpdater = setInterval(this.processMsgQueue.bind(this), this.MIN_MSG_DURATION);
+    });
+  }
+
+  private processMsgQueue() {
+    if (this.statusMsgQueue.length < 1) {
+      clearInterval(this.msgQueueUpdater);
+      this.msgQueueUpdater = null;
+      return;
+    }
+    this.statusMsg = this.statusMsgQueue.shift();
+    // skip empty string if possbile
+    if (this.statusMsg.length < 1 && this.statusMsgQueue.length > 0) {
+      this.statusMsg = this.statusMsgQueue.shift();
+    }
+
   }
 
   ngAfterViewInit() {

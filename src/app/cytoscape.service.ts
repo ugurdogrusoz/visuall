@@ -422,7 +422,6 @@ export class CytoscapeService {
     const edges = data.edges;
 
     let current = this._g.cy.nodes(':visible');
-    let prevElems = this._g.cy.$(':visible');
     let elemIds: string[] = [];
     let cyNodes = [];
     for (let i = 0; i < nodes.length; i++) {
@@ -448,6 +447,7 @@ export class CytoscapeService {
     if (!isIncremental) {
       this._g.cy.elements().remove();
     }
+    let prevElems = this._g.cy.$(':visible');
     const wasEmpty = this._g.cy.elements().length < 2;
 
     this._g.cy.add(cyNodes);
