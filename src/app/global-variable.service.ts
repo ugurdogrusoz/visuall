@@ -79,10 +79,14 @@ export class GlobalVariableService {
   }
 
   runLayout() {
-    this.statusMsg.next('Performing layout');
+    if (this.layout.randomize) {
+      this.statusMsg.next('Recalculating layout...');
+    } else {
+      this.statusMsg.next('Performing layout...');
+    }
     this.setLoadingStatus(true);
     this.cy.elements().not(':hidden, :transparent').layout(this.layout).run();
-    this.statusMsg.next('Rendering graph');
+    this.statusMsg.next('Rendering graph...');
   }
 
   performLayout(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = 1000) {
@@ -190,7 +194,7 @@ export class GlobalVariableService {
 
   listen4graphEvents() {
     this.cy.on('layoutstop', () => {
-      this.statusMsg.next('Graph rendered!');
+      this.statusMsg.next('');
       this.setLoadingStatus(false);
     });
   }
