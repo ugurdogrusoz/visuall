@@ -28,7 +28,8 @@ export class CytoscapeComponent implements OnInit {
 
   @HostListener('document:keydown.delete', ['$event'])
   deleteHotKeyFn() {
-    if (document.activeElement.tagName == 'INPUT') {
+    const activeElement = document.activeElement as any;
+    if (activeElement.tagName == 'INPUT' && activeElement.value && activeElement.value.length > 0) {
       return;
     }
     this._cyService.deleteSelected(false);
@@ -36,7 +37,8 @@ export class CytoscapeComponent implements OnInit {
 
   @HostListener('document:keydown.control.a', ['$event'])
   selectAllHotKeyFn(event: KeyboardEvent) {
-    if (document.activeElement.tagName == 'INPUT' || document.activeElement.tagName == 'TEXTAREA') {
+    const activeElement = document.activeElement as any;
+    if ((activeElement.tagName == 'INPUT' && activeElement.value && activeElement.value.length > 0) || activeElement.tagName == 'TEXTAREA') {
       return;
     }
     event.preventDefault();

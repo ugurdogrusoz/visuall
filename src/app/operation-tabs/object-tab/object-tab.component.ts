@@ -335,7 +335,7 @@ export class ObjectTabComponent implements OnInit {
       let isSelected = curr.selected();
       let isVisible = curr.visible();
       for (let j = 0; j < c.length; j++) {
-        if (!this.nodeClasses.has(c[j]) && !this.edgeClasses.has(c[j])) {
+        if (!this.nodeClasses.has(c[j]) && !this.edgeClasses.has(c[j]) && c[j] != COMPOUND_ELEM_EDGE_CLASS) {
           continue;
         }
         classSet.add(c[j]);
@@ -375,6 +375,9 @@ export class ObjectTabComponent implements OnInit {
       } else if (c == this.EDGE_TYPE) {
         row[0].val = 'edge';
         row.push({ val: 'Edge', type: TableDataType.string });
+      } else if (c == COMPOUND_ELEM_EDGE_CLASS) {
+        row[0].val = '.' + COMPOUND_ELEM_EDGE_CLASS;
+        row.push({ val: 'Meta edge', type: TableDataType.string });
       } else {
         row.push({ val: c, type: TableDataType.string });
       }
