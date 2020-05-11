@@ -20,6 +20,8 @@ export class ToolbarComponent implements OnInit {
   private searchTxt: string;
   menu: ToolbarDiv[];
   statusMsg: string = '';
+  statusMsgStack: string[] = [];
+  MIN_MSG_DURATION = 1000;
 
   constructor(private _cyService: CytoscapeService, private modalService: NgbModal,
     private _g: GlobalVariableService, private _customizationService: ToolbarCustomizationService) {
@@ -56,7 +58,19 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit() {
     this.mergeCustomMenu();
-    this._g.statusMsg.subscribe(x => { this.statusMsg = x });
+    this._g.statusMsg.subscribe(x => {
+      this.statusMsgStack.push(x);
+    });
+    setInterval(() => {
+      if (this.statusMsgStack.length < 1) {
+        return;
+      }
+      this.statusMsg = this.statusMsgStack.shift();
+      // skip empty string if possbile
+      if (this.statusMsg.length < 1 && this.statusMsgStack.length > 0) {
+        this.statusMsg = this.statusMsgStack.shift();
+      }
+    }, this.MIN_MSG_DURATION);
   }
 
   ngAfterViewInit() {
