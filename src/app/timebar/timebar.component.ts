@@ -4,6 +4,7 @@ import { TIME_UNITS, MIN_DATE, MAX_DATE } from '../constants';
 import flatpickr from 'flatpickr';
 import { Locale } from 'flatpickr/dist/types/locale';
 import { GlobalVariableService } from '../global-variable.service';
+import { debounce, HIDE_EMPTY_TIMEBAR_DELAY } from '../constants';
 
 @Component({
   selector: 'app-timebar',
@@ -38,7 +39,7 @@ export class TimebarComponent implements OnInit {
     this.cssLeftDate1 = (1 - r) / 2 * 100;
     this.cssLeftDate2 = (1 + r) / 2 * 100;
     this.s.setShowHideFn(this.showHide.bind(this));
-    this._g.cy.on('add remove', this.hideIfEmpty.bind(this));
+    this._g.cy.on('add remove', debounce(this.hideIfEmpty, HIDE_EMPTY_TIMEBAR_DELAY, false).bind(this));
   }
 
   playTiming() {
@@ -120,6 +121,9 @@ export class TimebarComponent implements OnInit {
   }
 
   hideIfEmpty() {
+    if (this.isHide) {
+      return;
+    }
     if (this._g.cy.$().length < 1) {
       this.isHide = true;
     }
