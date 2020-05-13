@@ -1,0 +1,26 @@
+button {
+  margin-left: 10rem;
+  float: initial; 
+  color: #1D9AF2;
+  border: 1px solid #1D9AF2;
+  border-radius: 4px;
+  cursor: pointer;
+  height:32px;
+  font-size:14px;
+  transition: all 0.2s ease-in-out;
+  margin-top: 10px;
+}
+button:hover {
+  box-shadow: 1px 1px #53a7ea, 2px 2px #53a7ea, 3px 3px #53a7ea;
+  transform: translateX(-5px);
+}
+
+#sparql{
+  table-layout: fixed;
+  overflow: auto;
+  justify-content: center;
+  margin-top: 20px;
+}
+#autocomplete{
+  width: fit-content;
+}

@@ -14,6 +14,8 @@ import { GlobalVariableService } from 'src/app/global-variable.service';
 export class RecommendComponent implements OnInit , DoCheck{
 
   recommendItems = [];
+
+  email:string = 'sem@homtila.ocm'
   
   constructor(private sharedService : SharedService, private _g:GlobalVariableService) {}
 

@@ -52,7 +52,7 @@ export class ContextMenuCustomizationService {
   }
 
   showRecom(event) {
-    this._g.operationTabChanged.next(4);
+    //this._g.operationTabChanged.next(5);
     this.individuals.splice(this.individuals['']);
     this._ctexData.getElemId(event);
     this._ctexData.getMovieDb().subscribe(data => {

@@ -5,6 +5,9 @@ import { MapTabComponent } from './map-tab/map-tab.component';
 import { QueryTabComponent } from './query-tab/query-tab.component';
 import { SettingsTabComponent } from './settings-tab/settings-tab.component';
 import { TabCustomizationModule } from './tab-customization/tab-customization.module';
+import { SparqlQueryComponent } from './sparql-query/sparql-query.component';
+import { SparqlDbService } from '../db-service/sparql-db.service';
+import { RecommendComponent } from './recommend/recommend.component';
 
 @Component({
   selector: 'app-operation-tabs',

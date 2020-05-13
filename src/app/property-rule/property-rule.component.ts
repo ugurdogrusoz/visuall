@@ -8,6 +8,8 @@ import { Subject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPosition } from 'angular2-draggable';
+import { SharedService } from '../shared.service';
+import { SparqlDbService } from '../db-service/sparql-db.service';
 
 @Component({
   selector: 'app-property-rule',
@@ -39,7 +41,9 @@ export class PropertyRuleComponent implements OnInit {
   txtAreaSize: { width: number, height: number } = { width: 250, height: 150 };
   position: IPosition = { x: 0, y: 0 };
 
-  constructor(private _modalService: NgbModal) { }
+  constructor(private _modalService: NgbModal, private shredService:SharedService, private spqDB:SparqlDbService) {
+    this.spqDB.saveSelectedInput(this.filterInp)
+   }
 
   ngOnInit() {
     this.propertyChanged.subscribe(v => {
@@ -55,6 +59,7 @@ export class PropertyRuleComponent implements OnInit {
     this.selectedProp = null;
     this.selectedOperatorKey = null;
     this.changeSelectedProp();
+    
   }
 
   changeSelectedProp() {
@@ -76,6 +81,10 @@ export class PropertyRuleComponent implements OnInit {
 
     this.operators[this.NO_OPERATION] = this.NO_OPERATION;
     this.operatorKeys.push(this.NOT_SELECTED);
+
+    
+    
+
     if (!attrType) {
       return;
     }
@@ -98,6 +107,23 @@ export class PropertyRuleComponent implements OnInit {
 
       flatpickr(this.dateInp.nativeElement, opt);
     }
+    this.getProp(this.selectedProp);
+    
+  }
+
+
+  filterInpValue(value){
+    this.shredService.setFilterInput(value)
+    this.spqDB.saveSelectedInput(this.filterInp);
+  }
+  getOpKeys(value){
+    this.shredService.setOpKeys(value);
+    this.spqDB.saveOpKey(this.selectedOperatorKey);
+  }
+  getProp(value){
+    this.shredService.setProp(value);
+    this.spqDB.saveProp(this.selectedProp);
+
   }
 
   onAddRuleClick() {
@@ -105,9 +131,14 @@ export class PropertyRuleComponent implements OnInit {
     const attribute = this.selectedProp;
     let value: any = this.filterInp;
     let rawValue: any = this.filterInp;
+    this.filterInpValue(value);
 
     let operator = this.operators[this.selectedOperatorKey];
     let atType = this.attributeType;
+    this.getOpKeys(operator);
+
+
+
     if (atType && atType.startsWith('enum')) {
       atType = atType.substr(atType.indexOf(',') + 1);
     }
@@ -193,7 +224,9 @@ export class PropertyRuleComponent implements OnInit {
     }
     this.isShowTxtArea = true;
     this.currInpType = 'text';
+    
   }
+  
 
   txtAreaPopupOk() {
     this.filterInp = this.textAreaInp.trim().split('\n').join(',');

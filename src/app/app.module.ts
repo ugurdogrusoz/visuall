@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
@@ -29,6 +30,12 @@ import { GraphTheoreticPropertiesTabComponent } from './operation-tabs/map-tab/g
 import { GraphHistoryComponent } from './graph-history/graph-history.component';
 import { TabCustomizationModule } from './operation-tabs/tab-customization/tab-customization.module';
 import { SaveProfileModalComponent } from './popups/save-profile-modal/save-profile-modal.component';
+import { SparqlQueryComponent } from './operation-tabs/sparql-query/sparql-query.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatAutocompleteModule} from '@angular/material/autocomplete'
+import {AutocompleteLibModule} from 'angular-ng-autocomplete';
+import { RecommendComponent } from './operation-tabs/recommend/recommend.component';
+
 
 @NgModule({
   declarations: [
@@ -54,6 +61,13 @@ import { SaveProfileModalComponent } from './popups/save-profile-modal/save-prof
     GraphTheoreticPropertiesTabComponent,
     GraphHistoryComponent,
     SaveProfileModalComponent,
+    SparqlQueryComponent,
+    RecommendComponent
+    
+    
+    
+   
+    
   ],
   imports: [
     BrowserModule,
@@ -62,7 +76,10 @@ import { SaveProfileModalComponent } from './popups/save-profile-modal/save-prof
     NgbModule,
     AutoSizeInputModule,
     AngularDraggableModule,
-    TabCustomizationModule
+    TabCustomizationModule,
+    BrowserAnimationsModule,
+    MatAutocompleteModule,
+    AutocompleteLibModule
   ],
   providers: [],
   bootstrap: [AppComponent],

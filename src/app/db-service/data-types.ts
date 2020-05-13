@@ -33,3 +33,4 @@ export interface GraphHistoryItem {
   base64png: string;
   json: string;
 } 
+

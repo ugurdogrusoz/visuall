@@ -14,6 +14,8 @@ import { DbQueryType, GraphResponse } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
 import { MergedElemIndicatorTypes } from 'src/app/user-preference.js';
 import { UserProfileService } from 'src/app/user-profile.service';
+import { SparqlDbService } from 'src/app/db-service/sparql-db.service.js';
+import { SharedService } from 'src/app/shared.service.js';
 
 @Component({
   selector: 'app-map-tab',
@@ -45,7 +47,7 @@ export class MapTabComponent implements OnInit {
   currRuleName = 'New rule';
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService,
-    private _timebarService: TimebarService, private _profile: UserProfileService) {
+    private _timebarService: TimebarService, private _profile: UserProfileService, private spqDb: SparqlDbService, private shredService: SharedService) {
     this.isFilterOnDb = true;
     this.tableInput.isMergeGraph = true;
     this.nodeClasses = new Set([]);
@@ -99,9 +101,13 @@ export class MapTabComponent implements OnInit {
       this.filteringRule.rules[j].ruleOperator = 'OR';
     }
   }
-
+  onRecievingClass(value){
+    this.shredService.setlblElem(value);
+    this.spqDb.saveSelectedClass(this.selectedClass);
+  } 
   changeSelectedClass() {
     const txt = this.selectedClass;
+    this.onRecievingClass(txt);
     let isNodeClassSelected: boolean = properties.nodes.hasOwnProperty(txt);
     let isEdgeClassSelected: boolean = properties.edges.hasOwnProperty(txt);
     this.selectedClassProps.length = 0;
