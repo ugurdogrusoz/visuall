@@ -813,11 +813,7 @@ export class CytoscapeService {
   }
 
   markovClustering() {
-    const opt = {
-      attributes: [
-        function () { return 1; }
-      ]
-    };
+    const opt = { attributes: [() => { return 1; }] };
 
     let clusters = this._g.cy.$().markovClustering(opt);
     for (let i = 0; i < clusters.length; i++) {
