@@ -39,7 +39,7 @@ export class TimebarComponent implements OnInit {
     this.cssLeftDate1 = (1 - r) / 2 * 100;
     this.cssLeftDate2 = (1 + r) / 2 * 100;
     this.s.setShowHideFn(this.showHide.bind(this));
-    this._g.cy.on('add remove', debounce(this.hideIfEmpty, HIDE_EMPTY_TIMEBAR_DELAY, false).bind(this));
+    this._g.cy.on('add remove', debounce(this.hideIfEmpty, HIDE_EMPTY_TIMEBAR_DELAY).bind(this));
   }
 
   playTiming() {

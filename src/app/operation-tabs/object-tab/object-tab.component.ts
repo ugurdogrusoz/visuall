@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
-import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COMPOUND_ELEM_EDGE_CLASS } from '../../constants';
+import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COMPOUND_ELEM_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY } from '../../constants';
 import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
 import AppDescription from '../../../assets/app_description.json';
@@ -55,8 +55,8 @@ export class ObjectTabComponent implements OnInit {
     this._g.shownElemsChanged.subscribe(() => { this.showStats() });
     this.showObjectProps();
     this.showStats();
-    this._cyService.showObjPropsFn = debounce(this.showObjectProps, 200, false).bind(this);
-    this._cyService.showStatsFn = debounce(this.showStats, 200, false).bind(this)
+    this._cyService.showObjPropsFn = debounce(this.showObjectProps, OBJ_INFO_UPDATE_DELAY).bind(this);
+    this._cyService.showStatsFn = debounce(this.showStats, OBJ_INFO_UPDATE_DELAY).bind(this)
   }
 
   showObjectProps() {

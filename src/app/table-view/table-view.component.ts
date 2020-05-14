@@ -54,7 +54,7 @@ export class TableViewComponent implements OnInit {
     this.highlighterFn = this._cyService.highlightNeighbors();
     this.position.x = 0;
     this.position.y = 0;
-    this.filterTxtChanged = debounce(this.filterBy.bind(this), 1000, false);
+    this.filterTxtChanged = debounce(this.filterBy.bind(this), 1000);
   }
 
   private onTableFilled() {

@@ -157,7 +157,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     }
 
     let fn = debounce2(() => { this.setBadgeCoords(e, div); }, this.UPDATE_POPPER_WAIT, () => { this.showHideBadge(false, div); }).bind(this);
-    let fn2 = debounce(() => { this.setBadgeVisibility(e, div); }, this.UPDATE_POPPER_WAIT * 2, false).bind(this);
+    let fn2 = debounce(() => { this.setBadgeVisibility(e, div); }, this.UPDATE_POPPER_WAIT * 2).bind(this);
 
     e.on('position', fn);
     e.on('style', fn2);
