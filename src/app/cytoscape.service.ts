@@ -540,11 +540,9 @@ export class CytoscapeService {
   }
 
   collapseNodes() {
-    this._g.expandCollapseApi.collapseAll();
-  }
-
-  expandNodes() {
-
+    if (this._g.cy.nodes(':parent').length > 0) {
+      this._g.expandCollapseApi.collapseAll();
+    }
   }
 
   getCollapsedEdgeIds(): any {
@@ -869,7 +867,9 @@ export class CytoscapeService {
   }
 
   expandAllCompounds() {
-    this._g.expandCollapseApi.expandAll();
+    if (this._g.cy.nodes('.cy-expand-collapse-collapsed-node').length > 0) {
+      this._g.expandCollapseApi.expandAll();
+    }
   }
 
   bindComponentSelector() {
