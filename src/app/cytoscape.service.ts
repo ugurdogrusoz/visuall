@@ -57,7 +57,7 @@ export class CytoscapeService {
       quality: 'default',
       // use random node positions at beginning of layout
       // if this is set to false, then quality option must be 'proof'
-      randomize: true,
+      randomize: false,
       // whether or not to animate the layout
       animate: true,
       // duration of animation in ms, if enabled
@@ -537,6 +537,14 @@ export class CytoscapeService {
     }
     this._g.expandCollapseApi.expandEdges(edges2expand);
     this._g.isLoadFromExpandCollapse = true;
+  }
+
+  collapseNodes() {
+    this._g.expandCollapseApi.collapseAll();
+  }
+
+  expandNodes() {
+
   }
 
   getCollapsedEdgeIds(): any {

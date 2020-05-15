@@ -47,8 +47,10 @@ export class NavbarComponent implements OnInit {
           { txt: 'Hide Selected', id: 'nbi20', fn: 'hideSelected', isStd: true },
           { txt: 'Hide Unselected', id: 'nbi21', fn: 'hideUnselected', isStd: true },
           { txt: 'Show All', id: 'nbi22', fn: 'showAll', isStd: true },
-          { txt: 'Collapse All Edges', id: 'nbi24', fn: 'collapseAllEdges', isStd: true },
-          { txt: 'Expand All Edges', id: 'nbi23', fn: 'expandAllEdges', isStd: true }
+          { txt: 'Collapse All Nodes', id: 'nbi23', fn: 'collapseAllNodes', isStd: true },
+          { txt: 'Expand All Nodes', id: 'nbi24', fn: 'expandAllNodes', isStd: true },
+          { txt: 'Collapse All Edges', id: 'nbi25', fn: 'collapseAllEdges', isStd: true },
+          { txt: 'Expand All Edges', id: 'nbi26', fn: 'expandAllEdges', isStd: true }
         ]
       },
       {
@@ -148,6 +150,10 @@ export class NavbarComponent implements OnInit {
   collapseAllEdges() { this._cyService.collapseMultiEdges(); }
 
   expandAllEdges() { this._cyService.expandMultiEdges(); }
+
+  collapseAllNodes() { this._cyService.collapseNodes(); }
+
+  expandAllNodes() { this._cyService.expandAllCompounds(); }
 
   getSampleData() {
     this._dbService.getSampleData(x => { this._cyService.loadElementsFromDatabase(x, false) });

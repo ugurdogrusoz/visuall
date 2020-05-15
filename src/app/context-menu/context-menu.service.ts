@@ -20,6 +20,12 @@ export class ContextMenuService {
 
     this.menu = [
       {
+        id: 'collapseAllNodes',
+        content: 'Collapse All Nodes',
+        coreAsWell: true,
+        onClickFunction: () => { this._cyService.collapseNodes(); }
+      },
+      {
         id: 'collapseAllEdges',
         content: 'Collapse All Edges',
         coreAsWell: true,
