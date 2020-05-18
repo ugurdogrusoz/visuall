@@ -16,7 +16,7 @@ import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse } from './db-service/data-types';
 import timebar from '../lib/timebar/cytoscape-timebar';
 import { UserPrefHelper } from './user-pref-helper';
-import { MergedElemIndicatorTypes } from './user-preference';
+import { MergedElemIndicatorTypes, TextWrapTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
 
 @Injectable({
@@ -613,14 +613,41 @@ export class CytoscapeService {
   fitLabel2Node() {
     this._g.cy.startBatch();
     let nodes = this._g.cy.nodes();
-    for (let i = 0; i < nodes.length; i++) {
-      nodes[i].data('__wid__', nodes[i].width() + 'px');
-    }
-    this._g.cy.nodes().removeClass('fitlabel');
-    if (this._g.userPrefs.isFitLabels2Nodes.getValue()) {
-      this._g.cy.nodes().addClass('fitlabel');
+    let wrapType = this._g.userPrefs.nodeLabelWrap.getValue();
+
+    nodes.removeClass('ellipsis_label wrap_label');
+    if (wrapType == TextWrapTypes.ellipsis) {
+      for (let i = 0; i < nodes.length; i++) {
+        let origLabel = this._g.getLabels4Elems([nodes[i].id().substr(1)]);
+        nodes[i].data('__label__', this.truncateText(origLabel, nodes[i]));
+      }
+      nodes.addClass('ellipsis_label');
+    } else if (wrapType == TextWrapTypes.wrap) {
+      nodes.addClass('wrap_label');
     }
     setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
+  }
+
+  truncateText(label: string, ele: any): string {
+    let context = document.createElement('canvas').getContext("2d");
+
+    let fStyle = ele.pstyle('font-style').strValue;
+    let size = ele.pstyle('font-size').pfValue + 'px';
+    let family = ele.pstyle('font-family').strValue;
+    let weight = ele.pstyle('font-weight').strValue;
+
+    context.font = fStyle + ' ' + weight + ' ' + size + ' ' + family;
+
+    let text = label || '';
+    let width;
+    let len = text.length;
+    let ellipsis = '..';
+    let textWidth = ele.width();
+    while ((width = context.measureText(text).width) > textWidth) {
+      --len;
+      text = text.substring(0, len) + ellipsis;
+    }
+    return text;
   }
 
   bindHighlightOnHoverListeners() {

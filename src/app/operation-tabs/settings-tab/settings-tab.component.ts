@@ -26,10 +26,12 @@ export class SettingsTabComponent implements OnInit {
   timebarGraphInclusionTypes: string[] = ['overlaps', 'contains', 'contained by'];
   timebarStatsInclusionTypes: string[] = ['all', 'begin', 'middle', 'end'];
   mergedElemIndicators: string[] = ['Selection', 'Highlight'];
+  nodeLabelWrapTypes: string[] = ['None', 'Wrap', 'Ellipsis'];
   // multiple choice settings
   graphInclusionType: TimebarGraphInclusionTypes;
   statsInclusionType: TimebarStatsInclusionTypes;
   mergedElemIndicator: MergedElemIndicatorTypes;
+  nodeLabelWrap: number = 0;
   isInit: boolean = false;
   currHighlightStyles: string[] = [];
   highlightStyleIdx = 0;
@@ -52,7 +54,6 @@ export class SettingsTabComponent implements OnInit {
       { text: 'Emphasize on hover', isEnable: false, path2userPref: 'isHighlightOnHover' },
       { text: 'Show overview window', isEnable: false, path2userPref: 'isShowOverviewWindow' },
       { text: 'Show edge labels', isEnable: false, path2userPref: 'isShowEdgeLabels' },
-      { text: 'Fit labels to nodes', isEnable: false, path2userPref: 'isFitLabels2Nodes' },
       { text: 'Ignore case in text operations', isEnable: false, path2userPref: 'isIgnoreCaseInText' },
       { text: 'Show results of latest query only', isEnable: false, path2userPref: 'isOnlyHighlight4LatestQuery' },
       { text: 'Collapse multiple edges based on type', isEnable: false, path2userPref: 'isCollapseEdgesBasedOnType' },
@@ -83,12 +84,12 @@ export class SettingsTabComponent implements OnInit {
     this.generalBoolSettings[1].isEnable = up.isHighlightOnHover.getValue();
     this.generalBoolSettings[2].isEnable = up.isShowOverviewWindow.getValue();
     this.generalBoolSettings[3].isEnable = up.isShowEdgeLabels.getValue();
-    this.generalBoolSettings[4].isEnable = up.isFitLabels2Nodes.getValue();
-    this.generalBoolSettings[5].isEnable = up.isIgnoreCaseInText.getValue();
-    this.generalBoolSettings[6].isEnable = up.isOnlyHighlight4LatestQuery.getValue();
-    this.generalBoolSettings[7].isEnable = up.isCollapseEdgesBasedOnType.getValue();
-    this.generalBoolSettings[8].isEnable = up.isCollapseMultiEdgesOnLoad.getValue();
+    this.generalBoolSettings[4].isEnable = up.isIgnoreCaseInText.getValue();
+    this.generalBoolSettings[5].isEnable = up.isOnlyHighlight4LatestQuery.getValue();
+    this.generalBoolSettings[6].isEnable = up.isCollapseEdgesBasedOnType.getValue();
+    this.generalBoolSettings[7].isEnable = up.isCollapseMultiEdgesOnLoad.getValue();
 
+    this.nodeLabelWrap = up.nodeLabelWrap.getValue();
     this.mergedElemIndicator = up.mergedElemIndicator.getValue();
     this.dataPageSize = up.dataPageSize.getValue();
     this.queryHistoryLimit = up.queryHistoryLimit.getValue();

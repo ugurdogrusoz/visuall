@@ -25,7 +25,7 @@ export class UserPrefHelper {
       up.isHighlightOnHover.subscribe(x => { this._cyService.highlighterCheckBoxClicked(x); });
       up.isShowOverviewWindow.subscribe(x => { this._cyService.navigatorCheckBoxClicked(x); });
       up.isShowEdgeLabels.subscribe(() => { this._cyService.showHideEdgeLabels(); });
-      up.isFitLabels2Nodes.subscribe(() => { this._cyService.fitLabel2Node(); });
+      up.nodeLabelWrap.subscribe(() => { this._cyService.fitLabel2Node(); });
       up.dataPageSize.subscribe(x => { this.dataPageSizeChanged(x); });
       up.tableColumnLimit.subscribe(x => { this.tableColumnLimitChanged(x); });
       up.compoundPadding.subscribe(x => { this.changeCompoundPadding(x); });

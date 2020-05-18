@@ -447,7 +447,6 @@
         "color": "#fff",
         "overlay-padding": "6px",
         "z-index": "10",
-        "text-wrap": "wrap",
         "text-max-width": "44px"
       }
     },
@@ -515,10 +514,15 @@
     }
   ],
   "overrideStyles": [{
-      "selector": "node.fitlabel",
+      "selector": "node.ellipsis_label",
       "style": {
-        "text-wrap": "ellipsis",
-        "text-max-width": "data(__wid__)"
+        "label": "data(__label__)"
+      }
+    },
+    {
+      "selector": "node.wrap_label",
+      "style": {
+        "text-wrap": "wrap"
       }
     },
     {
@@ -533,7 +537,6 @@
     "isHighlightOnHover": false,
     "isShowOverviewWindow": false,
     "isShowEdgeLabels": true,
-    "isFitLabels2Nodes": false,
     "isIgnoreCaseInText": false,
     "isOnlyHighlight4LatestQuery": false,
     "isStoreUserProfile": true,
@@ -550,6 +553,7 @@
     "currHighlightIdx": 0,
 
     "mergedElemIndicator": 1,
+    "nodeLabelWrap": 0,
 
     "compoundPadding": "5%",
 

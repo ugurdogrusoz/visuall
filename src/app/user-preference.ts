@@ -7,15 +7,15 @@ export interface UserPref {
   isHighlightOnHover: BehaviorSubject<boolean>;
   isShowOverviewWindow: BehaviorSubject<boolean>;
   isShowEdgeLabels: BehaviorSubject<boolean>;
-  isFitLabels2Nodes: BehaviorSubject<boolean>;
   isIgnoreCaseInText: BehaviorSubject<boolean>;
   isOnlyHighlight4LatestQuery: BehaviorSubject<boolean>;
   isStoreUserProfile: BehaviorSubject<boolean>;
   isCollapseEdgesBasedOnType: BehaviorSubject<boolean>;
   isCollapseMultiEdgesOnLoad: BehaviorSubject<boolean>;
-  
+
   // Show query results using 'Selection', 'Highlight'
   mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
+  nodeLabelWrap: BehaviorSubject<TextWrapTypes>;
   dataPageSize: BehaviorSubject<number>;
   queryHistoryLimit: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;
@@ -46,6 +46,10 @@ export enum TimebarStatsInclusionTypes {
 
 export enum MergedElemIndicatorTypes {
   selection = 0, highlight = 1
+}
+
+export enum TextWrapTypes {
+  none = 0, wrap = 1, ellipsis = 2
 }
 
 export interface BoolSetting {
