@@ -22,7 +22,6 @@ export class ObjectTabComponent implements OnInit {
   tableFilled = new Subject<boolean>();
   multiObjTableFilled = new Subject<boolean>();
   clearMultiObjTableFilter = new Subject<boolean>();
-  isShowTableViewProperties: boolean = false;
   isShowStatsTable: boolean = false;
 
   tableInput: TableViewInput = {
@@ -62,16 +61,13 @@ export class ObjectTabComponent implements OnInit {
   showObjectProps() {
     let selected = this._g.cy.$(':selected');
     if (selected.filter('.' + COMPOUND_ELEM_EDGE_CLASS).length > 0) {
-      this.isShowTableViewProperties = true;
       this.showCompoundEdgeProps(true);
       return;
     }
     if (selected.length > 1 && (selected.length == selected.filter('node').length || selected.length == selected.filter('edge').length)) {
-      this.isShowTableViewProperties = true;
       this.showMultiObjTable(true);
       return;
     }
-    this.isShowTableViewProperties = false;
     const selectedNonMeta = selected.not('.' + COMPOUND_ELEM_EDGE_CLASS);
     let props: { [x: string]: any; }, classNames: any[];
     [props, classNames] = this.getCommonObjectProps(selectedNonMeta);

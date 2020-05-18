@@ -1,5 +1,5 @@
-<div class="d-flex flex-wrap justify-content-end m-1" *ngIf="isInitialized">
-  <input #searchTxt [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
+<div class="d-flex flex-wrap justify-content-end m-1" *ngIf="isShowTable">
+  <input [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
     class="form-control va-small-text" placeholder="Search..." [(ngModel)]="filterTxt"
     (ngModelChange)="filterTxtChanged()">
 
@@ -19,10 +19,10 @@
   </button>
 </div>
 
-<div #dynamicDiv [ngResizable]="isDraggable" [rzHandles]="'all'" [rzMinWidth]="origSize.wid"
+<div *ngIf="isShowTable" #dynamicDiv [ngResizable]="isDraggable" [rzHandles]="'all'" [rzMinWidth]="origSize.wid"
   [rzMinHeight]="origSize.hei" (rzStart)="onResizeStart($event)" [ngDraggable]="isDraggable" [position]="position"
   [ngClass]="{'draggable-content': isDraggable}">
-  <div *ngIf="isInitialized && params.results.length > 0" class="table-responsive">
+  <div *ngIf="params.results.length > 0" class="table-responsive">
     <table class="table table-sm table-hover va-text">
       <thead>
         <tr>

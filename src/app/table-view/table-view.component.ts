@@ -32,10 +32,9 @@ export class TableViewComponent implements OnInit {
   sortDirection: 'asc' | 'desc' | '' = '';
   sortingIdx: number = -1;
   isLoading: boolean = false;
-  isInitialized: boolean = false;
+  isShowTable: boolean = false;
   origSize: { wid: number, hei: number } = { wid: 1, hei: 1 };
   filterTxtChanged: () => void;
-  @ViewChild('searchTxt', { static: false }) inpElem;
   @ViewChild('dynamicDiv', { static: false }) dynamicDiv;
   checkedIdx: any = {};
 
@@ -59,10 +58,11 @@ export class TableViewComponent implements OnInit {
 
   private onTableFilled() {
     this.isLoading = false;
-    this.isInitialized = true;
     this.checkedIdx = {};
-    if (this.inpElem && this.params.results && this.params.results.length > 0) {
-      setTimeout(() => { this.inpElem.nativeElement.focus(); }, 0);
+    if (this.params.results && this.params.results.length > 0) {
+      this.isShowTable = true;
+    } else if (this.filterTxt.length == 0) {
+      this.isShowTable = false;
     }
   }
 
