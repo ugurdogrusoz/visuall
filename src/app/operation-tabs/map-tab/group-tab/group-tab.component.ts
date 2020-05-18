@@ -27,11 +27,10 @@ export class GroupTabComponent implements OnInit {
     this._cyService.deleteClusteringNodes();
     if (idx == 1) {
       this._cyService.markovClustering();
-      this._g.performLayout(false);
     } else if (idx == 2) {
       this._cyService.clusterByDirector();
-      this._g.performLayout(false);
     }
+    this._g.performLayout(false);
     this.setGraphState();
   }
 

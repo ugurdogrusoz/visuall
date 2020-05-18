@@ -830,7 +830,7 @@ export class CytoscapeService {
   }
 
   clusterByDirector() {
-    let edges = this._g.cy.$('edge.DIRECTED');
+    let edges = this._g.cy.$('edge.DIRECTOR');
     let directorIds = new Set<string>();
     let movie2director = {};
     for (let i = 0; i < edges.length; i++) {
