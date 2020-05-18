@@ -637,17 +637,34 @@ export class CytoscapeService {
     let weight = ele.pstyle('font-weight').strValue;
 
     context.font = fStyle + ' ' + weight + ' ' + size + ' ' + family;
-
     let text = label || '';
-    let width;
-    let len = text.length;
-    let ellipsis = '..';
     let textWidth = ele.width();
-    while ((width = context.measureText(text).width) > textWidth) {
-      --len;
-      text = text.substring(0, len) + ellipsis;
+    return this.findFittedTxt(context, text, textWidth);
+  }
+
+  private findFittedTxt(ctx: CanvasRenderingContext2D, txt: string, wid: number) {
+    let len = txt.length;
+    if (ctx.measureText(txt.substr(0, len)).width <= wid) {
+      return txt;
     }
-    return text;
+    let maxIdx = len - 1;
+    let minIdx = 1;
+
+    // binary search through possible interval
+    while (true) {
+      let doesFit = ctx.measureText(txt.substr(0, len) + '..').width <= wid;
+      if (doesFit && ctx.measureText(txt.substr(0, len + 1) + '..').width >= wid) {
+        break;
+      }
+      if (doesFit) {
+        minIdx = len;
+        len = Math.ceil((len + maxIdx) / 2);
+      } else {
+        maxIdx = len;
+        len = Math.floor((len + minIdx) / 2);
+      }
+    }
+    return txt.substr(0, len) + '..';
   }
 
   bindHighlightOnHoverListeners() {
