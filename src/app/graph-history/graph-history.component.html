@@ -1,9 +1,9 @@
-<div *ngIf="isShow" ngResizable ngDraggable [rzHandles]="'all'" [position]="position" class="draggable-content"
+<div *ngIf="isShow" ngResizable ngDraggable [rzHandles]="'n,e,s,w,se,sw,nw'" [position]="position" class="draggable-content"
   (endOffset)="onMoveEnd($event)" (rzStop)="onResizeStop($event)" [style.width]="currSize.width + 'px'"
   [style.height]="currSize.height + 'px'">
   <div class="d-flex">
     <div class="mx-auto p-1 va-heading1">Query History</div>
-    <button type="button" class="close m-1" (click)="closeClicked()">
+    <button type="button" class="close my-1 mx-2" (click)="closeClicked()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
