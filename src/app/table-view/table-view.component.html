@@ -66,9 +66,10 @@
       </tbody>
     </table>
   </div>
-  <div class="d-flex align-items-center justify-content-center va-text" *ngIf="params.resultCnt > params.pageSize">
-    <ngb-pagination (pageChange)="pageChanged($event)" [collectionSize]="params.resultCnt" [(page)]="params.currPage"
-      [pageSize]="params.pageSize" [maxSize]="3" [rotate]="true">
+  <div class="va-text overflow-auto" *ngIf="params.resultCnt > params.pageSize">
+    <ngb-pagination class="d-flex justify-content-center m-2" (pageChange)="pageChanged($event)"
+      [collectionSize]="params.resultCnt" [(page)]="params.currPage" [pageSize]="params.pageSize" [maxSize]="2"
+      [rotate]="true" size="sm">
       <ng-template ngbPaginationPrevious><img class="img-sm-icon" src="/assets/img/left-arrow.svg"></ng-template>
       <ng-template ngbPaginationNext><img class="img-sm-icon" src="/assets/img/right-arrow.svg"></ng-template>
     </ngb-pagination>
