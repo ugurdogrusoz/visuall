@@ -79,13 +79,17 @@ export class GlobalVariableService {
   }
 
   runLayout() {
+    const elems4layout = this.cy.elements().not(':hidden, :transparent');
+    if (elems4layout.length < 1) {
+      return;
+    }
     if (this.layout.randomize) {
       this.statusMsg.next('Recalculating layout...');
     } else {
       this.statusMsg.next('Performing layout...');
     }
     this.setLoadingStatus(true);
-    this.cy.elements().not(':hidden, :transparent').layout(this.layout).run();
+    elems4layout.layout(this.layout).run();
     this.statusMsg.next('Rendering graph...');
   }
 
