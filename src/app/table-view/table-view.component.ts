@@ -33,7 +33,6 @@ export class TableViewComponent implements OnInit {
   sortingIdx: number = -1;
   isLoading: boolean = false;
   isShowTable: boolean = false;
-  origSize: { wid: number, hei: number } = { wid: 1, hei: 1 };
   filterTxtChanged: () => void;
   @ViewChild('dynamicDiv', { static: false }) dynamicDiv;
   checkedIdx: any = {};
@@ -191,18 +190,5 @@ export class TableViewComponent implements OnInit {
       e.style.width = '';
       e.style.height = '';
     }
-    if (this.origSize.wid == 1) {
-      // get height and width when it is draggable
-      setTimeout(() => {
-        this.origSize.hei = this.dynamicDiv.nativeElement.clientHeight;
-        this.origSize.wid = this.dynamicDiv.nativeElement.clientWidth;
-      }, 0);
-    }
-  }
-
-  onResizeStart(e) {
-    let bb0 = e.host.children[0].getBoundingClientRect();
-    let bb1 = e.host.children[1].getBoundingClientRect();
-    this.origSize.hei = bb0.height + bb1.height;
   }
 }

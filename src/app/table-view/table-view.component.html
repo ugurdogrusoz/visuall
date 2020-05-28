@@ -19,9 +19,8 @@
   </button>
 </div>
 
-<div *ngIf="isShowTable" #dynamicDiv [ngResizable]="isDraggable" [rzHandles]="'all'" [rzMinWidth]="origSize.wid"
-  [rzMinHeight]="origSize.hei" (rzStart)="onResizeStart($event)" [ngDraggable]="isDraggable" [position]="position"
-  [ngClass]="{'draggable-content': isDraggable}">
+<div *ngIf="isShowTable" #dynamicDiv [ngResizable]="isDraggable" [rzHandles]="'all'" [rzMinWidth]="200"
+  [rzMinHeight]="200" [ngDraggable]="isDraggable" [position]="position" [ngClass]="{'draggable-content': isDraggable}">
   <div *ngIf="params.results.length > 0" class="table-responsive">
     <table class="table table-sm table-hover va-text">
       <thead>
