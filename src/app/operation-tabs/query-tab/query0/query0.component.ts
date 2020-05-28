@@ -16,7 +16,7 @@ export class Query0Component implements OnInit {
   movieCnt: number;
   tableFilled = new Subject<boolean>();
 
-  tableInput: TableViewInput = { columns: ['Actor', 'Count'], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  tableInput: TableViewInput = { columns: ['Actor', 'Count'], results: [], tableTitle: 'Query Results', resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
 
   constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
   }

@@ -26,6 +26,7 @@ export interface TableViewInput {
   isHideLoadGraph?: boolean;
   isReplace_inHeaders?: boolean;
   isDisableHover?: boolean;
+  tableTitle?: string;
 }
 
 export interface TableFiltering {

@@ -33,7 +33,7 @@ export class MapTabComponent implements OnInit {
   filteringRule: ClassBasedRules;
   isFilterOnDb: boolean;
   currProperties: Subject<RuleSync> = new Subject();
-  tableInput: TableViewInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true };
+  tableInput: TableViewInput = { columns: [], tableTitle: 'Filtering Results', results: [], resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true };
   tableFilled = new Subject<boolean>();
   isClassTypeLocked: boolean;
   private isGroupTabOpen = false;
@@ -256,8 +256,8 @@ export class MapTabComponent implements OnInit {
       for (let [k, v] of Object.entries(data.data[i][1])) {
         let idx = this.tableInput.columns.indexOf(k);
         if (idx > -1) {
-          d[idx + 1] = property2TableData(k,v,this.filteringRule.className, this.filteringRule.isEdge)
-        } 
+          d[idx + 1] = property2TableData(k, v, this.filteringRule.className, this.filteringRule.isEdge)
+        }
       }
       for (let j = 0; j < this.tableInput.columns.length + 1; j++) {
         if (!d[j]) {
@@ -312,7 +312,7 @@ export class MapTabComponent implements OnInit {
 
   resetRule() {
     this.filteringRule = null;
-    this.tableInput = { columns: [], results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true };
+    this.tableInput = { columns: [], tableTitle: 'Filtering Results', results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true };
     this.isClassTypeLocked = false;
     this.selectedClass = this.classOptions[0].text;
     this.changeSelectedClass();
