@@ -218,6 +218,10 @@ body {
   margin: 0 auto;
 }
 
+.modal-header {
+  padding: 0.5rem 1rem;
+}
+
 .img-icon {
   width: 20px;
   height: 20px;
