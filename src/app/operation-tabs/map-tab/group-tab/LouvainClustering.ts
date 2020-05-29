@@ -5,10 +5,7 @@ export class LouvainClustering {
   private __PASS_MAX = -1;
   private __MIN = 0.0000001;
 
-  private original_graph_nodes;
-  private original_graph_edges;
   private original_graph = {};
-  private partition_init;
   private edge_index = {};
 
   setOriginalGraph(g) {
@@ -16,33 +13,21 @@ export class LouvainClustering {
   }
 
   //Helpers
-  make_set(array) {
+  makeSet(array: (number | string)[]): string[] {
     const set = {};
 
-    array.forEach(function (d, i) {
+    array.forEach(function (d) {
       set[d] = true;
     });
 
     return Object.keys(set);
   }
 
-  obj_values(obj) {
-    const vals = [];
-
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        vals.push(obj[key]);
-      }
-    }
-
-    return vals;
-  }
-
   get_degree_for_node(graph, node) {
     const neighbours = graph._assoc_mat[node] ? Object.keys(graph._assoc_mat[node]) : [];
     let weight = 0;
 
-    neighbours.forEach(function (neighbour, i) {
+    neighbours.forEach(function (neighbour) {
       let value = graph._assoc_mat[node][neighbour] || 1;
       if (node === neighbour) {
         value *= 2;
@@ -181,9 +166,9 @@ export class LouvainClustering {
   __modularity(status) {
     const links = status.total_weight;
     let result = 0.0;
-    const communities = this.make_set(this.obj_values(status.nodes_to_com));
+    const communities = this.makeSet(Object.values(status.nodes_to_com));
 
-    communities.forEach(function (com, i) {
+    communities.forEach(function (com) {
       const in_degree = status.internals[com] || 0;
       const degree = status.degrees[com] || 0;
       if (links > 0) {
@@ -296,8 +281,8 @@ export class LouvainClustering {
     const ret = { nodes: [], edges: [], _assoc_mat: {} };
     let w_prec, weight;
     //add nodes from partition values
-    const partition_values = this.obj_values(partition);
-    ret.nodes = ret.nodes.concat(this.make_set(partition_values)); //make set
+    const partition_values = Object.values(partition) as string[];
+    ret.nodes = ret.nodes.concat(this.makeSet(partition_values)); //make set
 
     graph.edges.forEach((edge, i) => {
       weight = edge.weight || 1;
