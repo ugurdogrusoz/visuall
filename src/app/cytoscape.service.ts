@@ -873,6 +873,23 @@ export class CytoscapeService {
     }
   }
 
+  louvainClustering(clustering: any) {
+    let clusters = {};
+    for (let n in clustering) {
+      clusters[clustering[n]] = true;
+    }
+
+    // generate compound nodes
+    for (let i in clusters) {
+      let parentNode = this.createCyNode({ labels: ['Cluster'], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
+      this._g.cy.add(parentNode);
+    }
+    // add parents to non-compound nodes
+    for (let n in clustering) {
+      this._g.cy.$('#' + n).move({ parent: 'c' + clustering[n] });
+    }
+  }
+
   clusterByDirector() {
     let edges = this._g.cy.$('edge.DIRECTOR');
     let directorIds = new Set<string>();
