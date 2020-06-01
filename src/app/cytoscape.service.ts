@@ -612,7 +612,7 @@ export class CytoscapeService {
 
   fitLabel2Node() {
     this._g.cy.startBatch();
-    let nodes = this._g.cy.nodes();
+    let nodes = this._g.cy.nodes().not(':parent');
     let wrapType = this._g.userPrefs.nodeLabelWrap.getValue();
 
     nodes.removeClass('ellipsis_label wrap_label');
