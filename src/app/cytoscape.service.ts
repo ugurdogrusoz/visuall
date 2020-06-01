@@ -18,6 +18,7 @@ import timebar from '../lib/timebar/cytoscape-timebar';
 import { UserPrefHelper } from './user-pref-helper';
 import { MergedElemIndicatorTypes, TextWrapTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
+import { LouvainClustering } from './LouvainClustering';
 
 @Injectable({
   providedIn: 'root'
@@ -29,9 +30,10 @@ export class CytoscapeService {
   removePopperFn: Function;
   showObjPropsFn: Function;
   showStatsFn: Function;
-
+  louvainClusterer: LouvainClustering;
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService) {
     this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g, this._profile);
+    this.louvainClusterer = new LouvainClustering();
   }
 
   initCy(containerElem) {
@@ -873,7 +875,8 @@ export class CytoscapeService {
     }
   }
 
-  louvainClustering(clustering: any) {
+  louvainClustering() {
+    let clustering = this.louvainClusterer.cluster(this._g.cy.$());
     let clusters = {};
     for (let n in clustering) {
       clusters[clustering[n]] = true;
