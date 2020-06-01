@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
-import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting } from 'src/app/user-preference';
+import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting, GroupingOptionTypes } from 'src/app/user-preference';
 import { UserProfileService } from 'src/app/user-profile.service';
 import { BehaviorSubject } from 'rxjs';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH } from 'src/app/constants';
@@ -26,11 +26,13 @@ export class SettingsTabComponent implements OnInit {
   timebarGraphInclusionTypes: string[] = ['overlaps', 'contains', 'contained by'];
   timebarStatsInclusionTypes: string[] = ['all', 'begin', 'middle', 'end'];
   mergedElemIndicators: string[] = ['Selection', 'Highlight'];
+  groupingOptions: string[] = ['Compounds', 'Cluster IDs'];
   nodeLabelWrapTypes: string[] = ['None', 'Wrap', 'Ellipsis'];
   // multiple choice settings
   graphInclusionType: TimebarGraphInclusionTypes;
   statsInclusionType: TimebarStatsInclusionTypes;
   mergedElemIndicator: MergedElemIndicatorTypes;
+  groupingOption: GroupingOptionTypes;
   nodeLabelWrap: number = 0;
   isInit: boolean = false;
   currHighlightStyles: string[] = [];
@@ -91,6 +93,7 @@ export class SettingsTabComponent implements OnInit {
 
     this.nodeLabelWrap = up.nodeLabelWrap.getValue();
     this.mergedElemIndicator = up.mergedElemIndicator.getValue();
+    this.groupingOption = up.groupingOption.getValue();
     this.dataPageSize = up.dataPageSize.getValue();
     this.queryHistoryLimit = up.queryHistoryLimit.getValue();
     this.tableColumnLimit = up.tableColumnLimit.getValue();

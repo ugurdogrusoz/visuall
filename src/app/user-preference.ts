@@ -15,6 +15,7 @@ export interface UserPref {
 
   // Show query results using 'Selection', 'Highlight'
   mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
+  groupingOption: BehaviorSubject<GroupingOptionTypes>;
   nodeLabelWrap: BehaviorSubject<TextWrapTypes>;
   dataPageSize: BehaviorSubject<number>;
   queryHistoryLimit: BehaviorSubject<number>;
@@ -46,6 +47,10 @@ export enum TimebarStatsInclusionTypes {
 
 export enum MergedElemIndicatorTypes {
   selection = 0, highlight = 1
+}
+
+export enum GroupingOptionTypes {
+  compound = 0, clusterId = 1
 }
 
 export enum TextWrapTypes {

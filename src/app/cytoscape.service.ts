@@ -6,6 +6,7 @@ import fcose from 'cytoscape-fcose';
 import expandCollapse from 'cytoscape-expand-collapse';
 import viewUtilities from 'cytoscape-view-utilities';
 import layoutUtilities from 'cytoscape-layout-utilities';
+import cise from 'cytoscape-cise';
 import stylesheet from '../assets/generated/stylesheet.json';
 import * as C from './constants';
 import * as $ from 'jquery';
@@ -16,7 +17,7 @@ import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse } from './db-service/data-types';
 import timebar from '../lib/timebar/cytoscape-timebar';
 import { UserPrefHelper } from './user-pref-helper';
-import { MergedElemIndicatorTypes, TextWrapTypes } from './user-preference';
+import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
 import { LouvainClustering } from './LouvainClustering';
 
@@ -49,6 +50,8 @@ export class CytoscapeService {
     layoutUtilities(cytoscape, $);
     // use fcose layout algorithm
     cytoscape.use(fcose);
+    // use cise layout algorithm
+    cytoscape.use(cise);
 
     this._g.layout = {
       name: 'fcose',
@@ -868,10 +871,23 @@ export class CytoscapeService {
     const opt = { attributes: [() => { return 1; }] };
 
     let clusters = this._g.cy.$().markovClustering(opt);
-    for (let i = 0; i < clusters.length; i++) {
-      let parentNode = this.createCyNode({ labels: ['Cluster'], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
-      this._g.cy.add(parentNode);
-      clusters[i].move({ parent: parentNode.data.id });
+    if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
+      for (let i = 0; i < clusters.length; i++) {
+        let parentNode = this.createCyNode({ labels: ['Cluster'], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
+        this._g.cy.add(parentNode);
+        clusters[i].move({ parent: parentNode.data.id });
+      }
+    } else {
+      this._g.layout.name = 'cise';
+      let arr = [];
+      for (let i = 0; i < clusters.length; i++) {
+        let a = [];
+        for (let j = 0; j < clusters[i].length; j++) {
+          a.push(clusters[i][j].id());
+        }
+        arr.push(a);
+      }
+      this._g.layout.clusters = arr;
     }
   }
 
@@ -881,15 +897,19 @@ export class CytoscapeService {
     for (let n in clustering) {
       clusters[clustering[n]] = true;
     }
-
-    // generate compound nodes
-    for (let i in clusters) {
-      let parentNode = this.createCyNode({ labels: ['Cluster'], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
-      this._g.cy.add(parentNode);
-    }
-    // add parents to non-compound nodes
-    for (let n in clustering) {
-      this._g.cy.$('#' + n).move({ parent: 'c' + clustering[n] });
+    if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
+      // generate compound nodes
+      for (let i in clusters) {
+        let parentNode = this.createCyNode({ labels: ['Cluster'], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
+        this._g.cy.add(parentNode);
+      }
+      // add parents to non-compound nodes
+      for (let n in clustering) {
+        this._g.cy.$('#' + n).move({ parent: 'c' + clustering[n] });
+      }
+    } else {
+      this._g.layout.name = 'cise';
+      this._g.layout.clusters = (node) => { return clustering[node.id()]; };
     }
   }
 

@@ -31,6 +31,7 @@
     "core-js": "^3.6.5",
     "css": "^2.2.4",
     "cytoscape": "^3.14.2",
+    "cytoscape-cise": "^1.0.0",
     "cytoscape-context-menus": "^3.1.0",
     "cytoscape-expand-collapse": "github:iVis-at-Bilkent/cytoscape.js-expand-collapse#unstable",
     "cytoscape-fcose": "github:iVis-at-Bilkent/cytoscape.js-fcose#unstable",

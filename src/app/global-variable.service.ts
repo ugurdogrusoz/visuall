@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserPref } from './user-preference';
+import { UserPref, GroupingOptionTypes } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import AppDescription from '../assets/app_description.json'
@@ -89,6 +89,9 @@ export class GlobalVariableService {
       this.statusMsg.next('Performing layout...');
     }
     this.setLoadingStatus(true);
+    if (this.userPrefs.groupingOption.getValue() != GroupingOptionTypes.clusterId) {
+      this.layout.name = 'fcose';
+    }
     elems4layout.layout(this.layout).run();
     this.statusMsg.next('Rendering graph...');
   }
