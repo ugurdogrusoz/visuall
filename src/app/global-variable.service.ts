@@ -29,6 +29,7 @@ export class GlobalVariableService {
   isLoadFromExpandCollapse: boolean = false;
   isUserPrefReady = new BehaviorSubject<boolean>(false);
   statusMsg = new BehaviorSubject<string>('');
+  isUseCiseLayout = false;
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
@@ -89,8 +90,12 @@ export class GlobalVariableService {
       this.statusMsg.next('Performing layout...');
     }
     this.setLoadingStatus(true);
-
-    elems4layout.layout(this.layout).run();
+    if (this.isUseCiseLayout) {
+      elems4layout.layout(this.getCiseOptions()).run();
+      this.isUseCiseLayout = false;
+    } else {
+      elems4layout.layout(this.layout).run();
+    }
     this.statusMsg.next('Rendering graph...');
   }
 
@@ -277,7 +282,7 @@ export class GlobalVariableService {
     };
   }
 
-  getCiseOptions(clusterer) {
+  private getCiseOptions() {
     return {
       // -------- Mandatory parameters --------
       name: 'cise',
@@ -294,7 +299,7 @@ export class GlobalVariableService {
       //  [ ['n1','n2','n3'],                                       ...
       //    ['n5','n6']                                         }
       //    ['n7', 'n8', 'n9', 'n10'] ]                         
-      clusters: clusterer,
+      clusters: this.layout.clusters,
 
       // -------- Optional parameters --------
       // Whether to animate the layout
@@ -307,7 +312,7 @@ export class GlobalVariableService {
       refresh: 10,
 
       // Animation duration used for animate:'end'
-      animationDuration: undefined,
+      animationDuration: 1000,
 
       // Easing for animate:'end'
       animationEasing: undefined,
@@ -321,7 +326,7 @@ export class GlobalVariableService {
 
       // separation amount between nodes in a cluster
       // note: increasing this amount will also increase the simulation time 
-      nodeSeparation: 12.5,
+      nodeSeparation: 2.5,
 
       // Inter-cluster edge length factor 
       // (2.0 means inter-cluster edges should be twice as long as intra-cluster edges)
@@ -345,6 +350,8 @@ export class GlobalVariableService {
 
       // Gravity range (constant)
       gravityRange: 3.8,
+
+      packComponents: true,
 
       // Layout event callbacks; equivalent to `layout.one('layoutready', callback)` for example
       ready: function () { }, // on layoutready

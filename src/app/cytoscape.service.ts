@@ -820,7 +820,7 @@ export class CytoscapeService {
         arr.push(a);
       }
       this._g.layout.clusters = arr;
-      this._g.layout = this._g.getCiseOptions(arr);
+      this._g.isUseCiseLayout = true;
     }
   }
 
@@ -841,24 +841,24 @@ export class CytoscapeService {
         this._g.cy.$('#' + n).move({ parent: 'c' + clustering[n] });
       }
     } else {
-      // let arr = [];
-      // for (let i in clusters) {
-      //   arr.push([]);
-      // }
-      // for (let i in clustering) {
-      //   arr[clustering[i]].push(i);
-      // }
-      // this._g.layout = this._g.getCiseOptions(arr);
-      this._g.layout = this._g.getCiseOptions((node) => { return clustering[node.id()]; });
+      let arr = [];
+      for (let i in clusters) {
+        arr.push([]);
+      }
+      for (let i in clustering) {
+        arr[clustering[i]].push(i);
+      }
+      this._g.layout.clusters = (node) => { return clustering[node.id()]; };
+      this._g.isUseCiseLayout = true;
     }
   }
 
   clusterByDirector() {
-    let edges = this._g.cy.$('edge.DIRECTOR');
+    let directorEdges = this._g.cy.$('edge.DIRECTOR');
     let directorIds = new Set<string>();
     let movie2director = {};
-    for (let i = 0; i < edges.length; i++) {
-      let edgeData = edges[i].data();
+    for (let i = 0; i < directorEdges.length; i++) {
+      let edgeData = directorEdges[i].data();
       directorIds.add(edgeData.source);
       if (movie2director[edgeData.target]) {
         movie2director[edgeData.target].push(edgeData.source);
@@ -867,22 +867,42 @@ export class CytoscapeService {
       }
     }
 
-    // add parent nodes
-    for (let id of directorIds) {
-      let name = this._g.cy.$('#' + id).data().name;
-      let parentNode = this.createCyNode({ labels: ['Cluster'], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id + 'c');
-      this._g.cy.add(parentNode);
-      // add the director to the compound node
-      this._g.cy.$('#' + id).move({ parent: id + 'c' });
+    if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
+      // add parent nodes
+      for (let id of directorIds) {
+        let name = this._g.cy.$('#' + id).data().name;
+        // for each director, generate a compound node
+        let parentNode = this.createCyNode({ labels: ['Cluster'], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id + 'c');
+        this._g.cy.add(parentNode);
+        // add the director to the compound node
+        this._g.cy.$('#' + id).move({ parent: id + 'c' });
+      }
+
+      // assign nodes to parents
+      for (let [k, v] of Object.entries(movie2director)) {
+        // if a movie has less than 2 directors add, those movies to the cluster of director
+        if (v['length'] < 2) {
+          // add movies to the compound node
+          this._g.cy.$('#' + k).move({ parent: v[0] + 'c' });
+        }
+      }
+    } else {
+      const clusters = {};
+      for (let id of directorIds) {
+        clusters[id] = [id];
+      }
+      for (let [k, v] of Object.entries(movie2director)) {
+        // if a movie has less than 2 directors add, those movies to the cluster of director
+        if (v['length'] < 2) {
+          clusters[v[0]].push(k);
+        }
+      }
+      console.log(' clusters for directors: ', clusters);
+      console.log(' Object.values(clusters): ', Object.values(clusters));
+      this._g.layout.clusters = Object.values(clusters);
+      this._g.isUseCiseLayout = true;
     }
 
-    // assign nodes to parents
-    for (let [k, v] of Object.entries(movie2director)) {
-      if (v['length'] < 2) {
-        // add movies to the compound node
-        this._g.cy.$('#' + k).move({ parent: v[0] + 'c' });
-      }
-    }
   }
 
   deleteClusteringNodes() {
