@@ -239,44 +239,44 @@ export class LouvainClustering {
   private oneLevel(graph: Graph, status: ClusteringStatus) {
     //Compute one level of the Communities Dendogram.
     let modif = true;
-    let nb_pass_done = 0;
-    let cur_mod = this.modularity(status);
-    let new_mod = cur_mod;
+    let nbPassDone = 0;
+    let currMod = this.modularity(status);
+    let newMod = currMod;
 
-    while (modif && nb_pass_done !== this.maxIterations) {
-      cur_mod = new_mod;
+    while (modif && nbPassDone !== this.maxIterations) {
+      currMod = newMod;
       modif = false;
-      nb_pass_done += 1;
+      nbPassDone += 1;
 
       graph.nodes.forEach((node, i) => {
-        let com_node = status.node2Community[node];
-        let degc_totw = (status.gdegrees[node] || 0) / (status.totalWeight * 2.0);
-        let neigh_communities = this.neighcom(node, graph, status);
-        this.removeFromCommunity(node, com_node, neigh_communities[com_node] || 0.0, status);
-        let best_com = com_node;
-        let best_increase = 0;
-        const neigh_communities_entries = Object.keys(neigh_communities); // make iterable;
+        let comNode = status.node2Community[node];
+        let degcTotw = (status.gdegrees[node] || 0) / (status.totalWeight * 2.0);
+        let neighCommunities = this.neighcom(node, graph, status);
+        this.removeFromCommunity(node, comNode, neighCommunities[comNode] || 0.0, status);
+        let bestCom = comNode;
+        let bestIncrease = 0;
+        const neighCommunitiesEntries = Object.keys(neighCommunities); // make iterable;
 
-        neigh_communities_entries.forEach(function (com) {
-          const incr = neigh_communities[com] - (status.degrees[com] || 0.0) * degc_totw;
+        neighCommunitiesEntries.forEach(function (com) {
+          const incr = neighCommunities[com] - (status.degrees[com] || 0.0) * degcTotw;
 
-          if (incr > best_increase) {
-            best_increase = incr;
-            best_com = com;
+          if (incr > bestIncrease) {
+            bestIncrease = incr;
+            bestCom = com;
           }
         });
 
-        this.insert2Community(node, best_com, neigh_communities[best_com] || 0, status);
+        this.insert2Community(node, bestCom, neighCommunities[bestCom] || 0, status);
 
         // convert from string to number
-        if (+best_com !== com_node) {
+        if (+bestCom !== comNode) {
           modif = true;
         }
       });
 
-      new_mod = this.modularity(status);
+      newMod = this.modularity(status);
 
-      if (new_mod - cur_mod < this.sensitivityThreshold) {
+      if (newMod - currMod < this.sensitivityThreshold) {
         break;
       }
     }
@@ -285,18 +285,19 @@ export class LouvainClustering {
   // Produce the graph where nodes are the communities
   private inducedGraph(partition, graph: Graph): Graph {
     const ret: Graph = { nodes: [], edges: [], adj: {} };
-    //add nodes from partition values
-    const partition_values = Object.values(partition) as string[];
-    ret.nodes = ret.nodes.concat(this.makeSet(partition_values)); //make set
+    // add nodes from partition values
+    const partitionValues = Object.values(partition) as string[];
+    ret.nodes = ret.nodes.concat(this.makeSet(partitionValues)); // make set
 
-    let w_prec, weight;
+    let wPrec;
+    let weight;
     graph.edges.forEach((edge, i) => {
       weight = edge.weight || 1;
       const com1 = partition[edge.source];
       const com2 = partition[edge.target];
-      w_prec = this.getEdgeWeight(ret, com1, com2) || 0;
-      const new_weight = w_prec + weight;
-      this.addEdge2Graph(ret, { source: com1, target: com2, weight: new_weight });
+      wPrec = this.getEdgeWeight(ret, com1, com2) || 0;
+      const newWeight = wPrec + weight;
+      this.addEdge2Graph(ret, { source: com1, target: com2, weight: newWeight });
     });
 
     this.edge_index = {};
@@ -305,7 +306,7 @@ export class LouvainClustering {
   }
 
   private partitionAtLevel(dendogram: Dict[], level: number) {
-    let partition = this.clone(dendogram[0]);
+    const partition = this.clone(dendogram[0]);
 
     for (let i = 1; i < level + 1; i++) {
       Object.keys(partition).forEach(function (key, j) {

@@ -13,7 +13,7 @@ export class UserProfileService {
   constructor(private _g: GlobalVariableService) { }
 
   private getUserProfile() {
-    let p = localStorage.getItem('profile');
+    const p = localStorage.getItem('profile');
     if (!p) {
       return null;
     }
@@ -21,7 +21,7 @@ export class UserProfileService {
   }
 
   private setFilteringRules(f: FilteringRule[]) {
-    let p = this.getUserProfile();
+    const p = this.getUserProfile();
     if (p) {
       p.filteringRules = f;
       localStorage.setItem('profile', JSON.stringify(p));
@@ -31,7 +31,7 @@ export class UserProfileService {
   }
 
   private setTimebarMetrics(t: TimebarMetric[]) {
-    let p = this.getUserProfile();
+    const p = this.getUserProfile();
     if (p) {
       p.timebarMetrics = t;
       localStorage.setItem('profile', JSON.stringify(p));
@@ -41,7 +41,7 @@ export class UserProfileService {
   }
 
   private getUserPrefs() {
-    let p = this.getUserProfile();
+    const p = this.getUserProfile();
     if (p) {
       return p.userPref;
     }
@@ -49,13 +49,13 @@ export class UserProfileService {
   }
 
   private userPref2RawData() {
-    let o = {};
+    const o = {};
     this.mapSubjectProperties(this._g.userPrefs, o);
     return o;
   }
 
   private mapSubjectProperties(obj, mappedObj) {
-    for (let k in obj) {
+    for (const k in obj) {
       if (obj[k] instanceof BehaviorSubject) {
         mappedObj[k] = (obj[k] as BehaviorSubject<any>).getValue();
       } else {
@@ -70,7 +70,7 @@ export class UserProfileService {
   }
 
   getFilteringRules(): FilteringRule[] {
-    let p = this.getUserProfile();
+    const p = this.getUserProfile();
     if (p && p.filteringRules) {
       return p.filteringRules;
     }
@@ -78,7 +78,7 @@ export class UserProfileService {
   }
 
   downloadProfileAsFile(isSaveSettings = true, isSaveFilteringRules = true, isSaveTimebarStats = true) {
-    let p = this.getUserProfile();
+    const p = this.getUserProfile();
     if (p) {
       if (!isSaveSettings) {
         p.userPref = undefined;
@@ -90,8 +90,8 @@ export class UserProfileService {
         p.timebarMetrics = undefined;
       }
     }
-    let str = JSON.stringify(p);
-    let element = document.createElement('a');
+    const str = JSON.stringify(p);
+    const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(str));
     element.setAttribute('download', 'Visuall_User_Profile.vall');
 
@@ -109,8 +109,8 @@ export class UserProfileService {
   }
 
   isStoreProfile() {
-    let p = this.getUserProfile();
-    if (!p || !p.userPref || p.userPref.isStoreUserProfile == undefined || p.userPref.isStoreUserProfile == null) {
+    const p = this.getUserProfile();
+    if (!p || !p.userPref || p.userPref.isStoreUserProfile === undefined || p.userPref.isStoreUserProfile == null) {
       return this._g.userPrefs.isStoreUserProfile;
     }
     return p.userPref.isStoreUserProfile;
@@ -121,7 +121,7 @@ export class UserProfileService {
   }
 
   getTimebarMetrics(): TimebarMetric[] {
-    let p = this.getUserProfile();
+    const p = this.getUserProfile();
     if (p && p.timebarMetrics) {
       return p.timebarMetrics;
     }
@@ -133,24 +133,24 @@ export class UserProfileService {
   }
 
   transferUserPrefs() {
-    let p = this.getUserPrefs();
+    const p = this.getUserPrefs();
     this._g.transfer2UserPrefs(p);
   }
 
   transferIsStoreUserProfile() {
-    let p = this.getUserProfile();
+    const p = this.getUserProfile();
     if (p && p.userPref && typeof p.userPref.isStoreUserProfile === 'boolean') {
       this._g.userPrefs.isStoreUserProfile.next(p.userPref.isStoreUserProfile);
     }
   }
 
   saveUserPrefs() {
-    let p = this.getUserProfile();
+    const p = this.getUserProfile();
     if (p) {
       p.userPref = this.userPref2RawData();
       localStorage.setItem('profile', JSON.stringify(p));
     } else {
-      let up = this.userPref2RawData();
+      const up = this.userPref2RawData();
       localStorage.setItem('profile', JSON.stringify({ userPref: up }));
     }
   }

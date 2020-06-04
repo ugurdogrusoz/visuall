@@ -19,9 +19,9 @@ export class TimebarComponent implements OnInit {
   currPlayIcon: string;
   statsRange1Str: string;
   statsRange2Str: string;
-  cssLeftDate1: number = 0;
-  cssLeftDate2: number = 0;
-  isHide: boolean = true;
+  cssLeftDate1 = 0;
+  cssLeftDate2 = 0;
+  isHide = true;
   @ViewChild('dateInp1', { static: false }) dateInp1: ElementRef;
   @ViewChild('dateInp2', { static: false }) dateInp2: ElementRef;
 
@@ -96,16 +96,16 @@ export class TimebarComponent implements OnInit {
 
   date2str(d: number | Date): string {
     let date = d;
-    if (typeof d == 'number') {
+    if (typeof d === 'number') {
       date = new Date(d);
     }
     let s = date.toString();
-    let arr = s.split(' ');
+    const arr = s.split(' ');
     arr.splice(0, 1);
     arr.splice(arr.length - 2, 2);
     const u = this.s.getCurrTimeUnit();
-    const isGreaterThanDay = u >= TIME_UNITS['day'];
-    const hasNeedMs = u < TIME_UNITS['second'];
+    const isGreaterThanDay = u >= TIME_UNITS.day;
+    const hasNeedMs = u < TIME_UNITS.second;
     if (isGreaterThanDay) {
       arr.splice(arr.length - 1, 1);
     }

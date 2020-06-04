@@ -186,7 +186,7 @@ export class TableViewComponent implements OnInit {
     this.isDraggable = !this.isDraggable;
     this.resetPosition(this.isDraggable);
     if (!this.isDraggable) {
-      let e = this.dynamicDiv.nativeElement;
+      const e = this.dynamicDiv.nativeElement;
       e.style.width = '';
       e.style.height = '';
     }

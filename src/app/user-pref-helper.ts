@@ -9,8 +9,8 @@ export class UserPrefHelper {
   }
 
   listen4UserPref() {
-    this._g.isUserPrefReady.subscribe(x => {
-      if (!x) {
+    this._g.isUserPrefReady.subscribe(isReady => {
+      if (!isReady) {
         return;
       }
       this.loadPrefFromLocalStorage();
@@ -18,7 +18,7 @@ export class UserPrefHelper {
       this._cyService.bindViewUtilitiesExtension();
 
       const up = this._g.userPrefs;
-      const up_t = this._g.userPrefs.timebar;
+      const upT = this._g.userPrefs.timebar;
       const tb = this._timebarService;
 
       up.isAutoIncrementalLayoutOnChange.subscribe(x => { this.changeAutoIncremental(x); });
@@ -30,14 +30,14 @@ export class UserPrefHelper {
       up.tableColumnLimit.subscribe(x => { this.tableColumnLimitChanged(x); });
       up.compoundPadding.subscribe(x => { this.changeCompoundPadding(x); });
 
-      up_t.isEnabled.subscribe(x => this.isEnableTimebar(x));
-      up_t.isHideDisconnectedNodesOnAnim.subscribe(x => { tb.setisHideDisconnectedNodes(x); });
-      up_t.isMaintainGraphRange.subscribe(x => { tb.setIsMaintainGraphRange(x) });
-      up_t.playingStep.subscribe(x => { tb.changeStep(x); });
-      up_t.playingPeriod.subscribe(x => { tb.changePeriod(x); });
-      up_t.zoomingStep.subscribe(x => { tb.changeZoomStep(x); });
-      up_t.graphInclusionType.subscribe(x => { tb.changeGraphInclusionType(x); });
-      up_t.statsInclusionType.subscribe(x => { tb.changeStatsInclusionType(x); });
+      upT.isEnabled.subscribe(x => this.isEnableTimebar(x));
+      upT.isHideDisconnectedNodesOnAnim.subscribe(x => { tb.setisHideDisconnectedNodes(x); });
+      upT.isMaintainGraphRange.subscribe(x => { tb.setIsMaintainGraphRange(x) });
+      upT.playingStep.subscribe(x => { tb.changeStep(x); });
+      upT.playingPeriod.subscribe(x => { tb.changePeriod(x); });
+      upT.zoomingStep.subscribe(x => { tb.changeZoomStep(x); });
+      upT.graphInclusionType.subscribe(x => { tb.changeGraphInclusionType(x); });
+      upT.statsInclusionType.subscribe(x => { tb.changeStatsInclusionType(x); });
     });
   }
 
@@ -59,7 +59,7 @@ export class UserPrefHelper {
 
   changeCompoundPadding(x: string) {
     this._g.cy.style().selector(':compound')
-      .style({ 'padding': x })
+      .style({ padding: x })
       .update();
   }
 

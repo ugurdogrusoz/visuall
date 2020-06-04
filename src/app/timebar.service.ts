@@ -11,7 +11,7 @@ import { BehaviorSubject } from 'rxjs';
 export class TimebarService {
 
   shownMetrics = new BehaviorSubject<TimebarMetric[]>(null);
-  isRandomizedLayout: boolean = false;
+  isRandomizedLayout = false;
   private _timebarExt: Timebar;
   private _playingPeriod: number;
   private _prevElems: any = null;
@@ -21,9 +21,9 @@ export class TimebarService {
 
   // this function should show only the provided elements, then should make layout
   private shownOnlyElems(elems) {
-    let alreadyVisible = this._g.cy.nodes(':visible');
+    const alreadyVisible = this._g.cy.nodes(':visible');
     if (alreadyVisible.length > 0) {
-      let shownNodes = elems.nodes().difference(alreadyVisible);
+      const shownNodes = elems.nodes().difference(alreadyVisible);
       this._g.layoutUtils.placeNewNodes(shownNodes);
     }
     this._g.viewUtils.show(elems);
@@ -56,22 +56,22 @@ export class TimebarService {
       return true;
     }
 
-    let d1 = {};
-    for (let i = 0; i < prev.length; i++) {
-      d1[prev[i].id()] = true;
+    const d1 = {};
+    for (const i of prev) {
+      d1[i.id()] = true;
     }
-    for (let i = 0; i < curr.length; i++) {
-      if (!d1[curr[i].id()]) {
+    for (const i of curr) {
+      if (!d1[i.id()]) {
         return true;
       }
     }
 
-    let d2 = {};
-    for (let i = 0; i < curr.length; i++) {
-      d2[curr[i].id()] = true;
+    const d2 = {};
+    for (const i of curr) {
+      d2[i.id()] = true;
     }
-    for (let i = 0; i < prev.length; i++) {
-      if (!d2[prev[i].id()]) {
+    for (const i of prev) {
+      if (!d2[i.id()]) {
         return true;
       }
     }
@@ -91,7 +91,7 @@ export class TimebarService {
       },
       showOnlyElems: this.shownOnlyElems.bind(this),
       chartRendered: () => {
-        let isEnabled = this._g.userPrefs.timebar.isEnabled.getValue() && this._g.cy.$().length > 0;
+        const isEnabled = this._g.userPrefs.timebar.isEnabled.getValue() && this._g.cy.$().length > 0;
         if (!isEnabled) {
           this.showHideFn(true);
         } else {
