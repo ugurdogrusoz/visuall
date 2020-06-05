@@ -45,7 +45,7 @@ export class CytoscapeService {
     // register view utilities extension
     viewUtilities(cytoscape, $);
     //register expand-collapse extension
-    expandCollapse(cytoscape, $);
+    expandCollapse(cytoscape);
     //register layour utilities extension
     layoutUtilities(cytoscape, $);
     // use fcose layout algorithm
@@ -310,8 +310,8 @@ export class CytoscapeService {
   }
 
   bindExpandCollapseExtension() {
-    this._g.cy.expandCollapse({
-      layoutBy: this._g.layout, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
+    this._g.expandCollapseApi = this._g.cy.expandCollapse({
+      layoutBy: this._g.getFcoseOptions(), // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
       // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
       fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
       animate: true, // whether to animate on drawing changes you can specify a function too
@@ -328,8 +328,6 @@ export class CytoscapeService {
       expandCollapseCueSensitivity: 1, // sensitivity of expand-collapse cues
       allowNestedEdgeCollapse: false
     });
-
-    this._g.expandCollapseApi = this._g.cy.expandCollapse('get');
   }
 
   getNeighbors(event) {

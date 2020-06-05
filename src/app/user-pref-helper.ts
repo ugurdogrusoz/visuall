@@ -47,7 +47,7 @@ export class UserPrefHelper {
 
   changeAutoIncremental(x: boolean) {
     if (x) {
-      this._g.expandCollapseApi.setOption('layoutBy', this._g.layout);
+      this._g.expandCollapseApi.setOption('layoutBy', this._g.getFcoseOptions());
       this._g.expandCollapseApi.setOption('fisheye', true);
       this._g.expandCollapseApi.setOption('animate', true);
     } else {
