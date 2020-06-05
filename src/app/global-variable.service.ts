@@ -3,7 +3,7 @@ import { UserPref, GroupingOptionTypes } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import AppDescription from '../assets/app_description.json'
-import { isPrimitiveType } from './constants';
+import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR } from './constants';
 import { GraphHistoryItem } from './db-service/data-types';
 
 @Injectable({
@@ -30,6 +30,7 @@ export class GlobalVariableService {
   isUserPrefReady = new BehaviorSubject<boolean>(false);
   statusMsg = new BehaviorSubject<string>('');
   isUseCiseLayout = false;
+  performLayout: Function;
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
@@ -42,6 +43,7 @@ export class GlobalVariableService {
       this.setUserPrefs(x['appPreferences'], this.userPrefs);
       this.isUserPrefReady.next(true);
     });
+    this.performLayout = debounce(this.performLayoutFn, LAYOUT_ANIM_DUR, true);
   }
 
   private setUserPrefs(obj: any, userPref: any) {
@@ -99,7 +101,7 @@ export class GlobalVariableService {
     this.statusMsg.next('Rendering graph...');
   }
 
-  performLayout(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = 1000) {
+  private performLayoutFn(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = 1000) {
     if (!this.userPrefs.isAutoIncrementalLayoutOnChange.getValue() && !isRandomize && !isDirectCommand) {
       this.cy.fit();
       return;
@@ -226,7 +228,7 @@ export class GlobalVariableService {
       // whether or not to animate the layout
       animate: true,
       // duration of animation in ms, if enabled
-      animationDuration: 1000,
+      animationDuration: LAYOUT_ANIM_DUR,
       // easing of animation, if enabled
       animationEasing: undefined,
       // fit the viewport to the repositioned nodes
@@ -312,7 +314,7 @@ export class GlobalVariableService {
       refresh: 10,
 
       // Animation duration used for animate:'end'
-      animationDuration: 1000,
+      animationDuration: LAYOUT_ANIM_DUR,
 
       // Easing for animate:'end'
       animationEasing: undefined,

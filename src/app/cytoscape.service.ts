@@ -782,6 +782,9 @@ export class CytoscapeService {
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
       this._timebarService.coverVisibleRange();
+      if (hiddenNodes.length > 0) {
+        this._g.performLayout(false);
+      }
     }
   }
 
@@ -801,7 +804,7 @@ export class CytoscapeService {
   markovClustering() {
     const opt = { attributes: [() => { return 1; }] };
 
-    let clusters = this._g.cy.$().markovClustering(opt);
+    let clusters = this._g.cy.$(':visible').markovClustering(opt);
     if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
       for (let i = 0; i < clusters.length; i++) {
         let parentNode = this.createCyNode({ labels: [C.CLASS_CLUSTER], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
@@ -823,7 +826,7 @@ export class CytoscapeService {
   }
 
   louvainClustering() {
-    let clustering = this.louvainClusterer.cluster(this._g.cy.$());
+    let clustering = this.louvainClusterer.cluster(this._g.cy.$(':visible'));
     let clusters = {};
     for (let n in clustering) {
       clusters[clustering[n]] = true;
@@ -852,7 +855,7 @@ export class CytoscapeService {
   }
 
   clusterByDirector() {
-    let directorEdges = this._g.cy.$('edge.DIRECTOR');
+    let directorEdges = this._g.cy.$('edge.DIRECTOR :visible');
     let directorIds = new Set<string>();
     let movie2director = {};
     for (let i = 0; i < directorEdges.length; i++) {
