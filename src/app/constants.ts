@@ -12,6 +12,7 @@ export const CY_BATCH_END_DELAY = 100;
 export const OBJ_INFO_UPDATE_DELAY = 200;
 
 export const COMPOUND_ELEM_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge'; // defined in expand-collapse extension
+export const COMPOUND_ELEM_NODE_CLASS = 'cy-expand-collapse-collapsed-node'; // defined in expand-collapse extension
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
 export const FILTER_CLASS_HIDE = 'filter-class-disabled';
 export const MAX_HIGHTLIGHT_WIDTH = 20;

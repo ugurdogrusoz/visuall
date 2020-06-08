@@ -135,7 +135,9 @@ export class PropertyRuleComponent implements OnInit {
     };
     const isOk = this.isStrictlyValid(rule);
     if (this.isStrict && !isOk) {
-      this._modalService.open(ErrorModalComponent);
+      const instance = this._modalService.open(ErrorModalComponent);
+      instance.componentInstance.msg = 'Invalid Rule!';
+      instance.componentInstance.title = 'Error';
       return;
     }
     this.onRuleReady.emit(rule);

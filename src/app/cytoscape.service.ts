@@ -20,7 +20,8 @@ import { UserPrefHelper } from './user-pref-helper';
 import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
 import { LouvainClustering } from './LouvainClustering';
-
+import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Injectable({
   providedIn: 'root'
 })
@@ -32,7 +33,8 @@ export class CytoscapeService {
   showObjPropsFn: Function;
   showStatsFn: Function;
   louvainClusterer: LouvainClustering;
-  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService) {
+  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService,
+    private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService, private _modalService: NgbModal) {
     this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g, this._profile);
     this.louvainClusterer = new LouvainClustering();
   }
@@ -724,6 +726,13 @@ export class CytoscapeService {
   }
 
   saveAsJson() {
+    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COMPOUND_ELEM_EDGE_CLASS).length > 0 || this._g.cy.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS).length > 0;
+    if (hasAnyCollapsed) {
+      const instance = this._modalService.open(ErrorModalComponent);
+      instance.componentInstance.msg = 'Cannot save as JSON due to collapsed node(s) and/or edge(s)';
+      instance.componentInstance.title = 'Save as JSON';
+      return;
+    }
     const json = this._g.cy.json();
     const elements = json.elements;
     const file = JSON.stringify(elements, undefined, 4);
@@ -912,7 +921,7 @@ export class CytoscapeService {
   }
 
   expandAllCompounds() {
-    if (this._g.cy.nodes('.cy-expand-collapse-collapsed-node').length > 0) {
+    if (this._g.cy.nodes('.' + C.COMPOUND_ELEM_NODE_CLASS).length > 0) {
       this._g.expandCollapseApi.expandAll();
     }
   }
