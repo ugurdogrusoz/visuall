@@ -416,7 +416,8 @@ export class CytoscapeService {
     const hasNew = this.hasNewElem(elemIds, prevElems);
     if (this._g.userPrefs.timebar.isEnabled.getValue()) {
       this._timebarService.isRandomizedLayout = shouldRandomize; // make randomized layout on the next load
-    } else if (hasNew) {
+    }
+    if (hasNew) {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
