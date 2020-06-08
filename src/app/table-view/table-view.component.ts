@@ -35,6 +35,7 @@ export class TableViewComponent implements OnInit {
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
 
+
   ngOnInit() {
     this.tableFilled.subscribe(this.onTableFilled.bind(this));
     this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; if (this.params.columnLimit) { this.columnLimit = this.params.columnLimit; } });

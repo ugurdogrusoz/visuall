@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
+import {ReactiveFormsModule} from '@angular/forms'
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
@@ -32,10 +33,18 @@ import { TabCustomizationModule } from './operation-tabs/tab-customization/tab-c
 import { SaveProfileModalComponent } from './popups/save-profile-modal/save-profile-modal.component';
 import { SparqlQueryComponent } from './operation-tabs/sparql-query/sparql-query.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatAutocompleteModule} from '@angular/material/autocomplete'
-import {AutocompleteLibModule} from 'angular-ng-autocomplete';
 import { RecommendComponent } from './operation-tabs/recommend/recommend.component';
 
+import{NzConfig, NZ_CONFIG} from 'ng-zorro-antd/core/config';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import{NgZorroAntdModule, NzAutocompleteModule} from 'ng-zorro-antd';
+import { SparqlSearchComponent } from './operation-tabs/sparql-search/sparql-search.component';
+
+
+const ngZorroConfig: NzConfig = {
+  message: { nzTop: 120 },
+  notification: { nzTop: 240 }
+};
 
 @NgModule({
   declarations: [
@@ -62,7 +71,8 @@ import { RecommendComponent } from './operation-tabs/recommend/recommend.compone
     GraphHistoryComponent,
     SaveProfileModalComponent,
     SparqlQueryComponent,
-    RecommendComponent
+    RecommendComponent,
+    SparqlSearchComponent
     
     
     
@@ -78,10 +88,14 @@ import { RecommendComponent } from './operation-tabs/recommend/recommend.compone
     AngularDraggableModule,
     TabCustomizationModule,
     BrowserAnimationsModule,
-    MatAutocompleteModule,
-    AutocompleteLibModule
+    NgZorroAntdModule,
+    ReactiveFormsModule,
+    NzInputModule,
+    NzAutocompleteModule
+
+
   ],
-  providers: [],
+  providers: [{provide: NZ_CONFIG, useValue: ngZorroConfig}],
   bootstrap: [AppComponent],
   entryComponents: [SaveAsPngModalComponent, QuickHelpModalComponent, AboutModalComponent, ErrorModalComponent]
 })

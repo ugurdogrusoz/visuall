@@ -1,0 +1,32 @@
+<div class="container justify-content-center my-3 ml-3">
+  <textarea placeholder="Search" nz-input row="4" mode="multiple" [(ngModel)]="inputValue" (keyup)="onInput()"
+    [nzAutocomplete]="auto"></textarea>
+  <nz-autocomplete #auto>
+    <nz-auto-option *ngFor="let option of options" [nzValue]="option.id">{{ option.id }}</nz-auto-option>
+  </nz-autocomplete>
+  <button (click)="clearList()" class="btn btn-dark va-text m-2 center">Clear</button>
+</div>
+
+
+
+
+<div class="table-responsive" *ngIf="listValue.length > 0">
+  <table class="table table-hover table-sm" id="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th scope="col">Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let o of listValue; let i=index">
+        <td style="color:black;">{{i+1}}</td>
+        <td style="color:black;">{{o}}</td>
+
+        <th scope="col">
+          <input type="checkbox" (change)="cb4AllChanged($event.target.checked)" />
+        </th>
+      </tr>
+    </tbody>
+  </table>
+</div>

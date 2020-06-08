@@ -1,13 +1,38 @@
-<div class="container my-3" id="sparql">
-  <div class="row">
-    <div class="ng-autocomplete" id="autocomplete">
-      <ng-autocomplete></ng-autocomplete>
-    </div>
-    <button class="btn">Draw</button>
-  </div>
- 
+<!-- <div class="container justify-content-center my-3 ml-5" id="select">
+  <nz-select   [nzMaxTagPlaceholder]="Search" [nzMaxTagCount]="3" nzMode="multiple" nzPlaceHolder="Select" [(ngModel)]="inputValue"
+    (keyup)="inData()" [nzOptions]="tableInput">
+    <nz-option *ngFor="let item of searchData" (click)="fillTable()" [nzLabel]="item" [nzValue]="item"></nz-option>
+    <nz-spin nzSimple></nz-spin>
+  </nz-select>
+  <ng-template #Search let-selectedList> and {{ selectedList.length }} more selected </ng-template>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover table-sm" id="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th scope="col">Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let o of listValue; let i=index">
+        <td style="color:black;">{{i+1}}</td>
+        <td style="color:black;">{{o}}</td>
+
+        <th scope="col">
+          <input type="checkbox">
+        </th>
+      </tr>
+    </tbody>
+  </table>
+</div> -->
+
+<div class="container justify-content-center my-3">
+  <input type="text" [(ngModel)]="inputValue" (keyup)="inData()">
 </div>
 
 
 
-
+<app-table-view [params]="tableInput" [tableFilled]="tableFilled" (onFilteringChanged)="filterTable($event)" (onDataForQueryResult)="getDataForQueryResult($event)">
+</app-table-view>

@@ -9,12 +9,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let recommendItem of recommendItems">
-            <td style="color:black; font-weight: bold;">{{recommendItem.uri}}</td>
-            <td style="color: #007bff; font-weight: bold;">{{recommendItem.score}}</td>
+            <td style="color:black;">{{recommendItem.uri}}</td>
+            <td style="color: black;">{{recommendItem.score}}</td>
           </tr>
         </tbody>
       </table>
-      <button (click)="recomRemove();" type="button" data-toggle="tooltip" data-placement="top"
+      <button class="btn btn-dark va-text m-2 center" (click)="recomRemove();" type="button" data-toggle="tooltip" data-placement="top"
         title="Clear All Data">Clear</button>
     </div>
   </div>

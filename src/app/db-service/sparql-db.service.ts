@@ -8,7 +8,7 @@ import properties from '../../assets/generated/properties.json'
 import { TableFiltering } from '../table-view/table-view-types';
 import { templateJitUrl } from '@angular/compiler';
 import { Neo4jDb } from './neo4j-db.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { SharedService } from '../shared.service';
 import { TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber, DATETIME_OPERATORS } from '../constants';
 
@@ -27,6 +27,7 @@ export class SparqlDbService implements DbService {
   condition: any;
   elemN: any;
   sparqlData:any;
+  spqNodes = [];
   filterInput:any;
   
   
@@ -103,9 +104,9 @@ export class SparqlDbService implements DbService {
   sparqlQuery(){
     const url = `http://10.122.123.125:8086/sparql?solrBase=http://10.122.123.125:8985/solr/&solrCollection=teydeb_hkt_1610&triplestoreBase=http://10.122.123.125:3030&graphName=visuall_hkt`;
     let requestBdy: any = {"query":"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nprefix owl: <http://www.w3.org/2002/07/owl#>\n\nSELECT ?subject ?object\nWHERE {\n  ?subject a ?object\n}\nLIMIT 25","ruleMode":false}
-    return this._http.post(url,requestBdy).subscribe(resp => {
+    this._http.post(url,requestBdy).subscribe(resp => {
       this.sparqlData = resp;
-      console.log(this.sparqlData);
+      return this.spqNodes;
       }
     );
   }
