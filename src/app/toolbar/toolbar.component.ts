@@ -60,7 +60,9 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.mergeCustomMenu();
     this._g.statusMsg.subscribe(x => {
-      this.statusMsgQueue.push(x);
+      if (this.statusMsgQueue[this.statusMsgQueue.length - 1] !== x) {
+        this.statusMsgQueue.push(x);
+      }
       if (this.msgQueueUpdater) {
         return;
       }
@@ -76,8 +78,8 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
       return;
     }
     this.statusMsg = this.statusMsgQueue.shift();
-    // skip empty string if possbile
-    if (this.statusMsg.length < 1 && this.statusMsgQueue.length > 0) {
+    // skip empty string if possible
+    while (this.statusMsg.length < 1 && this.statusMsgQueue.length > 0) {
       this.statusMsg = this.statusMsgQueue.shift();
     }
 
