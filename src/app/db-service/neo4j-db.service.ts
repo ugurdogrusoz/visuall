@@ -149,7 +149,6 @@ export class Neo4jDb implements DbService {
     const username = this.dbConfig.username;
     const password = this.dbConfig.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
-    console.log(query);
     this._g.setLoadingStatus(true);
     this._g.statusMsg.next('Executing database query...')
     const requestBody = {
@@ -166,7 +165,6 @@ export class Neo4jDb implements DbService {
         'Authorization': 'Basic ' + btoa(username + ':' + password)
       }
     }).subscribe(x => {
-      this._g.statusMsg.next('');
       this._g.setLoadingStatus(false);
       if (isGraphResponse) {
         callback(this.extractGraph(x));

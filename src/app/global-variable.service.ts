@@ -209,7 +209,6 @@ export class GlobalVariableService {
 
   listen4graphEvents() {
     this.cy.on('layoutstop', () => {
-      this.statusMsg.next('');
       this.setLoadingStatus(false);
     });
   }

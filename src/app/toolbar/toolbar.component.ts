@@ -74,15 +74,16 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
   private processMsgQueue() {
     if (this.statusMsgQueue.length < 1) {
       clearInterval(this.msgQueueUpdater);
+      this.statusMsg = '';
       this.msgQueueUpdater = null;
       return;
     }
-    this.statusMsg = this.statusMsgQueue.shift();
-    // skip empty string if possible
-    while (this.statusMsg.length < 1 && this.statusMsgQueue.length > 0) {
-      this.statusMsg = this.statusMsgQueue.shift();
+    let candidateMsg = this.statusMsgQueue.shift();
+    // skip the same messages if there are new ones
+    while (candidateMsg == this.statusMsg && this.statusMsgQueue.length > 0) {
+      candidateMsg = this.statusMsgQueue.shift();
     }
-
+    this.statusMsg = candidateMsg;
   }
 
   ngAfterViewInit() {
