@@ -23,6 +23,7 @@ export class ObjectTabComponent implements OnInit {
   multiObjTableFilled = new Subject<boolean>();
   clearMultiObjTableFilter = new Subject<boolean>();
   isShowStatsTable: boolean = false;
+  isShowObjTable = false;
 
   tableInput: TableViewInput = {
     columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20,
@@ -60,11 +61,14 @@ export class ObjectTabComponent implements OnInit {
 
   showObjectProps() {
     let selected = this._g.cy.$(':selected');
+    this.isShowObjTable = false;
     if (selected.filter('.' + COMPOUND_ELEM_EDGE_CLASS).length > 0) {
+      this.isShowObjTable = true;
       this.showCompoundEdgeProps(true);
       return;
     }
     if (selected.length > 1 && (selected.length == selected.filter('node').length || selected.length == selected.filter('edge').length)) {
+      this.isShowObjTable = true;
       this.showMultiObjTable(true);
       return;
     }
