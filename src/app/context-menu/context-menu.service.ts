@@ -75,7 +75,7 @@ export class ContextMenuService {
     // register context menu extension
     cytoscape.use(contextMenus, $);
     this.menu = this._customizationService.menu.concat(this.menu);
-    this._g.cy.contextMenus({ menuItems: this.menu });
+    this._g.cy.contextMenus({ menuItems: this.menu, menuItemClasses: ['vall-ctx-menu-item'], contextMenuClasses: ['vall-ctx-menu'] });
   }
 
   deleteElem(event) { this._cyService.deleteSelected(event); }

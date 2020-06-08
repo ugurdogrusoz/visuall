@@ -207,11 +207,27 @@ body {
   height: 23px;
 }
 
-/* overwrite context-menu extension css */
+/* custom css for context-menu extension */
+.vall-ctx-menu-item:hover {
+  color: #16181b !important;
+  background-color: #f8f9fa !important;
+}
 
-.cy-context-menus-cxt-menuitem:hover {
-  color: #555 !important;
-  background-color: #eaeaea !important;
+.vall-ctx-menu-item {
+  background-color: #ffffff !important;
+  padding: 0.25rem 1.5rem !important;
+  width: 100% !important;
+  font-weight: 400 !important;
+  color: #212529 !important;
+  
+}
+
+.vall-ctx-menu {
+  padding: .5rem 0 !important;
+  margin: .125rem 0 0 !important;
+  border: 1px solid rgba(0, 0, 0, .15) !important;
+  background-color: #ffffff !important;
+  border-radius: .25rem !important;
 }
 
 .modal-title {

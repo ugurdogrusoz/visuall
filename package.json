@@ -32,7 +32,7 @@
     "css": "^2.2.4",
     "cytoscape": "^3.15.0",
     "cytoscape-cise": "github:iVis-at-Bilkent/cytoscape.js-cise#develop",
-    "cytoscape-context-menus": "^3.1.0",
+    "cytoscape-context-menus": "github:iVis-at-Bilkent/cytoscape.js-context-menus#unstable",
     "cytoscape-expand-collapse": "github:iVis-at-Bilkent/cytoscape.js-expand-collapse#unstable",
     "cytoscape-fcose": "github:iVis-at-Bilkent/cytoscape.js-fcose#unstable",
     "cytoscape-layout-utilities": "github:iVis-at-Bilkent/cytoscape.js-layout-utilities#unstable",
