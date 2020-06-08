@@ -501,12 +501,13 @@ export class CytoscapeService {
       return;
     }
     // remove all existing hightlights before hightlighting new elements
+    const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();
+
     if (this._g.userPrefs.isOnlyHighlight4LatestQuery.getValue()) {
-      let t = this._g.userPrefs.mergedElemIndicator.getValue();
-      if (t == MergedElemIndicatorTypes.highlight) {
+      if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
         this._g.viewUtils.removeHighlights();
       }
-      if (t == MergedElemIndicatorTypes.selection) {
+      if (newElemIndicator == MergedElemIndicatorTypes.selection) {
         this._g.cy.$().unselect();
       }
     }
@@ -515,10 +516,10 @@ export class CytoscapeService {
     for (let i = 0; i < cnt; i++) {
       ele2highlight.merge('#' + elemIds.pop());
     }
-    if (this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
+    if (newElemIndicator == MergedElemIndicatorTypes.selection) {
       this._g.isSelectFromLoad = true;
       ele2highlight.select();
-    } else {
+    } else if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
       this._g.highlightElems(ele2highlight);
     }
   }

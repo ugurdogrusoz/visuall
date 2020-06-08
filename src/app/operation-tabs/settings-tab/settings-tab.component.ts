@@ -25,7 +25,7 @@ export class SettingsTabComponent implements OnInit {
   edgeCollapseLimit: number;
   timebarGraphInclusionTypes: string[] = ['overlaps', 'contains', 'contained by'];
   timebarStatsInclusionTypes: string[] = ['all', 'begin', 'middle', 'end'];
-  mergedElemIndicators: string[] = ['Selection', 'Highlight'];
+  mergedElemIndicators: string[] = ['Selection', 'Highlight', 'None'];
   groupingOptions: string[] = ['Compounds', 'Cluster IDs'];
   nodeLabelWrapTypes: string[] = ['None', 'Wrap', 'Ellipsis'];
   // multiple choice settings

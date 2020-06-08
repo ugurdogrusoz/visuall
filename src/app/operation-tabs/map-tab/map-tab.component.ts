@@ -190,9 +190,10 @@ export class MapTabComponent implements OnInit {
     let fnStr = getBoolExpressionFromMetric(this.filteringRule) + ' return true; return false;';
     let filteredClassElems = this._g.cy.filter(new Function('x', fnStr));
     filteredClassElems.merge(filteredClassElems.connectedNodes());
-    if (this._g.userPrefs.mergedElemIndicator.getValue() == MergedElemIndicatorTypes.highlight) {
+    const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();
+    if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
       this._g.highlightElems(filteredClassElems);
-    } else {
+    } else if (newElemIndicator == MergedElemIndicatorTypes.selection) {
       filteredClassElems.select();
     }
     this._g.applyClassFiltering();

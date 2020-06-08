@@ -46,7 +46,7 @@ export enum TimebarStatsInclusionTypes {
 }
 
 export enum MergedElemIndicatorTypes {
-  selection = 0, highlight = 1
+  selection = 0, highlight = 1, none = 2
 }
 
 export enum GroupingOptionTypes {

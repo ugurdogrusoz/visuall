@@ -16,7 +16,7 @@
         <div class="form-check-inline va-text" *ngFor="let str of mergedElemIndicators; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="settingChanged(i, 'mergedElemIndicator')"
-              name="optradio3" [checked]="i==mergedElemIndicator">{{str}}
+              name="optradio1" [checked]="i==mergedElemIndicator">{{str}}
           </label>
         </div>
       </div>
@@ -27,7 +27,7 @@
         <div class="form-check-inline va-text" *ngFor="let str of groupingOptions; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="settingChanged(i, 'groupingOption')"
-              name="optradio3" [checked]="i==groupingOption">{{str}}
+              name="optradio2" [checked]="i==groupingOption">{{str}}
           </label>
         </div>
       </div>
@@ -37,7 +37,7 @@
         <div class="form-check-label va-text">Node label wrapping &nbsp;</div>
         <div class="form-check-inline va-text" *ngFor="let str of nodeLabelWrapTypes; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'nodeLabelWrap')" name="optradio4"
+            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'nodeLabelWrap')" name="optradio3"
               [checked]="i==nodeLabelWrap">{{str}}
           </label>
         </div>
@@ -172,7 +172,7 @@
         <div class="form-check-inline va-text" *ngFor="let str of timebarGraphInclusionTypes; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="settingChanged(i, 'timebar.graphInclusionType')"
-              name="optradio" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==graphInclusionType">{{str}}
+              name="optradio4" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==graphInclusionType">{{str}}
           </label>
         </div>
       </div>
@@ -183,7 +183,7 @@
         <div class="form-check-inline va-text" *ngFor="let str of timebarStatsInclusionTypes; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="settingChanged(i, 'timebar.statsInclusionType')"
-              name="optradio2" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==statsInclusionType">{{str}}
+              name="optradio5" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==statsInclusionType">{{str}}
           </label>
         </div>
       </div>
