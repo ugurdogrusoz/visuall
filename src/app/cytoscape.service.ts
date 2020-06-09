@@ -866,7 +866,7 @@ export class CytoscapeService {
   }
 
   clusterByDirector() {
-    let directorEdges = this._g.cy.$('edge.DIRECTOR :visible');
+    let directorEdges = this._g.cy.edges('.DIRECTOR').filter(':visible');
     let directorIds = new Set<string>();
     let movie2director = {};
     for (let i = 0; i < directorEdges.length; i++) {
