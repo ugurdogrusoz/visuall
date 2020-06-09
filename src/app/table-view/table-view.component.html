@@ -57,7 +57,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let r of params.results; let i = index;" (mouseenter)="onMouseEnter(r[0].val)"
-          (mouseleave)="onMouseExit(r[0].val)" [ngClass]="{'highlighted-row': idsOfSelected[r[0].val]}">
+          (mouseleave)="onMouseExit(r[0].val)" [ngClass]="{'highlighted-row': hoveredElemId == r[0].val}">
           <td scope="row">{{ (params.currPage - 1) * params.pageSize + i + 1 }}</td>
           <td *ngFor="let e of r | slice:1:columnLimit+1; let j = index;">
             <span *ngIf="e.type == 0 || e.type == 3">

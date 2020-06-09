@@ -35,7 +35,7 @@ export class MapTabComponent implements OnInit {
   currProperties: Subject<RuleSync> = new Subject();
   tableInput: TableViewInput = {
     columns: [], tableTitle: 'Filtering Results', results: [], resultCnt: 0, currPage: 1, pageSize: 0,
-    isHightlightSelected: true, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
+    isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
   };
   tableFilled = new Subject<boolean>();
   isClassTypeLocked: boolean;
@@ -318,7 +318,7 @@ export class MapTabComponent implements OnInit {
     this.filteringRule = null;
     this.tableInput = {
       columns: [], tableTitle: 'Filtering Results', results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize,
-      isHightlightSelected: true, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
+      isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
     };
     this.isClassTypeLocked = false;
     this.selectedClass = this.classOptions[0].text;

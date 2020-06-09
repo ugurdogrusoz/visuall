@@ -17,7 +17,7 @@ export class Query0Component implements OnInit {
   tableFilled = new Subject<boolean>();
 
   tableInput: TableViewInput = {
-    columns: ['Actor', 'Count'], results: [], tableTitle: 'Query Results', isHightlightSelected: true,
+    columns: ['Actor', 'Count'], results: [], tableTitle: 'Query Results', isEmphasizeOnHover: true,
     resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true
   };
 

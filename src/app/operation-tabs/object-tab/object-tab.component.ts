@@ -31,7 +31,7 @@ export class ObjectTabComponent implements OnInit {
   };
   multiObjTableInp: TableViewInput = {
     columns: ['Type'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, isReplace_inHeaders: true,
-    isLoadGraph: true, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
+    isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
   private NODE_TYPE = '_NODE_';
   private EDGE_TYPE = '_EDGE_';
@@ -115,6 +115,7 @@ export class ObjectTabComponent implements OnInit {
   }
 
   private fillMultiObjTable(elems, isNode: boolean, idMappingForHighlight: any, isNeed2Filter: boolean) {
+    this.multiObjTableInp.isNodeData = isNode;
     let elemTypesArr = elems.map(x => x.classes()[0]);
     let elemTypes = {};
     for (let i = 0; i < elemTypesArr.length; i++) {

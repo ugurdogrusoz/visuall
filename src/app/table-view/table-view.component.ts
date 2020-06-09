@@ -4,7 +4,7 @@ import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../constants';
 import { TableViewInput, TableFiltering } from './table-view-types';
 import { IPosition } from 'angular2-draggable';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 @Pipe({ name: 'replace' })
 export class ReplacePipe implements PipeTransform {
@@ -22,8 +22,10 @@ export class ReplacePipe implements PipeTransform {
   templateUrl: './table-view.component.html',
   styleUrls: ['./table-view.component.css']
 })
-export class TableViewComponent implements OnInit {
+export class TableViewComponent implements OnInit, OnDestroy {
   private highlighterFn: (ev: { target: any, type: string, cySelector?: string }) => void;
+  private readonly TXT_FILTER_DEBOUNCE = 1000;
+  private readonly EMPHASIZE_DEBOUNCE = 50;
   // column index is also a column
   columnLimit: number;
   isDraggable: boolean = false;
@@ -36,8 +38,10 @@ export class TableViewComponent implements OnInit {
   filterTxtChanged: () => void;
   @ViewChild('dynamicDiv', { static: false }) dynamicDiv;
   checkedIdx: any = {};
-  selectFn: Function;
-  idsOfSelected = {};
+  emphasizeRowFn: Function;
+  userPrefSubs: Subscription;
+  hoveredElemId = '-';
+
 
   @Input() params: TableViewInput;
   @Input() tableFilled = new Subject<boolean>();
@@ -54,24 +58,62 @@ export class TableViewComponent implements OnInit {
     this.highlighterFn = this._cyService.highlightNeighbors();
     this.position.x = 0;
     this.position.y = 0;
-    this.filterTxtChanged = debounce(this.filterBy.bind(this), 1000);
-    if (this.params.isHightlightSelected) {
-      this.selectFn = this.elemSelectionChanged.bind(this);
-      this._g.cy.on('select unselect', this.selectFn);
+    this.filterTxtChanged = debounce(this.filterBy.bind(this), this.TXT_FILTER_DEBOUNCE);
+  }
+
+  private resetHoverEvents() {
+    this.ngOnDestroy();
+    if (!this.params.isEmphasizeOnHover) {
+      return;
+    }
+    this.userPrefSubs = this._g.userPrefs.isHighlightOnHover.subscribe(x => {
+      if (x) {
+        this.bindHoverListener();
+      } else {
+        this.unbindHoverListener();
+      }
+    });
+  }
+
+  private bindHoverListener() {
+    if (!this.params.isEmphasizeOnHover) {
+      return;
+    }
+    this.emphasizeRowFn = debounce(this.elemHovered.bind(this), this.EMPHASIZE_DEBOUNCE).bind(this);
+    if (this.params.isNodeData) {
+      this._g.cy.on('mouseover mouseout', 'node', this.emphasizeRowFn);
+    } else {
+      this._g.cy.on('mouseover mouseout', 'edge', this.emphasizeRowFn);
+    }
+  }
+
+  private unbindHoverListener() {
+    if (!this.emphasizeRowFn) {
+      return;
+    }
+    if (this.params.isNodeData) {
+      this._g.cy.off('node', 'mouseover mouseout', this.emphasizeRowFn);
+    } else {
+      this._g.cy.off('edge', 'mouseover mouseout', this.emphasizeRowFn);
     }
   }
 
   ngOnDestroy() {
-    if (this.params.isHightlightSelected) {
-      this._g.cy.off('select unselect', this.selectFn);
+    if (this.userPrefSubs) {
+      this.userPrefSubs.unsubscribe();
     }
+    this.unbindHoverListener();
   }
 
-  private elemSelectionChanged() {
-    this.idsOfSelected = {};
-    const ids = this._g.cy.$(':selected').map(x => x.id());
-    for (const id of ids) {
-      this.idsOfSelected[id.substr(1)] = true;
+  private elemHovered(e) {
+    if (e.type == 'mouseover') {
+      if (this.params.isUseCySelector4Highlight) {
+        this.hoveredElemId = '#' + e.target.id();
+      } else {
+        this.hoveredElemId = e.target.id().substr(1);
+      }
+    } else {
+      this.hoveredElemId = '-';
     }
   }
 
@@ -83,6 +125,7 @@ export class TableViewComponent implements OnInit {
     } else if (this.filterTxt.length == 0) {
       this.isShowTable = false;
     }
+    this.resetHoverEvents();
   }
 
   private onClearFilter() {
