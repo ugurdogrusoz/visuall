@@ -21,7 +21,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
   menu: ToolbarDiv[];
   statusMsg = '';
   statusMsgQueue: string[] = [];
-  MIN_MSG_DURATION = 1000;
+  MIN_MSG_DURATION = 500;
   msgQueueUpdater = null;
 
   constructor(private _cyService: CytoscapeService, private modalService: NgbModal,
