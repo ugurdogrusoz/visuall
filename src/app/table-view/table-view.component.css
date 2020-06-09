@@ -21,3 +21,8 @@ td {
 th {
   white-space: nowrap;
 }
+
+.highlighted-row {
+  color: #212529;
+  background-color: rgba(0, 0, 0, .075);
+}

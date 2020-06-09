@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, Pipe, PipeTransform } from '@angular/core';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../constants';
@@ -36,6 +36,8 @@ export class TableViewComponent implements OnInit {
   filterTxtChanged: () => void;
   @ViewChild('dynamicDiv', { static: false }) dynamicDiv;
   checkedIdx: any = {};
+  selectFn: Function;
+  idsOfSelected = {};
 
   @Input() params: TableViewInput;
   @Input() tableFilled = new Subject<boolean>();
@@ -53,6 +55,24 @@ export class TableViewComponent implements OnInit {
     this.position.x = 0;
     this.position.y = 0;
     this.filterTxtChanged = debounce(this.filterBy.bind(this), 1000);
+    if (this.params.isHightlightSelected) {
+      this.selectFn = this.elemSelectionChanged.bind(this);
+      this._g.cy.on('select unselect', this.selectFn);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.params.isHightlightSelected) {
+      this._g.cy.off('select unselect', this.selectFn);
+    }
+  }
+
+  private elemSelectionChanged() {
+    this.idsOfSelected = {};
+    const ids = this._g.cy.$(':selected').map(x => x.id());
+    for (const id of ids) {
+      this.idsOfSelected[id.substr(1)] = true;
+    }
   }
 
   private onTableFilled() {

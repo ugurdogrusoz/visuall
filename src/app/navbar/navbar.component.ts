@@ -101,7 +101,6 @@ export class NavbarComponent implements OnInit {
     } else {
       readTxtFile(this.file.nativeElement.files[0], (s) => {
         this._profile.setUserProfile(s);
-        // this._g.operationTabChanged.next(3);
       });
     }
   }

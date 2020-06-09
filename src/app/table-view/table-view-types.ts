@@ -27,6 +27,7 @@ export interface TableViewInput {
   isReplace_inHeaders?: boolean;
   isDisableHover?: boolean;
   tableTitle?: string;
+  isHightlightSelected?: boolean;
 }
 
 export interface TableFiltering {

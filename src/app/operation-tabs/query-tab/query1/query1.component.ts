@@ -15,7 +15,10 @@ export class Query1Component implements OnInit, AfterViewInit {
 
   selectedGenre: string;
   movieGenres: string[];
-  tableInput: TableViewInput = { columns: ['Title'], results: [], tableTitle: 'Query Results', resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true };
+  tableInput: TableViewInput = {
+    columns: ['Title'], results: [], isHightlightSelected: true, tableTitle: 'Query Results',
+    resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true
+  };
   tableFilled = new Subject<boolean>();
   date1Id = 'query1-inp0';
   date2Id = 'query1-inp1';
