@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import AppDescription from '../../../../assets/app_description.json';
-import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric } from '../../map-tab/filtering-types';
+import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric } from '../../map-tab/query-types';
 import { GENERIC_TYPE, deepCopy } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { Subject } from 'rxjs';

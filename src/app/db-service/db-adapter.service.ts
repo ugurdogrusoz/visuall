@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DbService, GraphResponse, TableResponse, DbQueryType, HistoryMetaData, DbQueryMeta } from './data-types';
 import { Neo4jDb } from './neo4j-db.service';
-import { ClassBasedRules, rule2str } from '../operation-tabs/map-tab/filtering-types';
+import { ClassBasedRules, rule2str } from '../operation-tabs/map-tab/query-types';
 import { TableFiltering } from '../table-view/table-view-types';
 import { GlobalVariableService } from '../global-variable.service';
 

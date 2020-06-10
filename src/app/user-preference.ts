@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { FilteringRule, TimebarMetric } from './operation-tabs/map-tab/filtering-types';
+import { QueryRule, TimebarMetric } from './operation-tabs/map-tab/query-types';
 
 export interface UserPref {
   // boolean settings
@@ -64,7 +64,7 @@ export interface BoolSetting {
 }
 
 export interface UserProfile {
-  filteringRules: FilteringRule[];
+  queryRules: QueryRule[];
   timebarMetrics: TimebarMetric[];
   userPref: any;
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
 import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta } from './data-types';
-import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/filtering-types';
+import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE } from '../constants';
 import AppDescription from '../../assets/app_description.json';
 import properties from '../../assets/generated/properties.json'

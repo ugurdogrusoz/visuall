@@ -1,4 +1,4 @@
-import { ClassBasedRules } from '../operation-tabs/map-tab/filtering-types';
+import { ClassBasedRules } from '../operation-tabs/map-tab/query-types';
 import { TableFiltering } from '../table-view/table-view-types';
 
 export interface DbService {

@@ -1,6 +1,6 @@
 import { GENERIC_TYPE, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS } from 'src/app/constants';
 
-export interface FilteringRule {
+export interface QueryRule {
   name: string;
   rules: ClassBasedRules;
   isEditing: boolean;

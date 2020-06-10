@@ -14,7 +14,7 @@
 
   <div class="panel">
     <div class="panel-heading collapsed" data-toggle="collapse" data-target="#rule-elements" aria-expanded="false">
-      <span class="panel-title accordion-toggle"><b class="va-heading2">Filter by Rules</b></span>
+      <span class="panel-title accordion-toggle"><b class="va-heading2">Query by Rule</b></span>
     </div>
     <div id="rule-elements" class="collapse">
 
@@ -24,7 +24,7 @@
           [style.border]="r.isEditing ? '2px solid #888888':'2px solid #dee2e6'">
           <div class="text-center">
             <span (click)="editRule(i)" class="pointer">{{r.name}}</span>&nbsp;
-            <img src="assets/img/close.svg" class="pointer" (click)="deleteRule(i)" title="Delete filtering rule">
+            <img src="assets/img/close.svg" class="pointer" (click)="deleteRule(i)" title="Delete query rule">
           </div>
         </div>
         <div class="rounded va-text m-1 p-1" [style.border]="isAddingNewRule ? '2px solid #888888':'2px solid #dee2e6'">
@@ -45,24 +45,24 @@
       </div>
 
       <!-- rule input -->
-      <app-property-rule (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties"
+      <app-property-rule (onRuleReady)="addRule2QueryRules($event)" [propertyChanged]="currProperties"
         [isStrict]="true">
       </app-property-rule>
 
       <div class="text-center borderless mx-1 my-3">
         <div>
-          <div *ngIf="filteringRule" class="border">
+          <div *ngIf="queryRule" class="border">
             <span class="va-text">
-              Get <b>{{filteringRule.className}}</b> where:
+              Get <b>{{queryRule.className}}</b> where:
             </span>
-            <div *ngFor="let rule of filteringRule.rules; let j = index;" class="mx-1 my-2">
+            <div *ngFor="let rule of queryRule.rules; let j = index;" class="mx-1 my-2">
               <div class="row align-items-center no-gutters">
                 <!-- up, down buttons for the rule -->
                 <div class="col-lg-2 col-sm-1 text-left">
-                  <a href="#" class="mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
+                  <a href="#" class="mx-1" (click)="changeQueryRuleOrder(j, true)" *ngIf="j!=0">
                     <img src="assets/img/up-arrow.svg" title="Navigate Up">
                   </a>
-                  <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(j, false)" *ngIf="j!=0">
+                  <a href="#" class="nav-down-link" (click)="changeQueryRuleOrder(j, false)" *ngIf="j!=0">
                     <img src="assets/img/down-arrow.svg" title="Navigate Down">
                   </a>
                 </div>
@@ -74,7 +74,7 @@
                 </div>
                 <!-- delete rule button -->
                 <div class="col-1 text-right pr-1">
-                  <a href="#" (click)="deleteFilterRule(j)">
+                  <a href="#" (click)="deleteQueryRule(j)">
                     <img src="assets/img/close.svg" title="Delete rule">
                   </a>
                 </div>
@@ -83,26 +83,26 @@
           </div>
         </div>
 
-        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="filteringRule">
+        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="queryRule">
           <div class="custom-control custom-checkbox m-1">
-            <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isFilterOnDb" />
+            <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isQueryOnDb" />
             <label class="form-check-label va-text">Database</label>
           </div>
           <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="tableInput.isLoadGraph"
-              [disabled]="!isFilterOnDb" />
+              [disabled]="!isQueryOnDb" />
             <label class="form-check-label va-text">Graph</label>
           </div>
           <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="tableInput.isMergeGraph"
-              [disabled]="!isFilterOnDb" />
+              [disabled]="!isQueryOnDb" />
             <label class="form-check-label va-text">Merge</label>
           </div>
         </div>
 
-        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="filteringRule">
+        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="queryRule">
           <input class="btn btn-dark va-text m-1" type="button" [value]="changeBtnTxt" (click)="addOrUpdateRule()">
-          <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runFiltering()">
+          <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runQuery()">
         </div>
 
       </div>
@@ -115,7 +115,7 @@
   <div class="panel">
     <div class="panel-heading collapsed" (click)="groupTabCliked()" data-toggle="collapse" data-target="#group"
       aria-expanded="true">
-      <span class="panel-title accordion-toggle"><b class="va-heading2">Group</b></span>
+      <span class="panel-title accordion-toggle"><b class="va-heading2">Group Nodes</b></span>
     </div>
 
     <div id="group" class="collapse">
@@ -126,7 +126,7 @@
   <div class="panel">
     <div class="panel-heading collapsed" data-toggle="collapse" data-target="#graph-theoretic-measures"
       aria-expanded="true">
-      <span class="panel-title accordion-toggle"><b class="va-heading2">Graph Theoretic Properties</b></span>
+      <span class="panel-title accordion-toggle"><b class="va-heading2">Calculate Theoretic Property</b></span>
     </div>
 
     <div id="graph-theoretic-measures" class="collapse">

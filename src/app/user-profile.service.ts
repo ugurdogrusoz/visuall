@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserProfile } from './user-preference';
-import { FilteringRule, TimebarMetric } from './operation-tabs/map-tab/filtering-types';
+import { QueryRule, TimebarMetric } from './operation-tabs/map-tab/query-types';
 import { BehaviorSubject } from 'rxjs';
 import { GlobalVariableService } from './global-variable.service';
 
@@ -20,13 +20,13 @@ export class UserProfileService {
     return JSON.parse(p) as UserProfile;
   }
 
-  private setFilteringRules(f: FilteringRule[]) {
+  private setQueryRules(f: QueryRule[]) {
     const p = this.getUserProfile();
     if (p) {
-      p.filteringRules = f;
+      p.queryRules = f;
       localStorage.setItem('profile', JSON.stringify(p));
     } else {
-      localStorage.setItem('profile', JSON.stringify({ filteringRules: [] }));
+      localStorage.setItem('profile', JSON.stringify({ queryRules: [] }));
     }
   }
 
@@ -69,22 +69,22 @@ export class UserProfileService {
     }
   }
 
-  getFilteringRules(): FilteringRule[] {
+  getQueryRules(): QueryRule[] {
     const p = this.getUserProfile();
-    if (p && p.filteringRules) {
-      return p.filteringRules;
+    if (p && p.queryRules) {
+      return p.queryRules;
     }
     return [];
   }
 
-  downloadProfileAsFile(isSaveSettings = true, isSaveFilteringRules = true, isSaveTimebarStats = true) {
+  downloadProfileAsFile(isSaveSettings = true, isSaveQueryRules = true, isSaveTimebarStats = true) {
     const p = this.getUserProfile();
     if (p) {
       if (!isSaveSettings) {
         p.userPref = undefined;
       }
-      if (!isSaveFilteringRules) {
-        p.filteringRules = undefined;
+      if (!isSaveQueryRules) {
+        p.queryRules = undefined;
       }
       if (!isSaveTimebarStats) {
         p.timebarMetrics = undefined;
@@ -116,8 +116,8 @@ export class UserProfileService {
     return p.userPref.isStoreUserProfile;
   }
 
-  saveFilteringRules(f: FilteringRule[]) {
-    this.setFilteringRules(f);
+  saveQueryRules(f: QueryRule[]) {
+    this.setQueryRules(f);
   }
 
   getTimebarMetrics(): TimebarMetric[] {
