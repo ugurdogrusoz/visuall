@@ -140,7 +140,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
   }
 
   onMouseEnter(id: string) {
-    if (this.params.isDisableHover) {
+    if (this.params.isDisableHover || !this._g.userPrefs.isHighlightOnHover.getValue()) {
       return;
     }
     if (this.params.isUseCySelector4Highlight) {
@@ -155,7 +155,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
   }
 
   onMouseExit(id: string) {
-    if (this.params.isDisableHover) {
+    if (this.params.isDisableHover || !this._g.userPrefs.isHighlightOnHover.getValue()) {
       return;
     }
     if (this.params.isUseCySelector4Highlight) {
