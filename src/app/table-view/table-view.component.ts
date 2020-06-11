@@ -92,9 +92,9 @@ export class TableViewComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.params.isNodeData) {
-      this._g.cy.off('node', 'mouseover mouseout', this.emphasizeRowFn);
+      this._g.cy.off('mouseover mouseout', 'node', this.emphasizeRowFn);
     } else {
-      this._g.cy.off('edge', 'mouseover mouseout', this.emphasizeRowFn);
+      this._g.cy.off('mouseover mouseout', 'edge', this.emphasizeRowFn);
     }
   }
 
