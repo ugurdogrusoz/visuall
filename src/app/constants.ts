@@ -14,7 +14,6 @@ export const OBJ_INFO_UPDATE_DELAY = 200;
 export const COMPOUND_ELEM_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge'; // defined in expand-collapse extension
 export const COMPOUND_ELEM_NODE_CLASS = 'cy-expand-collapse-collapsed-node'; // defined in expand-collapse extension
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
-export const FILTER_CLASS_HIDE = 'filter-class-disabled';
 export const MAX_HIGHTLIGHT_WIDTH = 20;
 export const MIN_HIGHTLIGHT_WIDTH = 1;
 export const MAX_DATA_PAGE_SIZE = 10000;
@@ -220,8 +219,10 @@ export function union(setA, setB) {
   return _union;
 }
 
-// is a2 subset of a1
-// a1, a2 are arrays of primitive types
+/** check whether 2 arrays are equal sets.
+ * @param  {} a1 is an array
+ * @param  {} a2 is an array
+ */
 export function isSubset(a1, a2) {
   let superSet = {};
   for (let i = 0; i < a1.length; i++) {

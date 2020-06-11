@@ -5,10 +5,12 @@
     </div>
     <div id="filter-class" class="collapse show text-center m-1">
       <a class="btn btn-sm btn-outline-dark filter-node-class d-inline-flex justify-content-center va-text"
-        *ngFor="let nc of nodeClasses" href="#" role="button" (click)="filterElesByClass($event)">{{nc}}</a>
+        *ngFor="let nc of nodeClasses" href="#" role="button"
+        [ngClass]="{'filter-class-disabled': !(showNodeClass[nc])}" (click)="filterElesByClass(nc, true)">{{nc}}</a>
       <br>
       <a class="filter-edge-class d-inline-flex justify-content-center va-text" *ngFor="let ec of edgeClasses" href="#"
-        role="button" (click)="filterElesByClass($event)">{{ec}}<br></a>
+        role="button" (click)="filterElesByClass(ec, false)"
+        [ngClass]="{'filter-class-disabled': !(showEdgeClass[ec])}">{{ec}}<br></a>
     </div>
   </div>
 

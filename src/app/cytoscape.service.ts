@@ -440,7 +440,7 @@ export class CytoscapeService {
 
   collapseMultiEdges(edges2collapse?: any) {
     if (!edges2collapse) {
-      edges2collapse = this._g.cy.edges();
+      edges2collapse = this._g.cy.edges(':visible');
     }
     let sourceTargetPairs = {};
     let isCollapseBasedOnType = this._g.userPrefs.isCollapseEdgesBasedOnType.getValue();
@@ -552,7 +552,7 @@ export class CytoscapeService {
 
   fitLabel2Node() {
     this._g.cy.startBatch();
-    let nodes = this._g.cy.nodes().not(':parent').not(C.CLASS_CLUSTER);
+    let nodes = this._g.cy.nodes().not(':parent').not('.' + C.CLASS_CLUSTER);
     let wrapType = this._g.userPrefs.nodeLabelWrap.getValue();
 
     nodes.removeClass('ellipsis_label wrap_label');

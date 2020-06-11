@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
-import { FILTER_CLASS_HIDE, GENERIC_TYPE, deepCopy } from '../../constants';
-import * as $ from 'jquery';
+import { GENERIC_TYPE, deepCopy, COMPOUND_ELEM_NODE_CLASS, COMPOUND_ELEM_EDGE_CLASS, CLASS_CLUSTER } from '../../constants';
 import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
@@ -23,7 +22,9 @@ import { UserProfileService } from 'src/app/user-profile.service';
 export class MapTabComponent implements OnInit {
 
   nodeClasses: Set<string>;
+  showNodeClass = {};
   edgeClasses: Set<string>;
+  showEdgeClass = {};
   classOptions: ClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
@@ -73,6 +74,7 @@ export class MapTabComponent implements OnInit {
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
       this.nodeClasses.add(key);
+      this.showNodeClass[key] = true;
       if (this.selectedClassProps.length == 0) {
         this.selectedClassProps = Object.keys(properties.nodes[key]);
       }
@@ -80,6 +82,7 @@ export class MapTabComponent implements OnInit {
 
     for (const key in properties.edges) {
       this.edgeClasses.add(key);
+      this.showEdgeClass[key] = true;
       this.classOptions.push({ text: key, isDisabled: false });
     }
 
@@ -191,7 +194,7 @@ export class MapTabComponent implements OnInit {
   }
 
   runQueryOnDatabase(cb: (s: number, end: number) => void, cbParams: any[]) {
-    if ($.isEmptyObject(this.queryRule)) {
+    if (!this.queryRule || Object.keys(this.queryRule).length === 0) {
       console.log('there is no query rule');
       return;
     }
@@ -274,24 +277,81 @@ export class MapTabComponent implements OnInit {
     }
   }
 
-  filterElesByClass(event) {
-    const source = $(event.target);
-    const willBeShowed = source.hasClass(FILTER_CLASS_HIDE);
-    const classText = source.text();
-
-    source.blur();
-    source.toggleClass(FILTER_CLASS_HIDE);
-
+  filterElesByClass(className: string, isNode: boolean) {
+    let willBeShowed = false;
+    if (isNode) {
+      this.showNodeClass[className] = !this.showNodeClass[className];
+      willBeShowed = this.showNodeClass[className];
+    } else {
+      this.showEdgeClass[className] = !this.showEdgeClass[className];
+      willBeShowed = this.showEdgeClass[className];
+    }
     if (willBeShowed) {
-      this._g.hiddenClasses.delete(classText);
-      this._g.viewUtils.show(this._g.cy.$('.' + classText));
+      this._g.hiddenClasses.delete(className);
+      this._g.viewUtils.show(this._g.cy.$('.' + className));
     }
     else {
-      this._g.hiddenClasses.add(classText);
-      this._g.viewUtils.hide(this._g.cy.$('.' + classText));
+      this._g.hiddenClasses.add(className);
+      this._g.viewUtils.hide(this._g.cy.$('.' + className));
     }
+    this.filter4Collapsed(className, willBeShowed);
     this._g.shownElemsChanged.next(true);
     this._g.performLayout(false);
+  }
+
+  private filter4Collapsed(className: string, isShow: boolean) {
+    const classCSS = '.' + className;
+
+    // apply filter to collapsed nodes, if they are not collapsed it should be already applied
+    const metaNodes = this._g.cy.nodes('.' + COMPOUND_ELEM_NODE_CLASS);
+    for (let i = 0; i < metaNodes.length; i++) {
+      if (isShow) {
+        this._g.viewUtils.show(metaNodes[i].data('collapsedChildren').filter(classCSS));
+      } else {
+        this._g.viewUtils.hide(metaNodes[i].data('collapsedChildren').filter(classCSS));
+      }
+    }
+    let compounds2remove = this._g.cy.collection();
+
+
+    // First, expand the collapsed if they don't have anything visible inside
+    for (let i = 0; i < metaNodes.length; i++) {
+      const collapsedChildren = metaNodes[i].data('collapsedChildren');
+      if (collapsedChildren.filter(':visible').length < 1) {
+        this._g.expandCollapseApi.expand(metaNodes[i], { layoutBy: null, fisheye: false, animate: false });
+      }
+    }
+
+    // collapsed nodes are already expanded, if a compound does not have anything visible, delete it
+    const clusterNodes = this._g.cy.nodes(':parent');
+    for (let i = 0; i < clusterNodes.length; i++) {
+      // if there are empty compounds, delete them
+      const children = clusterNodes[i].children();
+      if (children.filter(':visible').length < 1) {
+        for (let j = 0; j < children.length; j++) {
+          children[j].move({ parent: null });
+        }
+        this._g.cy.remove(clusterNodes[i]);
+      }
+    }
+    
+    // handle meta edges
+    const metaEdges = this._g.cy.edges('.' + COMPOUND_ELEM_EDGE_CLASS);
+    for (let i = 0; i < metaEdges.length; i++) {
+      if (isShow) {
+        this._g.viewUtils.show(metaEdges[i].data('collapsedEdges').filter(classCSS));
+      } else {
+        // some collapsed edges should be expanded
+        const collapsedEdges = metaEdges[i].data('collapsedEdges');
+        if (collapsedEdges.not(classCSS).length < 2) {
+          this._g.expandCollapseApi.expandEdges(metaEdges[i]);
+        } else {
+          metaEdges[i].data('collapsedEdges', collapsedEdges.not(classCSS))
+          this._g.cy.add(collapsedEdges.filter(classCSS));
+        }
+        this._g.viewUtils.hide(collapsedEdges.filter(classCSS));
+      }
+    }
   }
 
   getDataForQueryResult(e: TableRowMeta) {
