@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
-import { GENERIC_TYPE, deepCopy, COMPOUND_ELEM_NODE_CLASS, COMPOUND_ELEM_EDGE_CLASS, CLASS_CLUSTER } from '../../constants';
+import { GENERIC_TYPE, deepCopy, COMPOUND_ELEM_NODE_CLASS, COMPOUND_ELEM_EDGE_CLASS, CLUSTER_CLASS } from '../../constants';
 import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
@@ -311,47 +311,17 @@ export class MapTabComponent implements OnInit {
         this._g.viewUtils.hide(metaNodes[i].data('collapsedChildren').filter(classCSS));
       }
     }
-    let compounds2remove = this._g.cy.collection();
 
-
-    // First, expand the collapsed if they don't have anything visible inside
-    for (let i = 0; i < metaNodes.length; i++) {
-      const collapsedChildren = metaNodes[i].data('collapsedChildren');
-      if (collapsedChildren.filter(':visible').length < 1) {
-        this._g.expandCollapseApi.expand(metaNodes[i], { layoutBy: null, fisheye: false, animate: false });
-      }
-    }
-
-    // collapsed nodes are already expanded, if a compound does not have anything visible, delete it
-    const clusterNodes = this._g.cy.nodes(':parent');
-    for (let i = 0; i < clusterNodes.length; i++) {
-      // if there are empty compounds, delete them
-      const children = clusterNodes[i].children();
-      if (children.filter(':visible').length < 1) {
-        for (let j = 0; j < children.length; j++) {
-          children[j].move({ parent: null });
-        }
-        this._g.cy.remove(clusterNodes[i]);
-      }
-    }
-    
-    // handle meta edges
+    // apply filter to collapsed edges, if they are not collapsed it should be already applied
     const metaEdges = this._g.cy.edges('.' + COMPOUND_ELEM_EDGE_CLASS);
     for (let i = 0; i < metaEdges.length; i++) {
       if (isShow) {
         this._g.viewUtils.show(metaEdges[i].data('collapsedEdges').filter(classCSS));
       } else {
-        // some collapsed edges should be expanded
-        const collapsedEdges = metaEdges[i].data('collapsedEdges');
-        if (collapsedEdges.not(classCSS).length < 2) {
-          this._g.expandCollapseApi.expandEdges(metaEdges[i]);
-        } else {
-          metaEdges[i].data('collapsedEdges', collapsedEdges.not(classCSS))
-          this._g.cy.add(collapsedEdges.filter(classCSS));
-        }
-        this._g.viewUtils.hide(collapsedEdges.filter(classCSS));
+        this._g.viewUtils.hide(metaEdges[i].data('collapsedEdges').filter(classCSS));
       }
     }
+    this._g.handleCompoundsOnHideDelete();
   }
 
   getDataForQueryResult(e: TableRowMeta) {

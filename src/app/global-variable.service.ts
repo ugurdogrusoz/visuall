@@ -3,7 +3,7 @@ import { UserPref, GroupingOptionTypes } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import AppDescription from '../assets/app_description.json'
-import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR } from './constants';
+import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COMPOUND_ELEM_EDGE_CLASS, COMPOUND_ELEM_NODE_CLASS, CLUSTER_CLASS } from './constants';
 import { GraphHistoryItem } from './db-service/data-types';
 
 @Injectable({
@@ -132,6 +132,8 @@ export class GlobalVariableService {
     if (hiddenSelector.length > 1) {
       this.viewUtils.hide(this.cy.$(hiddenSelector));
     }
+
+    this.handleCompoundsOnHideDelete();
   }
 
   filterByClass(elems) {
@@ -360,4 +362,39 @@ export class GlobalVariableService {
     };
   }
 
-}
+  handleCompoundsOnHideDelete() {
+    const metaEdges = this.cy.edges('.' + COMPOUND_ELEM_EDGE_CLASS);
+    // some collapsed edges should be expanded, or their data should be updated
+    for (let i = 0; i < metaEdges.length; i++) {
+      const collapsedEdges = metaEdges[i].data('collapsedEdges');
+      if (collapsedEdges.filter(':visible').length < 2) {
+        this.expandCollapseApi.expandEdges(metaEdges[i]);
+      } else {
+        metaEdges[i].data('collapsedEdges', collapsedEdges.filter(':visible'))
+        this.cy.add(collapsedEdges.not(':visible'));
+      }
+    }
+
+    const metaNodes = this.cy.nodes('.' + COMPOUND_ELEM_NODE_CLASS);
+    // First, expand the collapsed if they don't have anything visible inside
+    for (let i = 0; i < metaNodes.length; i++) {
+      const collapsedChildren = metaNodes[i].data('collapsedChildren');
+      if (collapsedChildren.filter(':visible').length < 1) {
+        this.expandCollapseApi.expand(metaNodes[i], { layoutBy: null, fisheye: false, animate: false });
+      }
+    }
+
+    // collapsed nodes are already expanded, if a compound does not have anything visible, delete it
+    const clusterNodes = this.cy.nodes('.' + CLUSTER_CLASS);
+    for (let i = 0; i < clusterNodes.length; i++) {
+      // if there are empty compounds, delete them
+      const children = clusterNodes[i].children();
+      if (children.filter(':visible').length < 1) {
+        for (let j = 0; j < children.length; j++) {
+          children[j].move({ parent: null });
+        }
+        this.cy.remove(clusterNodes[i]);
+      }
+    }
+  }
+} 

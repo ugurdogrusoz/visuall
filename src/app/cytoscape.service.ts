@@ -552,7 +552,7 @@ export class CytoscapeService {
 
   fitLabel2Node() {
     this._g.cy.startBatch();
-    let nodes = this._g.cy.nodes().not(':parent').not('.' + C.CLASS_CLUSTER);
+    let nodes = this._g.cy.nodes().not(':parent').not('.' + C.CLUSTER_CLASS);
     let wrapType = this._g.userPrefs.nodeLabelWrap.getValue();
 
     nodes.removeClass('ellipsis_label wrap_label');
@@ -770,6 +770,7 @@ export class CytoscapeService {
     } else {
       this._g.cy.remove(':selected');
     }
+    this._g.handleCompoundsOnHideDelete();
     this.runLayoutIfNoTimebar();
   }
 
@@ -818,7 +819,7 @@ export class CytoscapeService {
     let clusters = this._g.cy.$(':visible').markovClustering(opt);
     if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
       for (let i = 0; i < clusters.length; i++) {
-        let parentNode = this.createCyNode({ labels: [C.CLASS_CLUSTER], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
+        let parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
         this._g.cy.add(parentNode);
         clusters[i].move({ parent: parentNode.data.id });
       }
@@ -845,7 +846,7 @@ export class CytoscapeService {
     if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
       // generate compound nodes
       for (let i in clusters) {
-        let parentNode = this.createCyNode({ labels: [C.CLASS_CLUSTER], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
+        let parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
         this._g.cy.add(parentNode);
       }
       // add parents to non-compound nodes
@@ -884,7 +885,7 @@ export class CytoscapeService {
       for (let id of directorIds) {
         let name = this._g.cy.$('#' + id).data().name;
         // for each director, generate a compound node
-        let parentNode = this.createCyNode({ labels: [C.CLASS_CLUSTER], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id + 'c');
+        let parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id + 'c');
         this._g.cy.add(parentNode);
         // add the director to the compound node
         this._g.cy.$('#' + id).move({ parent: id + 'c' });
@@ -919,7 +920,7 @@ export class CytoscapeService {
 
   deleteClusteringNodes() {
     this._g.cy.$().move({ parent: null });
-    this._g.cy.remove('node.' + C.CLASS_CLUSTER);
+    this._g.cy.remove('node.' + C.CLUSTER_CLASS);
   }
 
   expandAllCompounds() {
