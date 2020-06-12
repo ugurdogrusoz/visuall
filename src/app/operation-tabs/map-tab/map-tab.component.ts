@@ -303,25 +303,58 @@ export class MapTabComponent implements OnInit {
     const classCSS = '.' + className;
 
     // apply filter to collapsed nodes, if they are not collapsed it should be already applied
-    const metaNodes = this._g.cy.nodes('.' + COMPOUND_ELEM_NODE_CLASS);
-    for (let i = 0; i < metaNodes.length; i++) {
-      if (isShow) {
-        this._g.viewUtils.show(metaNodes[i].data('collapsedChildren').filter(classCSS));
-      } else {
-        this._g.viewUtils.hide(metaNodes[i].data('collapsedChildren').filter(classCSS));
-      }
+    const clusterNodes = this._g.cy.nodes('.' + CLUSTER_CLASS);
+    for (let i = 0; i < clusterNodes.length; i++) {
+      this.filter4CompoundNode(clusterNodes[i], classCSS, isShow);
     }
 
     // apply filter to collapsed edges, if they are not collapsed it should be already applied
-    const metaEdges = this._g.cy.edges('.' + COMPOUND_ELEM_EDGE_CLASS);
-    for (let i = 0; i < metaEdges.length; i++) {
-      if (isShow) {
-        this._g.viewUtils.show(metaEdges[i].data('collapsedEdges').filter(classCSS));
-      } else {
-        this._g.viewUtils.hide(metaEdges[i].data('collapsedEdges').filter(classCSS));
-      }
+    const compoundEdges = this._g.cy.edges('.' + COMPOUND_ELEM_EDGE_CLASS);
+    for (let i = 0; i < compoundEdges.length; i++) {
+      this.filter4CompoundEdge(compoundEdges[i], classCSS, isShow);
     }
     this._g.handleCompoundsOnHideDelete();
+  }
+
+  private filter4CompoundNode(node, classCSS: string, isShow: boolean) {
+    let children = node.children(); // a node might have children
+    const collapsed = node.data('collapsedChildren'); // a node might a collapsed 
+    if (collapsed) {
+      children = children.union(collapsed);
+    }
+    for (let i = 0; i < children.length; i++) {
+      if (isShow) {
+        this._g.viewUtils.show(children[i].filter(classCSS));
+      } else {
+        this._g.viewUtils.hide(children[i].filter(classCSS));
+      }
+    }
+    // recursively apply for complex children
+    const compoundNodes = children.filter('.' + CLUSTER_CLASS);
+    for (let i = 0; i < compoundNodes.length; i++) {
+      this.filter4CompoundNode(compoundNodes[i], classCSS, isShow);
+    }
+    // a compound node might also have compound edges
+    const compoundEdges = children.filter('.' + COMPOUND_ELEM_EDGE_CLASS);
+    for (let i = 0; i < compoundEdges.length; i++) {
+      this.filter4CompoundEdge(compoundEdges[i], classCSS, isShow);
+    }
+  }
+
+  private filter4CompoundEdge(edge, classCSS: string, isShow: boolean) {
+    const children = edge.data('collapsedEdges') // a node might have children
+    for (let i = 0; i < children.length; i++) {
+      if (isShow) {
+        this._g.viewUtils.show(children[i].filter(classCSS));
+      } else {
+        this._g.viewUtils.hide(children[i].filter(classCSS));
+      }
+    }
+    // recursively apply for complex children
+    const complexes = children.filter('.' + COMPOUND_ELEM_EDGE_CLASS);
+    for (let i = 0; i < complexes.length; i++) {
+      this.filter4CompoundNode(complexes[i], classCSS, isShow);
+    }
   }
 
   getDataForQueryResult(e: TableRowMeta) {

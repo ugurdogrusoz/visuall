@@ -384,11 +384,15 @@ export class GlobalVariableService {
       }
     }
 
-    // collapsed nodes are already expanded, if a compound does not have anything visible, delete it
-    const clusterNodes = this.cy.nodes('.' + CLUSTER_CLASS);
+    //if an expanded compound does not have anything visible, delete it
+    const clusterNodes = this.cy.nodes('.' + CLUSTER_CLASS).not('.' + COMPOUND_ELEM_NODE_CLASS);
     for (let i = 0; i < clusterNodes.length; i++) {
       // if there are empty compounds, delete them
-      const children = clusterNodes[i].children();
+      let children = clusterNodes[i].children();
+      const collapsedChildren = clusterNodes[i].data('collapsedChildren');
+      if (collapsedChildren) {
+        children = children.union(collapsedChildren);
+      }
       if (children.filter(':visible').length < 1) {
         for (let j = 0; j < children.length; j++) {
           children[j].move({ parent: null });
