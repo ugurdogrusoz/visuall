@@ -62,17 +62,17 @@ export class ContextMenuService {
         onClickFunction: this.expandEdge.bind(this)
       },
       {
+        id: 'removeGroup',
+        content: 'Remove Group',
+        selector: 'node.' + CLUSTER_CLASS,
+        onClickFunction: (e) => { this._cyService.removeGroup4Selected(e.target || e.cyTarget) }
+      },
+      {
         id: 'deleteElement',
         content: 'Delete',
         selector: 'node,edge',
         onClickFunction: this.deleteElem.bind(this)
       },
-      {
-        id: 'removeGroup',
-        content: 'Remove Group',
-        selector: 'node.' + CLUSTER_CLASS,
-        onClickFunction: (e) => { this._cyService.removeGroup4Selected(e.target || e.cyTarget) }
-      }
     ];
   }
 
