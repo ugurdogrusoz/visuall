@@ -774,6 +774,48 @@ export class CytoscapeService {
     this.runLayoutIfNoTimebar();
   }
 
+  private addParentNode(idSuffix: string | number, parent = undefined) {
+    const id = 'c' + idSuffix;
+    const parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id);
+    this._g.cy.add(parentNode);
+    this._g.cy.$('#' + id).move({ parent: parent });
+  }
+
+  addGroup4Selected() {
+    const elems = this._g.cy.nodes(':selected');
+    if (elems.length < 1) {
+      return;
+    }
+    const parent = elems[0].parent().id();
+    for (let i = 1; i < elems.length; i++) {
+      if (parent !== elems[i].parent().id()) {
+        return;
+      }
+    }
+    const id = new Date().getTime();
+    this.addParentNode(id, parent);
+    for (let i = 0; i < elems.length; i++) {
+      elems[i].move({ parent: 'c' + id });
+    }
+  }
+
+  removeGroup4Selected(elems = undefined) {
+    if (!elems) {
+      elems = this._g.cy.nodes(':selected').filter('.' + C.CLUSTER_CLASS);
+    }
+    for (let i = 0; i < elems.length; i++) {
+      const grandParent = elems[i].parent().id() ?? null;
+      let children = elems[i].children();
+      const collapsed = elems[i].data('collapsedChildren');
+      if (collapsed) {
+        children = children.union(collapsed);
+        this._g.cy.add(collapsed);
+      }
+      children.move({ parent: grandParent });
+      this._g.cy.remove(elems[i]);
+    }
+  }
+
   showHideSelectedElements(isHide: boolean) {
     if (isHide) {
       let selected = this._g.cy.$(':selected');
@@ -869,9 +911,8 @@ export class CytoscapeService {
     let clusters = this._g.cy.$(':visible').markovClustering(opt);
     if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
       for (let i = 0; i < clusters.length; i++) {
-        let parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
-        this._g.cy.add(parentNode);
-        clusters[i].move({ parent: parentNode.data.id });
+        this.addParentNode(i);
+        clusters[i].move({ parent: 'c' + i });
       }
     } else {
       let arr = [];
@@ -896,8 +937,7 @@ export class CytoscapeService {
     if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
       // generate compound nodes
       for (let i in clusters) {
-        let parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
-        this._g.cy.add(parentNode);
+        this.addParentNode(i);
       }
       // add parents to non-compound nodes
       for (let n in clustering) {
@@ -935,10 +975,9 @@ export class CytoscapeService {
       for (let id of directorIds) {
         let name = this._g.cy.$('#' + id).data().name;
         // for each director, generate a compound node
-        let parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id + 'c');
-        this._g.cy.add(parentNode);
+        this.addParentNode(id);
         // add the director to the compound node
-        this._g.cy.$('#' + id).move({ parent: id + 'c' });
+        this._g.cy.$('#' + id).move({ parent: 'c' + id });
       }
 
       // assign nodes to parents
@@ -946,7 +985,7 @@ export class CytoscapeService {
         // if a movie has less than 2 directors add, those movies to the cluster of director
         if (v['length'] < 2) {
           // add movies to the compound node
-          this._g.cy.$('#' + k).move({ parent: v[0] + 'c' });
+          this._g.cy.$('#' + k).move({ parent: 'c' + v[0] });
         }
       }
     } else {

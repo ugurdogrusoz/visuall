@@ -39,7 +39,9 @@ export class NavbarComponent implements OnInit {
         { txt: 'Save User Profile...', id: 'nbi04', fn: 'saveUserProfile', isStd: true }]
       },
       {
-        dropdown: 'Edit', actions: [{ txt: 'Delete Selected', id: 'nbi10', fn: 'deleteSelected', isStd: true },
+        dropdown: 'Edit', actions: [{ txt: 'Add Group for Selected', id: 'nbi10', fn: 'addGroup4Selected', isStd: true },
+        { txt: 'Remove Group for Selected', id: 'nbi11', fn: 'removeGroup4Selected', isStd: true },
+        { txt: 'Delete Selected', id: 'nbi12', fn: 'deleteSelected', isStd: true },
         { txt: 'Query History', id: 'nbi101', fn: 'showHideGraphHistory', isStd: true }]
       },
       {
@@ -123,6 +125,10 @@ export class NavbarComponent implements OnInit {
   saveAsPng() { this._modalService.open(SaveAsPngModalComponent); }
 
   deleteSelected() { this._cyService.deleteSelected(null); }
+
+  addGroup4Selected() { this._cyService.addGroup4Selected(); }
+
+  removeGroup4Selected() { this._cyService.removeGroup4Selected(); }
 
   hideSelected() { this._cyService.showHideSelectedElements(true); }
 

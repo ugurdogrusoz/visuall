@@ -7,7 +7,7 @@ import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
 import { ContextMenuCustomizationService } from './context-menu-customization.service';
 import properties from '../../assets/generated/properties.json';
-import { COMPOUND_ELEM_EDGE_CLASS } from './../constants';
+import { COMPOUND_ELEM_EDGE_CLASS, CLUSTER_CLASS } from './../constants';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +66,12 @@ export class ContextMenuService {
         content: 'Delete',
         selector: 'node,edge',
         onClickFunction: this.deleteElem.bind(this)
+      },
+      {
+        id: 'removeGroup',
+        content: 'Remove Group',
+        selector: 'node.' + CLUSTER_CLASS,
+        onClickFunction: (e) => { this._cyService.removeGroup4Selected(e.target || e.cyTarget) }
       }
     ];
   }
