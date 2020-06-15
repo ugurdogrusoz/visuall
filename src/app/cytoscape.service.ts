@@ -859,6 +859,7 @@ export class CytoscapeService {
   }
 
   hideCompounds(elems) {
+    elems = elems.not('.' + C.META_EDGE_CLASS);
     const nodes = elems.filter('.' + C.CLUSTER_CLASS);
     for (let i = 0; i < nodes.length; i++) {
       this.hideCompoundNode(nodes[i]);
@@ -870,10 +871,10 @@ export class CytoscapeService {
   }
 
   hideCompoundNode(node) {
-    let children = node.children(); // a node might have children
-    const collapsed = node.data('collapsedChildren'); // a node might a collapsed 
+    let children = node.children().not('.' + C.META_EDGE_CLASS); // a node might have children
+    let collapsed = node.data('collapsedChildren'); // a node might a collapsed 
     if (collapsed) {
-      children = children.union(collapsed);
+      children = children.union(collapsed).not('.' + C.META_EDGE_CLASS);
     }
 
     // recursively apply for complex children
@@ -881,29 +882,35 @@ export class CytoscapeService {
     for (let i = 0; i < compoundNodes.length; i++) {
       this.hideCompoundNode(compoundNodes[i]);
     }
-    // a compound node might also have compound edges
-    const compoundEdges = children.filter('.' + C.COMPOUND_ELEM_EDGE_CLASS);
-    for (let i = 0; i < compoundEdges.length; i++) {
-      this.hideCompoundEdge(compoundEdges[i]);
+
+    // in recursive calls chilren are modified, compound nodes are removed
+    children = node.children().not('.' + C.META_EDGE_CLASS); // a node might have children
+    collapsed = node.data('collapsedChildren'); // a node might a collapsed 
+    if (collapsed) {
+      children = children.union(collapsed).not('.' + C.META_EDGE_CLASS);
     }
     if (collapsed) {
-      this._g.cy.add(collapsed);
+      this._g.expandCollapseApi.expand(node, { layoutBy: null, fisheye: false, animate: false });
     }
-    children.move({ parent: null });
+    // after all nodes are hidden, also hide compound edges
+    // const compoundEdges = children.filter('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+    // for (let i = 0; i < compoundEdges.length; i++) {
+    //   this.hideCompoundEdge(compoundEdges[i]);
+    // }
+    children.move({ parent: node.parent().id() ?? null });
     this._g.viewUtils.hide(children);
     this._g.cy.remove(node);
   }
 
   hideCompoundEdge(edge) {
-    const children = edge.data('collapsedEdges') // a node might have children
+    let children = edge.data('collapsedEdges').not('.' + C.META_EDGE_CLASS);
     this._g.viewUtils.hide(children);
     // recursively apply for complex children
     const compoundEdges = children.filter('.' + C.COMPOUND_ELEM_EDGE_CLASS);
     for (let i = 0; i < compoundEdges.length; i++) {
       this.hideCompoundEdge(compoundEdges[i]);
     }
-    this._g.cy.add(children);
-    this._g.cy.remove(edge);
+    this._g.expandCollapseApi.expandEdges(edge);
   }
 
   isAnyHidden() {
