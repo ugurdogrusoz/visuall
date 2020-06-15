@@ -778,6 +778,7 @@ export class CytoscapeService {
     if (isHide) {
       let selected = this._g.cy.$(':selected');
       this._g.viewUtils.hide(selected);
+      this.hideCompounds(selected);
       this._g.applyClassFiltering();
       if (selected.length > 0) {
         this._g.performLayout(false);
@@ -803,10 +804,59 @@ export class CytoscapeService {
   hideUnselected() {
     let unselected = this._g.cy.$().not(':selected');
     this._g.viewUtils.hide(unselected);
+    this.hideCompounds(unselected);
     this._g.applyClassFiltering();
     if (unselected.length > 0) {
       this._g.performLayout(false);
     }
+  }
+
+  hideCompounds(elems) {
+    const nodes = elems.filter('.' + C.CLUSTER_CLASS);
+    for (let i = 0; i < nodes.length; i++) {
+      this.hideCompoundNode(nodes[i]);
+    }
+    const edges = elems.filter('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+    for (let i = 0; i < edges.length; i++) {
+      this.hideCompoundEdge(edges[i]);
+    }
+  }
+
+  hideCompoundNode(node) {
+    let children = node.children(); // a node might have children
+    const collapsed = node.data('collapsedChildren'); // a node might a collapsed 
+    if (collapsed) {
+      children = children.union(collapsed);
+    }
+
+    // recursively apply for complex children
+    const compoundNodes = children.filter('.' + C.CLUSTER_CLASS);
+    for (let i = 0; i < compoundNodes.length; i++) {
+      this.hideCompoundNode(compoundNodes[i]);
+    }
+    // a compound node might also have compound edges
+    const compoundEdges = children.filter('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+    for (let i = 0; i < compoundEdges.length; i++) {
+      this.hideCompoundEdge(compoundEdges[i]);
+    }
+    if (collapsed) {
+      this._g.cy.add(collapsed);
+    }
+    children.move({ parent: null });
+    this._g.viewUtils.hide(children);
+    this._g.cy.remove(node);
+  }
+
+  hideCompoundEdge(edge) {
+    const children = edge.data('collapsedEdges') // a node might have children
+    this._g.viewUtils.hide(children);
+    // recursively apply for complex children
+    const compoundEdges = children.filter('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+    for (let i = 0; i < compoundEdges.length; i++) {
+      this.hideCompoundEdge(compoundEdges[i]);
+    }
+    this._g.cy.add(children);
+    this._g.cy.remove(edge);
   }
 
   isAnyHidden() {

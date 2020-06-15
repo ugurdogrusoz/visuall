@@ -11,8 +11,11 @@ export const MAX_DATE = 32503669200000;  // Wed Jan 01 3000 00:00:00 GMT+0300
 export const CY_BATCH_END_DELAY = 100;
 export const OBJ_INFO_UPDATE_DELAY = 200;
 
-export const COMPOUND_ELEM_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge'; // defined in expand-collapse extension
-export const COMPOUND_ELEM_NODE_CLASS = 'cy-expand-collapse-collapsed-node'; // defined in expand-collapse extension
+// defined in expand-collapse extension
+export const META_EDGE_CLASS = 'cy-expand-collapse-meta-edge';
+export const COMPOUND_ELEM_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge'; 
+export const COMPOUND_ELEM_NODE_CLASS = 'cy-expand-collapse-collapsed-node';
+
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
 export const MAX_HIGHTLIGHT_WIDTH = 20;
 export const MIN_HIGHTLIGHT_WIDTH = 1;

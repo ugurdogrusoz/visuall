@@ -353,7 +353,7 @@ export class MapTabComponent implements OnInit {
     // recursively apply for complex children
     const complexes = children.filter('.' + COMPOUND_ELEM_EDGE_CLASS);
     for (let i = 0; i < complexes.length; i++) {
-      this.filter4CompoundNode(complexes[i], classCSS, isShow);
+      this.filter4CompoundEdge(complexes[i], classCSS, isShow);
     }
   }
 

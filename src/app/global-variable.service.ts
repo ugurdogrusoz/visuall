@@ -362,6 +362,7 @@ export class GlobalVariableService {
     };
   }
 
+  // delete/expand compounds if they don't have any visible elements
   handleCompoundsOnHideDelete() {
     const metaEdges = this.cy.edges('.' + COMPOUND_ELEM_EDGE_CLASS);
     // some collapsed edges should be expanded, or their data should be updated
@@ -388,15 +389,9 @@ export class GlobalVariableService {
     const clusterNodes = this.cy.nodes('.' + CLUSTER_CLASS).not('.' + COMPOUND_ELEM_NODE_CLASS);
     for (let i = 0; i < clusterNodes.length; i++) {
       // if there are empty compounds, delete them
-      let children = clusterNodes[i].children();
-      const collapsedChildren = clusterNodes[i].data('collapsedChildren');
-      if (collapsedChildren) {
-        children = children.union(collapsedChildren);
-      }
+      const children = clusterNodes[i].children();
       if (children.filter(':visible').length < 1) {
-        for (let j = 0; j < children.length; j++) {
-          children[j].move({ parent: null });
-        }
+        children.move({ parent: null });
         this.cy.remove(clusterNodes[i]);
       }
     }
