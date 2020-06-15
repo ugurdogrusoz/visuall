@@ -208,6 +208,7 @@ body {
 }
 
 /* custom css for context-menu extension */
+
 .vall-ctx-menu-item:hover {
   color: #16181b !important;
   background-color: #f8f9fa !important;
@@ -219,7 +220,6 @@ body {
   width: 100% !important;
   font-weight: 400 !important;
   color: #212529 !important;
-  
 }
 
 .vall-ctx-menu {

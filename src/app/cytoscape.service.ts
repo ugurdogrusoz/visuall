@@ -797,11 +797,15 @@ export class CytoscapeService {
     for (let i = 0; i < elems.length; i++) {
       elems[i].move({ parent: 'c' + id });
     }
+    this._g.performLayout(false);
   }
 
   removeGroup4Selected(elems = undefined) {
     if (!elems) {
       elems = this._g.cy.nodes(':selected').filter('.' + C.CLUSTER_CLASS);
+    }
+    if (elems.length < 1) {
+      return;
     }
     for (let i = 0; i < elems.length; i++) {
       const grandParent = elems[i].parent().id() ?? null;
@@ -814,6 +818,7 @@ export class CytoscapeService {
       children.move({ parent: grandParent });
       this._g.cy.remove(elems[i]);
     }
+    this._g.performLayout(false);
   }
 
   showHideSelectedElements(isHide: boolean) {
