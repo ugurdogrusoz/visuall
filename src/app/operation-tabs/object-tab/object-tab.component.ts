@@ -26,11 +26,11 @@ export class ObjectTabComponent implements OnInit {
   isShowObjTable = false;
 
   tableInput: TableViewInput = {
-    columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20,
+    columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, tableTitle: 'Statistics',
     isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
   multiObjTableInp: TableViewInput = {
-    columns: ['Type'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, isReplace_inHeaders: true,
+    columns: ['Type'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, isReplace_inHeaders: true, tableTitle: 'Properties',
     isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
   private NODE_TYPE = '_NODE_';
@@ -167,7 +167,7 @@ export class ObjectTabComponent implements OnInit {
   }
 
   showMultiObjTable(isNeed2Filter: boolean) {
-    let selected = this._g.cy.$(':selected').not(CLUSTER_CLASS);
+    let selected = this._g.cy.$(':selected').not('.' + CLUSTER_CLASS);
     this.selectedClasses = '';
     this.selectedItemProps.length = 0;
     let hasNode = selected.filter('node').length > 0;
