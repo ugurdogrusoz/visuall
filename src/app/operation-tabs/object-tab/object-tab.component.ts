@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
-import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COMPOUND_ELEM_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY } from '../../constants';
+import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COMPOUND_ELEM_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY, CLUSTER_CLASS } from '../../constants';
 import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
 import AppDescription from '../../../assets/app_description.json';
@@ -167,7 +167,7 @@ export class ObjectTabComponent implements OnInit {
   }
 
   showMultiObjTable(isNeed2Filter: boolean) {
-    let selected = this._g.cy.$(':selected');
+    let selected = this._g.cy.$(':selected').not(CLUSTER_CLASS);
     this.selectedClasses = '';
     this.selectedItemProps.length = 0;
     let hasNode = selected.filter('node').length > 0;

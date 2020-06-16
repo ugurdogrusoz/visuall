@@ -719,6 +719,7 @@ export class CytoscapeService {
     if (collapsed) {
       children = children.union(collapsed);
       collapsedEdgeIds = collapsed.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS).map(x => x.id());
+      this._g.expandCollapseApi.expand(node, { layoutBy: null, fisheye: false, animate: false });
     }
     for (const i of collapsedEdgeIds) {
       edgeIdDict[i] = true;
@@ -730,14 +731,9 @@ export class CytoscapeService {
       this.hideCompoundNode(compoundNodes[i], edgeIdDict);
     }
 
-    // in recursive calls chilren are modified, compound nodes are removed
+    
+    // in recursive calls chilren are modified, this node should be an expanded compound node
     children = node.children(); // a node might have children
-    collapsed = node.data('collapsedChildren'); // a node might a collapsed 
-    if (collapsed) {
-      children = children.union(collapsed);
-      this._g.expandCollapseApi.expand(node, { layoutBy: null, fisheye: false, animate: false });
-    }
-    // node.parent() does not give corrent parent, it should give after we call `expandCollapseApi.expand`
     children.move({ parent: node.data('parent') ?? null });
     this._g.viewUtils.hide(children);
     this._g.cy.remove(node);
