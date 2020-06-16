@@ -538,7 +538,7 @@
     "isShowOverviewWindow": false,
     "isShowEdgeLabels": true,
     "isIgnoreCaseInText": false,
-    "isOnlyHighlight4LatestQuery": false,
+    "isOnlyHighlight4LatestQuery": true,
     "isStoreUserProfile": true,
     "isCollapseEdgesBasedOnType": false,
     "isCollapseMultiEdgesOnLoad": true,
@@ -552,7 +552,7 @@
     }],
     "currHighlightIdx": 0,
     "groupingOption": 0,
-    "mergedElemIndicator": 1,
+    "mergedElemIndicator": 2,
     "nodeLabelWrap": 0,
 
     "compoundPadding": "5%",
