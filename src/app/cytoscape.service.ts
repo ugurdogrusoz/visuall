@@ -561,6 +561,7 @@ export class CytoscapeService {
     C.readTxtFile(file, (txt) => {
       const fileJSON = JSON.parse(txt);
       this._g.cy.json({ elements: fileJSON });
+      this._g.cy.fit();
     });
   }
 
