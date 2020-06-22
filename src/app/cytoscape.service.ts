@@ -646,13 +646,12 @@ export class CytoscapeService {
       return;
     }
     for (let i = 0; i < elems.length; i++) {
-      const grandParent = elems[i].parent().id() ?? null;
-      let children = elems[i].children();
-      const collapsed = elems[i].data('collapsedChildren');
-      if (collapsed) {
-        children = children.union(collapsed);
-        this._g.cy.add(collapsed);
+      // expand if collapsed
+      if (elems[i].hasClass(C.COMPOUND_ELEM_NODE_CLASS)) {
+        this._g.expandCollapseApi.expand(elems[i], { layoutBy: null, fisheye: false, animate: false });
       }
+      const grandParent = elems[i].parent().id() ?? null;
+      const children = elems[i].children();
       children.move({ parent: grandParent });
       this._g.cy.remove(elems[i]);
     }
@@ -732,7 +731,6 @@ export class CytoscapeService {
       this.hideCompoundNode(compoundNodes[i], edgeIdDict);
     }
 
-    
     // in recursive calls chilren are modified, this node should be an expanded compound node
     children = node.children(); // a node might have children
     children.move({ parent: node.data('parent') ?? null });

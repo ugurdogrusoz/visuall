@@ -11,7 +11,7 @@ import AppDescription from '../../assets/app_description.json';
 import { NavbarCustomizationService } from './navbar-customization.service';
 import { NavbarDropdown, NavbarAction } from './inavbar';
 import { UserProfileService } from '../user-profile.service';
-import { readTxtFile } from '../constants';
+import { readTxtFile, CLUSTER_CLASS } from '../constants';
 import { SaveProfileModalComponent } from '../popups/save-profile-modal/save-profile-modal.component';
 
 @Component({
@@ -41,7 +41,8 @@ export class NavbarComponent implements OnInit {
       {
         dropdown: 'Edit', actions: [{ txt: 'Add Group for Selected', id: 'nbi10', fn: 'addGroup4Selected', isStd: true },
         { txt: 'Remove Group for Selected', id: 'nbi11', fn: 'removeGroup4Selected', isStd: true },
-        { txt: 'Delete Selected', id: 'nbi12', fn: 'deleteSelected', isStd: true },
+        { txt: 'Remove All Groups', id: 'nbi12', fn: 'removeAllGroups', isStd: true },
+        { txt: 'Delete Selected', id: 'nbi13', fn: 'deleteSelected', isStd: true },
         { txt: 'Query History', id: 'nbi101', fn: 'showHideGraphHistory', isStd: true }]
       },
       {
@@ -129,6 +130,8 @@ export class NavbarComponent implements OnInit {
   addGroup4Selected() { this._cyService.addGroup4Selected(); }
 
   removeGroup4Selected() { this._cyService.removeGroup4Selected(); }
+
+  removeAllGroups() { this._cyService.removeGroup4Selected(this._g.cy.nodes('.' + CLUSTER_CLASS)); }
 
   hideSelected() { this._cyService.showHideSelectedElements(true); }
 
