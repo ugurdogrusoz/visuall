@@ -289,6 +289,7 @@ export class CytoscapeService {
     if (!edges2collapse) {
       edges2collapse = this._g.cy.edges(':visible');
     }
+    edges2collapse = edges2collapse.filter('[^originalEnds]'); // do not collapse meta-edges
     let sourceTargetPairs = {};
     let isCollapseBasedOnType = this._g.userPrefs.isCollapseEdgesBasedOnType.getValue();
     let edgeCollapseLimit = this._g.userPrefs.edgeCollapseLimit.getValue();
