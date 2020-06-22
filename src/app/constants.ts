@@ -13,8 +13,8 @@ export const OBJ_INFO_UPDATE_DELAY = 200;
 
 // defined in expand-collapse extension
 export const META_EDGE_CLASS = 'cy-expand-collapse-meta-edge';
-export const COMPOUND_ELEM_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge'; 
-export const COMPOUND_ELEM_NODE_CLASS = 'cy-expand-collapse-collapsed-node';
+export const COLLAPSED_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge'; 
+export const COLLAPSED_NODE_CLASS = 'cy-expand-collapse-collapsed-node';
 
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
 export const MAX_HIGHTLIGHT_WIDTH = 20;

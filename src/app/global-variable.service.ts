@@ -3,7 +3,7 @@ import { UserPref, GroupingOptionTypes } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import AppDescription from '../assets/app_description.json'
-import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COMPOUND_ELEM_EDGE_CLASS, COMPOUND_ELEM_NODE_CLASS, CLUSTER_CLASS } from './constants';
+import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS } from './constants';
 import { GraphHistoryItem } from './db-service/data-types';
 
 @Injectable({
@@ -364,7 +364,7 @@ export class GlobalVariableService {
 
   // delete/expand compounds if they don't have any visible elements
   handleCompoundsOnHideDelete() {
-    const metaEdges = this.cy.edges('.' + COMPOUND_ELEM_EDGE_CLASS);
+    const metaEdges = this.cy.edges('.' + COLLAPSED_EDGE_CLASS);
     // some collapsed edges should be expanded, or their data should be updated
     for (let i = 0; i < metaEdges.length; i++) {
       const collapsedEdges = metaEdges[i].data('collapsedEdges');
@@ -376,7 +376,7 @@ export class GlobalVariableService {
       }
     }
 
-    const metaNodes = this.cy.nodes('.' + COMPOUND_ELEM_NODE_CLASS);
+    const metaNodes = this.cy.nodes('.' + COLLAPSED_NODE_CLASS);
     // First, expand the collapsed if they don't have anything visible inside
     for (let i = 0; i < metaNodes.length; i++) {
       const collapsedChildren = metaNodes[i].data('collapsedChildren');
@@ -386,7 +386,7 @@ export class GlobalVariableService {
     }
 
     //if an expanded compound does not have anything visible, delete it
-    const clusterNodes = this.cy.nodes('.' + CLUSTER_CLASS).not('.' + COMPOUND_ELEM_NODE_CLASS);
+    const clusterNodes = this.cy.nodes('.' + CLUSTER_CLASS).not('.' + COLLAPSED_NODE_CLASS);
     for (let i = 0; i < clusterNodes.length; i++) {
       // if there are empty compounds, delete them
       const children = clusterNodes[i].children();

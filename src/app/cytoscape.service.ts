@@ -110,7 +110,7 @@ export class CytoscapeService {
   private addOtherStyles() {
     this._g.cy.startBatch();
 
-    this._g.cy.style().selector('edge.' + C.COMPOUND_ELEM_EDGE_CLASS)
+    this._g.cy.style().selector('edge.' + C.COLLAPSED_EDGE_CLASS)
       .style({
         'label': (e) => {
           return '(' + e.data('collapsedEdges').length + ')';
@@ -241,7 +241,7 @@ export class CytoscapeService {
     if (this._g.userPrefs.isCollapseMultiEdgesOnLoad.getValue()) {
       this.collapseMultiEdges();
     }
-    let compoundEdgeIds2 = this._g.cy.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS).map(x => x.id());
+    let compoundEdgeIds2 = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
     elemIds.push(...C.arrayDiff(compoundEdgeIds, compoundEdgeIds2));
     // elements might already exist but hidden, so show them
     this._g.viewUtils.show(this._g.cy.$(elemIds.map(x => '#' + x).join(',')));
@@ -319,7 +319,7 @@ export class CytoscapeService {
 
   expandMultiEdges(edges2expand?: any) {
     if (!edges2expand) {
-      edges2expand = this._g.cy.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+      edges2expand = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS);
     }
     this._g.expandCollapseApi.expandEdges(edges2expand);
     this._g.isLoadFromExpandCollapse = true;
@@ -332,7 +332,7 @@ export class CytoscapeService {
   }
 
   getCollapsedEdgeIds(): any {
-    let compoundEdges = this._g.cy.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+    let compoundEdges = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS);
     let collapsedEdgeIds = {};
     for (let i = 0; i < compoundEdges.length; i++) {
       let collapsed = compoundEdges[i].data('collapsedEdges');
@@ -566,7 +566,7 @@ export class CytoscapeService {
   }
 
   saveAsJson() {
-    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COMPOUND_ELEM_EDGE_CLASS).length > 0 || this._g.cy.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS).length > 0;
+    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
     if (hasAnyCollapsed) {
       const instance = this._modalService.open(ErrorModalComponent);
       instance.componentInstance.msg = 'Cannot save as JSON due to collapsed node(s) and/or edge(s)';
@@ -647,7 +647,7 @@ export class CytoscapeService {
     }
     for (let i = 0; i < elems.length; i++) {
       // expand if collapsed
-      if (elems[i].hasClass(C.COMPOUND_ELEM_NODE_CLASS)) {
+      if (elems[i].hasClass(C.COLLAPSED_NODE_CLASS)) {
         this._g.expandCollapseApi.expand(elems[i], { layoutBy: null, fisheye: false, animate: false });
       }
       const grandParent = elems[i].parent().id() ?? null;
@@ -671,15 +671,17 @@ export class CytoscapeService {
       if (!this.isAnyHidden()) {
         return;
       }
-      let hiddenNodes = this._g.cy.nodes(':hidden');
-      let prevVisible = this._g.cy.nodes(':visible');
+      const hiddenNodes = this._g.cy.nodes(':hidden');
+      const hiddenEdges = this._g.cy.edges(':hidden');
+      const prevVisible = this._g.cy.nodes(':visible');
       if (prevVisible.length > 0) {
         this._g.layoutUtils.placeNewNodes(hiddenNodes);
       }
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
       this._timebarService.coverVisibleRange();
-      if (hiddenNodes.length > 0) {
+      this.showAllCollapsed();
+      if (hiddenNodes.length > 0 || hiddenEdges.length > 0) {
         this._g.performLayout(false);
       }
     }
@@ -695,10 +697,45 @@ export class CytoscapeService {
     }
   }
 
+  showAllCollapsed() {
+    const collapsedNodes = this._g.cy.$('.' + C.COLLAPSED_NODE_CLASS);
+    for (let i = 0; i < collapsedNodes.length; i++) {
+      this.showCollapsed4Node(collapsedNodes[i]);
+    }
+
+    const collapsedEdges = this._g.cy.$('.' + C.COLLAPSED_EDGE_CLASS);
+    for (let i = 0; i < collapsedEdges.length; i++) {
+      this.showCollapsed4Edge(collapsedEdges[i]);
+    }
+  }
+
+  showCollapsed4Node(node) {
+    const collapsed = node.data('collapsedChildren');
+    this._g.viewUtils.show(collapsed);
+    const collapsedNodes = collapsed.filter('.' + C.COLLAPSED_NODE_CLASS);
+    for (let i = 0; i < collapsedNodes.length; i++) {
+      this.showCollapsed4Node(collapsedNodes[i]);
+    }
+
+    const collapsedEdges = collapsed.filter('.' + C.COLLAPSED_EDGE_CLASS);
+    for (let i = 0; i < collapsedEdges.length; i++) {
+      this.showCollapsed4Edge(collapsedEdges[i]);
+    }
+  }
+
+  showCollapsed4Edge(edge) {
+    const collapsed = edge.data('collapsedEdges');
+    this._g.viewUtils.show(collapsed);
+    const collapsedEdges = collapsed.filter('.' + C.COLLAPSED_EDGE_CLASS);
+    for (let i = 0; i < collapsedEdges.length; i++) {
+      this.showCollapsed4Edge(collapsedEdges[i]);
+    }
+  }
+
   // expands all the compound nodes and deletes them recursively
   hideCompounds(elems) {
     const nodes = elems.filter('.' + C.CLUSTER_CLASS).not('.' + C.META_EDGE_CLASS);
-    let collapsedEdgeIds = elems.filter('.' + C.COMPOUND_ELEM_EDGE_CLASS).map(x => x.id());
+    let collapsedEdgeIds = elems.union(elems.connectedEdges()).filter('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
     const edgeIdDict = {};
     for (const i of collapsedEdgeIds) {
       edgeIdDict[i] = true;
@@ -714,11 +751,11 @@ export class CytoscapeService {
   hideCompoundNode(node, edgeIdDict) {
     let children = node.children(); // a node might have children
     let collapsed = node.data('collapsedChildren'); // a node might a collapsed 
-    let collapsedEdgeIds = children.connectedEdges().filter('.' + C.COMPOUND_ELEM_EDGE_CLASS).map(x => x.id());
+    let collapsedEdgeIds = children.connectedEdges().filter('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
 
     if (collapsed) {
       children = children.union(collapsed);
-      collapsedEdgeIds = collapsed.edges('.' + C.COMPOUND_ELEM_EDGE_CLASS).map(x => x.id());
+      collapsedEdgeIds = collapsed.edges('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
       this._g.expandCollapseApi.expand(node, { layoutBy: null, fisheye: false, animate: false });
     }
     for (const i of collapsedEdgeIds) {
@@ -744,7 +781,7 @@ export class CytoscapeService {
     }
     let children = edge.data('collapsedEdges');
     // recursively apply for complex children
-    const compoundEdges = children.filter('.' + C.COMPOUND_ELEM_EDGE_CLASS);
+    const compoundEdges = children.filter('.' + C.COLLAPSED_EDGE_CLASS);
     for (let i = 0; i < compoundEdges.length; i++) {
       this.hideCompoundEdge(compoundEdges[i]);
     }
@@ -864,7 +901,7 @@ export class CytoscapeService {
   }
 
   expandAllCompounds() {
-    if (this._g.cy.nodes('.' + C.COMPOUND_ELEM_NODE_CLASS).length > 0) {
+    if (this._g.cy.nodes('.' + C.COLLAPSED_NODE_CLASS).length > 0) {
       this._g.expandCollapseApi.expandAll();
     }
   }

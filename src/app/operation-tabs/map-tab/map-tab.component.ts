@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
-import { GENERIC_TYPE, deepCopy, COMPOUND_ELEM_NODE_CLASS, COMPOUND_ELEM_EDGE_CLASS, CLUSTER_CLASS } from '../../constants';
+import { GENERIC_TYPE, deepCopy, COLLAPSED_NODE_CLASS, COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from '../../constants';
 import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
@@ -309,7 +309,7 @@ export class MapTabComponent implements OnInit {
     }
 
     // apply filter to collapsed edges, if they are not collapsed it should be already applied
-    const compoundEdges = this._g.cy.edges('.' + COMPOUND_ELEM_EDGE_CLASS);
+    const compoundEdges = this._g.cy.edges('.' + COLLAPSED_EDGE_CLASS);
     for (let i = 0; i < compoundEdges.length; i++) {
       this.filter4CompoundEdge(compoundEdges[i], classCSS, isShow);
     }
@@ -335,7 +335,7 @@ export class MapTabComponent implements OnInit {
       this.filter4CompoundNode(compoundNodes[i], classCSS, isShow);
     }
     // a compound node might also have compound edges
-    const compoundEdges = children.filter('.' + COMPOUND_ELEM_EDGE_CLASS);
+    const compoundEdges = children.filter('.' + COLLAPSED_EDGE_CLASS);
     for (let i = 0; i < compoundEdges.length; i++) {
       this.filter4CompoundEdge(compoundEdges[i], classCSS, isShow);
     }
@@ -351,7 +351,7 @@ export class MapTabComponent implements OnInit {
       }
     }
     // recursively apply for complex children
-    const complexes = children.filter('.' + COMPOUND_ELEM_EDGE_CLASS);
+    const complexes = children.filter('.' + COLLAPSED_EDGE_CLASS);
     for (let i = 0; i < complexes.length; i++) {
       this.filter4CompoundEdge(complexes[i], classCSS, isShow);
     }

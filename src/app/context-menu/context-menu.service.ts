@@ -7,7 +7,7 @@ import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
 import { ContextMenuCustomizationService } from './context-menu-customization.service';
 import properties from '../../assets/generated/properties.json';
-import { COMPOUND_ELEM_EDGE_CLASS, CLUSTER_CLASS } from './../constants';
+import { COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from './../constants';
 
 @Injectable({
   providedIn: 'root'
@@ -52,13 +52,13 @@ export class ContextMenuService {
       {
         id: 'collapseEdge',
         content: 'Collapse',
-        selector: this.getCySelector4AllDefinedEdges(),
+        selector: '[^collapsedEdges][^originalEnds]',
         onClickFunction: this.collapseEdges.bind(this)
       },
       {
         id: 'expandEdge',
         content: 'Expand',
-        selector: 'edge.' + COMPOUND_ELEM_EDGE_CLASS,
+        selector: 'edge.' + COLLAPSED_EDGE_CLASS,
         onClickFunction: this.expandEdge.bind(this)
       },
       {
@@ -101,14 +101,6 @@ export class ContextMenuService {
         this._g.cy.$('.' + c).select();
       }
     }
-  }
-
-  getCySelector4AllDefinedEdges() {
-    let s = [];
-    for (let i in properties.edges) {
-      s.push('edge.' + i)
-    }
-    return s.join(',');
   }
 
   collapseEdges(event) {

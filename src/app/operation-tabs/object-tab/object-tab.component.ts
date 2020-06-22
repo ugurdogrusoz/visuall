@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
-import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COMPOUND_ELEM_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY, CLUSTER_CLASS } from '../../constants';
+import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COLLAPSED_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY, CLUSTER_CLASS } from '../../constants';
 import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
 import AppDescription from '../../../assets/app_description.json';
@@ -62,7 +62,7 @@ export class ObjectTabComponent implements OnInit {
   showObjectProps() {
     let selected = this._g.cy.$(':selected');
     this.isShowObjTable = false;
-    if (selected.filter('.' + COMPOUND_ELEM_EDGE_CLASS).length > 0) {
+    if (selected.filter('.' + COLLAPSED_EDGE_CLASS).length > 0) {
       this.isShowObjTable = true;
       this.showCompoundEdgeProps(true);
       return;
@@ -72,7 +72,7 @@ export class ObjectTabComponent implements OnInit {
       this.showMultiObjTable(true);
       return;
     }
-    const selectedNonMeta = selected.not('.' + COMPOUND_ELEM_EDGE_CLASS);
+    const selectedNonMeta = selected.not('.' + COLLAPSED_EDGE_CLASS);
     let props: { [x: string]: any; }, classNames: any[];
     [props, classNames] = this.getCommonObjectProps(selectedNonMeta);
 
@@ -90,7 +90,7 @@ export class ObjectTabComponent implements OnInit {
   }
 
   showCompoundEdgeProps(isNeed2Filter: boolean) {
-    const compoundEdges = this._g.cy.edges(':selected').filter('.' + COMPOUND_ELEM_EDGE_CLASS);
+    const compoundEdges = this._g.cy.edges(':selected').filter('.' + COLLAPSED_EDGE_CLASS);
     const selectedNodeCnt = this._g.cy.nodes(':selected').length;
     this.selectedClasses = '';
     this.selectedItemProps.length = 0;
@@ -106,7 +106,7 @@ export class ObjectTabComponent implements OnInit {
         idMappingForHighlight[collapsed[j].id()] = compoundEdges[i].id();
       }
     }
-    let stdSelectedEdges = this._g.cy.edges(':selected').not('.' + COMPOUND_ELEM_EDGE_CLASS)
+    let stdSelectedEdges = this._g.cy.edges(':selected').not('.' + COLLAPSED_EDGE_CLASS)
     for (let i = 0; i < stdSelectedEdges.length; i++) {
       idMappingForHighlight[stdSelectedEdges[i].id()] = stdSelectedEdges[i].id();
     }
@@ -336,7 +336,7 @@ export class ObjectTabComponent implements OnInit {
       let isSelected = curr.selected();
       let isVisible = curr.visible();
       for (let j = 0; j < c.length; j++) {
-        if (!this.nodeClasses.has(c[j]) && !this.edgeClasses.has(c[j]) && c[j] != COMPOUND_ELEM_EDGE_CLASS) {
+        if (!this.nodeClasses.has(c[j]) && !this.edgeClasses.has(c[j]) && c[j] != COLLAPSED_EDGE_CLASS) {
           continue;
         }
         classSet.add(c[j]);
@@ -376,8 +376,8 @@ export class ObjectTabComponent implements OnInit {
       } else if (c == this.EDGE_TYPE) {
         row[0].val = 'edge';
         row.push({ val: 'Edge', type: TableDataType.string });
-      } else if (c == COMPOUND_ELEM_EDGE_CLASS) {
-        row[0].val = '.' + COMPOUND_ELEM_EDGE_CLASS;
+      } else if (c == COLLAPSED_EDGE_CLASS) {
+        row[0].val = '.' + COLLAPSED_EDGE_CLASS;
         row.push({ val: 'Meta edge', type: TableDataType.string });
       } else {
         row.push({ val: c, type: TableDataType.string });
@@ -422,7 +422,7 @@ export class ObjectTabComponent implements OnInit {
   }
 
   filterMultiObjTable(filter: TableFiltering) {
-    if (this._g.cy.edges(':selected').filter('.' + COMPOUND_ELEM_EDGE_CLASS).length > 0) {
+    if (this._g.cy.edges(':selected').filter('.' + COLLAPSED_EDGE_CLASS).length > 0) {
       this.showCompoundEdgeProps(false);
     } else {
       this.showMultiObjTable(false);
