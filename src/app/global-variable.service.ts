@@ -43,7 +43,8 @@ export class GlobalVariableService {
       this.setUserPrefs(x['appPreferences'], this.userPrefs);
       this.isUserPrefReady.next(true);
     });
-    this.performLayout = debounce(this.performLayoutFn, LAYOUT_ANIM_DUR, true);
+    let isGraphEmpty = () => { return this.cy.elements().not(':hidden, :transparent').length > 0 };
+    this.performLayout = debounce(this.performLayoutFn, LAYOUT_ANIM_DUR, true, isGraphEmpty);
   }
 
   private setUserPrefs(obj: any, userPref: any) {
@@ -101,7 +102,7 @@ export class GlobalVariableService {
     this.statusMsg.next('Rendering graph...');
   }
 
-  private performLayoutFn(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = 1000) {
+  private performLayoutFn(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = LAYOUT_ANIM_DUR) {
     if (!this.userPrefs.isAutoIncrementalLayoutOnChange.getValue() && !isRandomize && !isDirectCommand) {
       this.cy.fit();
       return;

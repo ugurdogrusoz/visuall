@@ -13,7 +13,7 @@ export const OBJ_INFO_UPDATE_DELAY = 200;
 
 // defined in expand-collapse extension
 export const META_EDGE_CLASS = 'cy-expand-collapse-meta-edge';
-export const COLLAPSED_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge'; 
+export const COLLAPSED_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge';
 export const COLLAPSED_NODE_CLASS = 'cy-expand-collapse-collapsed-node';
 
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
@@ -28,7 +28,7 @@ export const HIDE_EMPTY_TIMEBAR_DELAY = 1000;
 export const CSS_SM_TEXT_SIZE = 11;
 export const CSS_FONT_NAME = 'Arial';
 export const CLUSTER_CLASS = 'Cluster';
-export const LAYOUT_ANIM_DUR = 1000;
+export const LAYOUT_ANIM_DUR = 500;
 
 export const GENERIC_TYPE = {
   ANY_CLASS: 'Any Object',
@@ -158,10 +158,14 @@ export const SHORT_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
  * @param  {} func
  * @param  {number} wait
  * @param  {boolean=false} immediate
+ * @param  {} preConditionFn=null if function returns false, ignore this call
  */
-export function debounce(func, wait: number, immediate: boolean = false) {
+export function debounce(func, wait: number, immediate: boolean = false, preConditionFn = null) {
   let timeout;
   return function () {
+    if (preConditionFn && !preConditionFn()) {
+      return;
+    }
     const context = this, args = arguments;
     const later = function () {
       timeout = null;

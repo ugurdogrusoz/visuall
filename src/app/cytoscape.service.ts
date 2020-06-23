@@ -672,17 +672,16 @@ export class CytoscapeService {
       if (!this.isAnyHidden()) {
         return;
       }
-      const hiddenNodes = this._g.cy.nodes(':hidden');
-      const hiddenEdges = this._g.cy.edges(':hidden');
-      const prevVisible = this._g.cy.nodes(':visible');
-      if (prevVisible.length > 0) {
-        this._g.layoutUtils.placeNewNodes(hiddenNodes);
-      }
+      const prevVisible = this._g.cy.$(':visible');
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
       this._timebarService.coverVisibleRange();
       this.showAllCollapsed();
-      if (hiddenNodes.length > 0 || hiddenEdges.length > 0) {
+      const currVisible = this._g.cy.$(':visible');
+      if (!currVisible.same(prevVisible)) {
+        if (prevVisible.length > 0) {
+          this._g.layoutUtils.placeNewNodes(currVisible.difference(prevVisible).nodes());
+        }
         this._g.performLayout(false);
       }
     }
