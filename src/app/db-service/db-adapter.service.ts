@@ -32,6 +32,23 @@ export class DbAdapterService implements DbService {
     this._db.getNeighbors(elemId, fn, queryMeta);
   }
 
+  getElems(ids: string[]| number[], callback: (x: GraphResponse) => any, queryMeta: DbQueryMeta, historyMeta?: HistoryMetaData, ) {
+    let s = '';
+    if (historyMeta) {
+      s = historyMeta.labels;
+      if (!historyMeta.labels) {
+        s = this._g.getLabels4Elems(ids, historyMeta.isNode);
+      } 
+    }
+
+    let txt = 'Get neighbors of element(s): ';
+    if (historyMeta && historyMeta.customTxt) {
+      txt = historyMeta.customTxt;
+    }
+    let fn = (x) => { callback(x); this._g.add2GraphHistory(txt + s); };
+    this._db.getElems(ids, fn, queryMeta);
+  }
+
   getSampleData(callback: (x: GraphResponse) => any) {
     let fn = (x) => { callback(x); this._g.add2GraphHistory('Get sample data'); };
     this._db.getSampleData(fn);

@@ -360,7 +360,7 @@ export class MapTabComponent implements OnInit {
   getDataForQueryResult(e: TableRowMeta) {
     let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
     let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: !this.queryRule.isEdge, labels: e.tableIdx.join(',') }
-    this._dbService.getNeighbors(e.dbIds, fn, historyMeta, { isEdgeQuery: this.queryRule.isEdge });
+    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: this.queryRule.isEdge }, historyMeta);
   }
 
   resetRule() {

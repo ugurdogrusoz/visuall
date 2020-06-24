@@ -45,6 +45,14 @@ export class Neo4jDb implements DbService {
     this.runQuery(`MATCH p=(n)${edgeCql}(${targetCql}) WHERE ${idFilter} RETURN p`, callback);
   }
 
+  getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta) {
+    const isEdgeQuery = meta && meta.isEdgeQuery;
+    let idFilter = this.buildIdFilter(ids, false, isEdgeQuery);
+    let edgepart = isEdgeQuery ? '-[e]-(n2)' : '';
+    let returnPart = isEdgeQuery ? 'n,e,n2' : 'n';
+    this.runQuery(`MATCH (n)${edgepart} WHERE ${idFilter} RETURN ${returnPart}`, callback);
+  }
+
   getSampleData(callback: (x: GraphResponse) => any) {
     this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 100`, callback);
   }
