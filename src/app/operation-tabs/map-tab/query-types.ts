@@ -31,6 +31,7 @@ export interface Rule {
   inputOperand?: string;
   ruleOperator?: string;
   rawInput?: string;
+  enumMapping?: string;
 }
 
 export interface RuleSync {

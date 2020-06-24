@@ -131,7 +131,8 @@ export class PropertyRuleComponent implements OnInit {
       rawInput: rawValue,
       inputOperand: value,
       ruleOperator: logicOperator,
-      operator: operator
+      operator: operator,
+      enumMapping: this.finiteSetPropertyMap ? this.finiteSetPropertyMap[this.filterInp] : undefined 
     };
     const isOk = this.isStrictlyValid(rule);
     if (this.isStrict && !isOk) {

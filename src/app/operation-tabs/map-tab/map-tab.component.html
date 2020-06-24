@@ -72,7 +72,9 @@
                 <div class="col-lg-9 col-sm-10 text-left va-text">
                   <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
                     (click)="ruleOperatorClicked(j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
-                  <b>{{rule.propertyOperand}}</b> {{rule.operator}} <b>{{rule.inputOperand}}</b>
+                  <b>{{rule.propertyOperand}}</b> {{rule.operator}}
+                  <b *ngIf="rule.enumMapping;else no_enum">{{rule.enumMapping}}</b>
+                  <ng-template #no_enum><b>{{rule.inputOperand}}</b></ng-template>
                 </div>
                 <!-- delete rule button -->
                 <div class="col-1 text-right pr-1">
