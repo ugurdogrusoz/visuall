@@ -52,7 +52,11 @@ export function property2TableData(propName: string, propVal: any, className: st
   if (t === undefined || t == null) {
     return { val: propVal, type: TableDataType.string };
   } else if (t.startsWith('enum')) {
-    return { val: AppDescription.enumMapping[className][propName][propVal], type: TableDataType.enum };
+    const mapping = AppDescription.enumMapping[className][propName][propVal];
+    if (mapping) {
+      return { val: mapping, type: TableDataType.enum };
+    }
+    return { val: propVal, type: TableDataType.string };
   } else if (t == 'string') {
     return { val: propVal, type: TableDataType.string };
   } else if (t == 'list') {

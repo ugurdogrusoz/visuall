@@ -319,11 +319,15 @@ export class ObjectTabComponent implements OnInit {
       return propertyValue;
     }
 
-    let mapping = AppDescription.enumMapping[c][propertyName];
+    const mapping = AppDescription.enumMapping[c][propertyName];
     if (!mapping) {
       return propertyValue;
     }
-    return AppDescription.enumMapping[c][propertyName][propertyValue];
+    const val = AppDescription.enumMapping[c][propertyName][propertyValue];
+    if (val != null || val != undefined) {
+      return val;
+    }
+    return propertyValue;
   }
 
   showStats() {

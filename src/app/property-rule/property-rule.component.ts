@@ -132,7 +132,7 @@ export class PropertyRuleComponent implements OnInit {
       inputOperand: value,
       ruleOperator: logicOperator,
       operator: operator,
-      enumMapping: this.finiteSetPropertyMap ? this.finiteSetPropertyMap[this.filterInp] : undefined 
+      enumMapping: this.finiteSetPropertyMap && this.finiteSetPropertyMap[this.filterInp] ? this.finiteSetPropertyMap[this.filterInp].value : undefined
     };
     const isOk = this.isStrictlyValid(rule);
     if (this.isStrict && !isOk) {
@@ -156,6 +156,12 @@ export class PropertyRuleComponent implements OnInit {
     this.finiteSetPropertyMap = null;
     if (m && m[this.selectedClass] && m[this.selectedClass][this.selectedProp]) {
       this.finiteSetPropertyMap = m[this.selectedClass][this.selectedProp];
+      const arr = [];
+      for (const k in this.finiteSetPropertyMap) {
+        arr.push({ key: k, value: this.finiteSetPropertyMap[k] });
+      }
+      arr.sort((a: any, b: any) => { if (a.value > b.value) return 1; if (b.value > a.value) return -1; return 0 });
+      this.finiteSetPropertyMap = arr;
       return PropertyCategory.finiteSet;
     }
     if (this.attributeType == 'datetime') {

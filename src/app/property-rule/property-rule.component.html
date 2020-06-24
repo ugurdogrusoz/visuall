@@ -24,7 +24,7 @@
     </div>
     <div [hidden]="selectedPropertyCategory != 2">
       <select class="custom-select filter-form va-small-text" [(ngModel)]="filterInp">
-        <option *ngFor="let p of finiteSetPropertyMap | keyvalue" [value]="p.key">{{p.value}}</option>
+        <option *ngFor="let p of finiteSetPropertyMap" [value]="p.key">{{p.value}}</option>
       </select>
     </div>
   </div>
