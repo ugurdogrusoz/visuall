@@ -417,7 +417,7 @@
       },
       "title_type": {
         "short": "Short movie",
-        "Title": "Title",
+        "movie": "Movie",
         "tvSeries": "TV series",
         "tvEpisode": "TV episode",
         "tvMiniSeries": "TV mini-series",

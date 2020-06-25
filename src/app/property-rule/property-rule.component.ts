@@ -125,6 +125,13 @@ export class PropertyRuleComponent implements OnInit {
       value = this.filterInp;
     }
 
+    let mapped = undefined;
+    if (this.finiteSetPropertyMap) {
+      const o = this.finiteSetPropertyMap.find(x => x.key == this.filterInp);
+      if (o) {
+        mapped = o.value;
+      }
+    }
     const rule: Rule = {
       propertyOperand: attribute,
       propertyType: atType,
@@ -132,7 +139,7 @@ export class PropertyRuleComponent implements OnInit {
       inputOperand: value,
       ruleOperator: logicOperator,
       operator: operator,
-      enumMapping: this.finiteSetPropertyMap && this.finiteSetPropertyMap[this.filterInp] ? this.finiteSetPropertyMap[this.filterInp].value : undefined
+      enumMapping: mapped
     };
     const isOk = this.isStrictlyValid(rule);
     if (this.isStrict && !isOk) {
