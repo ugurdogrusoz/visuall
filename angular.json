@@ -32,7 +32,8 @@
               "node_modules/cytoscape-context-menus/cytoscape-context-menus.css",
               "node_modules/flatpickr/dist/flatpickr.min.css",
               "node_modules/angular2-draggable/css/resizable.min.css",
-              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css"
+              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",

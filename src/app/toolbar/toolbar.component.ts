@@ -9,6 +9,7 @@ import { getPropNamesFromObj } from '../constants';
 import entityMap from '../../assets/generated/properties.json';
 import { ToolbarCustomizationService } from './toolbar-customization.service';
 import { ToolbarDiv, ToolbarAction } from './itoolbar';
+import {MapModalComponent} from '../popups/map-modal/map-modal.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -49,6 +50,9 @@ export class ToolbarComponent implements OnInit {
       {
         div: 5, items: [{ imgSrc: 'assets/img/toolbar/quick-help.svg', title: 'Quick help', fn: 'openQuickHelp', isStd: true, isRegular: true },
         { imgSrc: 'assets/img/toolbar/about.svg', title: 'About', fn: 'openAbout', isStd: true, isRegular: true }]
+      },
+      {
+        div: 6, items: [{ imgSrc: 'assets/img/toolbar/map.svg', title: 'Show On Map', fn: 'showOnMap', isStd: true, isRegular: true }]
       },
     ];
   }
@@ -176,4 +180,7 @@ export class ToolbarComponent implements OnInit {
     const v = this._g.showHideGraphHistory.getValue();
     this._g.showHideGraphHistory.next(!v);
   }
+
+  showOnMap() {this.modalService.open(MapModalComponent, { keyboard: true, size: 'xl' }); }
+
 }
