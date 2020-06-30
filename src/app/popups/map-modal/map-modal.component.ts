@@ -18,7 +18,7 @@ export class MapModalComponent implements OnInit {
     options: {
       iconSize: [25, 34],
       iconAnchor: [12.5, 34],
-      popupAnchor: [-8, -88]
+      popupAnchor: [0, -30]
     }
   } as any);
   defaultIcon = new this.CustomIcon({iconUrl: '../../assets/img/marker-default.svg'});
@@ -179,7 +179,7 @@ export class MapModalComponent implements OnInit {
       return this.selectedMarkers.some(marker => {
         const popupContent = marker._popup._content.match(/>(.*)</).pop();
         return popupContent === this.getInfoOfCyNode(node) &&
-          _.isEqual([marker._latlng.lat, marker._latlng.lng], this.getLocationOfCyNode(node))
+          _.isEqual(["" + marker._latlng.lat, "" + marker._latlng.lng], this.getLocationOfCyNode(node))
       });
     })
   }
