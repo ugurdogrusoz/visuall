@@ -6,3 +6,8 @@
   width: 5vh;
   height: 5vh;
 }
+
+#map {
+  height: 50%;
+  width: 100%;
+}
