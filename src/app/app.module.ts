@@ -39,6 +39,7 @@ import{NzConfig, NZ_CONFIG} from 'ng-zorro-antd/core/config';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import{NgZorroAntdModule, NzAutocompleteModule} from 'ng-zorro-antd';
 import { SparqlSearchComponent } from './operation-tabs/sparql-search/sparql-search.component';
+import { EditorComponent } from './operation-tabs/sparql-query/sparql-editor/editor/editor.component';
 
 
 const ngZorroConfig: NzConfig = {
@@ -72,7 +73,8 @@ const ngZorroConfig: NzConfig = {
     SaveProfileModalComponent,
     SparqlQueryComponent,
     RecommendComponent,
-    SparqlSearchComponent
+    SparqlSearchComponent,
+    EditorComponent
     
     
     

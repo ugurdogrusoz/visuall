@@ -32,13 +32,19 @@
               "node_modules/cytoscape-context-menus/cytoscape-context-menus.css",
               "node_modules/flatpickr/dist/flatpickr.min.css",
               "node_modules/angular2-draggable/css/resizable.min.css",
-              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css"
+              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+              "node_modules/@triply/yasgui/build/yasgui.min.css",
+              "node_modules/@triply/yasqe/build/yasqe.min.css",
+              "node_modules/@triply/yasr/build/yasr.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
               "node_modules/cytoscape-navigator/cytoscape-navigator.js",
               "node_modules/numeric/numeric-1.2.6.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/@triply/yasgui/build/yasgui.min.js",
+              "node_modules/@triply/yasqe/build/yasqe.min.js",
+              "node_modules/@triply/yasr/build/yasr.min.js"
             ],
             "es5BrowserSupport": true
           },

@@ -26,13 +26,15 @@
       </tr>
     </tbody>
   </table>
-</div> -->
+</div>
 
 <div class="container justify-content-center my-3">
   <input type="text" [(ngModel)]="inputValue" (keyup)="inData()">
 </div>
 
+<app-editor></app-editor>
 
-
-<app-table-view [params]="tableInput" [tableFilled]="tableFilled" (onFilteringChanged)="filterTable($event)" (onDataForQueryResult)="getDataForQueryResult($event)">
-</app-table-view>
+<app-table-view [params]="tableInput" [tableFilled]="tableFilled" (onFilteringChanged)="filterTable($event)"
+  (onDataForQueryResult)="getDataForQueryResult($event)">
+</app-table-view> 
+ -->

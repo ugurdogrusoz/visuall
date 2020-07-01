@@ -9,6 +9,7 @@ import { getPropNamesFromObj } from '../constants';
 import entityMap from '../../assets/generated/properties.json';
 import { ToolbarCustomizationService } from './toolbar-customization.service';
 import { ToolbarDiv, ToolbarAction } from './itoolbar';
+import { EditorComponent } from '../operation-tabs/sparql-query/sparql-editor/editor/editor.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -49,6 +50,9 @@ export class ToolbarComponent implements OnInit {
       {
         div: 5, items: [{ imgSrc: 'assets/img/toolbar/quick-help.svg', title: 'Quick help', fn: 'openQuickHelp', isStd: true, isRegular: true },
         { imgSrc: 'assets/img/toolbar/about.svg', title: 'About', fn: 'openAbout', isStd: true, isRegular: true }]
+      },
+      {
+        div: 6, items: [{ imgSrc: 'assets/img/toolbar/texteditor.svg', title: 'Sparql Editor', fn: 'openEditor', isStd: true, isRegular: true }]
       },
     ];
   }
@@ -171,6 +175,9 @@ export class ToolbarComponent implements OnInit {
   openQuickHelp() { this.modalService.open(QuickHelpModalComponent); }
 
   openAbout() { this.modalService.open(AboutModalComponent); }
+  
+  openEditor(){this.modalService.open(EditorComponent)}
+
 
   showHideGraphHistory() {
     const v = this._g.showHideGraphHistory.getValue();

@@ -1,0 +1,5 @@
+<div class="justify-content-center" id='yasgui'></div>
+
+<app-table-view [params]="tableInput" [tableFilled]="tableFilled" (onFilteringChanged)="filterTable($event)"
+  (onDataForQueryResult)="getDataForQueryResult($event)">
+</app-table-view>

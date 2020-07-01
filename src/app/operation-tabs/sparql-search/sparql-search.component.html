@@ -1,6 +1,6 @@
 <div class="container justify-content-center my-3 ml-3">
-  <textarea placeholder="Search" nz-input row="4" mode="multiple" [(ngModel)]="inputValue" (keyup)="onInput()"
-    [nzAutocomplete]="auto"></textarea>
+  <input type="text" nz-input row="4" mode="multiple" [(ngModel)]="inputValue" (keyup)="onInput()"
+    [nzAutocomplete]="auto">
   <nz-autocomplete #auto>
     <nz-auto-option *ngFor="let option of options" [nzValue]="option.id">{{ option.id }}</nz-auto-option>
   </nz-autocomplete>

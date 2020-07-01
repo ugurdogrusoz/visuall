@@ -494,7 +494,7 @@
     "style": {
       "label": "s3PortToOnt",
       "width": "4px",
-      "font-size": "4px",
+      "font-size": "8px",
       "line-color": "#abcaf2",
       "line-style": "solid",
       "curve-style": "bezier",
@@ -508,7 +508,7 @@
     "style": {
       "label": "s2PortToS3",
       "width": "4px",
-      "font-size": "4px",
+      "font-size": "8px",
       "line-color": "#abcaf2",
       "line-style": "solid",
       "curve-style": "bezier",
@@ -550,7 +550,7 @@
     "style": {
       "label": "hasS3Port",
       "width": "2px",
-      "font-size": "4px",
+      "font-size": "8px",
       "line-color": "#b5b74b",
       "line-style": "dashed",
       "curve-style": "bezier",
