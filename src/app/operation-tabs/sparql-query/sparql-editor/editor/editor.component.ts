@@ -25,7 +25,7 @@ import EndpointSelect from '@triply/yasgui/build/ts/src/endpointSelect';
 
 export class EditorComponent implements OnInit {
 
-  
+
   spqData: any;
   objects = []; //Nodes & Edges
   searchData = []; //Node Names
@@ -54,11 +54,11 @@ export class EditorComponent implements OnInit {
         }
       }, copyEndpointOnNewTab: false
 
-    })
+    });
 
     const tab = yasgui.addTab(true, { ...Yasgui.Tab.getDefaults(), name: `Sparql Query` });
-    tab.yasr.on(`drawn`, (yasrResult) => {
-      this.spqData = yasrResult.results.json;
+    tab.getYasr().on(`drawn`, (yasrResult) => {
+      this.spqData = yasrResult.results.getAsJson();
       for (let i = 0; i < this.spqData.data.result.nodes.length; i++) {
         const curr = this.spqData.data.result.nodes[i];
         let row: TableData[] = [{ val: curr.id, type: TableDataType.string }];
