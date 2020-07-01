@@ -39,11 +39,8 @@ import{NzConfig, NZ_CONFIG} from 'ng-zorro-antd/core/config';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import{NgZorroAntdModule, NzAutocompleteModule} from 'ng-zorro-antd';
 import { SparqlSearchComponent } from './operation-tabs/sparql-search/sparql-search.component';
-<<<<<<< HEAD
 import { EditorComponent } from './operation-tabs/sparql-query/sparql-editor/editor/editor.component';
-=======
 import { MapModalComponent } from './popups/map-modal/map-modal.component';
->>>>>>> 621462c1b996461801bb599691ef4a8d403a375b
 
 
 const ngZorroConfig: NzConfig = {
@@ -78,21 +75,9 @@ const ngZorroConfig: NzConfig = {
     SparqlQueryComponent,
     RecommendComponent,
     SparqlSearchComponent,
-<<<<<<< HEAD
-    EditorComponent
-    
-    
-    
-   
-    
-=======
+    EditorComponent,
     MapModalComponent
 
-
-
-
-
->>>>>>> 621462c1b996461801bb599691ef4a8d403a375b
   ],
   imports: [
     BrowserModule,

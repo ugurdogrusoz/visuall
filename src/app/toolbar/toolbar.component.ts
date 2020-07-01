@@ -9,11 +9,9 @@ import { getPropNamesFromObj } from '../constants';
 import entityMap from '../../assets/generated/properties.json';
 import { ToolbarCustomizationService } from './toolbar-customization.service';
 import { ToolbarDiv, ToolbarAction } from './itoolbar';
-<<<<<<< HEAD
 import { EditorComponent } from '../operation-tabs/sparql-query/sparql-editor/editor/editor.component';
-=======
 import {MapModalComponent} from '../popups/map-modal/map-modal.component';
->>>>>>> 621462c1b996461801bb599691ef4a8d403a375b
+
 
 @Component({
   selector: 'app-toolbar',
@@ -56,12 +54,11 @@ export class ToolbarComponent implements OnInit {
         { imgSrc: 'assets/img/toolbar/about.svg', title: 'About', fn: 'openAbout', isStd: true, isRegular: true }]
       },
       {
-<<<<<<< HEAD
         div: 6, items: [{ imgSrc: 'assets/img/toolbar/texteditor.svg', title: 'Sparql Editor', fn: 'openEditor', isStd: true, isRegular: true }]
-=======
-        div: 6, items: [{ imgSrc: 'assets/img/toolbar/map.svg', title: 'Show On Map', fn: 'showOnMap', isStd: true, isRegular: true }]
->>>>>>> 621462c1b996461801bb599691ef4a8d403a375b
       },
+      {
+        div: 7, items: [{ imgSrc: 'assets/img/toolbar/map.svg', title: 'Show On Map', fn: 'showOnMap', isStd: true, isRegular: true }]
+      }
     ];
   }
 
