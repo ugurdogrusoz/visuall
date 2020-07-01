@@ -33,9 +33,13 @@
               "node_modules/flatpickr/dist/flatpickr.min.css",
               "node_modules/angular2-draggable/css/resizable.min.css",
               "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+<<<<<<< HEAD
               "node_modules/@triply/yasgui/build/yasgui.min.css",
               "node_modules/@triply/yasqe/build/yasqe.min.css",
               "node_modules/@triply/yasr/build/yasr.min.css"
+=======
+              "node_modules/leaflet/dist/leaflet.css"
+>>>>>>> 621462c1b996461801bb599691ef4a8d403a375b
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",

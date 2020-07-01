@@ -45,9 +45,16 @@
     "cytoscape-view-utilities": "github:iVis-at-Bilkent/cytoscape.js-view-utilities#unstable",
     "express": "^4.17.1",
     "flatpickr": "^4.6.3",
+<<<<<<< HEAD
     "jquery": "^3.5.1",
     "ng-zorro-antd": "^9.2.0",
+=======
+    "jquery": "^3.4.1",
+    "leaflet": "^1.6.0",
+    "ng-zorro-antd": "^9.0.2",
+>>>>>>> 621462c1b996461801bb599691ef4a8d403a375b
     "ngx-autosize-input": "^2.3.7",
+    "numeric": "^1.2.6",
     "path": "^0.12.7",
     "rxjs": "^6.5.5",
     "tslib": "^1.13.0",
