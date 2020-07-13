@@ -15,7 +15,7 @@ import { DataContentService } from '../data-content.service';
  * Using 'menu' function, provided items will be added to toolbar.
  * 'isStd' property must be false for all items.
  * If 'dropdown' is not existing inside standard menu, it will be added as a new item.
- sample menu   
+ sample menu
 this._menu = [{
       div: 12, items: [{ title: 'Custom Action 1', isRegular: true, fn: 'fn1', isStd: false, imgSrc: '' }]
     },
@@ -64,7 +64,7 @@ export class ContextMenuCustomizationService {
       }
       this.shrService.setRecomDetails(this.individuals);
     })
-    
+
   }
 
 }

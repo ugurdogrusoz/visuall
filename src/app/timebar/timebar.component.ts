@@ -4,6 +4,7 @@ import { TIME_UNITS, MIN_DATE, MAX_DATE } from '../constants';
 import flatpickr from 'flatpickr';
 import { Locale } from 'flatpickr/dist/types/locale';
 import { GlobalVariableService } from '../global-variable.service';
+import { debounce, HIDE_EMPTY_TIMEBAR_DELAY } from '../constants';
 
 @Component({
   selector: 'app-timebar',
@@ -18,9 +19,9 @@ export class TimebarComponent implements OnInit {
   currPlayIcon: string;
   statsRange1Str: string;
   statsRange2Str: string;
-  cssLeftDate1: number = 0;
-  cssLeftDate2: number = 0;
-  isHide: boolean = true;
+  cssLeftDate1 = 0;
+  cssLeftDate2 = 0;
+  isHide = true;
   @ViewChild('dateInp1', { static: false }) dateInp1: ElementRef;
   @ViewChild('dateInp2', { static: false }) dateInp2: ElementRef;
 
@@ -38,7 +39,7 @@ export class TimebarComponent implements OnInit {
     this.cssLeftDate1 = (1 - r) / 2 * 100;
     this.cssLeftDate2 = (1 + r) / 2 * 100;
     this.s.setShowHideFn(this.showHide.bind(this));
-    this._g.cy.on('add remove', this.hideIfEmpty.bind(this));
+    this._g.cy.on('add remove', debounce(this.hideIfEmpty, HIDE_EMPTY_TIMEBAR_DELAY).bind(this));
   }
 
   playTiming() {
@@ -95,16 +96,16 @@ export class TimebarComponent implements OnInit {
 
   date2str(d: number | Date): string {
     let date = d;
-    if (typeof d == 'number') {
+    if (typeof d === 'number') {
       date = new Date(d);
     }
     let s = date.toString();
-    let arr = s.split(' ');
+    const arr = s.split(' ');
     arr.splice(0, 1);
     arr.splice(arr.length - 2, 2);
     const u = this.s.getCurrTimeUnit();
-    const isGreaterThanDay = u >= TIME_UNITS['day'];
-    const hasNeedMs = u < TIME_UNITS['second'];
+    const isGreaterThanDay = u >= TIME_UNITS.day;
+    const hasNeedMs = u < TIME_UNITS.second;
     if (isGreaterThanDay) {
       arr.splice(arr.length - 1, 1);
     }
@@ -120,6 +121,9 @@ export class TimebarComponent implements OnInit {
   }
 
   hideIfEmpty() {
+    if (this.isHide) {
+      return;
+    }
     if (this._g.cy.$().length < 1) {
       this.isHide = true;
     }

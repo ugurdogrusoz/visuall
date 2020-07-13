@@ -14,10 +14,11 @@ export class GroupTabComponent implements OnInit {
   prevGraph: Set<string>;
   currGraph: Set<string>;
 
+
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
 
   ngOnInit() {
-    this.options = ['None', 'By the Markov clustering algorithm', 'By director'];
+    this.options = ['None', 'By the Louvain modularity algorithm', 'By the Markov clustering algorithm', 'By director'];
     this.selectedOption = this.options[0];
   }
 
@@ -26,12 +27,13 @@ export class GroupTabComponent implements OnInit {
     this._cyService.expandAllCompounds();
     this._cyService.deleteClusteringNodes();
     if (idx == 1) {
-      this._cyService.markovClustering();
-      this._g.performLayout(false);
+      this._cyService.louvainClustering();
     } else if (idx == 2) {
+      this._cyService.markovClustering();
+    } else if (idx == 3) {
       this._cyService.clusterByDirector();
-      this._g.performLayout(false);
     }
+    this._g.performLayout(false);
     this.setGraphState();
   }
 

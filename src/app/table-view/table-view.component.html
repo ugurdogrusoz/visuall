@@ -1,5 +1,5 @@
-<div class="d-flex flex-wrap justify-content-end m-1" *ngIf="isInitialized">
-  <input #searchTxt [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
+<div class="d-flex flex-wrap justify-content-end m-1" *ngIf="isShowTable">
+  <input [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
     class="form-control va-small-text" placeholder="Search..." [(ngModel)]="filterTxt"
     (ngModelChange)="filterTxtChanged()">
 
@@ -19,19 +19,28 @@
   </button>
 </div>
 
-<div #dynamicDiv [ngResizable]="isDraggable" [rzHandles]="'all'" [rzMinWidth]="origSize.wid"
-  [rzMinHeight]="origSize.hei" (rzStart)="onResizeStart($event)" [ngDraggable]="isDraggable" [position]="position"
+<div *ngIf="isShowTable" #dynamicDiv [ngResizable]="isDraggable" [rzHandles]="'n,e,s,w,se,sw,nw'" [rzMinWidth]="200"
+  [handle]="DragHandle" [rzMinHeight]="200" [ngDraggable]="isDraggable" [position]="position"
   [ngClass]="{'draggable-content': isDraggable}">
-  <div *ngIf="isInitialized && params.results.length > 0" class="table-responsive">
+
+  <div #DragHandle style="cursor: move;" class="modal-header" [ngClass]="{'d-none': !isDraggable}">
+    <div class="modal-title va-heading1 text-center">{{params.tableTitle}}</div>
+    <div>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="tableStateChanged()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <div *ngIf="params.results.length > 0" class="table-responsive">
     <table class="table table-sm table-hover va-text">
       <thead>
         <tr>
           <th scope="col">
             #
           </th>
-          <th scope="col" *ngFor="let col of params.columns; let i = index;">
-            <a href="#" class="table-header" *ngIf="isDraggable || (i <= columnLimit-1)" (click)="columnClicked(i)">
-              {{col}}
+          <th scope="col" *ngFor="let col of params.columns | slice:0:columnLimit; let i = index;">
+            <a href="#" class="table-header" (click)="columnClicked(i)">
+              {{params.isReplace_inHeaders ? (col | replace : '[_]' : ' ') : col }}
               <span *ngIf="sortingIdx == i">
                 <span *ngIf="sortDirection == 'asc'">&#9650;</span>
                 <span *ngIf="sortDirection == 'desc'">&#9660;</span>
@@ -42,35 +51,34 @@
             <span>...</span>
           </th>
           <th scope="col" [hidden]="params.isLoadGraph">
-            <input type="checkbox" (change)="cb4AllChanged($event.target.checked)" />
+            <input type="checkbox" class="m-1" (change)="cb4AllChanged($event.target.checked)" />
           </th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let r of params.results; let i = index;" (mouseenter)="onMouseEnter(r[0].val)"
-          (mouseleave)="onMouseExit(r[0].val)">
+          (mouseleave)="onMouseExit(r[0].val)" [ngClass]="{'highlighted-row': hoveredElemId == r[0].val}">
           <td scope="row">{{ (params.currPage - 1) * params.pageSize + i + 1 }}</td>
-          <td *ngFor="let e of r | slice:1; let j = index;">
-            <span *ngIf="isDraggable || (j <= columnLimit-1)">
-              <span *ngIf="e.type == 0 || e.type == 3">
-                <ngb-highlight [result]="e.val" [term]="filterTxt"></ngb-highlight>
-              </span>
-              <span *ngIf="e.type == 1 && (e.val != 0 || !params.isHide0)">{{e.val | number:'1.0-2'}}</span>
-              <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
+          <td *ngFor="let e of r | slice:1:columnLimit+1; let j = index;">
+            <span *ngIf="e.type == 0 || e.type == 3">
+              <ngb-highlight [result]="e.val" [term]="filterTxt"></ngb-highlight>
             </span>
+            <span *ngIf="e.type == 1 && (e.val != 0 || !params.isHide0)">{{e.val | number:'1.0-2'}}</span>
+            <span *ngIf="e.type == 2">{{e.val | date:'medium'}}</span>
           </td>
           <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
           <td [hidden]="params.isLoadGraph">
-            <input type="checkbox" class="form-check-input mx-0 row-cb"
-              (change)="cbChanged(i, $event.target.checked)" />
+            <!-- row-cb class is used in TS, it is useless in CSS -->
+            <input type="checkbox" class="m-1 row-cb" (change)="cbChanged(i, $event.target.checked)" />
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div class="d-flex align-items-center justify-content-center va-text" *ngIf="params.resultCnt > params.pageSize">
-    <ngb-pagination (pageChange)="pageChanged($event)" [collectionSize]="params.resultCnt" [(page)]="params.currPage"
-      [pageSize]="params.pageSize" [maxSize]="3" [rotate]="true">
+  <div class="va-text overflow-auto" *ngIf="params.resultCnt > params.pageSize">
+    <ngb-pagination class="d-flex justify-content-center m-2" (pageChange)="pageChanged($event)"
+      [collectionSize]="params.resultCnt" [(page)]="params.currPage" [pageSize]="params.pageSize" [maxSize]="2"
+      [rotate]="true" size="sm">
       <ng-template ngbPaginationPrevious><img class="img-sm-icon" src="/assets/img/left-arrow.svg"></ng-template>
       <ng-template ngbPaginationNext><img class="img-sm-icon" src="/assets/img/right-arrow.svg"></ng-template>
     </ngb-pagination>

@@ -4,9 +4,11 @@ This guide details how a custom application can be built using Visu*all*. We ass
 
 Many of the things from the name and logo of your application to the type and style of nodes and edges to default values of various settings are defined in a so-called [description file](../src/assets/app_description.json). The description file contains many sections as detailed throughout this guide. 
 
-Once this file is prepared, the [style generator file](../src/style-generator.js) modifies [index.html file](../src/index.html), [styles.css file](../src/styles.css), [properties.json file](../src/assets/generated/properties.json) and [stylesheet.json file](../src/assets/generated/stylesheet.json), resulting in the desired customization, using the command:
+Once this file is prepared, the [style generator](../src/style-generator.js) file modifies [index.html](../src/index.html) file, [styles.css](../src/styles.css) file, [properties.json](../src/assets/generated/properties.json) file and [stylesheet.json](../src/assets/generated/stylesheet.json) file, resulting in the desired customization, using the command:
+- First navigate to `src` folder
+- Then execute `node style-generator.js assets/app_description.json`
 
-`node style-generator.js /assest/app_description.json`
+Note that some of the changes made in the description file will automatically be shown on the web page without executing the above command. However, it is not always the case. So it is recommended to always run the style generation command after changing the description file.
 
 Here is the overall look of the sample application on movies and people taking part in these movies:
 
@@ -43,13 +45,13 @@ One of the essential definitions in this file is the structure of the data: the 
 
 ### Objects
 
-The section named "objects" contains the stucture of different kinds of objects in your graphs. In other words, each *object* corresponds to a *node* type in your graph. For instance, in the sample movie application, there are two classes of nodes: `Person` and `Movie`. 
+The section named "objects" contains the stucture of different kinds of objects in your graphs. In other words, each *object* corresponds to a *node* type in your graph. For instance, in the sample movie application, there are two classes of nodes: `Person` and `Title`. 
 
 Each node has a set of associated *properties* and *style*. Each property has a name and data type. For example, `Person` class has the following properties: `name`, `born`, `start_t`, and `end_t`.  
 
 Each *property* is one of the following data types: `string`, `int`, `float`, `datetime`, `list` and `enum`. Here, `string`, `float`, `int` are standard data types as described by most programming languages. `datetime`, on the other hand, is an integer which represents the date (and time in that date) in [Unix time stamp in milliseconds](https://currentmillis.com/). 
 
-`list` is used to represent a *set of values* for a property. For instance, in our sample application, the `roles` property of `ACTED_IN` assumes a list of values corresponding to the list of roles assumed by the source `Person` in the target `Movie`. When the type of a property is `List`, binary operator used to specify values for it will be `in`. In the example below, we see that Hugo Weaving acted in a number of roles in Cloud Atlas.
+`list` is used to represent a *set of values* for a property. For instance, in our sample application, the `roles` property of `ACTED_IN` assumes a list of values corresponding to the list of roles assumed by the source `Person` in the target `Title`. When the type of a property is `List`, binary operator used to specify values for it will be `in`. In the example below, we see that Hugo Weaving acted in a number of roles in Cloud Atlas.
 
 <p align="center">
     <img src="image/list-example.png" width="480"/>
@@ -57,7 +59,7 @@ Each *property* is one of the following data types: `string`, `int`, `float`, `d
 
 Finally, `enum` is a special type to define a group of pre-defined values for this property. Each `enum` type should be defined as a tuple `enum,<type>`, where the second element of the tuple corresponds to the type of the values in that enumeration. For instance, `enum,string` means this property's values are *string*. The corresponding set of values to be actually used must be defined in the section named `enumMapping` inside the description file. These values are shown to the user with a *dropdown box*.
 
-For example, in the sample application, the genre of a movie is defined as an enumaration (i.e. `enum,string`) where the internal values as kept in the database and those values as shown in the application happen to be the same strings:
+For example, in the sample application, the genre of a movie is defined as an enumeration (i.e. `enum,string`) where the internal values as kept in the database and those values as shown in the application happen to be the same strings:
 ```
   "enumMapping": {
     "Movie": {
@@ -78,7 +80,7 @@ Hence, this property is shown as a dropdown box in the application user interfac
 
 ### Relations
 
-This section contains the strcuture of different kinds of relations among the objects in your graph. Each *relation* corresponds to an *edge* type in your graph with specifc types of `source` and `target` nodes. `isBidirectional` is used to specify if the edge is bi-directional (undirected) or uni-directional (directed). For instance, in the sample movie application, we define an edge type named `ACTED_IN` from `Person` objects to `Movie` objects as `source` and `target`, respectively, with `isBirectional` set to `false`.
+This section contains the structure of different kinds of relations among the objects in your graph. Each *relation* corresponds to an *edge* type in your graph with specific types of `source` and `target` nodes. `isBidirectional` is used to specify if the edge is bi-directional (undirected) or uni-directional (directed). For instance, in the sample movie application, we define an edge type named `ACTED_IN` from `Person` objects to `Movie` objects as `source` and `target`, respectively, with `isBirectional` set to `false`.
 
 ### Styling graph objects
 
@@ -130,7 +132,7 @@ Here, the rating is a value in range [0,10], which is linearly mapped to [20px,6
 
 ### Timebar
 
-"timebarDataMapping" section of the model description file is used to map lifetime of nodes and edges. Lifetime information is used in [timebar service](../src/app/timebar.service.ts) to filter graph objects by time and show useful, user-defined statistics during the specified period. Ideally, each *object* and each *relation* would have two datetime properties corresponding to their *begin* and *end* datettimes. These two fields should be provided under *begin_datetime* and *end_datetime*, respectively. In case begin or end datetime of a graph object is not mapped to a property of that object, Visu*all* assumes the default begin (as early as minus infinity) and end datetimes (as late as plus infinity) for the timebar.
+"timebarDataMapping" section of the model description file is used to map the lifetime of nodes and edges. Lifetime information is used in [timebar service](../src/app/timebar.service.ts) to filter graph objects by time and show useful, user-defined statistics during the specified period. Ideally, each *object* and each *relation* would have two datetime properties corresponding to their *begin* and *end* datetimes. These two fields should be provided under *begin_datetime* and *end_datetime*, respectively. In case begin or end datetime of a graph object is not mapped to a property of that object, Visu*all* assumes the default begin (as early as minus infinity) and end datetimes (as late as plus infinity) for the timebar.
 
 Minimum and maximum values for begin and datetimes are specified in the section on application default settings.
 
@@ -163,7 +165,7 @@ The developer also defines their style preferences in this section. For instance
     ...
 ```
 
-For example, `va-title` defines the style of the font for the tool tile while `panel-heading` defines the style of panel headings. By changing the style here, for instance defining the font family as "Arial" for all text types, you could consistenly use a different font in your application.
+For example, `va-title` defines the style of the font for the tool tile while `panel-heading` defines the style of panel headings. By changing the style here, for instance defining the font family as "Arial" for all text types, you could consistently use a different font in your application.
 
 ## Menus
 
@@ -219,7 +221,7 @@ As explained in the [User Guide](UG.md), this tab is used to filter the graph ba
 
 The queries defined in [the Query tab](../src/app/operation-tabs/query-tab/query-tab.component.ts) are all application specific ones. Each query here should be an *angular component* with the path `../src/app/operation-tabs/query-tab/`. In Visu*all* sample app, there are two movie related queries:
 - [Get actors with movie counts](../src/app/operation-tabs/query-tab/query0/query0.component.ts) and
-- [Get movies by genre](../src/app/operation-tabs/query-tab/query1/query1.component.ts).
+- [Get titles by genre](../src/app/operation-tabs/query-tab/query1/query1.component.ts).
 
 Name of such components do not have to follow a certain format but in order for them to be visible, they should be inside [the query tab component html file](../src/app/operation-tabs/query-tab/query-tab.component.ts) formatted like
 ```
@@ -227,7 +229,7 @@ Name of such components do not have to follow a certain format but in order for 
 ```
 Also, their display names should be added to [the Query tab component file](../src/app/operation-tabs/query-tab/query-tab.component.ts). For the sample app, we have the following two queries in this file:
 
-`this.queryTypes = ['Get actors by movie counts', 'Get movies by genre'];`
+`this.queryTypes = ['Get actors by title counts', 'Get titles by genre'];`
 
 ### Settings tab
 
@@ -236,7 +238,7 @@ As explained in the [User Guide](UG.md), this tab is used to change all types of
 ### Adding your own tabs
 
 [TabCustomizationModule](../src/app/operation-tabs/tab-customization/tab-customization.module.ts) is designated for this purpose. You can modify this module as you wish. You can add your own tabs. A tab is an [angular component](https://angular.io/api/core/Component). By using [angular cli](https://www.npmjs.com/package/@angular/cli) you can generate [an angular component](https://angular.io/api/core/Component) with command `ng g c aComponentNameHere`. To distinguish your own components from standard components, you should generate your components in path `src\app\operation-tabs\tab-customization`. 
-To prevent conflicts, you should **not** modify [app.module.ts file](../src/app/app.module.ts). Instead, you should modify [tab-customization.module.ts](../src/app/operation-tabs/tab-customization/tab-customization.module.ts). There you will see a static `tabs` member. You should add your tabs to there. You should also add your components inside `declarations` of [TabCustomizationModule](../src/app/operation-tabs/tab-customization/tab-customization.module.ts).
+To prevent conflicts, you should **not** modify [app.module.ts file](../src/app/app.module.ts). Instead, you should modify [tab-customization.module.ts](../src/app/operation-tabs/tab-customization/tab-customization.module.ts). There you will see a static `tabs` member. You should add your tabs there. You should also add your components inside `declarations` of [TabCustomizationModule](../src/app/operation-tabs/tab-customization/tab-customization.module.ts).
 
 
 
@@ -254,7 +256,7 @@ To connect the database, visuall needs to read database connection information. 
 
 ### Using A Different Database 
 
-To use a different database in the back end, you should modify [the db-adapter.service.ts file](../src/app/db-service/db-adapter.service.ts). Idealy, only changing the constructor of the service should be sufficient. Just by injecting [your own angular service](https://angular.io/tutorial/toh-pt4) which implements [the interface DbService](../src/app/db-service/data-types.ts), you can switch to another database. Of course for your application-specific queries, you will want to change/delete existing ones or implement new ones.
+To use a different database in the back end, you should modify [the db-adapter.service.ts file](../src/app/db-service/db-adapter.service.ts). Ideally, only changing the constructor of the service should be sufficient. Just by injecting [your own angular service](https://angular.io/tutorial/toh-pt4) which implements [the interface DbService](../src/app/db-service/data-types.ts), you can switch to another database. Of course for your application-specific queries, you will want to change/delete existing ones or implement new ones.
 
 For each database, database dependent query code should be inside only one file. This file is the angular service that you should generate as your database driver. For example, Visu*all* uses Neo4j database. All the queries which are specific to Neo4j are inside the file named [neo4j-db.service.ts](../src/app/db-service/neo4j-db.service.ts). Neo4j uses a query language called [Cypher](https://neo4j.com/developer/cypher-query-language/) for querying the database.
 

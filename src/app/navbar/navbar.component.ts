@@ -11,7 +11,7 @@ import AppDescription from '../../assets/app_description.json';
 import { NavbarCustomizationService } from './navbar-customization.service';
 import { NavbarDropdown, NavbarAction } from './inavbar';
 import { UserProfileService } from '../user-profile.service';
-import { readTxtFile } from '../constants';
+import { readTxtFile, CLUSTER_CLASS } from '../constants';
 import { SaveProfileModalComponent } from '../popups/save-profile-modal/save-profile-modal.component';
 
 @Component({
@@ -39,14 +39,21 @@ export class NavbarComponent implements OnInit {
         { txt: 'Save User Profile...', id: 'nbi04', fn: 'saveUserProfile', isStd: true }]
       },
       {
-        dropdown: 'Edit', actions: [{ txt: 'Delete Selected', id: 'nbi10', fn: 'deleteSelected', isStd: true },
+        dropdown: 'Edit', actions: [{ txt: 'Add Group for Selected', id: 'nbi10', fn: 'addGroup4Selected', isStd: true },
+        { txt: 'Remove Group for Selected', id: 'nbi11', fn: 'removeGroup4Selected', isStd: true },
+        { txt: 'Remove All Groups', id: 'nbi12', fn: 'removeAllGroups', isStd: true },
+        { txt: 'Delete Selected', id: 'nbi13', fn: 'deleteSelected', isStd: true },
         { txt: 'Query History', id: 'nbi101', fn: 'showHideGraphHistory', isStd: true }]
       },
       {
         dropdown: 'View', actions: [
           { txt: 'Hide Selected', id: 'nbi20', fn: 'hideSelected', isStd: true },
-          { txt: 'Hide Unselected', id: 'nbi20', fn: 'hideUnselected', isStd: true },
-          { txt: 'Show All', id: 'nbi21', fn: 'showAll', isStd: true }
+          { txt: 'Hide Unselected', id: 'nbi21', fn: 'hideUnselected', isStd: true },
+          { txt: 'Show All', id: 'nbi22', fn: 'showAll', isStd: true },
+          { txt: 'Collapse All Nodes', id: 'nbi23', fn: 'collapseAllNodes', isStd: true },
+          { txt: 'Expand All Nodes', id: 'nbi24', fn: 'expandAllNodes', isStd: true },
+          { txt: 'Collapse All Edges', id: 'nbi25', fn: 'collapseAllEdges', isStd: true },
+          { txt: 'Expand All Edges', id: 'nbi26', fn: 'expandAllEdges', isStd: true }
         ]
       },
       {
@@ -65,7 +72,6 @@ export class NavbarComponent implements OnInit {
       },
       {
         dropdown: 'Data', actions: [{ txt: 'Sample Data', id: 'nbi60', fn: 'getSampleData', isStd: true },
-        { txt: 'All Data', id: 'nbi61', fn: 'getAllData', isStd: true },
         { txt: 'Clear Data', id: 'nbi62', fn: 'clearData', isStd: true }]
       }
     ];
@@ -96,9 +102,8 @@ export class NavbarComponent implements OnInit {
     if (this.isLoadFile4Graph) {
       this._cyService.loadFile(this.file.nativeElement.files[0]);
     } else {
-      readTxtFile(this.file.nativeElement.files[0], (s) => { 
+      readTxtFile(this.file.nativeElement.files[0], (s) => {
         this._profile.setUserProfile(s);
-        // this._g.operationTabChanged.next(3);
       });
     }
   }
@@ -122,6 +127,12 @@ export class NavbarComponent implements OnInit {
 
   deleteSelected() { this._cyService.deleteSelected(null); }
 
+  addGroup4Selected() { this._cyService.addGroup4Selected(); }
+
+  removeGroup4Selected() { this._cyService.removeGroup4Selected(); }
+
+  removeAllGroups() { this._cyService.removeGroup4Selected(this._g.cy.nodes('.' + CLUSTER_CLASS)); }
+
   hideSelected() { this._cyService.showHideSelectedElements(true); }
 
   hideUnselected() { this._cyService.hideUnselected(); }
@@ -144,12 +155,16 @@ export class NavbarComponent implements OnInit {
 
   openAbout() { this._modalService.open(AboutModalComponent); }
 
+  collapseAllEdges() { this._cyService.collapseMultiEdges(); }
+
+  expandAllEdges() { this._cyService.expandMultiEdges(); }
+
+  collapseAllNodes() { this._cyService.collapseNodes(); }
+
+  expandAllNodes() { this._cyService.expandAllCompounds(); }
+
   getSampleData() {
     this._dbService.getSampleData(x => { this._cyService.loadElementsFromDatabase(x, false) });
-  }
-
-  getAllData() {
-    this._dbService.getAllData(x => { this._cyService.loadElementsFromDatabase(x, false) });
   }
 
   clearData() {

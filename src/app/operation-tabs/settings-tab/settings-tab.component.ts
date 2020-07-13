@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
-import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting } from 'src/app/user-preference';
+import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting, GroupingOptionTypes } from 'src/app/user-preference';
 import { UserProfileService } from 'src/app/user-profile.service';
 import { BehaviorSubject } from 'rxjs';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH } from 'src/app/constants';
@@ -22,13 +22,18 @@ export class SettingsTabComponent implements OnInit {
   dataPageSize: number;
   queryHistoryLimit: number;
   tableColumnLimit: number;
+  edgeCollapseLimit: number;
   timebarGraphInclusionTypes: string[] = ['overlaps', 'contains', 'contained by'];
   timebarStatsInclusionTypes: string[] = ['all', 'begin', 'middle', 'end'];
-  mergedElemIndicators: string[] = ['Selection', 'Highlight'];
+  mergedElemIndicators: string[] = ['None', 'Selection', 'Highlight'];
+  groupingOptions: string[] = ['Compounds', 'Circles'];
+  nodeLabelWrapTypes: string[] = ['None', 'Wrap', 'Ellipsis'];
   // multiple choice settings
   graphInclusionType: TimebarGraphInclusionTypes;
   statsInclusionType: TimebarStatsInclusionTypes;
   mergedElemIndicator: MergedElemIndicatorTypes;
+  groupingOption: GroupingOptionTypes;
+  nodeLabelWrap: number = 0;
   isInit: boolean = false;
   currHighlightStyles: string[] = [];
   highlightStyleIdx = 0;
@@ -51,9 +56,10 @@ export class SettingsTabComponent implements OnInit {
       { text: 'Emphasize on hover', isEnable: false, path2userPref: 'isHighlightOnHover' },
       { text: 'Show overview window', isEnable: false, path2userPref: 'isShowOverviewWindow' },
       { text: 'Show edge labels', isEnable: false, path2userPref: 'isShowEdgeLabels' },
-      { text: 'Fit labels to nodes', isEnable: false, path2userPref: 'isFitLabels2Nodes' },
       { text: 'Ignore case in text operations', isEnable: false, path2userPref: 'isIgnoreCaseInText' },
-      { text: 'Show results of latest query only', isEnable: false, path2userPref: 'isOnlyHighlight4LatestQuery' }
+      { text: 'Show results of latest query only', isEnable: false, path2userPref: 'isOnlyHighlight4LatestQuery' },
+      { text: 'Collapse multiple edges based on type', isEnable: false, path2userPref: 'isCollapseEdgesBasedOnType' },
+      { text: 'Collapse multiple edges on load', isEnable: false, path2userPref: 'isCollapseMultiEdgesOnLoad' },
     ];
 
     this.timebarBoolSettings = [
@@ -80,14 +86,18 @@ export class SettingsTabComponent implements OnInit {
     this.generalBoolSettings[1].isEnable = up.isHighlightOnHover.getValue();
     this.generalBoolSettings[2].isEnable = up.isShowOverviewWindow.getValue();
     this.generalBoolSettings[3].isEnable = up.isShowEdgeLabels.getValue();
-    this.generalBoolSettings[4].isEnable = up.isFitLabels2Nodes.getValue();
-    this.generalBoolSettings[5].isEnable = up.isIgnoreCaseInText.getValue();
-    this.generalBoolSettings[6].isEnable = up.isOnlyHighlight4LatestQuery.getValue();
+    this.generalBoolSettings[4].isEnable = up.isIgnoreCaseInText.getValue();
+    this.generalBoolSettings[5].isEnable = up.isOnlyHighlight4LatestQuery.getValue();
+    this.generalBoolSettings[6].isEnable = up.isCollapseEdgesBasedOnType.getValue();
+    this.generalBoolSettings[7].isEnable = up.isCollapseMultiEdgesOnLoad.getValue();
 
+    this.nodeLabelWrap = up.nodeLabelWrap.getValue();
     this.mergedElemIndicator = up.mergedElemIndicator.getValue();
+    this.groupingOption = up.groupingOption.getValue();
     this.dataPageSize = up.dataPageSize.getValue();
     this.queryHistoryLimit = up.queryHistoryLimit.getValue();
     this.tableColumnLimit = up.tableColumnLimit.getValue();
+    this.edgeCollapseLimit = up.edgeCollapseLimit.getValue();
     this.currHighlightStyles = up.highlightStyles.map((_, i) => 'Style ' + (i + 1));
     this.highlightStyleIdx = up.currHighlightIdx.getValue();
     this.highlightColor = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].color.getValue();
@@ -125,6 +135,7 @@ export class SettingsTabComponent implements OnInit {
         this._g.userPrefs.highlightStyles[i] = { wid: new BehaviorSubject<number>(w), color: new BehaviorSubject<string>(c) };
       }
     }
+    this._g.userPrefs.highlightStyles.splice(styles.length);
     this._profile.saveUserPrefs();
   }
 
@@ -169,6 +180,19 @@ export class SettingsTabComponent implements OnInit {
     let cyStyle = this.getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
     this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, cyStyle.nodeCss, cyStyle.edgeCss);
     this.setHighlightStyles();
+  }
+
+  deleteHighlightStyle() {
+    if (this._g.viewUtils.getAllHighlightClasses().length < 2) {
+      return;
+    }
+    this._g.viewUtils.removeHighlightStyle(this.highlightStyleIdx);
+    this.setHighlightStyles();
+    let styleCnt = this._g.viewUtils.getAllHighlightClasses().length - 1;
+    if (this.highlightStyleIdx > styleCnt) {
+      this.highlightStyleIdx = styleCnt;
+    }
+    this.highlightStyleSelected(this.highlightStyleIdx);
   }
 
   addHighlightStyle() {

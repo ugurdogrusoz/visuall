@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GlobalVariableService } from './global-variable.service';
 import AppDescription from '../assets/app_description.json';
-import { TimebarMetric } from './operation-tabs/map-tab/filtering-types';
+import { TimebarMetric } from './operation-tabs/map-tab/query-types';
 import { Timebar } from '../lib/timebar/Timebar';
 import { BehaviorSubject } from 'rxjs';
 
@@ -11,34 +11,71 @@ import { BehaviorSubject } from 'rxjs';
 export class TimebarService {
 
   shownMetrics = new BehaviorSubject<TimebarMetric[]>(null);
-  isRandomizedLayout: boolean = false;
+  isRandomizedLayout = false;
   private _timebarExt: Timebar;
   private _playingPeriod: number;
+  private _prevElems: any = null;
   showHideFn: (isHide: boolean) => void;
 
   constructor(private _g: GlobalVariableService) { }
 
   // this function should show only the provided elements, then should make layout
-  private shownOnlyElems(elems, isRandomize: boolean) {
-    let alreadyVisible = this._g.cy.nodes(':visible');
+  private shownOnlyElems(elems) {
+    const alreadyVisible = this._g.cy.nodes(':visible');
     if (alreadyVisible.length > 0) {
-      let shownNodes = elems.nodes().difference(alreadyVisible);
+      const shownNodes = elems.nodes().difference(alreadyVisible);
       this._g.layoutUtils.placeNewNodes(shownNodes);
     }
     this._g.viewUtils.show(elems);
     this._g.viewUtils.hide(this._g.cy.elements().difference(elems));
+
+    const isChanged = this.hasElemsChanged(this._prevElems, elems);
+    this._prevElems = elems;
+    if (!isChanged) {
+      return;
+    }
     if (this.isRandomizedLayout) {
       this._g.performLayout(true, false, this._playingPeriod);
       this.isRandomizedLayout = false;
     } else {
-      if (!this._g.isLoadFromHistory) {
+      if (!this._g.isLoadFromHistory && !this._g.isLoadFromExpandCollapse) {
         this._g.performLayout(false, false, this._playingPeriod);
       } else {
-        this._g.cy.fit();
+        if (!this._g.isLoadFromExpandCollapse) {
+          this._g.cy.fit();
+        }
         this._g.isLoadFromHistory = false;
+        this._g.isLoadFromExpandCollapse = false;
       }
     }
     this._g.shownElemsChanged.next(true);
+  }
+
+  private hasElemsChanged(prev: any, curr: any) {
+    if (prev == null || curr == null) {
+      return true;
+    }
+
+    const d1 = {};
+    for (const i of prev) {
+      d1[i.id()] = true;
+    }
+    for (const i of curr) {
+      if (!d1[i.id()]) {
+        return true;
+      }
+    }
+
+    const d2 = {};
+    for (const i of curr) {
+      d2[i.id()] = true;
+    }
+    for (const i of prev) {
+      if (!d2[i.id()]) {
+        return true;
+      }
+    }
+    return false;
   }
 
   setShowHideFn(fn: (isHide: boolean) => void) {
@@ -54,7 +91,7 @@ export class TimebarService {
       },
       showOnlyElems: this.shownOnlyElems.bind(this),
       chartRendered: () => {
-        let isEnabled = this._g.userPrefs.timebar.isEnabled.getValue();
+        const isEnabled = this._g.userPrefs.timebar.isEnabled.getValue() && this._g.cy.$().length > 0;
         if (!isEnabled) {
           this.showHideFn(true);
         } else {

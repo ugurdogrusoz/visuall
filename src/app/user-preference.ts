@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { FilteringRule, TimebarMetric } from './operation-tabs/map-tab/filtering-types';
+import { QueryRule, TimebarMetric } from './operation-tabs/map-tab/query-types';
 
 export interface UserPref {
   // boolean settings
@@ -7,19 +7,23 @@ export interface UserPref {
   isHighlightOnHover: BehaviorSubject<boolean>;
   isShowOverviewWindow: BehaviorSubject<boolean>;
   isShowEdgeLabels: BehaviorSubject<boolean>;
-  isFitLabels2Nodes: BehaviorSubject<boolean>;
   isIgnoreCaseInText: BehaviorSubject<boolean>;
   isOnlyHighlight4LatestQuery: BehaviorSubject<boolean>;
   isStoreUserProfile: BehaviorSubject<boolean>;
+  isCollapseEdgesBasedOnType: BehaviorSubject<boolean>;
+  isCollapseMultiEdgesOnLoad: BehaviorSubject<boolean>;
 
   // Show query results using 'Selection', 'Highlight'
   mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
+  groupingOption: BehaviorSubject<GroupingOptionTypes>;
+  nodeLabelWrap: BehaviorSubject<TextWrapTypes>;
   dataPageSize: BehaviorSubject<number>;
   queryHistoryLimit: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;
   highlightStyles: { wid: BehaviorSubject<number>, color: BehaviorSubject<string> }[];
   currHighlightIdx: BehaviorSubject<number>;
   compoundPadding: BehaviorSubject<string>;
+  edgeCollapseLimit: BehaviorSubject<number>
 
   timebar: {
     isEnabled: BehaviorSubject<boolean>;
@@ -42,7 +46,15 @@ export enum TimebarStatsInclusionTypes {
 }
 
 export enum MergedElemIndicatorTypes {
-  selection = 0, highlight = 1
+  none = 0, selection = 1, highlight = 2
+}
+
+export enum GroupingOptionTypes {
+  compound = 0, clusterId = 1
+}
+
+export enum TextWrapTypes {
+  none = 0, wrap = 1, ellipsis = 2
 }
 
 export interface BoolSetting {
@@ -52,7 +64,7 @@ export interface BoolSetting {
 }
 
 export interface UserProfile {
-  filteringRules: FilteringRule[];
+  queryRules: QueryRule[];
   timebarMetrics: TimebarMetric[];
   userPref: any;
 }

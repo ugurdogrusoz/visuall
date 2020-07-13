@@ -1,8 +1,8 @@
-<div class="panel m-1">
+<div class="panel">
   <div class="panel-heading" data-toggle="collapse" data-target="#general-settings" aria-expanded="true">
-    <p class="panel-title accordion-toggle"><b class="va-heading2">General</b></p>
+    <span class="panel-title accordion-toggle"><b class="va-heading2">General</b></span>
   </div>
-  <div id="general-settings" class="collapse show text-center m-1">
+  <div id="general-settings" class="collapse show m-1">
     <div class="card border-0 m-1" *ngFor="let setting of generalBoolSettings; let i = index;">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="checkbox" [(ngModel)]="setting.isEnable"
@@ -10,14 +10,35 @@
         <label class="form-check-label va-text">{{setting.text}}</label>
       </div>
     </div>
-    <!-- Show query results using -->
     <div class="card border-0 m-1">
       <div class="form-inline">
         <label class="form-check-label va-text">Show query results using &nbsp;</label>
         <div class="form-check-inline va-text" *ngFor="let str of mergedElemIndicators; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="settingChanged(i, 'mergedElemIndicator')"
-              name="optradio3" [checked]="i==mergedElemIndicator">{{str}}
+              name="optradio1" [checked]="i==mergedElemIndicator">{{str}}
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text">Group using &nbsp;</label>
+        <div class="form-check-inline va-text" *ngFor="let str of groupingOptions; let i = index;">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'groupingOption')"
+              name="optradio2" [checked]="i==groupingOption">{{str}}
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form">
+        <div class="form-check-label va-text">Node label wrapping &nbsp;</div>
+        <div class="form-check-inline va-text" *ngFor="let str of nodeLabelWrapTypes; let i = index;">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'nodeLabelWrap')" name="optradio3"
+              [checked]="i==nodeLabelWrap">{{str}}
           </label>
         </div>
       </div>
@@ -32,15 +53,18 @@
               {{t}}
             </option>
           </select>
-          <input type="number" max="20" min="1" (change)="bandPassHighlightWidth()" [(ngModel)]="highlightWidth" class="form-control inp-3-char va-text"
-            placeholder="width">
+          <input type="number" max="20" min="1" (change)="bandPassHighlightWidth()" [(ngModel)]="highlightWidth"
+            class="form-control inp-3-char va-text" placeholder="width">
           <app-color-picker (onColorSelected)="onColorSelected($event)" [currColor]="highlightColor"
             class="align-middle"></app-color-picker>
-          <a href="#" title="Update style" (click)="changeHighlightStyle()" class="m-1">
-            <img src="../../../assets/img/refresh.svg" alt="Update style">
+          <a href="#" title="Update this style" (click)="changeHighlightStyle()" class="m-1">
+            <img src="../../../assets/img/refresh.svg" alt="Update this style">
           </a>
-          <a href="#" title="Add style" (click)="addHighlightStyle()" class="m-1">
-            <img src="../../../assets/img/add.svg" alt="Add style">
+          <a href="#" title="Delete this style" (click)="deleteHighlightStyle()" class="m-1">
+            <img src="../../../assets/img/close.svg" alt="Delete this style">
+          </a>
+          <a href="#" title="Add new style" (click)="addHighlightStyle()" class="m-1">
+            <img src="../../../assets/img/add.svg" alt="Add new style">
           </a>
         </div>
       </div>
@@ -75,6 +99,16 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
+        <label class="form-check-label va-text">Multiple edge collapse limit</label>
+        <div class="mx-1">
+          <input type="number" max="100" min="1"
+            (keydown.enter)="settingChanged(edgeCollapseLimit, 'edgeCollapseLimit')" [(ngModel)]="edgeCollapseLimit"
+            class="form-control inp-3-char va-text">
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
         <label class="form-check-label va-text">Compound padding</label>
         <div class="mx-1">
           <input type="text" (keydown.enter)="settingChanged(compoundPadding, 'compoundPadding')"
@@ -92,9 +126,9 @@
   </div>
 </div>
 
-<div class="panel m-1">
+<div class="panel">
   <div class="panel-heading collapsed" data-toggle="collapse" data-target="#timebar-settings" aria-expanded="false">
-    <p class="panel-title accordion-toggle"><b class="va-heading2">Timebar</b></p>
+    <span class="panel-title accordion-toggle"><b class="va-heading2">Timebar</b></span>
   </div>
   <div id="timebar-settings" class="collapse">
     <div class="card border-0 m-1" *ngFor="let setting of timebarBoolSettings; let i = index;">
@@ -138,7 +172,7 @@
         <div class="form-check-inline va-text" *ngFor="let str of timebarGraphInclusionTypes; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="settingChanged(i, 'timebar.graphInclusionType')"
-              name="optradio" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==graphInclusionType">{{str}}
+              name="optradio4" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==graphInclusionType">{{str}}
           </label>
         </div>
       </div>
@@ -149,7 +183,7 @@
         <div class="form-check-inline va-text" *ngFor="let str of timebarStatsInclusionTypes; let i = index;">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" (click)="settingChanged(i, 'timebar.statsInclusionType')"
-              name="optradio2" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==statsInclusionType">{{str}}
+              name="optradio5" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==statsInclusionType">{{str}}
           </label>
         </div>
       </div>

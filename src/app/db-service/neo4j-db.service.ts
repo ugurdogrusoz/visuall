@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
-import { GraphResponse, TableResponse, DbService, DbQueryType } from './data-types';
-import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/filtering-types';
+import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta } from './data-types';
+import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE } from '../constants';
 import AppDescription from '../../assets/app_description.json';
 import properties from '../../assets/generated/properties.json'
@@ -24,28 +24,41 @@ export class Neo4jDb implements DbService {
     this._g.getConfig().subscribe(x => { this.dbConfig = x['database'] }, error => console.log('getConfig err: ', error));
   }
 
-  getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any) {
-    let condition = '';
-    for (let i = 0; i < elemIds.length; i++) {
-      if (i == elemIds.length - 1) {
-        condition += ` ID(n) = ${elemIds[i]} `
-      } else {
-        condition += ` ID(n) = ${elemIds[i]} OR `
-      }
+  getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, meta?: DbQueryMeta) {
+    let isEdgeQuery = meta && meta.isEdgeQuery;
+    let idFilter = this.buildIdFilter(elemIds, false, isEdgeQuery);
+    let edgeCql = '';
+    if (meta && meta.edgeType != undefined && typeof meta.edgeType == 'string' && meta.edgeType.length > 0) {
+      edgeCql = `-[e:${meta.edgeType}`;
+    } else if (meta && meta.edgeType != undefined && typeof meta.edgeType == 'object') {
+      edgeCql = `-[e:${meta.edgeType.join('|')}`;
+    } else {
+      edgeCql = `-[e`;
     }
-    this.runQuery(`MATCH (n)-[e]-(n2) WHERE ${condition} RETURN n,n2,e`, callback);
+    let targetCql = '';
+    if (meta && meta.targetType != undefined && meta.targetType.length > 0) {
+      edgeCql += '*' + meta.depth;
+      targetCql = ':' + meta.targetType;
+    }
+    edgeCql += ']-';
+
+    this.runQuery(`MATCH p=(n)${edgeCql}(${targetCql}) WHERE ${idFilter} RETURN p`, callback);
+  }
+
+  getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta) {
+    const isEdgeQuery = meta && meta.isEdgeQuery;
+    let idFilter = this.buildIdFilter(ids, false, isEdgeQuery);
+    let edgepart = isEdgeQuery ? '-[e]-(n2)' : '';
+    let returnPart = isEdgeQuery ? 'n,e,n2' : 'n';
+    this.runQuery(`MATCH (n)${edgepart} WHERE ${idFilter} RETURN ${returnPart}`, callback);
   }
 
   getSampleData(callback: (x: GraphResponse) => any) {
-    this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 33`, callback);
+    this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 100`, callback);
   }
 
-  getAllData(callback: (x: GraphResponse) => any) {
-    this.runQuery(`MATCH (n) RETURN n UNION MATCH ()-[e]-() RETURN distinct e as n`, callback);
-  }
-
-  getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    const cql = this.rule2cql(rules, skip, limit, type);
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+    const cql = this.rule2cql(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
@@ -55,8 +68,8 @@ export class Neo4jDb implements DbService {
   }
 
   getCount4Q0(d1: number, d2: number, movieCount: number, callback: (x) => any, filter?: TableFiltering) {
-    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.name', 'degree']);
-    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
     WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${movieCount} ${txtCondition}
@@ -65,69 +78,78 @@ export class Neo4jDb implements DbService {
   }
 
   getTable4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, filter?: TableFiltering) {
-    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.name', 'degree']);
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
     let ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
     let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
 
-    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
+    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
     WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${movieCnt} ${txtCondition}
-    RETURN DISTINCT ID(n) as id, n.name as Actor, degree as Count 
+    RETURN DISTINCT ID(n) as id, n.primary_name as Actor, degree as Count 
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback, false);
   }
 
-  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids: string[] | number[]) {
-    let idFilter = this.buildIdFilter(ids);
-    let cql = `MATCH (n:Person)-[r:ACTED_IN]->(:Movie)
+  getGraph4Q0(d1: number, d2: number, movieCnt: number, skip: number, limit: number, callback: (x) => any, ids: string[] | number[], filter: TableFiltering) {
+    let idFilter = this.buildIdFilter(ids, true);
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    let ui2Db = { 'Actor': 'n.primary_name', 'Count': 'degree' };
+    let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
+
+    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
       WHERE ${idFilter} r.act_begin >= ${d1} AND r.act_end <= ${d2}  
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
-      WHERE degree >= ${movieCnt}
-      RETURN n, edges ORDER BY degree DESC SKIP ${skip} LIMIT ${limit}`;
+      WHERE degree >= ${movieCnt} ${txtCondition}
+      RETURN DISTINCT n, edges, degree 
+      ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback);
   }
 
   getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any, filter?: TableFiltering) {
-    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.title']);
-    let cql = ` MATCH (m:Movie {genre:'${genre}'})
-    WHERE m.released> ${d1} AND m.released < ${d2} ${txtCondition} 
-    RETURN DISTINCT COUNT(*)`;
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.primary_title']);
+    let cql = ` MATCH (m:Title)<-[:ACTOR|ACTRESS]-(:Person)
+    WHERE '${genre}' IN m.genres AND m.start_year> ${d1} AND m.start_year < ${d2} ${txtCondition} 
+    RETURN COUNT( DISTINCT m)`;
     this.runQuery(cql, callback, false);
   }
 
   getTable4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, filter?: TableFiltering) {
-    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.title']);
-    let ui2Db = { 'Movie': 'm.title' };
-    let orderExpr = this.getOrderByExpression4Query(filter, 'm.title', 'desc', ui2Db);
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.primary_title']);
+    let ui2Db = { 'Title': 'm.primary_title' };
+    let orderExpr = this.getOrderByExpression4Query(filter, 'm.primary_title', 'desc', ui2Db);
 
-    let cql = ` MATCH (m:Movie {genre:'${genre}'})
-    WHERE m.released > ${d1} AND m.released < ${d2} ${txtCondition} 
-    RETURN DISTINCT ID(m) as id, m.title
+    let cql = ` MATCH (m:Title)<-[r:ACTOR|ACTRESS]-(:Person)
+    WHERE '${genre}' IN m.genres AND m.start_year > ${d1} AND m.start_year < ${d2} ${txtCondition} 
+    RETURN DISTINCT ID(m) as id, m.primary_title
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback, false);
   }
 
-  getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids: string[] | number[]) {
-    let idFilter = this.buildIdFilter(ids);
-    let cql = `MATCH (n:Movie {genre:'${genre}'})<-[r:ACTED_IN]-(:Person)
-    WHERE ${idFilter}  n.released > ${d1} AND n.released < ${d2}  
+  getGraph4Q1(d1: number, d2: number, genre: string, skip: number, limit: number, callback: (x) => any, ids: string[] | number[], filter: TableFiltering) {
+    let idFilter = this.buildIdFilter(ids, true);
+    let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_title']);
+    let ui2Db = { 'Title': 'n.primary_title' };
+    let orderExpr = this.getOrderByExpression4Query(filter, 'n.primary_title', 'desc', ui2Db);
+
+    let cql = `MATCH (n:Title)<-[r:ACTOR|ACTRESS]-(:Person)
+    WHERE '${genre}' IN n.genres AND ${idFilter}  n.start_year > ${d1} AND n.start_year < ${d2}  ${txtCondition}
     WITH n, COLLECT(r) as edges
-    RETURN  n, edges
-    ORDER BY n.title DESC SKIP ${skip} LIMIT ${limit}`;
+    RETURN  DISTINCT n, edges
+    ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback);
   }
 
   getDataForQ1(id: number, d1: number, d2: number, genre: string, callback: (x) => any) {
     let cql =
-      `MATCH p=(m:Movie{genre:'${genre}'})<-[:ACTED_IN]-(a:Person) WHERE ID(m) = ${id} 
-     AND m.released > ${d1} AND m.released < ${d2}
+      `MATCH p=(m:Title)<-[:ACTOR|ACTRESS]-(a:Person) 
+      WHERE '${genre}' IN m.genres AND ID(m) = ${id} AND m.start_year > ${d1} AND m.start_year < ${d2}
      RETURN nodes(p), relationships(p)`;
     this.runQuery(cql, callback);
   }
 
   getMovieGenres(callback: (x: any) => any) {
-    this.runQuery('MATCH (m:Movie) return distinct m.genre', callback, false);
+    this.runQuery('MATCH (m:Title) UNWIND m.genres as g return distinct g', callback, false);
   }
 
   private runQuery(query: string, callback: (x: any) => any, isGraphResponse = true) {
@@ -135,8 +157,8 @@ export class Neo4jDb implements DbService {
     const username = this.dbConfig.username;
     const password = this.dbConfig.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
-    console.log(query);
     this._g.setLoadingStatus(true);
+    this._g.statusMsg.next('Executing database query...')
     const requestBody = {
       'statements': [{
         'statement': query,
@@ -363,21 +385,29 @@ export class Neo4jDb implements DbService {
     return orderBy + ' ' + orderDirection;
   }
 
-  private buildIdFilter(ids: string[] | number[]): string {
+  private buildIdFilter(ids: string[] | number[], hasEnd = false, isEdgeQuery = false): string {
     if (ids === undefined) {
       return '';
+    }
+    let varName = 'n';
+    if (isEdgeQuery) {
+      varName = 'e';
     }
     let cql = '';
     if (ids.length > 0) {
       cql = '(';
     }
     for (let i = 0; i < ids.length; i++) {
-      cql += `ID(n)=${ids[i]} OR `
+      cql += `ID(${varName})=${ids[i]} OR `
     }
 
     if (ids.length > 0) {
       cql = cql.slice(0, -4);
-      cql += ') AND ';
+
+      cql += ')';
+      if (hasEnd) {
+        cql += ' AND ';
+      }
     }
     return cql;
   }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import AppDescription from '../../../../assets/app_description.json';
-import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric } from '../../map-tab/filtering-types';
+import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric } from '../../map-tab/query-types';
 import { GENERIC_TYPE, deepCopy } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { Subject } from 'rxjs';
@@ -34,12 +34,12 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.classOptions = [];
     this.selectedClassProps = [];
     this.filteringRule = null;
-    const genreRule = { propertyOperand: 'genre', propertyType: 'string', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: 'AND', operator: '=' };
-    let rulesHi = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '7', inputOperand: '7', ruleOperator: 'AND', operator: '>=' }];
+    const genreRule = { propertyOperand: 'genres', propertyType: 'list', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: 'AND', operator: 'in' };
+    let rulesHi = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '8', inputOperand: '8', ruleOperator: 'AND', operator: '>=' }];
     let rulesLo = [genreRule, { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: 'AND', operator: '<=' }];
     this.currMetrics = [
-      { incrementFn: null, name: 'lowly rated comedies', className: 'Movie', rules: rulesLo, color: '#3366cc' },
-      { incrementFn: null, name: 'highly rated comedies', className: 'Movie', rules: rulesHi, color: '#ff9900' }];
+      { incrementFn: null, name: 'lowly rated comedies', className: 'Title', rules: rulesLo, color: '#3366cc' },
+      { incrementFn: null, name: 'highly rated comedies', className: 'Title', rules: rulesHi, color: '#ff9900' }];
 
     this.setCurrMetricsFromLocalStorage();
     this.setFnsForMetrics();
@@ -255,7 +255,7 @@ export class TimebarMetricEditorComponent implements OnInit {
         if (r.propertyType == 'edge') {
           fnStr += `return x.connectedEdges('.${r.propertyOperand}').length;`
         } else {
-          fnStr += `return x.data().${r.propertyOperand};`
+          fnStr += `return x.data('${r.propertyOperand}');`
         }
       }
       fnStr += ' return 0;'

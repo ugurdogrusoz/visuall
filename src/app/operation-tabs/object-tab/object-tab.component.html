@@ -1,7 +1,7 @@
 <div class="panel-group">
-  <div class="panel mx-1" *ngIf="selectedClasses && selectedClasses.length > 0">
+  <div class="panel" *ngIf="selectedClasses && selectedClasses.length > 0">
     <div class="panel-heading" data-toggle="collapse" data-target="#prop-tab" aria-expanded="true">
-      <p class="panel-title accordion-toggle"><b class="va-heading2">{{selectedClasses}}</b></p>
+      <span class="panel-title accordion-toggle"><b class="va-heading2">{{selectedClasses}}</b></span>
     </div>
 
     <div id="prop-tab" class="collapse show text-center m-1">
@@ -11,15 +11,20 @@
           <div class="col-8 text-left px-1 va-text">{{item.val}}</div>
         </div>
       </div>
+
+      <app-table-view *ngIf="isShowObjTable" [params]="multiObjTableInp" [tableFilled]="multiObjTableFilled"
+        [clearFilter]="clearMultiObjTableFilter" (onFilteringChanged)="filterMultiObjTable($event)">
+      </app-table-view>
     </div>
   </div>
 
-  <div class="panel mx-1">
+  <div class="panel">
     <div class="panel-heading collapsed" data-toggle="collapse" data-target="#stat-tab" aria-expanded="false">
-      <p class="panel-title accordion-toggle"><b class="va-heading2">Statistics</b></p>
+      <span class="panel-title accordion-toggle"><b class="va-heading2">Statistics</b></span>
     </div>
     <div id="stat-tab" class="collapse">
-      <app-table-view [params]="tableInput" [tableFilled]="tableFilled" (onFilteringChanged)="filterTable($event)">
+      <app-table-view *ngIf="isShowStatsTable" [params]="tableInput" [tableFilled]="tableFilled"
+        (onFilteringChanged)="filterTable($event)">
       </app-table-view>
     </div>
   </div>

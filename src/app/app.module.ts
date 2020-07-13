@@ -20,7 +20,7 @@ import { MapTabComponent } from './operation-tabs/map-tab/map-tab.component';
 import { SettingsTabComponent } from './operation-tabs/settings-tab/settings-tab.component';
 import { QueryTabComponent } from './operation-tabs/query-tab/query-tab.component';
 import { GroupTabComponent } from './operation-tabs/map-tab/group-tab/group-tab.component';
-import { TableViewComponent } from './table-view/table-view.component';
+import { TableViewComponent, ReplacePipe } from './table-view/table-view.component';
 import { TimebarMetricEditorComponent } from './operation-tabs/settings-tab/timebar-metric-editor/timebar-metric-editor.component';
 import { ColorPickerComponent } from './color-picker/color-picker.component';
 import { AutoSizeInputModule } from 'ngx-autosize-input';
@@ -72,12 +72,12 @@ const ngZorroConfig: NzConfig = {
     GraphTheoreticPropertiesTabComponent,
     GraphHistoryComponent,
     SaveProfileModalComponent,
+    ReplacePipe,
     SparqlQueryComponent,
     RecommendComponent,
     SparqlSearchComponent,
     EditorComponent,
     MapModalComponent
-
   ],
   imports: [
     BrowserModule,

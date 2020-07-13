@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewChecked, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, ElementRef, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-error-modal',
@@ -7,9 +7,10 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ErrorModalComponent implements OnInit, AfterViewChecked {
   @ViewChild('closeBtn', { static: false }) closeBtnRef: ElementRef;
-
+  @Input() msg: string;
+  @Input() title: string;
   constructor(public activeModal: NgbActiveModal) { }
-  
+
   ngOnInit() {
   }
 

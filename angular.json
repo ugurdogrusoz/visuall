@@ -42,7 +42,6 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
               "node_modules/cytoscape-navigator/cytoscape-navigator.js",
-              "node_modules/numeric/numeric-1.2.6.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/@triply/yasgui/build/yasgui.min.js",
               "node_modules/@triply/yasqe/build/yasqe.min.js",

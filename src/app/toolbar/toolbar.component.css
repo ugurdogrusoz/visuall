@@ -4,8 +4,6 @@ img {
 
 img:hover {
   opacity: 1;
-}
-
-.toolbar-element {
-  cursor: pointer;
+  background: #dae0e5;
+  border-radius: 5px;
 }

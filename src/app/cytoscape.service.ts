@@ -1,13 +1,6 @@
 import { Injectable } from '@angular/core';
 import cytoscape from 'cytoscape';
-import navigator from 'cytoscape-navigator';
-import panzoom from 'cytoscape-panzoom';
-import fcose from 'cytoscape-fcose';
-import expandCollapse from 'cytoscape-expand-collapse';
-import viewUtilities from 'cytoscape-view-utilities';
-import layoutUtilities from 'cytoscape-layout-utilities';
 import stylesheet from '../assets/generated/stylesheet.json';
-import AppDescription from '../assets/app_description.json';
 import * as C from './constants';
 import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
@@ -15,108 +8,32 @@ import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse } from './db-service/data-types';
-import timebar from '../lib/timebar/cytoscape-timebar';
 import { UserPrefHelper } from './user-pref-helper';
-import { MergedElemIndicatorTypes } from './user-preference';
+import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
-
+import { LouvainClustering } from './LouvainClustering';
+import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CyExtService } from './cy-ext.service';
 @Injectable({
   providedIn: 'root'
 })
 export class CytoscapeService {
-  cyNavi: any;
-  cyNaviPositionSetter: EventListenerOrEventListenerObject;
   userPrefHelper: UserPrefHelper;
   removePopperFn: Function;
   showObjPropsFn: Function;
   showStatsFn: Function;
-
-  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService) {
+  louvainClusterer: LouvainClustering;
+  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _cyExtService: CyExtService,
+    private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService, private _modalService: NgbModal) {
     this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g, this._profile);
+    this.louvainClusterer = new LouvainClustering();
   }
 
   initCy(containerElem) {
-    // register timebar extension
-    timebar(cytoscape);
-    // register navigator extension
-    navigator(cytoscape);
-    // register view utilities extension
-    viewUtilities(cytoscape, $);
-    //register expand-collapse extension
-    expandCollapse(cytoscape, $);
-    //register layour utilities extension
-    layoutUtilities(cytoscape, $);
-    // use fcose layout algorithm
-    cytoscape.use(fcose);
+    this._cyExtService.registerExtensions();
 
-    this._g.layout = {
-      name: 'fcose',
-      // 'draft', 'default' or 'proof' 
-      // - 'draft' only applies spectral layout 
-      // - 'default' improves the quality with incremental layout (fast cooling rate)
-      // - 'proof' improves the quality with incremental layout (slow cooling rate) 
-      quality: 'default',
-      // use random node positions at beginning of layout
-      // if this is set to false, then quality option must be 'proof'
-      randomize: true,
-      // whether or not to animate the layout
-      animate: true,
-      // duration of animation in ms, if enabled
-      animationDuration: 1000,
-      // easing of animation, if enabled
-      animationEasing: undefined,
-      // fit the viewport to the repositioned nodes
-      fit: true,
-      // padding around layout
-      padding: 10,
-      // whether to include labels in node dimensions. Valid in 'proof' quality
-      nodeDimensionsIncludeLabels: false,
-
-      /* spectral layout options */
-
-      // false for random, true for greedy sampling
-      samplingType: true,
-      // sample size to construct distance matrix
-      sampleSize: 25,
-      // separation amount between nodes
-      nodeSeparation: 75,
-      // power iteration tolerance
-      piTol: 0.0000001,
-
-      /* incremental layout options */
-
-      // Node repulsion (non overlapping) multiplier
-      nodeRepulsion: 4500,
-      // Ideal edge (non nested) length
-      idealEdgeLength: 50,
-      // Divisor to compute edge forces
-      edgeElasticity: 0.45,
-      // Nesting factor (multiplier) to compute ideal edge length for nested edges
-      nestingFactor: 0.1,
-      // Gravity force (constant)
-      gravity: 0.25,
-      // Maximum number of iterations to perform
-      numIter: 2500,
-      // For enabling tiling
-      tile: false,
-      // Represents the amount of the vertical space to put between the zero degree members during the tiling operation(can also be a function)
-      tilingPaddingVertical: 10,
-      // Represents the amount of the horizontal space to put between the zero degree members during the tiling operation(can also be a function)
-      tilingPaddingHorizontal: 10,
-      // Gravity range (constant) for compounds
-      gravityRangeCompound: 1.5,
-      // Gravity force (constant) for compounds
-      gravityCompound: 1.0,
-      // Gravity range (constant)
-      gravityRange: 3.8,
-      // Initial cooling factor for incremental layout  
-      initialEnergyOnIncremental: 0.3,
-
-      /* layout event callbacks */
-      ready: () => { }, // on layoutready
-      stop: () => { } // on layoutstop
-    };
-
+    this._g.layout = this._g.getFcoseOptions();
     this._g.cy = cytoscape({
       container: containerElem,
       style: stylesheet,
@@ -149,19 +66,24 @@ export class CytoscapeService {
       wheelSensitivity: 0.1,
       pixelRatio: 'auto'
     });
-    this.bindNavigatorExtension();
-    this.bindLayoutUtilitiesExtension();
-    this.bindPanZoomExtension();
-    this.bindExpandCollapseExtension();
+    this._cyExtService.bindExtensions();
+
     this.bindComponentSelector();
     this._marqueeZoomService.init();
     this.addOtherStyles();
     (<any>window).cy = this._g.cy;
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
     this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
-    this._g.cy.on('add', C.debounce(this.fitLabel2Node, 1000, false).bind(this));
+    this._g.cy.on('add', C.debounce(this.applyStyle4NewElements, C.CY_BATCH_END_DELAY).bind(this));
     this._timebarService.init();
     this.userPrefHelper.listen4UserPref();
+    this._g.listen4graphEvents();
+  }
+
+  private runLayoutIfNoTimebar() {
+    if (!this._g.userPrefs.timebar.isEnabled.getValue()) {
+      this._g.performLayout(false);
+    }
   }
 
   private elemSelected(e) {
@@ -184,17 +106,60 @@ export class CytoscapeService {
     }
   }
 
-  /** some styles uses functions, so they can't be added using JSON
-   * or they should e added last to overrite some of the previously added
-   */
+  // some styles uses functions, so they can't be added using JSON
   private addOtherStyles() {
-    this._g.cy.style().selector('node.fitlabel')
-      .style({ 'text-wrap': 'ellipsis', 'text-max-width': function (ele) { return ele.width() + 'px'; } })
+    this._g.cy.startBatch();
+
+    this._g.cy.style().selector('edge.' + C.COLLAPSED_EDGE_CLASS)
+      .style({
+        'label': (e) => {
+          return '(' + e.data('collapsedEdges').length + ')';
+        },
+        'width': (e) => {
+          let n = e.data('collapsedEdges').length;
+          return (3 + Math.log2(n)) + 'px';
+        },
+        'line-color': this.setColor4CompoundEdge.bind(this),
+        'target-arrow-color': this.setColor4CompoundEdge.bind(this),
+        'target-arrow-shape': this.setTargetArrowShape.bind(this),
+      })
       .update();
 
-    this._g.cy.style().selector('edge.nolabel')
-      .style({ 'label': '' })
-      .update();
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
+  }
+
+  private doElemsMultiClasses(elems) {
+    let classDict = {};
+    for (let i = 0; i < elems.length; i++) {
+      let classes = elems[i].classes();
+      for (let j = 0; j < classes.length; j++) {
+        classDict[classes[j]] = true;
+      }
+    }
+    return Object.keys(classDict).length > 1;
+  }
+
+  private setColor4CompoundEdge(e) {
+    let collapsedEdges = e.data('collapsedEdges');
+    if (this.doElemsMultiClasses(collapsedEdges)) {
+      return '#b3b3b3';
+    }
+    return collapsedEdges[0].style('line-color')
+  }
+
+  private setTargetArrowShape(e) {
+    let collapsedEdges = e.data('collapsedEdges');
+    if (this.doElemsMultiClasses(collapsedEdges)) {
+      return 'triangle';
+    }
+    return collapsedEdges[0].style('target-arrow-shape')
+  }
+
+  private applyStyle4NewElements() {
+    this._g.cy.startBatch();
+    this.fitLabel2Node();
+    this.showHideEdgeLabels();
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   setNodeSizeOnGraphTheoreticProp(maxVal: number, avgSize: number) {
@@ -220,147 +185,17 @@ export class CytoscapeService {
       .update();
   }
 
-  bindLayoutUtilitiesExtension() {
-    this._g.layoutUtils = this._g.cy.layoutUtilities({ desiredAspectRatio: this._g.cy.width() / this._g.cy.height() });
-  }
-
-  bindNavigatorExtension() {
-    if (this.cyNavi) {
-      return;
-    }
-    const cyNaviClass = 'cytoscape-navigator-wrapper';
-    $('.cyContainer').append(`<div class='${cyNaviClass}'></div>`);
-
-    this.setNavigatorPosition();
-    let defaults = {
-      container: `.${cyNaviClass}`,  // can be a HTML or jQuery
-      // element or jQuery selector
-
-      viewLiveFramerate:
-        0,  // set false to update graph pan only on drag end; set 0 to do it
-      // instantly; set a number (frames per second) to update not more
-      // than N times per second
-
-      thumbnailEventFramerate:
-        30,  // max thumbnail's updates per second triggered by graph updates
-
-      thumbnailLiveFramerate:
-        false,  // max thumbnail's updates per second. Set false to disable
-
-      dblClickDelay: 200,  // milliseconds
-
-      removeCustomContainer:
-        true,  // destroy the container specified by user on plugin destroy
-
-      rerenderDelay: 100,  // ms to throttle rerender updates to the panzoom for
-      // performance
-    };
-
-    this.cyNavi = this._g.cy.navigator(defaults);  // get navigator instance, nav
-    this.cyNaviPositionSetter = this.setNavigatorPosition.bind(this);
-    window.removeEventListener('resize', this.cyNaviPositionSetter);
-    window.removeEventListener('scroll', this.cyNaviPositionSetter);
-
-    window.addEventListener('resize', this.cyNaviPositionSetter);
-    window.addEventListener('scroll', this.cyNaviPositionSetter);
-    // to render navigator, fire zoom event
-    this._g.cy.zoom(this._g.cy.zoom() + 0.00001);
-    // to prevent expandCollapse extension's blocking 
-    $('.' + cyNaviClass).css('z-index', 1000);
-  }
-
   bindViewUtilitiesExtension() {
-    let options = {
-      highlightStyles: this.getHighlightStyles(),
-      setVisibilityOnHide: false, // whether to set visibility on hide/show
-      setDisplayOnHide: true, // whether to set display on hide/show
-      zoomAnimationDuration: 1500, //default duration for zoom animation speed
-      neighbor: function (node) { // return desired neighbors of tapheld node
-        return false;
-      },
-      neighborSelectTime: 500, //ms, time to taphold to select desired neighbors,
-      colorCount: C.MAX_HIGHLIGHT_CNT
-    };
-    this._g.viewUtils = this._g.cy.viewUtilities(options);
+    this._cyExtService.bindViewUtilitiesExtension();
   }
 
-  bindPanZoomExtension() {
-    panzoom(cytoscape);  // register extension
-    // the default values of each option are outlined below:
-    const defaults = {
-      zoomFactor: 0.05,     // zoom factor per zoom tick
-      zoomDelay: 45,        // how many ms between zoom ticks
-      minZoom: 0.1,         // min zoom level
-      maxZoom: 10,          // max zoom level
-      fitPadding: 50,       // padding when fitting
-      panSpeed: 10,         // how many ms in between pan ticks
-      panDistance: 10,      // max pan distance per tick
-      panDragAreaSize: 75,  // the length of the pan drag box in which the
-      // vector for panning is calculated (bigger = finer
-      // control of pan speed and direction)
-      panMinPercentSpeed:
-        0.25,  // the slowest speed we can pan by (as a percent of panSpeed)
-      panInactiveArea: 8,           // radius of inactive area in pan drag box
-      panIndicatorMinOpacity: 0.5,  // min opacity of pan indicator (the
-      // draggable nib); scales from this to 1.0
-      zoomOnly: false,  // a minimal version of the ui only with zooming (useful
-      // on systems with bad mousewheel resolution)
-      fitSelector: undefined,     // selector of elements to fit
-      animateOnFit: function () {  // whether to animate on fit
-        return true;
-      },
-      fitAnimationDuration: 1000,  // duration of animation on fit
-
-      // icon class names
-      sliderHandleIcon: 'fa fa-minus',
-      zoomInIcon: 'fa fa-plus',
-      zoomOutIcon: 'fa fa-minus',
-      resetIcon: 'fa fa-expand'
-    };
-
-    // add the panzoom control
-    this._g.cy.panzoom(defaults);
-  }
-
-  bindExpandCollapseExtension() {
-    this._g.cy.expandCollapse({
-      layoutBy: this._g.layout, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
-      // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
-      fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
-      animate: true, // whether to animate on drawing changes you can specify a function too
-      ready: function () { }, // callback when expand/collapse initialized
-      undoable: false, // and if undoRedoExtension exists,
-      randomize: false,
-
-      cueEnabled: true, // Whether cues are enabled
-      expandCollapseCuePosition: C.expandCollapseCuePosition,
-      expandCollapseCueSize: C.EXPAND_COLLAPSE_CUE_SIZE, // size of expand-collapse cue
-      expandCollapseCueLineSize: 8, // size of lines used for drawing plus-minus icons
-      expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
-      collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
-      expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
-    });
-
-    this._g.expandCollapseApi = this._g.cy.expandCollapse('get');
+  setNavigatorPosition() {
+    this._cyExtService.setNavigatorPosition();
   }
 
   getNeighbors(event) {
     const ele = event.target || event.cyTarget;
     this._dbService.getNeighbors([ele.id().substr(1)], (x) => { this.loadElementsFromDatabase(x, true) });
-  }
-
-  setNavigatorPosition() {
-    const navSelector = '.cytoscape-navigator-wrapper';
-    const containerSelector = '.cyContainer';
-
-    const topCy = $(containerSelector).offset().top - window.scrollY;
-    const leftCy = $(containerSelector).offset().left;
-    const heightCy = $(containerSelector).outerHeight();
-    const widthCy = $(containerSelector).outerWidth();
-    const heightNavigator = $(navSelector).outerHeight();
-    const widthNavigator = $(navSelector).outerWidth();
-    $(navSelector).css('top', heightCy + topCy - heightNavigator);
-    $(navSelector).css('left', widthCy + leftCy - widthNavigator);
   }
 
   loadElementsFromDatabase(data: GraphResponse, isIncremental: boolean) {
@@ -378,16 +213,23 @@ export class CytoscapeService {
 
     let current = this._g.cy.nodes(':visible');
     let elemIds: string[] = [];
-    let cy_nodes = [];
+    let cyNodes = [];
     for (let i = 0; i < nodes.length; i++) {
-      cy_nodes.push(this.createCyNode(nodes[i], 'n' + nodes[i].id));
-      elemIds.push('n' + nodes[i].id);
+      let cyNodeId = 'n' + nodes[i].id;
+      cyNodes.push(this.createCyNode(nodes[i], cyNodeId));
+      elemIds.push(cyNodeId);
     }
 
-    let cy_edges = [];
+    let cyEdges = [];
+    let collapsedEdgeIds = this.getCollapsedEdgeIds();
     for (let i = 0; i < edges.length; i++) {
-      cy_edges.push(this.createCyEdge(edges[i], 'e' + edges[i].id));
-      elemIds.push('e' + edges[i].id)
+      let cyEdgeId = 'e' + edges[i].id;
+      if (collapsedEdgeIds[cyEdgeId]) {
+        elemIds.push(collapsedEdgeIds[cyEdgeId]);
+        continue;
+      }
+      cyEdges.push(this.createCyEdge(edges[i], cyEdgeId));
+      elemIds.push(cyEdgeId)
     }
 
     this._g.switchLayoutRandomization(!isIncremental);
@@ -395,10 +237,17 @@ export class CytoscapeService {
     if (!isIncremental) {
       this._g.cy.elements().remove();
     }
+    let prevElems = this._g.cy.$(':visible');
     const wasEmpty = this._g.cy.elements().length < 2;
 
-    this._g.cy.add(cy_nodes);
-    this._g.cy.add(cy_edges);
+    this._g.cy.add(cyNodes);
+    this._g.cy.add(cyEdges);
+    let compoundEdgeIds = Object.values(collapsedEdgeIds) as string[];
+    if (this._g.userPrefs.isCollapseMultiEdgesOnLoad.getValue()) {
+      this.collapseMultiEdges();
+    }
+    let compoundEdgeIds2 = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
+    elemIds.push(...C.arrayDiff(compoundEdgeIds, compoundEdgeIds2));
     // elements might already exist but hidden, so show them
     this._g.viewUtils.show(this._g.cy.$(elemIds.map(x => '#' + x).join(',')));
 
@@ -406,8 +255,8 @@ export class CytoscapeService {
 
     if (isIncremental && !wasEmpty) {
       let collection = this._g.cy.collection();
-      for (let i = 0; i < cy_nodes.length; i++) {
-        let node = this._g.cy.getElementById(cy_nodes[i].data.id);
+      for (let i = 0; i < cyNodes.length; i++) {
+        let node = this._g.cy.getElementById(cyNodes[i].data.id);
         if (!current.contains(node)) {
           collection = collection.union(node);
         }
@@ -416,12 +265,88 @@ export class CytoscapeService {
     }
 
     const shouldRandomize = !isIncremental || wasEmpty;
+    const hasNew = this.hasNewElem(elemIds, prevElems);
     if (this._g.userPrefs.timebar.isEnabled.getValue()) {
       this._timebarService.isRandomizedLayout = shouldRandomize; // make randomized layout on the next load
-    } else {
+    }
+    if (hasNew) {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
+  }
+
+  hasNewElem(newElemIds: string[], prevElems: any) {
+    let d = {};
+
+    for (let i = 0; i < prevElems.length; i++) {
+      d[prevElems[i].id()] = true;
+    }
+
+    for (let i = 0; i < newElemIds.length; i++) {
+      if (!d[newElemIds[i]]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  collapseMultiEdges(edges2collapse?: any) {
+    if (!edges2collapse) {
+      edges2collapse = this._g.cy.edges(':visible');
+    }
+    edges2collapse = edges2collapse.filter('[^originalEnds]'); // do not collapse meta-edges
+    let sourceTargetPairs = {};
+    let isCollapseBasedOnType = this._g.userPrefs.isCollapseEdgesBasedOnType.getValue();
+    let edgeCollapseLimit = this._g.userPrefs.edgeCollapseLimit.getValue();
+    for (let i = 0; i < edges2collapse.length; i++) {
+      let e = edges2collapse[i];
+      const s = e.data('source');
+      const t = e.data('target');
+      let edgeId = s + t;
+      if (isCollapseBasedOnType) {
+        edgeId = e.classes()[0] + s + t;
+      }
+      if (!sourceTargetPairs[edgeId]) {
+        sourceTargetPairs[edgeId] = { cnt: 1, s: s, t: t };
+      } else {
+        sourceTargetPairs[edgeId]['cnt'] += 1;
+      }
+    }
+    for (let i in sourceTargetPairs) {
+      let curr = sourceTargetPairs[i];
+      if (curr.cnt < edgeCollapseLimit) {
+        continue;
+      }
+      let edges = this._g.cy.edges(`[source="${curr.s}"][target="${curr.t}"]`);
+      this._g.expandCollapseApi.collapseEdges(edges);
+    }
+    this._g.isLoadFromExpandCollapse = true;
+  }
+
+  expandMultiEdges(edges2expand?: any) {
+    if (!edges2expand) {
+      edges2expand = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS);
+    }
+    this._g.expandCollapseApi.expandEdges(edges2expand);
+    this._g.isLoadFromExpandCollapse = true;
+  }
+
+  collapseNodes() {
+    if (this._g.cy.nodes(':parent').length > 0) {
+      this._g.expandCollapseApi.collapseAll();
+    }
+  }
+
+  getCollapsedEdgeIds(): any {
+    let compoundEdges = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS);
+    let collapsedEdgeIds = {};
+    for (let i = 0; i < compoundEdges.length; i++) {
+      let collapsed = compoundEdges[i].data('collapsedEdges');
+      for (let j = 0; j < collapsed.length; j++) {
+        collapsedEdgeIds[collapsed[j].id()] = compoundEdges[i].id();
+      }
+    }
+    return collapsedEdgeIds;
   }
 
   highlightElems(isIncremental: boolean, elemIds: string[]) {
@@ -429,12 +354,13 @@ export class CytoscapeService {
       return;
     }
     // remove all existing hightlights before hightlighting new elements
+    const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();
+
     if (this._g.userPrefs.isOnlyHighlight4LatestQuery.getValue()) {
-      let t = this._g.userPrefs.mergedElemIndicator.getValue();
-      if (t == MergedElemIndicatorTypes.highlight) {
+      if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
         this._g.viewUtils.removeHighlights();
       }
-      if (t == MergedElemIndicatorTypes.selection) {
+      if (newElemIndicator == MergedElemIndicatorTypes.selection) {
         this._g.cy.$().unselect();
       }
     }
@@ -443,10 +369,10 @@ export class CytoscapeService {
     for (let i = 0; i < cnt; i++) {
       ele2highlight.merge('#' + elemIds.pop());
     }
-    if (this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
+    if (newElemIndicator == MergedElemIndicatorTypes.selection) {
       this._g.isSelectFromLoad = true;
       ele2highlight.select();
-    } else {
+    } else if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
       this._g.highlightElems(ele2highlight);
     }
   }
@@ -468,25 +394,77 @@ export class CytoscapeService {
     return { data: properties, classes: edge.type };
   }
 
-  showHideEdgeLabelCheckBoxClicked(isChecked: boolean) {
+  showHideEdgeLabels() {
+    this._g.cy.startBatch();
     this._g.cy.edges().removeClass('nolabel');
-    if (!isChecked) {
+    if (!this._g.userPrefs.isShowEdgeLabels.getValue()) {
       this._g.cy.edges().addClass('nolabel');
     }
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   fitLabel2Node() {
-    this._g.cy.nodes().removeClass('fitlabel');
-    if (this._g.userPrefs.isFitLabels2Nodes.getValue()) {
-      this._g.cy.nodes().addClass('fitlabel');
+    this._g.cy.startBatch();
+    let nodes = this._g.cy.nodes().not(':parent').not('.' + C.CLUSTER_CLASS);
+    let wrapType = this._g.userPrefs.nodeLabelWrap.getValue();
+
+    nodes.removeClass('ellipsis_label wrap_label');
+    if (wrapType == TextWrapTypes.ellipsis) {
+      for (let i = 0; i < nodes.length; i++) {
+        let origLabel = this._g.getLabels4Elems([nodes[i].id().substr(1)]);
+        nodes[i].data('__label__', this.truncateText(origLabel, nodes[i]));
+      }
+      nodes.addClass('ellipsis_label');
+    } else if (wrapType == TextWrapTypes.wrap) {
+      nodes.addClass('wrap_label');
     }
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
+  }
+
+  truncateText(label: string, ele: any): string {
+    let context = document.createElement('canvas').getContext("2d");
+
+    let fStyle = ele.pstyle('font-style').strValue;
+    let size = ele.pstyle('font-size').pfValue + 'px';
+    let family = ele.pstyle('font-family').strValue;
+    let weight = ele.pstyle('font-weight').strValue;
+
+    context.font = fStyle + ' ' + weight + ' ' + size + ' ' + family;
+    let text = label || '';
+    let textWidth = ele.width();
+    return this.findFittedTxt(context, text, textWidth);
+  }
+
+  private findFittedTxt(ctx: CanvasRenderingContext2D, txt: string, wid: number) {
+    let len = txt.length;
+    if (ctx.measureText(txt.substr(0, len)).width <= wid) {
+      return txt;
+    }
+    let maxIdx = len - 1;
+    let minIdx = 1;
+
+    // binary search through possible interval
+    while (true) {
+      let doesFit = ctx.measureText(txt.substr(0, len) + '..').width <= wid;
+      if (doesFit && ctx.measureText(txt.substr(0, len + 1) + '..').width >= wid) {
+        break;
+      }
+      if (doesFit) {
+        minIdx = len;
+        len = Math.ceil((len + maxIdx) / 2);
+      } else {
+        maxIdx = len;
+        len = Math.floor((len + minIdx) / 2);
+      }
+    }
+    return txt.substr(0, len) + '..';
   }
 
   bindHighlightOnHoverListeners() {
     let highlighterFn = this.highlightNeighbors();
-    this._g.cy.on(
-      `${C.EV_MOUSE_ON} ${C.EV_MOUSE_OFF}`, 'node, edge',
-      highlighterFn.bind(this));
+    let events = `${C.EV_MOUSE_ON} ${C.EV_MOUSE_OFF}`;
+    let targets = 'node, edge'
+    this._g.cy.on(events, targets, highlighterFn.bind(this));
   }
 
   highlightNeighbors() {
@@ -529,7 +507,9 @@ export class CytoscapeService {
   }
 
   setOtherElementsOpacity(elements, opacity) {
+    this._g.cy.startBatch();
     this._g.cy.elements().difference(elements).style({ opacity: opacity });
+    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
   }
 
   highlightSelected() {
@@ -565,21 +545,12 @@ export class CytoscapeService {
 
   navigatorCheckBoxClicked(isChecked: boolean) {
     if (isChecked) {
-      this.bindNavigatorExtension();
+      this._cyExtService.bindNavigatorExtension();
     } else {
-      this.unbindNavigatorExtension();
+      this._cyExtService.unbindNavigatorExtension();
     }
   }
 
-  unbindNavigatorExtension() {
-    window.removeEventListener('resize', this.cyNaviPositionSetter);
-    window.removeEventListener('scroll', this.cyNaviPositionSetter);
-    if (!this.cyNavi) {
-      return;
-    }
-    this.cyNavi.destroy();
-    this.cyNavi = null;
-  }
 
   showHideTimebar(isChecked: boolean) {
     if (!isChecked) {
@@ -589,17 +560,25 @@ export class CytoscapeService {
     }
     this._g.cy.resize();
     this._timebarService.showHideTimebar(isChecked);
-    setTimeout(() => { this.setNavigatorPosition() }, 0);
+    setTimeout(() => { this._cyExtService.setNavigatorPosition() }, 0);
   }
 
   loadFile(file: File) {
     C.readTxtFile(file, (txt) => {
       const fileJSON = JSON.parse(txt);
       this._g.cy.json({ elements: fileJSON });
+      this._g.cy.fit();
     });
   }
 
   saveAsJson() {
+    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
+    if (hasAnyCollapsed) {
+      const instance = this._modalService.open(ErrorModalComponent);
+      instance.componentInstance.msg = 'Cannot save as JSON due to collapsed node(s) and/or edge(s)';
+      instance.componentInstance.title = 'Save as JSON';
+      return;
+    }
     const json = this._g.cy.json();
     const elements = json.elements;
     const file = JSON.stringify(elements, undefined, 4);
@@ -635,12 +614,61 @@ export class CytoscapeService {
     } else {
       this._g.cy.remove(':selected');
     }
+    this._g.handleCompoundsOnHideDelete();
+    this.runLayoutIfNoTimebar();
+  }
+
+  private addParentNode(idSuffix: string | number, parent = undefined) {
+    const id = 'c' + idSuffix;
+    const parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id);
+    this._g.cy.add(parentNode);
+    this._g.cy.$('#' + id).move({ parent: parent });
+  }
+
+  addGroup4Selected() {
+    const elems = this._g.cy.nodes(':selected');
+    if (elems.length < 1) {
+      return;
+    }
+    const parent = elems[0].parent().id();
+    for (let i = 1; i < elems.length; i++) {
+      if (parent !== elems[i].parent().id()) {
+        return;
+      }
+    }
+    const id = new Date().getTime();
+    this.addParentNode(id, parent);
+    for (let i = 0; i < elems.length; i++) {
+      elems[i].move({ parent: 'c' + id });
+    }
+    this._g.performLayout(false);
+  }
+
+  removeGroup4Selected(elems = undefined) {
+    if (!elems) {
+      elems = this._g.cy.nodes(':selected').filter('.' + C.CLUSTER_CLASS);
+    }
+    if (elems.length < 1) {
+      return;
+    }
+    for (let i = 0; i < elems.length; i++) {
+      // expand if collapsed
+      if (elems[i].hasClass(C.COLLAPSED_NODE_CLASS)) {
+        this._g.expandCollapseApi.expand(elems[i], { layoutBy: null, fisheye: false, animate: false });
+      }
+      const grandParent = elems[i].parent().id() ?? null;
+      const children = elems[i].children();
+      children.move({ parent: grandParent });
+      this._g.cy.remove(elems[i]);
+    }
+    this._g.performLayout(false);
   }
 
   showHideSelectedElements(isHide: boolean) {
     if (isHide) {
-      let selected = this._g.cy.$(':selected');
+      let selected = this._g.cy.$(':selected').not('.' + C.META_EDGE_CLASS);
       this._g.viewUtils.hide(selected);
+      this.hideCompounds(selected);
       this._g.applyClassFiltering();
       if (selected.length > 0) {
         this._g.performLayout(false);
@@ -649,24 +677,121 @@ export class CytoscapeService {
       if (!this.isAnyHidden()) {
         return;
       }
-      let hiddenNodes = this._g.cy.nodes(':hidden');
-      let prevVisible = this._g.cy.nodes(':visible');
-      if (prevVisible.length > 0) {
-        this._g.layoutUtils.placeNewNodes(hiddenNodes);
-      }
+      const prevVisible = this._g.cy.$(':visible');
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
       this._timebarService.coverVisibleRange();
+      this.showAllCollapsed();
+      const currVisible = this._g.cy.$(':visible');
+      if (!currVisible.same(prevVisible)) {
+        if (prevVisible.length > 0) {
+          this._g.layoutUtils.placeNewNodes(currVisible.difference(prevVisible).nodes());
+        }
+        this._g.performLayout(false);
+      }
     }
   }
 
   hideUnselected() {
-    let unselected = this._g.cy.$().not(':selected');
+    let unselected = this._g.cy.$().not(':selected').not('.' + C.META_EDGE_CLASS);
     this._g.viewUtils.hide(unselected);
+    this.hideCompounds(unselected);
     this._g.applyClassFiltering();
     if (unselected.length > 0) {
       this._g.performLayout(false);
     }
+  }
+
+  showAllCollapsed() {
+    const collapsedNodes = this._g.cy.$('.' + C.COLLAPSED_NODE_CLASS);
+    for (let i = 0; i < collapsedNodes.length; i++) {
+      this.showCollapsed4Node(collapsedNodes[i]);
+    }
+
+    const collapsedEdges = this._g.cy.$('.' + C.COLLAPSED_EDGE_CLASS);
+    for (let i = 0; i < collapsedEdges.length; i++) {
+      this.showCollapsed4Edge(collapsedEdges[i]);
+    }
+  }
+
+  showCollapsed4Node(node) {
+    const collapsed = node.data('collapsedChildren');
+    this._g.viewUtils.show(collapsed);
+    const collapsedNodes = collapsed.filter('.' + C.COLLAPSED_NODE_CLASS);
+    for (let i = 0; i < collapsedNodes.length; i++) {
+      this.showCollapsed4Node(collapsedNodes[i]);
+    }
+
+    const collapsedEdges = collapsed.filter('.' + C.COLLAPSED_EDGE_CLASS);
+    for (let i = 0; i < collapsedEdges.length; i++) {
+      this.showCollapsed4Edge(collapsedEdges[i]);
+    }
+  }
+
+  showCollapsed4Edge(edge) {
+    const collapsed = edge.data('collapsedEdges');
+    this._g.viewUtils.show(collapsed);
+    const collapsedEdges = collapsed.filter('.' + C.COLLAPSED_EDGE_CLASS);
+    for (let i = 0; i < collapsedEdges.length; i++) {
+      this.showCollapsed4Edge(collapsedEdges[i]);
+    }
+  }
+
+  // expands all the compound nodes and deletes them recursively
+  hideCompounds(elems) {
+    const nodes = elems.filter('.' + C.CLUSTER_CLASS).not('.' + C.META_EDGE_CLASS);
+    let collapsedEdgeIds = elems.union(elems.connectedEdges()).filter('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
+    const edgeIdDict = {};
+    for (const i of collapsedEdgeIds) {
+      edgeIdDict[i] = true;
+    }
+    for (let i = 0; i < nodes.length; i++) {
+      this.hideCompoundNode(nodes[i], edgeIdDict);
+    }
+    for (let i in edgeIdDict) {
+      this.hideCompoundEdge(this._g.cy.edges('#' + i));
+    }
+  }
+
+  hideCompoundNode(node, edgeIdDict) {
+    let children = node.children(); // a node might have children
+    let collapsed = node.data('collapsedChildren'); // a node might a collapsed 
+    let collapsedEdgeIds = children.connectedEdges().filter('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
+
+    if (collapsed) {
+      children = children.union(collapsed);
+      collapsedEdgeIds = collapsed.edges('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
+      this._g.expandCollapseApi.expand(node, { layoutBy: null, fisheye: false, animate: false });
+    }
+    for (const i of collapsedEdgeIds) {
+      edgeIdDict[i] = true;
+    }
+
+    // recursively apply for complex children
+    const compoundNodes = children.filter('.' + C.CLUSTER_CLASS);
+    for (let i = 0; i < compoundNodes.length; i++) {
+      this.hideCompoundNode(compoundNodes[i], edgeIdDict);
+    }
+
+    // in recursive calls chilren are modified, this node should be an expanded compound node
+    children = node.children(); // a node might have children
+    children.move({ parent: node.data('parent') ?? null });
+    this._g.viewUtils.hide(children);
+    this._g.cy.remove(node);
+  }
+
+  hideCompoundEdge(edge) {
+    if (!edge || edge.length < 1 || edge.not('.' + C.META_EDGE_CLASS).length < 1) {
+      return;
+    }
+    let children = edge.data('collapsedEdges');
+    // recursively apply for complex children
+    const compoundEdges = children.filter('.' + C.COLLAPSED_EDGE_CLASS);
+    for (let i = 0; i < compoundEdges.length; i++) {
+      this.hideCompoundEdge(compoundEdges[i]);
+    }
+    this._g.viewUtils.hide(children);
+    this._g.expandCollapseApi.expandEdges(edge);
   }
 
   isAnyHidden() {
@@ -674,26 +799,62 @@ export class CytoscapeService {
   }
 
   markovClustering() {
-    const opt = {
-      attributes: [
-        function () { return 1; }
-      ]
-    };
+    const opt = { attributes: [() => { return 1; }] };
 
-    let clusters = this._g.cy.$().markovClustering(opt);
-    for (let i = 0; i < clusters.length; i++) {
-      let parentNode = this.createCyNode({ labels: ['Cluster'], properties: { end_datetime: 0, begin_datetime: 0 } }, 'c' + i);
-      this._g.cy.add(parentNode);
-      clusters[i].move({ parent: parentNode.data.id });
+    let clusters = this._g.cy.$(':visible').markovClustering(opt);
+    if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
+      for (let i = 0; i < clusters.length; i++) {
+        this.addParentNode(i);
+        clusters[i].move({ parent: 'c' + i });
+      }
+    } else {
+      let arr = [];
+      for (let i = 0; i < clusters.length; i++) {
+        let a = [];
+        for (let j = 0; j < clusters[i].length; j++) {
+          a.push(clusters[i][j].id());
+        }
+        arr.push(a);
+      }
+      this._g.layout.clusters = arr;
+      this._g.isUseCiseLayout = true;
+    }
+  }
+
+  louvainClustering() {
+    let clustering = this.louvainClusterer.cluster(this._g.cy.$(':visible'));
+    let clusters = {};
+    for (let n in clustering) {
+      clusters[clustering[n]] = true;
+    }
+    if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
+      // generate compound nodes
+      for (let i in clusters) {
+        this.addParentNode(i);
+      }
+      // add parents to non-compound nodes
+      for (let n in clustering) {
+        this._g.cy.$('#' + n).move({ parent: 'c' + clustering[n] });
+      }
+    } else {
+      let arr = [];
+      for (let i in clusters) {
+        arr.push([]);
+      }
+      for (let i in clustering) {
+        arr[clustering[i]].push(i);
+      }
+      this._g.layout.clusters = (node) => { return clustering[node.id()]; };
+      this._g.isUseCiseLayout = true;
     }
   }
 
   clusterByDirector() {
-    let edges = this._g.cy.$('edge.DIRECTED');
+    let directorEdges = this._g.cy.edges('.DIRECTOR').filter(':visible');
     let directorIds = new Set<string>();
     let movie2director = {};
-    for (let i = 0; i < edges.length; i++) {
-      let edgeData = edges[i].data();
+    for (let i = 0; i < directorEdges.length; i++) {
+      let edgeData = directorEdges[i].data();
       directorIds.add(edgeData.source);
       if (movie2director[edgeData.target]) {
         movie2director[edgeData.target].push(edgeData.source);
@@ -702,37 +863,58 @@ export class CytoscapeService {
       }
     }
 
-    // add parent nodes
-    for (let id of directorIds) {
-      let name = this._g.cy.$('#' + id).data().name;
-      let parentNode = this.createCyNode({ labels: ['Cluster'], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id + 'c');
-      this._g.cy.add(parentNode);
-      // add the director to the compound node
-      this._g.cy.$('#' + id).move({ parent: id + 'c' });
+    if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
+      // add parent nodes
+      for (let id of directorIds) {
+        let name = this._g.cy.$('#' + id).data().name;
+        // for each director, generate a compound node
+        this.addParentNode(id);
+        // add the director to the compound node
+        this._g.cy.$('#' + id).move({ parent: 'c' + id });
+      }
+
+      // assign nodes to parents
+      for (let [k, v] of Object.entries(movie2director)) {
+        // if a movie has less than 2 directors add, those movies to the cluster of director
+        if (v['length'] < 2) {
+          // add movies to the compound node
+          this._g.cy.$('#' + k).move({ parent: 'c' + v[0] });
+        }
+      }
+    } else {
+      const clusters = {};
+      for (let id of directorIds) {
+        clusters[id] = [id];
+      }
+      for (let [k, v] of Object.entries(movie2director)) {
+        // if a movie has less than 2 directors add, those movies to the cluster of director
+        if (v['length'] < 2) {
+          clusters[v[0]].push(k);
+        }
+      }
+      console.log(' clusters for directors: ', clusters);
+      console.log(' Object.values(clusters): ', Object.values(clusters));
+      this._g.layout.clusters = Object.values(clusters);
+      this._g.isUseCiseLayout = true;
     }
 
-    // assign nodes to parents
-    for (let [k, v] of Object.entries(movie2director)) {
-      if (v['length'] < 2) {
-        // add movies to the compound node
-        this._g.cy.$('#' + k).move({ parent: v[0] + 'c' });
-      }
-    }
   }
 
   deleteClusteringNodes() {
     this._g.cy.$().move({ parent: null });
-    this._g.cy.remove('node.Cluster');
+    this._g.cy.remove('node.' + C.CLUSTER_CLASS);
   }
 
   expandAllCompounds() {
-    this._g.expandCollapseApi.expandAll();
+    if (this._g.cy.nodes('.' + C.COLLAPSED_NODE_CLASS).length > 0) {
+      this._g.expandCollapseApi.expandAll();
+    }
   }
 
   bindComponentSelector() {
     let isSelectionLocked: boolean = false;
 
-    this._g.cy.on('taphold', 'node', function (e) {
+    this._g.cy.on('taphold', 'node', (e) => {
       if (!e.originalEvent.shiftKey) {
         return;
       }
@@ -740,9 +922,9 @@ export class CytoscapeService {
       // it selects current node again to prevent that, disable selection until next tap event
       this._g.cy.autounselectify(true);
       isSelectionLocked = true;
-    }.bind(this));
+    });
 
-    this._g.cy.on('free', 'node', function (e) {
+    this._g.cy.on('free', 'node', () => {
       if (!isSelectionLocked) {
         return;
       }
@@ -751,28 +933,12 @@ export class CytoscapeService {
         this._g.cy.autounselectify(false);
         isSelectionLocked = false;
       }, 100);
-
-    }.bind(this));
+    });
   }
 
   setRemovePoppersFn(fn) {
     this.removePopperFn = fn;
   }
 
-  getHighlightStyles(): any[] {
-    let r = [];
 
-    for (let i = 0; i < this._g.userPrefs.highlightStyles.length; i++) {
-      let style = this._g.userPrefs.highlightStyles[i];
-      let w = style.wid.getValue();
-      let c = style.color.getValue();
-
-      r.push({
-        node: { 'border-color': c, 'border-width': w },
-        edge: { 'line-color': c, 'target-arrow-color': c, 'width': 4.5 }
-      });
-
-    }
-    return r;
-  }
 }

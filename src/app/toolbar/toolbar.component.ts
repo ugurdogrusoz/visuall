@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CytoscapeService } from '../cytoscape.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaveAsPngModalComponent } from '../popups/save-as-png-modal/save-as-png-modal.component';
@@ -18,10 +18,14 @@ import {MapModalComponent} from '../popups/map-modal/map-modal.component';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.css']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent implements OnInit, AfterViewInit {
   @ViewChild('file', { static: false }) file;
   private searchTxt: string;
   menu: ToolbarDiv[];
+  statusMsg = '';
+  statusMsgQueue: string[] = [];
+  MIN_MSG_DURATION = 500;
+  msgQueueUpdater = null;
 
   constructor(private _cyService: CytoscapeService, private modalService: NgbModal,
     private _g: GlobalVariableService, private _customizationService: ToolbarCustomizationService) {
@@ -64,6 +68,31 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit() {
     this.mergeCustomMenu();
+    this._g.statusMsg.subscribe(x => {
+      if (this.statusMsgQueue[this.statusMsgQueue.length - 1] !== x) {
+        this.statusMsgQueue.push(x);
+      }
+      if (this.msgQueueUpdater) {
+        return;
+      }
+      this.processMsgQueue();
+      this.msgQueueUpdater = setInterval(this.processMsgQueue.bind(this), this.MIN_MSG_DURATION);
+    });
+  }
+
+  private processMsgQueue() {
+    if (this.statusMsgQueue.length < 1) {
+      clearInterval(this.msgQueueUpdater);
+      this.statusMsg = '';
+      this.msgQueueUpdater = null;
+      return;
+    }
+    let candidateMsg = this.statusMsgQueue.shift();
+    // skip the same messages if there are new ones
+    while (candidateMsg == this.statusMsg && this.statusMsgQueue.length > 0) {
+      candidateMsg = this.statusMsgQueue.shift();
+    }
+    this.statusMsg = candidateMsg;
   }
 
   ngAfterViewInit() {
@@ -72,16 +101,16 @@ export class ToolbarComponent implements OnInit {
   }
 
   mergeCustomMenu() {
-    let m = this._customizationService.menu;
+    const m = this._customizationService.menu;
     // in any case, set isStd property to false
     m.map(x => x.items.map(y => y.isStd = false));
 
-    for (let i = 0; i < m.length; i++) {
-      let idx = this.menu.findIndex(x => x.div == m[i].div);
-      if (idx == -1) {
-        this.menu.push(m[i]);
+    for (const i of m) {
+      const idx = this.menu.findIndex(x => x.div === i.div);
+      if (idx === -1) {
+        this.menu.push(i);
       } else {
-        this.menu[idx].items.push(...m[i].items);
+        this.menu[idx].items.push(...i.items);
       }
     }
   }
@@ -113,9 +142,9 @@ export class ToolbarComponent implements OnInit {
 
   highlightSearch() {
     const q = this.generateCyQueryForStrSearch(this.searchTxt);
-    let e1 = this.findInListProps(this.searchTxt);
-    let e2 = this._g.cy.$(q);
-    let e3 = this.searchNumberProps(this.searchTxt);
+    const e1 = this.findInListProps(this.searchTxt);
+    const e2 = this._g.cy.$(q);
+    const e3 = this.searchNumberProps(this.searchTxt);
     this._g.highlightElems(e1.union(e2).union(e3))
   }
 
@@ -126,7 +155,7 @@ export class ToolbarComponent implements OnInit {
     if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
       caseInsensitive = '@'
     }
-    for (let name of Array.from(propNames)) {
+    for (const name of Array.from(propNames)) {
       cyQuery += `[${name} ${caseInsensitive}*= "${pattern}"],`
     }
     // delete last
@@ -137,15 +166,15 @@ export class ToolbarComponent implements OnInit {
   findInListProps(txt) {
     const listPropNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['list']);
     return this._g.cy.filter(function (e) {
-      let d = e.data();
+      const d = e.data();
 
-      for (let propName of Array.from(listPropNames)) {
-        let prop = d[propName];
+      for (const propName of Array.from(listPropNames)) {
+        const prop = d[propName];
         if (!prop) {
           continue;
         }
-        for (let i = 0; i < prop.length; i++) {
-          if (prop[i].toLowerCase().includes(txt.toLowerCase())) {
+        for (const p of prop) {
+          if (p.toLowerCase().includes(txt.toLowerCase())) {
             return true;
           }
         }
@@ -155,13 +184,13 @@ export class ToolbarComponent implements OnInit {
   }
 
   searchNumberProps(txt: string) {
-    let n = Number(txt);
+    const n = Number(txt);
     if (!n) {
       return this._g.cy.collection();
     }
     const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['int', 'float']);
     let cyQuery = '';
-    for (let name of Array.from(propNames)) {
+    for (const name of Array.from(propNames)) {
       cyQuery += `[${name} = ${n}],`
     }
     // delete last

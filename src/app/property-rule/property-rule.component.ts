@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber, DATETIME_OPERATORS } from '../constants';
 import flatpickr from 'flatpickr';
-import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/filtering-types';
+import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/query-types';
 import properties from '../../assets/generated/properties.json';
 import AppDescription from '../../assets/app_description.json';
 import { Subject } from 'rxjs';
@@ -156,17 +156,27 @@ export class PropertyRuleComponent implements OnInit {
       value = this.filterInp;
     }
 
+    let mapped = undefined;
+    if (this.finiteSetPropertyMap) {
+      const o = this.finiteSetPropertyMap.find(x => x.key == this.filterInp);
+      if (o) {
+        mapped = o.value;
+      }
+    }
     const rule: Rule = {
       propertyOperand: attribute,
       propertyType: atType,
       rawInput: rawValue,
       inputOperand: value,
       ruleOperator: logicOperator,
-      operator: operator
+      operator: operator,
+      enumMapping: mapped
     };
     const isOk = this.isStrictlyValid(rule);
     if (this.isStrict && !isOk) {
-      this._modalService.open(ErrorModalComponent);
+      const instance = this._modalService.open(ErrorModalComponent);
+      instance.componentInstance.msg = 'Invalid Rule!';
+      instance.componentInstance.title = 'Error';
       return;
     }
     this.onRuleReady.emit(rule);
@@ -184,6 +194,12 @@ export class PropertyRuleComponent implements OnInit {
     this.finiteSetPropertyMap = null;
     if (m && m[this.selectedClass] && m[this.selectedClass][this.selectedProp]) {
       this.finiteSetPropertyMap = m[this.selectedClass][this.selectedProp];
+      const arr = [];
+      for (const k in this.finiteSetPropertyMap) {
+        arr.push({ key: k, value: this.finiteSetPropertyMap[k] });
+      }
+      arr.sort((a: any, b: any) => { if (a.value > b.value) return 1; if (b.value > a.value) return -1; return 0 });
+      this.finiteSetPropertyMap = arr;
       return PropertyCategory.finiteSet;
     }
     if (this.attributeType == 'datetime') {

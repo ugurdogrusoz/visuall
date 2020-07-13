@@ -39,8 +39,15 @@ body {
 }
 
 .toolbar-element {
-  height: 2.5vh;
-  min-height: 25px;
+  height: 2.0vh;
+  min-height: 24px;
+  cursor: pointer;
+}
+
+.toolbar-element-container {
+  padding: 1px;
+  margin-left: 4px;
+  float: left;
 }
 
 #cy {
@@ -109,16 +116,22 @@ body {
 
 .panel-heading {
   cursor: pointer;
-  height: 17px;
   text-align: center;
   background-color: #eaeaea;
+  line-height: 1.45;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .subpanel-heading {
   cursor: pointer;
-  height: 17px;
   text-align: center;
   background-color: #eaeaea40;
+  line-height: 1.45;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .panel-heading-hideable {
@@ -131,6 +144,8 @@ body {
 .panel-title {
   font-size: 12px;
   color: #555555;
+  vertical-align: middle;
+  display: table-cell;
 }
 
 .panel-body {
@@ -144,15 +159,9 @@ body {
   border: 2px solid transparent;
 }
 
-.accordion-toggle {
-  /* symbol for "opening" panels */
-  height: auto;
-}
-
-/* CSS Method for adding Font Awesome Chevron Icons */
+/* CSS Method for adding Font Awesome Chevron Icons  symbol for "opening" panels*/
 
 .accordion-toggle:after {
-  /* symbol for "opening" panels */
   font-family: 'FontAwesome', sans-serif;
   content: "\f077";
   float: right;
@@ -160,13 +169,15 @@ body {
   color: inherit;
 }
 
+/* symbol for "collapsed" panels */
+
 .panel-heading.collapsed .accordion-toggle:after {
-  /* symbol for "collapsed" panels */
   content: "\f078";
 }
 
+/* symbol for "collapsed" panels */
+
 .subpanel-heading.collapsed .accordion-toggle:after {
-  /* symbol for "collapsed" panels */
   content: "\f078";
 }
 
@@ -193,20 +204,38 @@ body {
 #highlight-search-inp {
   width: 75px;
   border-radius: 5px;
-  border-color: #ddd;
-  outline-offset: 50px;
   height: 23px;
 }
 
-/* overwrite context-menu extension css */
+/* custom css for context-menu extension */
 
-.cy-context-menus-cxt-menuitem:hover {
-  color: #555 !important;
-  background-color: #eaeaea !important;
+.vall-ctx-menu-item:hover {
+  color: #16181b !important;
+  background-color: #f8f9fa !important;
+}
+
+.vall-ctx-menu-item {
+  background-color: #ffffff !important;
+  padding: 0.25rem 1.5rem !important;
+  width: 100% !important;
+  font-weight: 400 !important;
+  color: #212529 !important;
+}
+
+.vall-ctx-menu {
+  padding: .5rem 0 !important;
+  margin: .125rem 0 0 !important;
+  border: 1px solid rgba(0, 0, 0, .15) !important;
+  background-color: #ffffff !important;
+  border-radius: .25rem !important;
 }
 
 .modal-title {
   margin: 0 auto;
+}
+
+.modal-header {
+  padding: 0.5rem 1rem;
 }
 
 .img-icon {

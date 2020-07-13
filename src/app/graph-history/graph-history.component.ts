@@ -43,8 +43,9 @@ export class GraphHistoryComponent implements OnInit {
   load(i: number) {
     this.activeItemIdx = i;
     let g = this.graphHistory[i];
-    this._g.cy.json({ elements: JSON.parse(g.json) });
+    this._g.cy.json({ elements: g.json });
     this._g.isLoadFromHistory = true;
+    this._g.cy.fit();
   }
 
   delete(i: number) {

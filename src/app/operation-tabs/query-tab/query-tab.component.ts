@@ -11,7 +11,7 @@ export class QueryTabComponent implements OnInit {
   selectedIdx: number;
 
   constructor() {
-    this.queryTypes = ['Get actors by movie counts', 'Get movies by genre'];
+    this.queryTypes = ['Get actors by title counts', 'Get titles by genre'];
     this.selectedIdx = -1;
   }
 

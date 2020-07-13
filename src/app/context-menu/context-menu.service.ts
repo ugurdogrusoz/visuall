@@ -7,6 +7,7 @@ import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
 import { ContextMenuCustomizationService } from './context-menu-customization.service';
 import properties from '../../assets/generated/properties.json';
+import { COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from './../constants';
 
 @Injectable({
   providedIn: 'root'
@@ -19,16 +20,22 @@ export class ContextMenuService {
 
     this.menu = [
       {
+        id: 'collapseAllNodes',
+        content: 'Collapse All Nodes',
+        coreAsWell: true,
+        onClickFunction: () => { this._cyService.collapseNodes(); }
+      },
+      {
+        id: 'collapseAllEdges',
+        content: 'Collapse All Edges',
+        coreAsWell: true,
+        onClickFunction: () => { this._cyService.collapseMultiEdges(); }
+      },
+      {
         id: 'performLayout',
         content: 'Perform Layout',
         coreAsWell: true,
         onClickFunction: this.performLayout.bind(this)
-      },
-      {
-        id: 'deleteElement',
-        content: 'Delete',
-        selector: 'node,edge',
-        onClickFunction: this.deleteElem.bind(this)
       },
       {
         id: 'deleteSelected',
@@ -41,7 +48,31 @@ export class ContextMenuService {
         content: 'Select Objects of This Type',
         selector: 'node,edge',
         onClickFunction: this.selectAllThisType.bind(this)
-      }
+      },
+      {
+        id: 'collapseEdge',
+        content: 'Collapse',
+        selector: '[^collapsedEdges][^originalEnds]',
+        onClickFunction: this.collapseEdges.bind(this)
+      },
+      {
+        id: 'expandEdge',
+        content: 'Expand',
+        selector: 'edge.' + COLLAPSED_EDGE_CLASS,
+        onClickFunction: this.expandEdge.bind(this)
+      },
+      {
+        id: 'removeGroup',
+        content: 'Remove Group',
+        selector: 'node.' + CLUSTER_CLASS,
+        onClickFunction: (e) => { this._cyService.removeGroup4Selected(e.target || e.cyTarget) }
+      },
+      {
+        id: 'deleteElement',
+        content: 'Delete',
+        selector: 'node,edge',
+        onClickFunction: this.deleteElem.bind(this)
+      },
     ];
   }
 
@@ -49,8 +80,8 @@ export class ContextMenuService {
 
     // register context menu extension
     cytoscape.use(contextMenus, $);
-    this.menu = this.menu.concat(this._customizationService.menu);
-    this._g.cy.contextMenus({ menuItems: this.menu });
+    this.menu = this._customizationService.menu.concat(this.menu);
+    this._g.cy.contextMenus({ menuItems: this.menu, menuItemClasses: ['vall-ctx-menu-item'], contextMenuClasses: ['vall-ctx-menu'] });
   }
 
   deleteElem(event) { this._cyService.deleteSelected(event); }
@@ -70,6 +101,22 @@ export class ContextMenuService {
         this._g.cy.$('.' + c).select();
       }
     }
+  }
+
+  collapseEdges(event) {
+    const ele = event.target || event.cyTarget;
+    if (!ele) {
+      return;
+    }
+    this._cyService.collapseMultiEdges(ele.parallelEdges());
+  }
+
+  expandEdge(event) {
+    const ele = event.target || event.cyTarget;
+    if (!ele) {
+      return;
+    }
+    this._cyService.expandMultiEdges(ele);
   }
 
 }

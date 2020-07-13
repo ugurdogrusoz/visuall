@@ -8,10 +8,15 @@ export const DATE_PROP_START = 'start_time';
 export const DATE_PROP_END = 'end_time';
 export const MIN_DATE = -59011466152000; // Fri Jan 01 0100 00:00:00 GMT+0155
 export const MAX_DATE = 32503669200000;  // Wed Jan 01 3000 00:00:00 GMT+0300
+export const CY_BATCH_END_DELAY = 100;
+export const OBJ_INFO_UPDATE_DELAY = 200;
 
+// defined in expand-collapse extension
+export const META_EDGE_CLASS = 'cy-expand-collapse-meta-edge';
+export const COLLAPSED_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge';
+export const COLLAPSED_NODE_CLASS = 'cy-expand-collapse-collapsed-node';
 
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
-export const FILTER_CLASS_HIDE = 'filter-class-disabled';
 export const MAX_HIGHTLIGHT_WIDTH = 20;
 export const MIN_HIGHTLIGHT_WIDTH = 1;
 export const MAX_DATA_PAGE_SIZE = 10000;
@@ -19,9 +24,11 @@ export const MIN_DATA_PAGE_SIZE = 1;
 export const EXPAND_COLLAPSE_CUE_SIZE = 12;
 export const MAX_TABLE_COLUMN_COUNT = 100;
 export const MIN_TABLE_COLUMN_COUNT = 1;
-
+export const HIDE_EMPTY_TIMEBAR_DELAY = 1000;
 export const CSS_SM_TEXT_SIZE = 11;
 export const CSS_FONT_NAME = 'Arial';
+export const CLUSTER_CLASS = 'Cluster';
+export const LAYOUT_ANIM_DUR = 500;
 
 export const GENERIC_TYPE = {
   ANY_CLASS: 'Any Object',
@@ -143,14 +150,22 @@ export const MONTHS = ["January", "February", "March", "April", "May", "June",
 export const SHORT_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
-// https://davidwalsh.name/javascript-debounce-function
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-export function debounce(func, wait, immediate) {
+/** https://davidwalsh.name/javascript-debounce-function
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered. The function will be called after it stops being called for
+ * N milliseconds. If `immediate` is passed, trigger the function on the
+ * leading edge, instead of the trailing.
+ * @param  {} func
+ * @param  {number} wait
+ * @param  {boolean=false} immediate
+ * @param  {} preConditionFn=null if function returns false, ignore this call
+ */
+export function debounce(func, wait: number, immediate: boolean = false, preConditionFn = null) {
   let timeout;
   return function () {
+    if (preConditionFn && !preConditionFn()) {
+      return;
+    }
     const context = this, args = arguments;
     const later = function () {
       timeout = null;
@@ -211,8 +226,10 @@ export function union(setA, setB) {
   return _union;
 }
 
-// is a2 subset of a1
-// a1, a2 are arrays of primitive types
+/** check whether 2 arrays are equal sets.
+ * @param  {} a1 is an array
+ * @param  {} a2 is an array
+ */
 export function isSubset(a1, a2) {
   let superSet = {};
   for (let i = 0; i < a1.length; i++) {
@@ -372,4 +389,19 @@ export function readTxtFile(file: File, cb: (s: string) => void) {
     fileReader.abort();
   };
   fileReader.readAsText(file);
+}
+
+export function arrayDiff(smallArr: string[], bigArr: string[]): string[] {
+  let diff: string[] = [];
+  let d = {};
+  for (let i = 0; i < smallArr.length; i++) {
+    d[smallArr[i]] = true;
+  }
+
+  for (let i = 0; i < bigArr.length; i++) {
+    if (!d[bigArr[i]]) {
+      diff.push(bigArr[i]);
+    }
+  }
+  return diff;
 }

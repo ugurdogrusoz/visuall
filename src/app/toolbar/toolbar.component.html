@@ -3,11 +3,15 @@
   <ng-container *ngFor="let m of menu">
     <div class="col-xs-auto border rounded">
       <ng-container *ngFor="let i of m.items">
-        <img *ngIf="i.isRegular" [src]="i.imgSrc" class="toolbar-element p-1" [title]="i.title" (click)="triggerAct(i)">
-        <input *ngIf="!i.isRegular" class="toolbar-element va-text" id="highlight-search-inp" type="text"
-          [(ngModel)]="searchTxt" (keydown.enter)="highlightSearch()">
+        <div class="toolbar-element-container">
+          <img *ngIf="i.isRegular" [src]="i.imgSrc" class="toolbar-element" [title]="i.title" (click)="triggerAct(i)">
+          <input *ngIf="!i.isRegular" class="toolbar-element va-text form-control filter-form filter-input" id="highlight-search-inp" type="text"
+            [(ngModel)]="searchTxt" (keydown.enter)="highlightSearch()">
+        </div>
       </ng-container>
     </div>
     <div>&nbsp;&nbsp;</div>
   </ng-container>
+  <div class="va-small-text ml-auto my-auto">{{statusMsg}}</div>
+
 </div>

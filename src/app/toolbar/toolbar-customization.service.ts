@@ -12,13 +12,13 @@ import { GlobalVariableService } from '../global-variable.service';
  * 'isStd' property must be false for all items.
  * If 'dropdown' is not existing inside standard menu, it will be added as a new item.
  sample menu   
-this._menu = [{
+    this._menu = [{
       div: 12, items: [{ title: 'Custom Action 1', isRegular: true, fn: 'fn1', isStd: false, imgSrc: '' }]
     },
     {
       div: 1, items: [{ title: 'Custom Action 2', isRegular: true, fn: 'fn2', isStd: false, imgSrc: '' }]
     }];
- **/
+**/
 export class ToolbarCustomizationService {
   private _menu: ToolbarDiv[];
   get menu(): ToolbarDiv[] {

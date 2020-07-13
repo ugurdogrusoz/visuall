@@ -1,6 +1,5 @@
 .draggable-content {
   z-index: 1001 !important;
-  cursor: move;
   position: absolute;
   background: rgba(255, 255, 255, 0.90);
   white-space: pre-wrap;
@@ -16,8 +15,14 @@ img {
 
 td {
   max-width: 200px;
+  overflow-wrap: break-word;
 }
 
 th {
   white-space: nowrap;
+}
+
+.highlighted-row {
+  color: #212529;
+  background-color: rgba(0, 0, 0, .075);
 }
