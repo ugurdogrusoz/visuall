@@ -30,7 +30,7 @@ export class DbAdapterService implements DbService {
       txt = historyMeta.customTxt;
     }
     let fn = (x) => { callback(x); this._g.add2GraphHistory(txt + s); };
-    this._db.getNeighbors(elemId, fn, queryMeta);
+    this._db.getNeighbors(elemId, fn);
   }
 
   getElems(ids: string[]| number[], callback: (x: GraphResponse) => any, queryMeta: DbQueryMeta, historyMeta?: HistoryMetaData, ) {

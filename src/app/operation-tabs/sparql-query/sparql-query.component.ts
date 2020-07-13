@@ -53,7 +53,7 @@ export class SparqlQueryComponent {
 
   constructor(private spq: SparqlDbService, private _http: HttpClient, private _g: GlobalVariableService, private _cyService: CytoscapeService, private _dbService: DbAdapterService) { }
 
-  
+
   inData() {
 
     const url = `http://10.122.123.125:8086/sparql?solrBase=http://10.122.123.125:8985/solr/&solrCollection=teydeb_hkt_1610&triplestoreBase=http://10.122.123.125:3030&graphName=visuall_hkt`;
@@ -94,7 +94,7 @@ export class SparqlQueryComponent {
 
   getDataForQueryResult(e: TableRowMeta) {
     console.log('get data for query result: ', e);
-    this._dbService.getNeighbors(e.dbIds, (x) => { this._cyService.loadElementsFromDatabase(x, true) }, null, true, null);
+    this._dbService.getNeighbors(e.dbIds, (x) => { this._cyService.loadElementsFromDatabase(x, true) });
   }
 
 }

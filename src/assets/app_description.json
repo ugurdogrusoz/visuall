@@ -18,7 +18,7 @@
         "label": "data(label)",
         "color": "#e5ffb5",
         "text-valign": "center",
-		"text-margin-y": "8px",
+		    "text-margin-y": "8px",
         "font-size": "9px",
         "shape": "ellipse",
         "background-fit": "contain",
@@ -1354,6 +1354,25 @@
       }
     }
   ],
+  "overrideStyles": [{
+    "selector": "node.ellipsis_label",
+    "style": {
+      "label": "data(__label__)"
+    }
+  },
+    {
+      "selector": "node.wrap_label",
+      "style": {
+        "text-wrap": "wrap"
+      }
+    },
+    {
+      "selector": "edge.nolabel",
+      "style": {
+        "label": ""
+      }
+    }
+  ],
   "appPreferences": {
     "isAutoIncrementalLayoutOnChange": true,
     "isHighlightOnHover": false,
@@ -1375,6 +1394,12 @@
     "compoundPadding": "5%",
 
     "avgNodeSize": 40,
+
+    "nodeLabelWrap": true,
+    "isCollapseEdgesBasedOnType": false,
+    "isCollapseMultiEdgesOnLoad": true,
+    "edgeCollapseLimit": 2,
+    "groupingOption": 0,
 
     "timebar": {
       "isEnabled": true,

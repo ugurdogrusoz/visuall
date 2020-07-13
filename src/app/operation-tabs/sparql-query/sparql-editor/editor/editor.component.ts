@@ -89,7 +89,7 @@ export class EditorComponent implements OnInit {
 
   getDataForQueryResult(e: TableRowMeta) {
     console.log('get data for query result: ', e);
-    this._dbService.getNeighbors(e.dbIds, (x) => { this._cyService.loadElementsFromDatabase(x, true) }, null, true, null);
+    this._dbService.getNeighbors(e.dbIds, (x) => { this._cyService.loadElementsFromDatabase(x, true) });
   }
 
 

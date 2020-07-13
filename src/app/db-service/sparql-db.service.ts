@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
-import { DbQueryType, DbService, GraphResponse, TableResponse } from './data-types';
-import { ClassBasedRules } from '../operation-tabs/map-tab/filtering-types';
+import {DbQueryMeta, DbQueryType, DbService, GraphResponse, TableResponse} from './data-types';
+import { ClassBasedRules } from '../operation-tabs/map-tab/query-types';
 import { TableFiltering } from '../table-view/table-view-types';
 import { Neo4jDb } from './neo4j-db.service';
 import { SharedService } from '../shared.service';
@@ -33,7 +33,7 @@ export class SparqlDbService implements DbService {
   }
 
   constructor(private _http: HttpClient, private _g: GlobalVariableService, private neo4j: Neo4jDb, private shredService: SharedService) {
-    this._g.getConfig().subscribe(x => {
+    this._g.getConfig().subscribe((x: any) => {
       this.dbConfig = x.database
     }, error => console.log('getConfig err: ', error));
   }
@@ -58,7 +58,7 @@ export class SparqlDbService implements DbService {
     this.showAllData(callback);
   }
 
-  getFilteringResult(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType,
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType,
                      callback: (x: GraphResponse | TableResponse) => any) {
     this.filterResult(callback, type);
   }
@@ -68,7 +68,7 @@ export class SparqlDbService implements DbService {
   }
 
   private showSampleData(callback: (X: any) => any, graphResponse = true) {
-    const url = `http://10.122.123.125:7575/getSampleData?limit=33` + '&' + this.requestParameters;
+    const url = `http://10.122.123.125:7575/getSampleData?limit=33`;
 
     this._g.setLoadingStatus(true);
     this._http.get(url).subscribe(x => {
@@ -137,6 +137,9 @@ export class SparqlDbService implements DbService {
 
   saveProp(value) {
     this.shredService.setProp(value);
+  }
+
+  getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta) {
   }
 
   private filterResult(callback: (x: any) => any, type: DbQueryType) {
@@ -240,7 +243,7 @@ export class SparqlDbService implements DbService {
         'Content-Type': 'application/json',
       }
     })
-      .subscribe(x => {
+      .subscribe((x: any) => {
         this._g.setLoadingStatus(false);
         if (type == DbQueryType.count) {
           callback({data: x.results.data[0]});
@@ -300,5 +303,4 @@ export class SparqlDbService implements DbService {
     }
     return {columns: response.results[0].columns, data: response.results[0].data.map(x => x.row)};
   }
-
 }
