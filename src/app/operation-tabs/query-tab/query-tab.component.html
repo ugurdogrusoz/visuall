@@ -5,24 +5,7 @@
     </div>
 
     <div id="advanced-query-tab" class="show collapse text-center m-1">
-      <div>
-        <div class="va-text">
-          <div class="d-flex align-items-center justify-content-center">
-            <select class="custom-select filter-form va-small-text query-select" [(ngModel)]="selectedAdvancedQuery"
-              (change)="changeAdvancedQuery($event)">
-              <option ng-hide="model" value="">Please choose a query</option>
-              <option *ngFor="let p of advancedQueries" [value]="p">{{p}}</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div *ngIf="selectedIdx2==0">
-        Get graph of interest
-      </div>
-      <div *ngIf="selectedIdx2==1">
-        Get common targets/regulators
-      </div>
+      <app-advanced-queries></app-advanced-queries>
     </div>
   </div>
 

@@ -248,6 +248,10 @@ body {
   height: 12px;
 }
 
+.query-select {
+  width: 160px;
+}
+
 .query-input {
   width: 60px;
   height: 2rem;
