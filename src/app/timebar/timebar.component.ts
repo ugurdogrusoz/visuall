@@ -30,8 +30,8 @@ export class TimebarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.playImg = '../assets/img/play-button.svg';
-    this.pauseImg = '../assets/img/pause-symbol.svg';
+    this.playImg = 'assets/img/play-button.svg';
+    this.pauseImg = 'assets/img/pause-symbol.svg';
     this.currPlayIcon = this.playImg;
     this.s.onStatsChanged(this.setStatsRangeStr.bind(this));
     this.s.onGraphChanged(this.setGraphRangeStr.bind(this));
