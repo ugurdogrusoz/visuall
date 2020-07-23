@@ -1,20 +1,11 @@
 import { Component, OnInit, DoCheck, Input, Type } from '@angular/core';
 import Yasgui from '@triply/yasgui';
 import Yasqe from '@triply/yasqe';
-import Yasr from '@triply/yasr';
-import * as $ from 'jquery'
-import { default as PersistedJson } from "node_modules/@triply/yasgui/build/ts/src/Tab";
 import { GlobalVariableService } from 'src/app/global-variable.service';
-import { Key } from 'protractor';
-import { query } from '@angular/animations';
-import * as superagent from "superagent";
 import { TableDataType, TableData, TableRowMeta, TableViewInput } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
-import { listeners } from 'process';
-import { default as Tab, PersistedJson as PersistedTabJson } from "node_modules/@triply/yasgui/build/ts/src/Tab";
-import EndpointSelect from '@triply/yasgui/build/ts/src/endpointSelect';
 
 @Component({
   selector: 'app-editor',
