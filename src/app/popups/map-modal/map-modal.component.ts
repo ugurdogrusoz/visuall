@@ -21,9 +21,9 @@ export class MapModalComponent implements OnInit {
       popupAnchor: [0, -30]
     }
   } as any);
-  defaultIcon = new this.CustomIcon({iconUrl: '../../assets/img/marker-default.svg'});
-  selectedIcon = new this.CustomIcon({iconUrl: '../../assets/img/marker-selected.svg'});
-  highlightedIcon = new this.CustomIcon({iconUrl: '../../assets/img/marker-highlighted.svg'});
+  defaultIcon = new this.CustomIcon({iconUrl: 'assets/img/marker-default.svg'});
+  selectedIcon = new this.CustomIcon({iconUrl: 'assets/img/marker-selected.svg'});
+  highlightedIcon = new this.CustomIcon({iconUrl: 'assets/img/marker-highlighted.svg'});
 
 
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService,) {
@@ -45,7 +45,7 @@ export class MapModalComponent implements OnInit {
       return
     }
 
-    let group = new L.featureGroup(this.markers).addTo(this.map);
+    const group = new L.featureGroup(this.markers).addTo(this.map);
 
     this.selectMarkerWithCtrlClick(group);
 
@@ -62,7 +62,8 @@ export class MapModalComponent implements OnInit {
         continue;
       }
 
-      const marker = L.marker(this.getLocationOfCyNode(node), {icon: this.isNodeHighlighted(node) ? this.highlightedIcon : this.defaultIcon})
+      const marker = L.marker(this.getLocationOfCyNode(node),
+        {icon: this.isNodeHighlighted(node) ? this.highlightedIcon : this.defaultIcon})
         .bindPopup('<div class="marker-popup-content">' + this.getInfoOfCyNode(node) + '</div>');
       this.markers.push(marker);
     }
@@ -179,7 +180,7 @@ export class MapModalComponent implements OnInit {
       return this.selectedMarkers.some(marker => {
         const popupContent = marker._popup._content.match(/>(.*)</).pop();
         return popupContent === this.getInfoOfCyNode(node) &&
-          _.isEqual(["" + marker._latlng.lat, "" + marker._latlng.lng], this.getLocationOfCyNode(node))
+          _.isEqual(['' + marker._latlng.lat, '' + marker._latlng.lng], this.getLocationOfCyNode(node))
       });
     })
   }
