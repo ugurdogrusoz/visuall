@@ -72,13 +72,13 @@ export class ContextMenuCustomizationService {
         onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Actors/Actresses of movie: ' }, { edgeType: this._act_types }) }
       },
       {
-        id: 'showActorsOfMovie',
+        id: 'showOtherStaffOfMovie',
         content: 'Show Other Staff',
         selector: 'node.Title',
         onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show Other Staff of movie: ' }, { edgeType: this._non_act_types }) }
       },
       {
-        id: 'showActorsOfMovie',
+        id: 'showAllPersonsOfMovie',
         content: 'Show All Persons',
         selector: 'node.Title',
         onClickFunction: (x) => { this.getNeighbors(x, { isNode: true, customTxt: 'Show All Persons of movie: ' }, {}) }
