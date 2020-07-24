@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DbService, GraphResponse, TableResponse, DbQueryType, HistoryMetaData, DbQueryMeta } from './data-types';
+import { DbService, GraphResponse, TableResponse, DbQueryType, HistoryMetaData, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
 import { Neo4jDb } from './neo4j-db.service';
 import { ClassBasedRules, rule2str } from '../operation-tabs/map-tab/query-types';
 import { TableFiltering } from '../table-view/table-view-types';
@@ -21,7 +21,7 @@ export class DbAdapterService implements DbService {
       s = historyMeta.labels;
       if (!historyMeta.labels) {
         s = this._g.getLabels4Elems(elemId, historyMeta.isNode);
-      } 
+      }
     }
 
     let txt = 'Get neighbors of element(s): ';
@@ -32,13 +32,13 @@ export class DbAdapterService implements DbService {
     this._db.getNeighbors(elemId, fn, queryMeta);
   }
 
-  getElems(ids: string[]| number[], callback: (x: GraphResponse) => any, queryMeta: DbQueryMeta, historyMeta?: HistoryMetaData, ) {
+  getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, queryMeta: DbQueryMeta, historyMeta?: HistoryMetaData,) {
     let s = '';
     if (historyMeta) {
       s = historyMeta.labels;
       if (!historyMeta.labels) {
         s = this._g.getLabels4Elems(ids, historyMeta.isNode);
-      } 
+      }
     }
 
     let txt = 'Get neighbors of element(s): ';
@@ -107,4 +107,11 @@ export class DbAdapterService implements DbService {
     this._db.getMovieGenres(callback);
   }
 
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, cb: (x) => void) {
+    this._db.getGraphOfInterest(dbIds, ignoredTypes, lengthLimit, isDirected, type, cb);
+  }
+
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, cb: (x) => void) {
+    this._db.getCommonStream(dbIds, ignoredTypes, lengthLimit, dir, type, cb);
+  }
 }

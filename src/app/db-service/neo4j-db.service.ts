@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
-import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta } from './data-types';
+import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
 import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE } from '../constants';
 import AppDescription from '../../assets/app_description.json';
@@ -150,6 +150,26 @@ export class Neo4jDb implements DbService {
 
   getMovieGenres(callback: (x: any) => any) {
     this.runQuery('MATCH (m:Title) UNWIND m.genres as g return distinct g', callback, false);
+  }
+
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, cb: (x) => void) {
+    if (type == DbQueryType.count) {
+      this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected})`, cb, false);
+    } else if (type == DbQueryType.std) {
+      this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected})`, cb, true);
+    } else if (type == DbQueryType.table) {
+      this.runQuery(`CALL graphOfInterest4Table([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected})`, cb, false);
+    }
+  }
+
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, cb: (x) => void) {
+    if (type == DbQueryType.count) {
+      this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir})`, cb, false);
+    } else if (type == DbQueryType.std) {
+      this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir})`, cb, true);
+    } else if (type == DbQueryType.table) {
+      this.runQuery(`CALL commonStream4Table([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir})`, cb, false);
+    }
   }
 
   private runQuery(query: string, callback: (x: any) => any, isGraphResponse = true) {

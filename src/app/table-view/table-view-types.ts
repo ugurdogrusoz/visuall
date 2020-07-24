@@ -73,6 +73,35 @@ export function property2TableData(propName: string, propVal: any, className: st
   }
 }
 
+export function getClassNameFromProperties(propNames: string[]): string {
+  for (let nodeClass in properties.nodes) {
+    let hasAllProps = true;
+    for (let key in properties.nodes[nodeClass]) {
+      if (!propNames.includes(key)) {
+        hasAllProps = false;
+        break;
+      }
+    }
+    if (hasAllProps) {
+      return nodeClass;
+    }
+  }
+
+  for (let edgeClass in properties.edges) {
+    let hasAllProps = true;
+    for (let key in properties.edges[edgeClass]) {
+      if (!propNames.includes(key)) {
+        hasAllProps = false;
+        break;
+      }
+    }
+    if (hasAllProps) {
+      return edgeClass;
+    }
+  }
+  return null;
+}
+
 export function filterTableDatas(filter: TableFiltering, inp: TableViewInput, isIgnoreCaseInText: boolean) {
   let idxHide = [];
   // filter by text

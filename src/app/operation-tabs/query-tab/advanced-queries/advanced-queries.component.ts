@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from 'src/app/global-variable.service';
 import properties from '../../../../assets/generated/properties.json';
+import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
+import { CytoscapeService } from 'src/app/cytoscape.service';
+import { TableViewInput, TableDataType } from 'src/app/table-view/table-view-types';
+import { Subject } from 'rxjs';
+import { DbQueryType, Neo4jEdgeDirection } from 'src/app/db-service/data-types';
 
 @Component({
   selector: 'app-advanced-queries',
@@ -16,11 +21,18 @@ export class AdvancedQueriesComponent implements OnInit {
   ignoredTypes: string[] = [];
   lengthLimit = 2;
   isDirected = true;
+  isMerge = true;
+  isGraph = true;
   selectedNodes: { dbId: string, label: string }[] = [];
   selectedClass = '';
   targetOrRegulator = 0;
+  tableInput: TableViewInput = {
+    columns: ['Title'], results: [], isEmphasizeOnHover: true, tableTitle: 'Query Results',
+    resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true
+  };
+  tableFilled = new Subject<boolean>();
 
-  constructor(private _g: GlobalVariableService) {
+  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _cyService: CytoscapeService) {
     this.queries = ['Get graph of interest', 'Get common targets/regulators'];
     this.selectedIdx = -1;
   }
@@ -73,7 +85,43 @@ export class AdvancedQueriesComponent implements OnInit {
   }
 
   runQuery() {
+    let loadGraphFn = (x) => this._cyService.loadElementsFromDatabase(x, this.isMerge);
+    let setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0]; }
+    
+    if (this.selectedIdx == 0) {
+      let dbIds = this.selectedNodes.map(x => x.dbId);
+      this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.count, setDataCntFn);
+      this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.table, this.fillTable);
+      if (this.isGraph) {
+        this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.std, loadGraphFn);
+      }
+    } else if (this.selectedIdx == 1) {
 
+      let dir: Neo4jEdgeDirection = this.targetOrRegulator;
+      if (!this.isDirected) {
+        dir = Neo4jEdgeDirection.BOTH;
+      }
+
+      let dbIds = this.selectedNodes.map(x => x.dbId);
+      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, setDataCntFn);
+      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.table, this.fillTable);
+      if (this.isGraph) {
+        this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.std, loadGraphFn);
+      }
+      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, this.fillTable);
+    }
+  }
+
+  private fillTable(data) {
+    let arr = data['data'][0][0];
+    console.log('fill table with ', arr);
+
+    this.tableInput.results = [];
+    for (let i = 0; i < data.data.length; i++) {
+      const d = data.data[i];
+      this.tableInput.results.push([{ type: TableDataType.number, val: d[0] }, { type: TableDataType.string, val: d[1] }]);
+    }
+    this.tableFilled.next(true);
   }
 
 }
