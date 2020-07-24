@@ -3,7 +3,7 @@ import { GlobalVariableService } from 'src/app/global-variable.service';
 import properties from '../../../../assets/generated/properties.json';
 import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
 import { CytoscapeService } from 'src/app/cytoscape.service';
-import { TableViewInput, TableDataType } from 'src/app/table-view/table-view-types';
+import { TableViewInput, property2TableData, getClassNameFromProperties, TableData } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { DbQueryType, Neo4jEdgeDirection } from 'src/app/db-service/data-types';
 
@@ -91,7 +91,7 @@ export class AdvancedQueriesComponent implements OnInit {
     if (this.selectedIdx == 0) {
       let dbIds = this.selectedNodes.map(x => x.dbId);
       this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.count, setDataCntFn);
-      this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.table, this.fillTable);
+      this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.table, this.fillTable.bind(this));
       if (this.isGraph) {
         this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.std, loadGraphFn);
       }
@@ -104,23 +104,32 @@ export class AdvancedQueriesComponent implements OnInit {
 
       let dbIds = this.selectedNodes.map(x => x.dbId);
       this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, setDataCntFn);
-      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.table, this.fillTable);
+      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.table, this.fillTable.bind(this));
       if (this.isGraph) {
         this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.std, loadGraphFn);
       }
-      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, this.fillTable);
+      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, this.fillTable.bind(this));
     }
   }
 
   private fillTable(data) {
     let arr = data['data'][0][0];
-    console.log('fill table with ', arr);
 
     this.tableInput.results = [];
-    for (let i = 0; i < data.data.length; i++) {
-      const d = data.data[i];
-      this.tableInput.results.push([{ type: TableDataType.number, val: d[0] }, { type: TableDataType.string, val: d[1] }]);
+    let cols = new Set<string>();
+    for (let i = 0; i < arr.length; i++) {
+      const d = arr[i];
+      delete d['tconst'];
+      delete d['nconst'];
+      let className = getClassNameFromProperties(Object.keys(d));
+      let row: TableData[] = [];
+      for (let k in d) {
+        row.push(property2TableData(k, d[k], className, false));
+        cols.add(k);
+      }
+      this.tableInput.results.push(row);
     }
+    this.tableInput.columns = Array.from(cols);
     this.tableFilled.next(true);
   }
 

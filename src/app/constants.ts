@@ -226,7 +226,7 @@ export function union(setA, setB) {
   return _union;
 }
 
-/** check whether 2 arrays are equal sets.
+/** check whether a2 is a subset of a1.
  * @param  {} a1 is an array
  * @param  {} a2 is an array
  */

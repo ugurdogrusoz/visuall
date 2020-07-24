@@ -82,4 +82,7 @@
     </div>
 
   </div>
+  <app-table-view [params]="tableInput" [tableFilled]="tableFilled"
+    (onDataForQueryResult)="getDataForQueryResult($event)" (onFilteringChanged)="filterTable($event)">
+  </app-table-view>
 </div>

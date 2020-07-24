@@ -1,5 +1,6 @@
 import properties from '../../assets/generated/properties.json';
 import AppDescription from '../../assets/app_description.json';
+import { isSubset } from '../constants';
 
 export enum TableDataType {
   string = 0, number = 1, datetime = 2, enum = 3
@@ -74,31 +75,19 @@ export function property2TableData(propName: string, propVal: any, className: st
 }
 
 export function getClassNameFromProperties(propNames: string[]): string {
+
   for (let nodeClass in properties.nodes) {
-    let hasAllProps = true;
-    for (let key in properties.nodes[nodeClass]) {
-      if (!propNames.includes(key)) {
-        hasAllProps = false;
-        break;
-      }
-    }
-    if (hasAllProps) {
+    if (isSubset(Object.keys(properties.nodes[nodeClass]), propNames)) {
       return nodeClass;
     }
   }
 
   for (let edgeClass in properties.edges) {
-    let hasAllProps = true;
-    for (let key in properties.edges[edgeClass]) {
-      if (!propNames.includes(key)) {
-        hasAllProps = false;
-        break;
-      }
-    }
-    if (hasAllProps) {
+    if (isSubset(Object.keys(properties.edges[edgeClass]), propNames)) {
       return edgeClass;
     }
   }
+  console.log('could not find class from properties')
   return null;
 }
 
