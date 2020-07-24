@@ -57,6 +57,10 @@ export class Neo4jDb implements DbService {
     this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 100`, callback);
   }
 
+  getAllData(callback: (x: GraphResponse) => any) {
+    this.runQuery(`MATCH (n) RETURN n UNION MATCH ()-[e]-() RETURN distinct e as n`, callback);
+  }
+
   getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     const cql = this.rule2cql(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
@@ -70,7 +74,7 @@ export class Neo4jDb implements DbService {
   getCount4Q0(d1: number, d2: number, movieCount: number, callback: (x) => any, filter?: TableFiltering) {
     let txtCondition = this.getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
     let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
-    WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
+    WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${movieCount} ${txtCondition}
     RETURN DISTINCT COUNT(*)`;
@@ -83,10 +87,10 @@ export class Neo4jDb implements DbService {
     let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
 
     let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
-    WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
+    WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${movieCnt} ${txtCondition}
-    RETURN DISTINCT ID(n) as id, n.primary_name as Actor, degree as Count 
+    RETURN DISTINCT ID(n) as id, n.primary_name as Actor, degree as Count
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback, false);
   }
@@ -98,10 +102,10 @@ export class Neo4jDb implements DbService {
     let orderExpr = this.getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
 
     let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
-      WHERE ${idFilter} r.act_begin >= ${d1} AND r.act_end <= ${d2}  
+      WHERE ${idFilter} r.act_begin >= ${d1} AND r.act_end <= ${d2}
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
       WHERE degree >= ${movieCnt} ${txtCondition}
-      RETURN DISTINCT n, edges, degree 
+      RETURN DISTINCT n, edges, degree
       ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback);
   }
@@ -109,7 +113,7 @@ export class Neo4jDb implements DbService {
   getCount4Q1(d1: number, d2: number, genre: string, callback: (x) => any, filter?: TableFiltering) {
     let txtCondition = this.getQueryCondition4TxtFilter(filter, ['m.primary_title']);
     let cql = ` MATCH (m:Title)<-[:ACTOR|ACTRESS]-(:Person)
-    WHERE '${genre}' IN m.genres AND m.start_year> ${d1} AND m.start_year < ${d2} ${txtCondition} 
+    WHERE '${genre}' IN m.genres AND m.start_year> ${d1} AND m.start_year < ${d2} ${txtCondition}
     RETURN COUNT( DISTINCT m)`;
     this.runQuery(cql, callback, false);
   }
@@ -120,7 +124,7 @@ export class Neo4jDb implements DbService {
     let orderExpr = this.getOrderByExpression4Query(filter, 'm.primary_title', 'desc', ui2Db);
 
     let cql = ` MATCH (m:Title)<-[r:ACTOR|ACTRESS]-(:Person)
-    WHERE '${genre}' IN m.genres AND m.start_year > ${d1} AND m.start_year < ${d2} ${txtCondition} 
+    WHERE '${genre}' IN m.genres AND m.start_year > ${d1} AND m.start_year < ${d2} ${txtCondition}
     RETURN DISTINCT ID(m) as id, m.primary_title
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${limit}`;
     this.runQuery(cql, callback, false);
@@ -142,7 +146,7 @@ export class Neo4jDb implements DbService {
 
   getDataForQ1(id: number, d1: number, d2: number, genre: string, callback: (x) => any) {
     let cql =
-      `MATCH p=(m:Title)<-[:ACTOR|ACTRESS]-(a:Person) 
+      `MATCH p=(m:Title)<-[:ACTOR|ACTRESS]-(a:Person)
       WHERE '${genre}' IN m.genres AND ID(m) = ${id} AND m.start_year > ${d1} AND m.start_year < ${d2}
      RETURN nodes(p), relationships(p)`;
     this.runQuery(cql, callback);

@@ -68,7 +68,7 @@ export class SparqlDbService implements DbService {
   }
 
   private showSampleData(callback: (X: any) => any, graphResponse = true) {
-    const url = `http://10.122.123.125:7575/getSampleData?limit=33`;
+    const url = `http://10.122.123.125:7575/getSampleData?limit=33${this.requestParameters ? '&' + this.requestParameters : ''}`;
 
     this._g.setLoadingStatus(true);
     this._http.get(url).subscribe(x => {
@@ -82,7 +82,7 @@ export class SparqlDbService implements DbService {
   }
 
   private showAllData(callback: (X: any) => any, graphResponse = true) {
-    const url = `http://10.122.123.125:7575/getAllData` + '?' + this.requestParameters;
+    const url = `http://10.122.123.125:7575/getSampleData?limit=300${this.requestParameters ? '&' + this.requestParameters : ''}`;
 
     this._g.setLoadingStatus(true);
     this._http.get(url).subscribe(x => {
@@ -97,7 +97,8 @@ export class SparqlDbService implements DbService {
 
   private showNeighbors(callback: (X: any) => any, graphResponse = true) {
 
-    const url = `http://10.122.123.125:7575/getNeighbors?uri=${encodeURIComponent(this.condition)}` + '&' + this.requestParameters;
+    const url = `http://10.122.123.125:7575/getNeighbors?uri=${encodeURIComponent(this.condition) +
+    this.requestParameters ? '&' + this.requestParameters : ''}`;
 
     this._g.setLoadingStatus(true);
     this._http.get(url).subscribe(x => {
@@ -143,7 +144,7 @@ export class SparqlDbService implements DbService {
   }
 
   private filterResult(callback: (x: any) => any, type: DbQueryType) {
-    const url = `http://10.122.123.125:7575/getFilteringResult` + '?' + this.requestParameters;
+    const url = `http://10.122.123.125:7575/getFilteringResult`;
 
     this._g.setLoadingStatus(true);
     let requestBody: any;
@@ -191,20 +192,22 @@ export class SparqlDbService implements DbService {
         operator = 'C';
       }
     }
+    const propAddress = prop === 'label' ? '<http://www.w3.org/2000/01/rdf-schema#' + prop + '>' :
+      '<http://schema.huawei.com/' + prop + '>';
     if (type == DbQueryType.count) {
-      requestBody = {
-        rules: [
-          [
-            '<http://schema.huawei.com/' + lblElem + '>',
-            '<http://www.w3.org/2000/01/rdf-schema#' + prop + '>',
-            opKeys,
-            filterInput,
-            'OR',
-            operator
-          ]
-        ],
-        type: 'graph'
-      }
+        requestBody = {
+          rules: [
+            [
+              '<http://schema.huawei.com/' + lblElem + '>',
+              propAddress,
+              opKeys,
+              filterInput,
+              'OR',
+              operator
+            ]
+          ],
+          type: 'graph'
+        }
     }
     if (type == DbQueryType.std) {
       requestBody =
@@ -212,7 +215,7 @@ export class SparqlDbService implements DbService {
           rules: [
             [
               '<http://schema.huawei.com/' + lblElem + '>',
-              '<http://www.w3.org/2000/01/rdf-schema#' + prop + '>',
+              propAddress,
               opKeys,
               filterInput,
               'OR',
@@ -227,7 +230,7 @@ export class SparqlDbService implements DbService {
         rules: [
           [
             '<http://schema.huawei.com/' + lblElem + '>',
-            '<http://www.w3.org/2000/01/rdf-schema#' + prop + '>',
+            propAddress,
             opKeys,
             filterInput,
             'OR',
