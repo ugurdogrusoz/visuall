@@ -37,44 +37,6 @@ export const GENERIC_TYPE = {
   EDGES_CLASS: 'Any Edge'
 };
 
-export const HIGHLIGHTED_NODE_1 = {
-  'border-color': '#0B9BCD',  //blue
-  'border-width': 4.5
-};
-export const HIGHLIGHTED_NODE_2 = {
-  'border-color': '#04F06A',  //green
-  'border-width': 4.5
-};
-export const HIGHLIGHTED_NODE_3 = {
-  'border-color': '#F5E663',   //yellow
-  'border-width': 4.5
-};
-export const HIGHLIGHTED_NODE_4 = {
-  'border-color': '#BF0603',    //red
-  'border-width': 4.5
-};
-
-export const HIGHLIGHTED_EDGE_1 = {
-  'line-color': '#0B9BCD',    //blue
-  'target-arrow-color': '#0B9BCD',
-  'width': 4.5
-};
-export const HIGHLIGHTED_EDGE_2 = {
-  'line-color': '#04F06A',   //green
-  'target-arrow-color': '#04F06A',
-  'width': 4.5
-};
-export const HIGHLIGHTED_EDGE_3 = {
-  'line-color': '#F5E663',    //yellow
-  'target-arrow-color': '#F5E663',
-  'width': 4.5
-};
-export const HIGHLIGHTED_EDGE_4 = {
-  'line-color': '#BF0603',    //red
-  'target-arrow-color': '#BF0603',
-  'width': 4.5
-};
-
 export const MAX_HIGHLIGHT_CNT = 12;
 
 export const NUMBER_OPERATORS = {
@@ -404,4 +366,11 @@ export function arrayDiff(smallArr: string[], bigArr: string[]): string[] {
     }
   }
   return diff;
+}
+
+export function getCyStyleFromColorAndWid(color: string, wid: number): { nodeCss: any, edgeCss: any } {
+  return {
+    nodeCss: { 'border-color': color, 'border-width': wid },
+    edgeCss: { 'line-color': color, 'target-arrow-color': color, 'width': wid }
+  };
 }

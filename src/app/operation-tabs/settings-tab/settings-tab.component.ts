@@ -3,7 +3,7 @@ import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting, GroupingOptionTypes } from 'src/app/user-preference';
 import { UserProfileService } from 'src/app/user-profile.service';
 import { BehaviorSubject } from 'rxjs';
-import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH } from 'src/app/constants';
+import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, getCyStyleFromColorAndWid } from 'src/app/constants';
 
 @Component({
   selector: 'app-settings-tab',
@@ -144,20 +144,13 @@ export class SettingsTabComponent implements OnInit {
     const styles = this._g.userPrefs.highlightStyles;
     let vuStyles = this._g.viewUtils.getHighlightStyles();
     for (let i = 0; i < vuStyles.length; i++) {
-      let cyStyle = this.getCyStyleFromColorAndWid(styles[i].color.getValue(), styles[i].wid.getValue());
+      let cyStyle = getCyStyleFromColorAndWid(styles[i].color.getValue(), styles[i].wid.getValue());
       this._g.viewUtils.changeHighlightStyle(i, cyStyle.nodeCss, cyStyle.edgeCss);
     }
     for (let i = vuStyles.length; i < styles.length; i++) {
-      let cyStyle = this.getCyStyleFromColorAndWid(styles[i].color.getValue(), this.highlightWidth);
+      let cyStyle = getCyStyleFromColorAndWid(styles[i].color.getValue(), this.highlightWidth);
       this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
     }
-  }
-
-  private getCyStyleFromColorAndWid(color: string, wid: number): { nodeCss: any, edgeCss: any } {
-    return {
-      nodeCss: { 'border-color': color, 'border-width': wid },
-      edgeCss: { 'line-color': color, 'target-arrow-color': color, 'width': wid }
-    };
   }
 
   settingChanged(val: any, userPref: string) {
@@ -177,7 +170,7 @@ export class SettingsTabComponent implements OnInit {
   // used to change border width or color. One of them should be defined. (exclusively)
   changeHighlightStyle() {
     this.bandPassHighlightWidth();
-    let cyStyle = this.getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
+    let cyStyle = getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
     this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, cyStyle.nodeCss, cyStyle.edgeCss);
     this.setHighlightStyles();
   }
@@ -197,7 +190,7 @@ export class SettingsTabComponent implements OnInit {
 
   addHighlightStyle() {
     this.bandPassHighlightWidth();
-    let cyStyle = this.getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
+    let cyStyle = getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
     this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
     this.setHighlightStyles();
     this.highlightStyleIdx = this.currHighlightStyles.length - 1;

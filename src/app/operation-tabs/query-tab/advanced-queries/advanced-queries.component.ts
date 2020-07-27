@@ -6,6 +6,7 @@ import { CytoscapeService } from 'src/app/cytoscape.service';
 import { TableViewInput, property2TableData, getClassNameFromProperties, TableData } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { DbQueryType, Neo4jEdgeDirection } from 'src/app/db-service/data-types';
+import { getCyStyleFromColorAndWid } from 'src/app/constants';
 
 @Component({
   selector: 'app-advanced-queries',
@@ -85,11 +86,11 @@ export class AdvancedQueriesComponent implements OnInit {
   }
 
   runQuery() {
-    let loadGraphFn = (x) => this._cyService.loadElementsFromDatabase(x, this.isMerge);
-    let setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0]; }
-    
+    const loadGraphFn = (x) => { this._cyService.loadElementsFromDatabase(x, this.isMerge); this.higlightSeedNodes(); };
+    const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0]; }
+
     if (this.selectedIdx == 0) {
-      let dbIds = this.selectedNodes.map(x => x.dbId);
+      const dbIds = this.selectedNodes.map(x => x.dbId);
       this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.count, setDataCntFn);
       this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.table, this.fillTable.bind(this));
       if (this.isGraph) {
@@ -102,7 +103,7 @@ export class AdvancedQueriesComponent implements OnInit {
         dir = Neo4jEdgeDirection.BOTH;
       }
 
-      let dbIds = this.selectedNodes.map(x => x.dbId);
+      const dbIds = this.selectedNodes.map(x => x.dbId);
       this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, setDataCntFn);
       this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.table, this.fillTable.bind(this));
       if (this.isGraph) {
@@ -133,4 +134,19 @@ export class AdvancedQueriesComponent implements OnInit {
     this.tableFilled.next(true);
   }
 
+  private higlightSeedNodes() {
+    const dbIds = this.selectedNodes.map(x => x.dbId);
+    const seedNodes = this._g.cy.nodes(dbIds.map(x => '#n' + x).join());
+    // add a new higlight style
+    if (this._g.userPrefs.highlightStyles.length < 2) {
+      const cyStyle = getCyStyleFromColorAndWid('#0b9bcd', 4.5);
+      this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
+    }
+    const currHighlightIdx = this._g.userPrefs.currHighlightIdx.getValue();
+    if (currHighlightIdx == 0) {
+      this._g.viewUtils.highlight(seedNodes, 1);
+    } else {
+      this._g.viewUtils.highlight(seedNodes, 0);
+    }
+  }
 }
