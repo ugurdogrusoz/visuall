@@ -88,9 +88,11 @@ export class AdvancedQueriesComponent implements OnInit {
   runQuery() {
     const loadGraphFn = (x) => { this._cyService.loadElementsFromDatabase(x, this.isMerge); this.higlightSeedNodes(); };
     const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0]; }
-
+    const dbIds = this.selectedNodes.map(x => x.dbId);
+    if (dbIds.length < 1) {
+      return;
+    }
     if (this.selectedIdx == 0) {
-      const dbIds = this.selectedNodes.map(x => x.dbId);
       this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.count, setDataCntFn);
       this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.table, this.fillTable.bind(this));
       if (this.isGraph) {
@@ -102,14 +104,11 @@ export class AdvancedQueriesComponent implements OnInit {
       if (!this.isDirected) {
         dir = Neo4jEdgeDirection.BOTH;
       }
-
-      const dbIds = this.selectedNodes.map(x => x.dbId);
       this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, setDataCntFn);
       this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.table, this.fillTable.bind(this));
       if (this.isGraph) {
         this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.std, loadGraphFn);
       }
-      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, this.fillTable.bind(this));
     }
   }
 
