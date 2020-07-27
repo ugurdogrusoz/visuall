@@ -59,7 +59,7 @@ export class AdvancedQueriesComponent implements OnInit {
     }
     const dbIds = selectedNodes.map(x => x.id().slice(1));
     const labels = this._g.getLabels4Elems(dbIds).split(',');
-    const types = selectedNodes.map(x => x.classes().join());
+    const types = selectedNodes.map(x => x.classes()[0]);
     for (let i = 0; i < labels.length; i++) {
       if (this.selectedNodes.findIndex(x => x.dbId == dbIds[i]) < 0) {
         this.selectedNodes.push({ dbId: dbIds[i], label: types[i] + ':' + labels[i] });
