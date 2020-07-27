@@ -3,7 +3,7 @@ import { GlobalVariableService } from 'src/app/global-variable.service';
 import properties from '../../../../assets/generated/properties.json';
 import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
 import { CytoscapeService } from 'src/app/cytoscape.service';
-import { TableViewInput, property2TableData, getClassNameFromProperties, TableData } from 'src/app/table-view/table-view-types';
+import { TableViewInput, property2TableData, TableData, TableDataType } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { DbQueryType, Neo4jEdgeDirection } from 'src/app/db-service/data-types';
 import { getCyStyleFromColorAndWid } from 'src/app/constants';
@@ -86,50 +86,60 @@ export class AdvancedQueriesComponent implements OnInit {
   }
 
   runQuery() {
-    const loadGraphFn = (x) => { this._cyService.loadElementsFromDatabase(x, this.isMerge); this.higlightSeedNodes(); };
-    const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0]; }
     const dbIds = this.selectedNodes.map(x => x.dbId);
     if (dbIds.length < 1) {
       return;
     }
+    let prepareDataFn = (x) => { this.fillTable(x); };
+    if (this.isGraph) {
+      prepareDataFn = (x) => { this.fillTable(x); this._cyService.loadElementsFromDatabase(x, this.isMerge); this.higlightSeedNodes(); };
+    }
+    const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0]; }
+
     if (this.selectedIdx == 0) {
       this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.count, setDataCntFn);
-      this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.table, this.fillTable.bind(this));
-      if (this.isGraph) {
-        this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.std, loadGraphFn);
-      }
+      this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.std, prepareDataFn);
     } else if (this.selectedIdx == 1) {
-
       let dir: Neo4jEdgeDirection = this.targetOrRegulator;
       if (!this.isDirected) {
         dir = Neo4jEdgeDirection.BOTH;
       }
       this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, setDataCntFn);
-      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.table, this.fillTable.bind(this));
-      if (this.isGraph) {
-        this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.std, loadGraphFn);
-      }
+      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.std, prepareDataFn);
     }
   }
 
+  // fill table from graph response
   private fillTable(data) {
-    let arr = data['data'][0][0];
+    let arr = data['nodes'];
 
     this.tableInput.results = [];
-    let cols = new Set<string>();
+    this.tableInput.columns = [];
+
     for (let i = 0; i < arr.length; i++) {
-      const d = arr[i];
+      const d = arr[i].properties;
       delete d['tconst'];
       delete d['nconst'];
-      let className = getClassNameFromProperties(Object.keys(d));
-      let row: TableData[] = [];
-      for (let k in d) {
-        row.push(property2TableData(k, d[k], className, false));
-        cols.add(k);
+      const propNames = Object.keys(d);
+      const row: TableData[] = [{ type: TableDataType.string, val: arr[i].id }];
+      for (const n of propNames) {
+        const idx = this.tableInput.columns.indexOf(n);
+        if (idx == -1) {
+          this.tableInput.columns.push(n);
+          row[this.tableInput.columns.length] = property2TableData(n, d[n], arr[i].labels[0], false);
+        } else {
+          row[idx + 1] = property2TableData(n, d[n], arr[i].labels[0], false);
+        }
+      }
+      // fill empty columns
+      for (let j = 0; j < this.tableInput.columns.length + 1; j++) {
+        if (!row[j]) {
+          row[j] = { val: '', type: TableDataType.string };
+        }
       }
       this.tableInput.results.push(row);
     }
-    this.tableInput.columns = Array.from(cols);
+
     this.tableFilled.next(true);
   }
 
