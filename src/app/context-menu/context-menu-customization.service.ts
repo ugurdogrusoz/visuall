@@ -32,23 +32,29 @@ export class ContextMenuCustomizationService {
   }
   constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _g: GlobalVariableService, private shrService: SharedService, private _ctexData: DataContentService) {
     this._menu = [
-      {
+/*       {
         id: 'showMoviesOfPerson',
         content: 'Show All Movies Involving This Person',
         selector: 'node',
         onClickFunction: this.getNeighbors.bind(this)
-      },
+      }, */
       {
         id: 'recommend',
         content: 'Recommend',
         selector: 'node',
         onClickFunction: this.showRecom.bind(this)
+      },
+      {
+        id: 'getNeighbors',
+        content: 'Show Adjacent Nodes',
+        selector: 'node',
+        onClickFunction: this.getNeighbors.bind(this)
       }
     ];
   }
   getNeighbors(event) {
     const ele = event.target || event.cyTarget;
-    this._dbService.getNeighbors([ele.id().substr(1)], (x) => { this._cyService.loadElementsFromDatabase(x, true) })
+    this._dbService.getNeighbors([ele.data().id.substr(1)], (x) => { this._cyService.loadElementsFromDatabase(x, true) })
   }
 
   showRecom(event) {
@@ -64,7 +70,6 @@ export class ContextMenuCustomizationService {
       }
       this.shrService.setRecomDetails(this.individuals);
     })
-
   }
 
 }

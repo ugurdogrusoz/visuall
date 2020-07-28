@@ -6,6 +6,9 @@ import { TableDataType, TableData, TableRowMeta, TableViewInput } from 'src/app/
 import { Subject } from 'rxjs';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
+import * as superagent from "superagent";
+import {HistoryMetaData } from 'src/app/db-service/data-types';
+import { ClassBasedRules } from '../../../map-tab/query-types';
 
 @Component({
   selector: 'app-editor',
@@ -22,6 +25,7 @@ export class EditorComponent implements OnInit {
   searchData = []; //Node Names
   inputValue: any;
   options: string[] = [];
+  queryRule: ClassBasedRules;
 
   tableFilled = new Subject<boolean>();
 
@@ -36,7 +40,7 @@ export class EditorComponent implements OnInit {
 
   ngOnInit(): void {
     Yasqe.defaults.requestConfig.endpoint = "http://10.122.123.125:8086/sparql?solrBase=http://10.122.123.125:8985/solr/&solrCollection=teydeb_hkt_1610&triplestoreBase=http://10.122.123.125:3030&graphName=visuall_hkt";
-    const yasgui = new Yasgui(document.getElementById('yasgui'), {
+/*     const yasgui = new Yasgui(document.getElementById('yasgui'), {
       requestConfig: {
         endpoint: Yasqe.defaults.requestConfig.endpoint,
         headers: {
@@ -44,10 +48,23 @@ export class EditorComponent implements OnInit {
           'Content-Type': 'application/json',
         }
       }, copyEndpointOnNewTab: false
-
+    }); */
+    const yasqe = new Yasqe(document.getElementById('yasqe'));
+    yasqe.on("queryResponse", (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number) => {
+      this.spqData = req.body.data.result;
+      for (let i = 0; i < this.spqData.nodes.length; i++) {
+        const curr = this.spqData.nodes[i];
+        let row: TableData[] = [{ val: curr.id, type: TableDataType.string }];
+        row.push({ val: curr.properties.label, type: TableDataType.string });
+        this.tableInput.results.push(row);
+        for (let i = 0; i < this.spqData.nodes.length; i++) {
+          this.searchData.push(this.spqData.nodes[i].properties.label);
+        }
+      }
+      this.tableFilled.next(true);
     });
 
-    const tab = yasgui.addTab(true, { ...Yasgui.Tab.getDefaults(), name: `Sparql Query` });
+/*     const tab = yasgui.addTab(true, { ...Yasgui.Tab.getDefaults(), name: `Sparql Query` });
     tab.getYasr().on(`drawn`, (yasrResult) => {
       this.spqData = yasrResult.results.getAsJson();
       for (let i = 0; i < this.spqData.data.result.nodes.length; i++) {
@@ -60,7 +77,7 @@ export class EditorComponent implements OnInit {
         }
       }
       this.tableFilled.next(true);
-    });
+    }); */
   }
 
   fillTable() {
@@ -79,14 +96,16 @@ export class EditorComponent implements OnInit {
   }
 
   getDataForQueryResult(e: TableRowMeta) {
-    console.log('get data for query result: ', e);
-    this._dbService.getNeighbors(e.dbIds, (x) => { this._cyService.loadElementsFromDatabase(x, true) });
+    let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
+    let historyMeta: HistoryMetaData =  { customTxt: 'Loaded from table: ', isNode: true, labels: e.tableIdx.join(',') }
+    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: true }, historyMeta);
+
+
+  /*   console.log('get data for query result: ', e);
+    this._dbService.getNeighbors(e.dbIds, (x) => { this._cyService.loadElementsFromDatabase(x, true) }); */
   }
 
-
-
-
-
+  
 
 
 

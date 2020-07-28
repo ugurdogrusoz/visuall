@@ -1,15 +1,35 @@
-<div class="container justify-content-center my-3 ml-3">
-  <input type="text" nz-input row="4" mode="multiple" [(ngModel)]="inputValue" (keyup)="onInput()"
-    [nzAutocomplete]="auto">
-  <nz-autocomplete #auto>
-    <nz-auto-option *ngFor="let option of options" [nzValue]="option.id">{{ option.id }}</nz-auto-option>
-  </nz-autocomplete>
-  <button (click)="clearList()" class="btn btn-dark va-text m-2 center">Clear</button>
+<div class="container mt-3 mx-auto pt-3" >
+  <div class="row">
+    <input type="text" nz-input row="4" mode="multiple" [(ngModel)]="inputValue" (keyup)="onInput()" nzSize="small"
+      [nzAutocomplete]="auto">
+    <nz-autocomplete #auto>
+      <nz-auto-option *ngFor="let option of options" [nzValue]="option.id">{{ option.id }}</nz-auto-option>
+    </nz-autocomplete>
+    <button (click)="clearList()" class="btn btn-dark va-text m-2 center">Clear</button>
+  </div>
+  <br>
+  <nz-table #basicTable [nzData]="dataSet" *ngIf="listValue.length > 0" nzSize="small">
+    <thead>
+      <tr>
+        <th>Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let o of listValue; let i=index" nzSize="small">
+        <td>{{o}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
 </div>
 
 
 
+<app-table-view [params]="tableInput" [tableFilled]="tableFilled" (onFilteringChanged)="filterTable()"
+  (onDataForQueryResult)="getDataForQueryResult($event)">
+</app-table-view>
 
+
+<!-- 
 <div class="table-responsive" *ngIf="listValue.length > 0">
   <table class="table table-hover table-sm" id="table">
     <thead>
@@ -30,3 +50,4 @@
     </tbody>
   </table>
 </div>
+  -->

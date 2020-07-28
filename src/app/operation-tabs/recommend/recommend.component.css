@@ -8,7 +8,7 @@
     
   }
 
-  button {
+/*   button {
     margin-left: 10rem;
     float: initial; 
     color: #1D9AF2;
@@ -23,7 +23,7 @@
   button:hover {
     box-shadow: 1px 1px #53a7ea, 2px 2px #53a7ea, 3px 3px #53a7ea;
     transform: translateX(-5px);
-  }
+  } */
 
   .container {
     margin: 0 auto;
