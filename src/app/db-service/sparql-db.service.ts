@@ -128,6 +128,20 @@ export class SparqlDbService implements DbService {
     })
   }
 
+  private showElems(callback: (X: any) => any,  ids: string[] | number[], graphResponse = true) {
+    const url = `http://10.122.123.125:7575/constructGraph?uriList=${encodeURI(ids.join(','))}`;
+
+    this._g.setLoadingStatus(true);
+    this._http.get(url).subscribe(x => {
+      this._g.setLoadingStatus(false);
+      if (graphResponse) {
+        callback(this.extractGraph(x));
+      } else {
+        callback(this.extractTable(x));
+      }
+    })
+  }
+
   sparqlQuery() {
     const url = `http://10.122.123.125:8086/sparql?solrBase=http://10.122.123.125:8985/solr/&solrCollection=teydeb_hkt_1610&triplestoreBase=http://10.122.123.125:3030&graphName=visuall_hkt`;
     const requestBdy: any = {
