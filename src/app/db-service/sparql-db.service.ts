@@ -58,6 +58,10 @@ export class SparqlDbService implements DbService {
     this.showAllData(callback);
   }
 
+  getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta) {
+    this.showElems(callback, ids);
+  }
+
   getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType,
                      callback: (x: GraphResponse | TableResponse) => any) {
     this.filterResult(callback, type);
@@ -111,6 +115,20 @@ export class SparqlDbService implements DbService {
     })
   }
 
+  private showElems(callback: (X: any) => any,  ids: string[] | number[], graphResponse = true) {
+    const url = `http://10.122.123.125:7575/constructGraph?uriList=${encodeURI(ids.join(','))}`;
+
+    this._g.setLoadingStatus(true);
+    this._http.get(url).subscribe(x => {
+      this._g.setLoadingStatus(false);
+      if (graphResponse) {
+        callback(this.extractGraph(x));
+      } else {
+        callback(this.extractTable(x));
+      }
+    })
+  }
+
   sparqlQuery() {
     const url = `http://10.122.123.125:8086/sparql?solrBase=http://10.122.123.125:8985/solr/&solrCollection=teydeb_hkt_1610&triplestoreBase=http://10.122.123.125:3030&graphName=visuall_hkt`;
     const requestBdy: any = {
@@ -138,9 +156,6 @@ export class SparqlDbService implements DbService {
 
   saveProp(value) {
     this.shredService.setProp(value);
-  }
-
-  getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta) {
   }
 
   private filterResult(callback: (x: any) => any, type: DbQueryType) {
@@ -297,7 +312,6 @@ export class SparqlDbService implements DbService {
 
     return {nodes, edges};
   }
-
 
   private extractTable(response): TableResponse {
     if (response.errors && response.errors.length > 0) {
