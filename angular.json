@@ -36,8 +36,7 @@
               "node_modules/jquery/dist/jquery.js",
               "node_modules/cytoscape-navigator/cytoscape-navigator.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
-            ],
-            "es5BrowserSupport": true
+            ]
           },
           "configurations": {
             "production": {
