@@ -39,7 +39,7 @@
       <div class="form-inline m-2 justify-content-center">
         <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
           [(ngModel)]="currRuleName" class="form-control name-inp m-1 va-small-text">
-        <select class="custom-select filter-form va-text" [disabled]="isClassTypeLocked" [(ngModel)]="selectedClass"
+        <select class="custom-select tight-select filter-form va-text" [disabled]="isClassTypeLocked" [(ngModel)]="selectedClass"
           (change)="changeSelectedClass()">
           <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
           </option>

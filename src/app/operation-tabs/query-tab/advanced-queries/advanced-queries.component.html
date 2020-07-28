@@ -1,8 +1,8 @@
 <div>
   <div class="va-text">
     <div class="d-flex align-items-center justify-content-center">
-      <select class="custom-select filter-form va-small-text query-select" [(ngModel)]="selectedQuery"
-        (change)="changeAdvancedQuery($event)">
+      <select class="custom-select tight-select filter-form va-small-text query-select"
+        [(ngModel)]="selectedQuery" (change)="changeAdvancedQuery($event)">
         <option ng-hide="model" value="">Please choose a query</option>
         <option *ngFor="let p of queries" [value]="p">{{p}}</option>
       </select>
@@ -43,7 +43,7 @@
     <div>
       <p class="va-text">Object type(s) to ignore: </p>
       <div class="form-inline m-2 justify-content-center">
-        <select class="custom-select filter-form va-text" [(ngModel)]="selectedClass">
+        <select class="custom-select query-select tight-select filter-form va-text" [(ngModel)]="selectedClass">
           <option *ngFor="let opt of nodeEdgeClasses">{{opt}} </option>
         </select>
         <div class="m-1 text-center">

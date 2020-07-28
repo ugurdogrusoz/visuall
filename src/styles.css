@@ -1,5 +1,4 @@
-body,
-html {
+body, html {
   height: 100%;
 }
 
@@ -248,10 +247,6 @@ body {
   height: 12px;
 }
 
-.query-select {
-  width: 160px;
-}
-
 .query-input {
   width: 60px;
   height: 2rem;
@@ -278,4 +273,13 @@ body {
 .strokeme {
   color: white;
   text-shadow: 1px 0px 1px black, 0px 1px 1px black, -1px 0px 1px black, 0px -1px 1px black;
+}
+
+.tight-select {
+  background-position: center right 5px;
+}
+
+.query-select {
+  text-align: center;
+  text-align-last: center;
 }
