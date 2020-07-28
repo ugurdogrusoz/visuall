@@ -277,6 +277,7 @@ body {
 
 .tight-select {
   background-position: center right 5px;
+  height: inherit;
 }
 
 .query-select {
