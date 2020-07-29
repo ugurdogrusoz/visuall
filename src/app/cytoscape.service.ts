@@ -7,7 +7,7 @@ import { GlobalVariableService } from './global-variable.service';
 import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
-import { GraphResponse } from './db-service/data-types';
+import { GraphResponse, GraphElem } from './db-service/data-types';
 import { UserPrefHelper } from './user-pref-helper';
 import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
@@ -582,6 +582,27 @@ export class CytoscapeService {
     const anchor = document.createElement('a');
 
     anchor.download = 'visuall.txt';
+    anchor.href = (window.URL).createObjectURL(blob);
+    anchor.dataset.downloadurl =
+      ['text/plain', anchor.download, anchor.href].join(':');
+    anchor.click();
+  }
+
+  saveSelectedAsJson(objs: GraphElem[] = null) {
+    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
+    if (hasAnyCollapsed) {
+      const instance = this._modalService.open(ErrorModalComponent);
+      instance.componentInstance.msg = 'Cannot save as JSON due to collapsed node(s) and/or edge(s)';
+      instance.componentInstance.title = 'Save as JSON';
+      return;
+    }
+    if (!objs) {
+      objs = this._g.cy.$(':selected').map(x => { return { id: x.id(), data: x.data(), className: x.classNames()[0] } });
+    }
+    const blob = new Blob([JSON.stringify(objs)], { type: 'text/plain' });
+    const anchor = document.createElement('a');
+
+    anchor.download = 'visuall_table_data.txt';
     anchor.href = (window.URL).createObjectURL(blob);
     anchor.dataset.downloadurl =
       ['text/plain', anchor.download, anchor.href].join(':');

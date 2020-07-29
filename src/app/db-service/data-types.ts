@@ -49,3 +49,9 @@ export interface DbQueryMeta {
   depth?: number;
   isEdgeQuery?: boolean;
 }
+
+export interface GraphElem {
+  id: string;
+  data: any;
+  className: string;
+}

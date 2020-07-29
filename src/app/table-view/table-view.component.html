@@ -1,4 +1,11 @@
 <div class="d-flex flex-wrap justify-content-end m-1" *ngIf="isShowTable">
+  <button *ngIf="!params.isHideLoadGraph" [disabled]="isLoading || !params.results || params.results.length < 1"
+    class="btn btn-sm" (click)="downloadAsJSON4Checked()">
+    <img class="img-icon m-1" [title]="params.isLoadGraph ? 'Download Table as JSON' : 'Download Selected as JSON'"
+      src="../assets/img/downloading-file.svg">
+  </button>
+  &nbsp;
+
   <input [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
     class="form-control va-small-text" placeholder="Search..." [(ngModel)]="filterTxt"
     (ngModelChange)="filterTxtChanged()">

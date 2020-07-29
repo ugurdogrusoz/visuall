@@ -34,9 +34,10 @@ export class NavbarComponent implements OnInit {
       {
         dropdown: 'File', actions: [{ txt: 'Load...', id: 'nbi00', fn: 'loadFile', isStd: true },
         { txt: 'Save as JSON', id: 'nbi01', fn: 'saveAsJson', isStd: true },
-        { txt: 'Save as PNG...', id: 'nbi02', fn: 'saveAsPng', isStd: true },
-        { txt: 'Load User Profile...', id: 'nbi03', fn: 'loadUserProfile', isStd: true },
-        { txt: 'Save User Profile...', id: 'nbi04', fn: 'saveUserProfile', isStd: true }]
+        { txt: 'Save Selected as JSON', id: 'nbi02', fn: 'saveSelectedAsJson', isStd: true },
+        { txt: 'Save as PNG...', id: 'nbi03', fn: 'saveAsPng', isStd: true },
+        { txt: 'Load User Profile...', id: 'nbi04', fn: 'loadUserProfile', isStd: true },
+        { txt: 'Save User Profile...', id: 'nbi05', fn: 'saveUserProfile', isStd: true }]
       },
       {
         dropdown: 'Edit', actions: [{ txt: 'Add Group for Selected', id: 'nbi10', fn: 'addGroup4Selected', isStd: true },
@@ -122,6 +123,8 @@ export class NavbarComponent implements OnInit {
   }
 
   saveAsJson() { this._cyService.saveAsJson(); }
+
+  saveSelectedAsJson() { this._cyService.saveSelectedAsJson(); }
 
   saveAsPng() { this._modalService.open(SaveAsPngModalComponent); }
 

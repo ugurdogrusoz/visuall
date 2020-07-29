@@ -182,28 +182,43 @@ export class GlobalVariableService {
     }, this.HISTORY_SNAP_DELAY);
   }
 
-  getLabels4Elems(elemIds: string[] | number[], isNode: boolean = true): string {
+  getLabels4Elems(elemIds: string[] | number[], isNode: boolean = true, objDatas: any[] = null): string {
     let cyIds: string[] = [];
     let idChar = 'n';
     if (!isNode) {
       idChar = 'e';
     }
-    for (let i = 0; i < elemIds.length; i++) {
-      cyIds.push(idChar + elemIds[i]);
+    if (objDatas) {
+      cyIds = objDatas.map(x => x.id);
+    } else {
+      for (let i = 0; i < elemIds.length; i++) {
+        cyIds.push(idChar + elemIds[i]);
+      }
     }
+
     let labels = '';
     let labelParent: any = AppDescription.objects;
     if (!isNode) {
       labelParent = AppDescription.relations;
     }
     for (let i = 0; i < cyIds.length; i++) {
-      let curr = this.cy.$('#' + cyIds[i]);
-      let s = labelParent[curr.className()[0]]['style']['label'] as string;
+      let cName = '';
+      if (!objDatas) {
+        cName = this.cy.$('#' + cyIds[i]).className()[0];
+      } else {
+        cName = objDatas[i].className;
+      }
+
+      let s = labelParent[cName]['style']['label'] as string;
       if (s.indexOf('(') < 0) {
         labels += s + ',';
       } else {
         let propName = s.slice(s.indexOf('(') + 1, s.indexOf(')'));
-        labels += curr.data(propName) + ',';
+        if (!objDatas) {
+          labels += this.cy.$('#' + cyIds[i]).data(propName) + ',';
+        } else {
+          labels += objDatas[i]['data'][propName];
+        }
       }
     }
 
