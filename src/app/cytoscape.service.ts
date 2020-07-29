@@ -92,7 +92,9 @@ export class CytoscapeService {
       if (this._g.isSelectFromLoad && this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
         this._g.isSelectFromLoad = false;
       } else {
-        this._g.operationTabChanged.next(0);
+        if (this._g.isSwitch2ObjTabOnSelect) {
+          this._g.operationTabChanged.next(0);
+        }
       }
     }
     if (this.showObjPropsFn) {
@@ -589,15 +591,19 @@ export class CytoscapeService {
   }
 
   saveSelectedAsJson(objs: GraphElem[] = null) {
-    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
-    if (hasAnyCollapsed) {
-      const instance = this._modalService.open(ErrorModalComponent);
-      instance.componentInstance.msg = 'Cannot save as JSON due to collapsed node(s) and/or edge(s)';
-      instance.componentInstance.title = 'Save as JSON';
-      return;
-    }
+    const selected = this._g.cy.$(':selected');
     if (!objs) {
-      objs = this._g.cy.$(':selected').map(x => { return { id: x.id(), data: x.data(), className: x.classNames()[0] } });
+      let hasAnyCollapsed = selected.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || selected.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
+      if (hasAnyCollapsed) {
+        const instance = this._modalService.open(ErrorModalComponent);
+        instance.componentInstance.msg = 'Cannot save as JSON due to collapsed node(s) and/or edge(s)';
+        instance.componentInstance.title = 'Save as JSON';
+        return;
+      }
+    }
+
+    if (!objs) {
+      objs = selected.map(x => { return { id: x.id(), data: x.data(), className: x.classNames()[0] } });
     }
     const blob = new Blob([JSON.stringify(objs)], { type: 'text/plain' });
     const anchor = document.createElement('a');

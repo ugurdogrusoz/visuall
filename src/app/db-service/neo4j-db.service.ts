@@ -178,6 +178,7 @@ export class Neo4jDb implements DbService {
     const password = this.dbConfig.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
     this._g.setLoadingStatus(true);
+    console.log(query);
     this._g.statusMsg.next('Executing database query...')
     const requestBody = {
       'statements': [{

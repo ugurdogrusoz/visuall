@@ -4,13 +4,7 @@
       <span class="panel-title accordion-toggle"><b class="va-heading2">Filter by Node/Edge Type</b></span>
     </div>
     <div id="filter-class" class="collapse show text-center m-1">
-      <a class="btn btn-sm btn-outline-dark filter-node-class d-inline-flex justify-content-center va-text"
-        *ngFor="let nc of nodeClasses" href="#" role="button"
-        [ngClass]="{'filter-class-disabled': !(showNodeClass[nc])}" (click)="filterElesByClass(nc, true)">{{nc}}</a>
-      <br>
-      <a class="filter-edge-class d-inline-flex justify-content-center va-text" *ngFor="let ec of edgeClasses" href="#"
-        role="button" (click)="filterElesByClass(ec, false)"
-        [ngClass]="{'filter-class-disabled': !(showEdgeClass[ec])}">{{ec}}<br></a>
+      <app-types-view (onFilterByType)="filterElesByClass($event)"></app-types-view>
     </div>
   </div>
 
@@ -39,8 +33,8 @@
       <div class="form-inline m-2 justify-content-center">
         <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
           [(ngModel)]="currRuleName" class="form-control name-inp m-1 va-small-text">
-        <select class="custom-select tight-select filter-form va-text" [disabled]="isClassTypeLocked" [(ngModel)]="selectedClass"
-          (change)="changeSelectedClass()">
+        <select class="custom-select tight-select filter-form va-text" [disabled]="isClassTypeLocked"
+          [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
           <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
           </option>
         </select>

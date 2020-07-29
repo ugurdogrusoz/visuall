@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
-import { GENERIC_TYPE, deepCopy, COLLAPSED_NODE_CLASS, COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from '../../constants';
+import { GENERIC_TYPE, deepCopy, COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from '../../constants';
 import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
@@ -21,10 +21,6 @@ import { UserProfileService } from 'src/app/user-profile.service';
 })
 export class MapTabComponent implements OnInit {
 
-  nodeClasses: Set<string>;
-  showNodeClass = {};
-  edgeClasses: Set<string>;
-  showEdgeClass = {};
   classOptions: ClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
@@ -52,8 +48,6 @@ export class MapTabComponent implements OnInit {
     private _timebarService: TimebarService, private _profile: UserProfileService) {
     this.isQueryOnDb = true;
     this.tableInput.isMergeGraph = true;
-    this.nodeClasses = new Set([]);
-    this.edgeClasses = new Set([]);
     this.classOptions = [];
     this.selectedClassProps = [];
     this.isDateProp = false;
@@ -73,16 +67,12 @@ export class MapTabComponent implements OnInit {
 
     for (const key in properties.nodes) {
       this.classOptions.push({ text: key, isDisabled: false });
-      this.nodeClasses.add(key);
-      this.showNodeClass[key] = true;
       if (this.selectedClassProps.length == 0) {
         this.selectedClassProps = Object.keys(properties.nodes[key]);
       }
     }
 
     for (const key in properties.edges) {
-      this.edgeClasses.add(key);
-      this.showEdgeClass[key] = true;
       this.classOptions.push({ text: key, isDisabled: false });
     }
 
@@ -143,7 +133,7 @@ export class MapTabComponent implements OnInit {
   }
 
   addRule2QueryRules(r: Rule) {
-    const isEdge = this.edgeClasses.has(this.selectedClass);
+    const isEdge = properties.edges[this.selectedClass] != undefined;
 
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
@@ -277,24 +267,16 @@ export class MapTabComponent implements OnInit {
     }
   }
 
-  filterElesByClass(className: string, isNode: boolean) {
-    let willBeShowed = false;
-    if (isNode) {
-      this.showNodeClass[className] = !this.showNodeClass[className];
-      willBeShowed = this.showNodeClass[className];
-    } else {
-      this.showEdgeClass[className] = !this.showEdgeClass[className];
-      willBeShowed = this.showEdgeClass[className];
-    }
-    if (willBeShowed) {
-      this._g.hiddenClasses.delete(className);
-      this._g.viewUtils.show(this._g.cy.$('.' + className));
+  filterElesByClass(e: { className: string, willBeShowed: boolean }) {
+    if (e.willBeShowed) {
+      this._g.hiddenClasses.delete(e.className);
+      this._g.viewUtils.show(this._g.cy.$('.' + e.className));
     }
     else {
-      this._g.hiddenClasses.add(className);
-      this._g.viewUtils.hide(this._g.cy.$('.' + className));
+      this._g.hiddenClasses.add(e.className);
+      this._g.viewUtils.hide(this._g.cy.$('.' + e.className));
     }
-    this.filter4Collapsed(className, willBeShowed);
+    this.filter4Collapsed(e.className, e.willBeShowed);
     this._g.shownElemsChanged.next(true);
     this._g.performLayout(false);
   }

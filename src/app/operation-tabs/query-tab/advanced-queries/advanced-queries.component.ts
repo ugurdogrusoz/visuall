@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GlobalVariableService } from 'src/app/global-variable.service';
 import properties from '../../../../assets/generated/properties.json';
 import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { TableViewInput, property2TableData, TableData, TableDataType } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
-import { DbQueryType, Neo4jEdgeDirection } from 'src/app/db-service/data-types';
-import { getCyStyleFromColorAndWid } from 'src/app/constants';
+import { DbQueryType, Neo4jEdgeDirection, GraphElem } from 'src/app/db-service/data-types';
+import { getCyStyleFromColorAndWid, readTxtFile } from 'src/app/constants';
 
 @Component({
   selector: 'app-advanced-queries',
@@ -14,7 +14,7 @@ import { getCyStyleFromColorAndWid } from 'src/app/constants';
   styleUrls: ['./advanced-queries.component.css']
 })
 export class AdvancedQueriesComponent implements OnInit {
-
+  @ViewChild('file', { static: false }) file;
   queries: string[];
   selectedQuery: string;
   selectedIdx: number;
@@ -27,6 +27,7 @@ export class AdvancedQueriesComponent implements OnInit {
   selectedNodes: { dbId: string, label: string }[] = [];
   selectedClass = '';
   targetOrRegulator = 0;
+  addNodeBtnTxt = 'Select Nodes to Add';
   tableInput: TableViewInput = {
     columns: ['Title'], results: [], isEmphasizeOnHover: true, tableTitle: 'Query Results',
     resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true
@@ -53,6 +54,13 @@ export class AdvancedQueriesComponent implements OnInit {
   }
 
   addSelectedNodes() {
+    if (this._g.isSwitch2ObjTabOnSelect) {
+      this._g.isSwitch2ObjTabOnSelect = false;
+      this.addNodeBtnTxt = 'Complete Selection';
+      return;
+    }
+    this.addNodeBtnTxt = 'Select Nodes to Add';
+    this._g.isSwitch2ObjTabOnSelect = true;
     const selectedNodes = this._g.cy.nodes(':selected');
     if (selectedNodes.length < 1) {
       return;
@@ -75,16 +83,6 @@ export class AdvancedQueriesComponent implements OnInit {
     this.selectedNodes = [];
   }
 
-  addIgnoredType() {
-    if (!this.ignoredTypes.includes(this.selectedClass)) {
-      this.ignoredTypes.push(this.selectedClass);
-    }
-  }
-
-  removeIgnoredType(i: number) {
-    this.ignoredTypes.splice(i, 1);
-  }
-
   runQuery() {
     const dbIds = this.selectedNodes.map(x => x.dbId);
     if (dbIds.length < 1) {
@@ -95,7 +93,7 @@ export class AdvancedQueriesComponent implements OnInit {
       prepareDataFn = (x) => { this.fillTable(x); this._cyService.loadElementsFromDatabase(x, this.isMerge); this.higlightSeedNodes(); };
     }
     const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0]; }
-
+    this.ignoredTypes = this.ignoredTypes.map(x => `'${x}'`);
     if (this.selectedIdx == 0) {
       this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.count, setDataCntFn);
       this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.std, prepareDataFn);
@@ -156,6 +154,33 @@ export class AdvancedQueriesComponent implements OnInit {
       this._g.viewUtils.highlight(seedNodes, 1);
     } else {
       this._g.viewUtils.highlight(seedNodes, 0);
+    }
+  }
+
+  addSelectedNodesFromFile() {
+    this.file.nativeElement.value = '';
+    this.file.nativeElement.click();
+  }
+
+  fileSelected() {
+    readTxtFile(this.file.nativeElement.files[0], (txt) => {
+      const elems = (JSON.parse(txt) as GraphElem[])
+        .filter(x => x.id.startsWith('n') && this.selectedNodes.find(y => y.dbId === x.id.substring(1)) === undefined);
+      const labels = this._g.getLabels4Elems(null, true, elems).split(',');
+      this.selectedNodes = this.selectedNodes.concat(elems.map((x, i) => { return { dbId: x.id.substring(1), label: x.className + ':' + labels[i] } }));
+    });
+  }
+
+  addRemoveType(e: { className: string, willBeShowed: boolean }) {
+    if (e.willBeShowed) {
+      const idx = this.ignoredTypes.findIndex(x => x === e.className);
+      if (idx > -1) {
+        this.ignoredTypes.splice(idx, 1);
+      }
+    } else {
+      if (!this.ignoredTypes.includes(e.className)) {
+        this.ignoredTypes.push(e.className);
+      }
     }
   }
 }

@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import AppDescription from '../assets/app_description.json'
 import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS } from './constants';
-import { GraphHistoryItem } from './db-service/data-types';
+import { GraphHistoryItem, GraphElem } from './db-service/data-types';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,7 @@ export class GlobalVariableService {
   userPrefs: UserPref = {} as UserPref;
   shownElemsChanged = new BehaviorSubject<boolean>(true);
   operationTabChanged = new BehaviorSubject<number>(1);
+  isSwitch2ObjTabOnSelect: boolean = true;
   graphHistory: GraphHistoryItem[] = [];
   showHideGraphHistory = new BehaviorSubject<boolean>(false);
   addNewGraphHistoryItem = new BehaviorSubject<boolean>(false);
@@ -182,7 +183,7 @@ export class GlobalVariableService {
     }, this.HISTORY_SNAP_DELAY);
   }
 
-  getLabels4Elems(elemIds: string[] | number[], isNode: boolean = true, objDatas: any[] = null): string {
+  getLabels4Elems(elemIds: string[] | number[], isNode: boolean = true, objDatas: GraphElem[] = null): string {
     let cyIds: string[] = [];
     let idChar = 'n';
     if (!isNode) {
@@ -217,7 +218,7 @@ export class GlobalVariableService {
         if (!objDatas) {
           labels += this.cy.$('#' + cyIds[i]).data(propName) + ',';
         } else {
-          labels += objDatas[i]['data'][propName];
+          labels += objDatas[i].data[propName] + ',';
         }
       }
     }

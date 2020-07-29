@@ -285,3 +285,8 @@ body {
   text-align-last: center;
   width: auto;
 }
+
+.inp-3-char {
+  width: 5.5em;
+  height: 2em;
+}
