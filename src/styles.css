@@ -283,4 +283,5 @@ body {
 .query-select {
   text-align: center;
   text-align-last: center;
+  width: auto;
 }
