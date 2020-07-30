@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { RouterModule } from '@angular/router';
+import {APP_BASE_HREF} from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -31,8 +33,7 @@ import { GraphTheoreticPropertiesTabComponent } from './operation-tabs/map-tab/g
 import { GraphHistoryComponent } from './graph-history/graph-history.component';
 import { TabCustomizationModule } from './operation-tabs/tab-customization/tab-customization.module';
 import { SaveProfileModalComponent } from './popups/save-profile-modal/save-profile-modal.component';
-import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-queries/advanced-queries.component';
-import { TypesViewComponent } from './types-view/types-view.component';
+
 
 @NgModule({
   declarations: [
@@ -61,8 +62,6 @@ import { TypesViewComponent } from './types-view/types-view.component';
     GraphHistoryComponent,
     SaveProfileModalComponent,
     ReplacePipe,
-    AdvancedQueriesComponent,
-    TypesViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -71,9 +70,10 @@ import { TypesViewComponent } from './types-view/types-view.component';
     NgbModule,
     AutoSizeInputModule,
     AngularDraggableModule,
-    TabCustomizationModule
+    TabCustomizationModule,
+    RouterModule.forRoot([]),
   ],
-  providers: [],
+  providers: [{provide: APP_BASE_HREF, useValue : "/" }],
   bootstrap: [AppComponent],
   entryComponents: [SaveAsPngModalComponent, QuickHelpModalComponent, AboutModalComponent, ErrorModalComponent]
 })

@@ -13,6 +13,8 @@ import { NavbarDropdown, NavbarAction } from './inavbar';
 import { UserProfileService } from '../user-profile.service';
 import { readTxtFile, CLUSTER_CLASS } from '../constants';
 import { SaveProfileModalComponent } from '../popups/save-profile-modal/save-profile-modal.component';
+import { URLLoad } from '../load-from-url.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-navbar',
@@ -29,15 +31,15 @@ export class NavbarComponent implements OnInit {
   isLoadFile4Graph: boolean = false;
 
   constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _modalService: NgbModal,
-    private _g: GlobalVariableService, private _customizationService: NavbarCustomizationService, private _profile: UserProfileService) {
+    private _g: GlobalVariableService, private _customizationService: NavbarCustomizationService, private _profile: UserProfileService,
+     private _urlload: URLLoad) {
     this.menu = [
       {
         dropdown: 'File', actions: [{ txt: 'Load...', id: 'nbi00', fn: 'loadFile', isStd: true },
         { txt: 'Save as JSON', id: 'nbi01', fn: 'saveAsJson', isStd: true },
-        { txt: 'Save Selected as JSON', id: 'nbi02', fn: 'saveSelectedAsJson', isStd: true },
-        { txt: 'Save as PNG...', id: 'nbi03', fn: 'saveAsPng', isStd: true },
-        { txt: 'Load User Profile...', id: 'nbi04', fn: 'loadUserProfile', isStd: true },
-        { txt: 'Save User Profile...', id: 'nbi05', fn: 'saveUserProfile', isStd: true }]
+        { txt: 'Save as PNG...', id: 'nbi02', fn: 'saveAsPng', isStd: true },
+        { txt: 'Load User Profile...', id: 'nbi03', fn: 'loadUserProfile', isStd: true },
+        { txt: 'Save User Profile...', id: 'nbi04', fn: 'saveUserProfile', isStd: true }]
       },
       {
         dropdown: 'Edit', actions: [{ txt: 'Add Group for Selected', id: 'nbi10', fn: 'addGroup4Selected', isStd: true },
@@ -82,6 +84,7 @@ export class NavbarComponent implements OnInit {
     this.toolName = AppDescription.appInfo.name;
     this.toolLogo = AppDescription.appInfo.icon;
     this.mergeCustomMenu();
+    this._urlload.init();
   }
 
   mergeCustomMenu() {
@@ -123,8 +126,6 @@ export class NavbarComponent implements OnInit {
   }
 
   saveAsJson() { this._cyService.saveAsJson(); }
-
-  saveSelectedAsJson() { this._cyService.saveSelectedAsJson(); }
 
   saveAsPng() { this._modalService.open(SaveAsPngModalComponent); }
 
