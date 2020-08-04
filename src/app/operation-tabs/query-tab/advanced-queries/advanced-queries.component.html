@@ -1,4 +1,4 @@
-<input #file type="file" (change)="fileSelected()" accept="text/*, .json" style="display: none;" />
+<input #file type="file" (change)="fileSelected()" accept="text/*, .json, .csv" style="display: none;" />
 <div>
   <div class="va-text">
     <div class="d-flex align-items-center justify-content-center">
@@ -39,7 +39,7 @@
           </div>
         </div>
         <div>
-          <input class="btn btn-dark va-text m-1" type="button" value="Add from JSON File"
+          <input class="btn btn-dark va-text m-1" type="button" value="Add Objects from File"
             (click)="addSelectedNodesFromFile()">
           <input class="btn btn-dark va-text m-1" type="button" [value]="addNodeBtnTxt" (click)="addSelectedNodes()">
           <input *ngIf="selectedNodes && selectedNodes.length > 0" class="btn btn-dark va-text m-1" type="button"

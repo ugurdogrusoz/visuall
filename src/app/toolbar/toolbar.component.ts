@@ -29,7 +29,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
     this.menu = [
       {
         div: 0, items: [{ imgSrc: 'assets/img/toolbar/load.svg', title: 'Load', fn: 'load', isStd: true, isRegular: true },
-        { imgSrc: 'assets/img/toolbar/json-file.svg', title: 'Save as JSON', fn: 'saveAsJson', isStd: true, isRegular: true },
+        { imgSrc: 'assets/img/toolbar/save.svg', title: 'Save', fn: 'saveAsJson', isStd: true, isRegular: true },
         { imgSrc: 'assets/img/toolbar/png.svg', title: 'Save as PNG', fn: 'saveAsPng', isStd: true, isRegular: true }]
       },
       {

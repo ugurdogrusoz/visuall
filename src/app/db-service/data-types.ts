@@ -51,7 +51,6 @@ export interface DbQueryMeta {
 }
 
 export interface GraphElem {
-  id: string;
   data: any;
-  className: string;
+  classes: string;
 }

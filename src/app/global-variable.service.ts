@@ -190,7 +190,7 @@ export class GlobalVariableService {
       idChar = 'e';
     }
     if (objDatas) {
-      cyIds = objDatas.map(x => x.id);
+      cyIds = objDatas.map(x => x.data.id);
     } else {
       for (let i = 0; i < elemIds.length; i++) {
         cyIds.push(idChar + elemIds[i]);
@@ -207,7 +207,7 @@ export class GlobalVariableService {
       if (!objDatas) {
         cName = this.cy.$('#' + cyIds[i]).className()[0];
       } else {
-        cName = objDatas[i].className;
+        cName = objDatas[i].classes.split(' ')[0];
       }
 
       let s = labelParent[cName]['style']['label'] as string;

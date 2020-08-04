@@ -164,10 +164,16 @@ export class AdvancedQueriesComponent implements OnInit {
 
   fileSelected() {
     readTxtFile(this.file.nativeElement.files[0], (txt) => {
-      const elems = (JSON.parse(txt) as GraphElem[])
-        .filter(x => x.id.startsWith('n') && this.selectedNodes.find(y => y.dbId === x.id.substring(1)) === undefined);
+      let elems = JSON.parse(txt) as GraphElem[];
+      const fn1 = x => this.selectedNodes.find(y => y.dbId === x.id.substring(1)) === undefined;
+      if (!(elems instanceof Array)) {
+        elems = (JSON.parse(txt).nodes as any[]).filter(fn1);
+      } else {
+        elems = elems.filter(x => x.data.id.startsWith('n') && fn1(x));
+      }
+
       const labels = this._g.getLabels4Elems(null, true, elems).split(',');
-      this.selectedNodes = this.selectedNodes.concat(elems.map((x, i) => { return { dbId: x.id.substring(1), label: x.className + ':' + labels[i] } }));
+      this.selectedNodes = this.selectedNodes.concat(elems.map((x, i) => { return { dbId: x.data.id.substring(1), label: x.classes.split(' ')[0] + ':' + labels[i] } }));
     });
   }
 

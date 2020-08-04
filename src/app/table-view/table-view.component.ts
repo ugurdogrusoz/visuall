@@ -270,8 +270,9 @@ export class TableViewComponent implements OnInit, OnDestroy {
       for (let i = 1; i < r.length; i++) {
         data[this.params.columns[i - 1]] = r[i].val;
       }
-      objs.push({ id: prefix + r[0].val, className: cName, data: data });
+      data['id'] = prefix + r[0].val;
+      objs.push({ classes: cName, data: data });
     }
-    this._cyService.saveSelectedAsJson(objs)
+    this._cyService.saveAsCSV(objs)
   }
 }

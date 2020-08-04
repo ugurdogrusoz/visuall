@@ -36,8 +36,8 @@ export class NavbarComponent implements OnInit {
     this.menu = [
       {
         dropdown: 'File', actions: [{ txt: 'Load...', id: 'nbi00', fn: 'loadFile', isStd: true },
-        { txt: 'Save as JSON', id: 'nbi01', fn: 'saveAsJson', isStd: true },
-        { txt: 'Save Selected as JSON', id: 'nbi02', fn: 'saveSelectedAsJson', isStd: true },
+        { txt: 'Save', id: 'nbi01', fn: 'saveAsJson', isStd: true },
+        { txt: 'Save Selected Objects', id: 'nbi02', fn: 'saveSelectedAsJson', isStd: true },
         { txt: 'Save as PNG...', id: 'nbi03', fn: 'saveAsPng', isStd: true },
         { txt: 'Load User Profile...', id: 'nbi04', fn: 'loadUserProfile', isStd: true },
         { txt: 'Save User Profile...', id: 'nbi05', fn: 'saveUserProfile', isStd: true }]
