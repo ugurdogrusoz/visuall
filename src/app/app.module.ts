@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { RouterModule } from '@angular/router';
+import {APP_BASE_HREF} from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -33,6 +35,7 @@ import { TabCustomizationModule } from './operation-tabs/tab-customization/tab-c
 import { SaveProfileModalComponent } from './popups/save-profile-modal/save-profile-modal.component';
 import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-queries/advanced-queries.component';
 import { TypesViewComponent } from './types-view/types-view.component';
+
 
 @NgModule({
   declarations: [
@@ -71,9 +74,10 @@ import { TypesViewComponent } from './types-view/types-view.component';
     NgbModule,
     AutoSizeInputModule,
     AngularDraggableModule,
-    TabCustomizationModule
+    TabCustomizationModule,
+    RouterModule.forRoot([]),
   ],
-  providers: [],
+  providers: [{provide: APP_BASE_HREF, useValue : "/" }],
   bootstrap: [AppComponent],
   entryComponents: [SaveAsPngModalComponent, QuickHelpModalComponent, AboutModalComponent, ErrorModalComponent]
 })
