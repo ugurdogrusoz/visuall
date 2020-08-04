@@ -33,6 +33,8 @@ import { GraphTheoreticPropertiesTabComponent } from './operation-tabs/map-tab/g
 import { GraphHistoryComponent } from './graph-history/graph-history.component';
 import { TabCustomizationModule } from './operation-tabs/tab-customization/tab-customization.module';
 import { SaveProfileModalComponent } from './popups/save-profile-modal/save-profile-modal.component';
+import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-queries/advanced-queries.component';
+import { TypesViewComponent } from './types-view/types-view.component';
 
 
 @NgModule({
@@ -62,6 +64,8 @@ import { SaveProfileModalComponent } from './popups/save-profile-modal/save-prof
     GraphHistoryComponent,
     SaveProfileModalComponent,
     ReplacePipe,
+    AdvancedQueriesComponent,
+    TypesViewComponent,
   ],
   imports: [
     BrowserModule,

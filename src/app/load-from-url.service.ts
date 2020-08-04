@@ -6,7 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({providedIn: 'root'})
 
-export class URLLoad {
+export class URLLoadService {
 
     url: string;
     data: any;
@@ -24,21 +24,16 @@ export class URLLoad {
     }
 
     getData() {
-        if(this.url){
-          //if url is not null, get the data from the given route else wait for 200 ms and try again
-            this.http.get<any>(this.url, { responseType: 'blob' as 'json' }).subscribe(async data => {
-                this.data = new File([await data], 'Graph', { type: 'txt', lastModified:Date.now()});
-                //data is taken as json and given to cytoscape's loadFile method as it is in navbar load
-                this._cyService.loadFile(this.data);
-            },
-            (err: HttpErrorResponse) => {
-                console.log (err.message);
-            }
-            );
-        }
-        else{
-            window.setTimeout(this.getData, 200);
-        }
-    }
+
+      this.http.get<any>(this.url, { responseType: 'blob' as 'json' }).subscribe(async data => {
+          this.data = new File([await data], 'Graph', { type: 'txt', lastModified:Date.now()});
+          //data is taken as json and given to cytoscape's loadFile method as it is in navbar load
+          this._cyService.loadFile(this.data);
+      },
+      (err: HttpErrorResponse) => {
+          console.log (err.message);
+      }
+      );
+  }
 
 }
