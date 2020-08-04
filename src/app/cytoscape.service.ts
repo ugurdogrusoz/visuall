@@ -578,6 +578,9 @@ export class CytoscapeService {
     }
     const json = this._g.cy.json();
     const elements = json.elements;
+    if (!elements.nodes) {
+      return;
+    }
     const file = JSON.stringify(elements, undefined, 4);
 
     const blob = new Blob([file], { type: 'text/plain' });
@@ -604,6 +607,9 @@ export class CytoscapeService {
 
     if (!objs) {
       objs = selected.map(x => { return { id: x.id(), data: x.data(), className: x.classNames()[0] } });
+    }
+    if (objs.length < 1) {
+      return;
     }
     const blob = new Blob([JSON.stringify(objs)], { type: 'text/plain' });
     const anchor = document.createElement('a');
