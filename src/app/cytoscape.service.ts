@@ -88,13 +88,8 @@ export class CytoscapeService {
 
   private elemSelected(e) {
     if (e.type == 'select') {
-      // do not change tab if selection is originated from load
-      if (this._g.isSelectFromLoad && this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
-        this._g.isSelectFromLoad = false;
-      } else {
-        if (this._g.isSwitch2ObjTabOnSelect) {
-          this._g.operationTabChanged.next(0);
-        }
+      if (this._g.isSwitch2ObjTabOnSelect) {
+        this._g.operationTabChanged.next(0);
       }
     }
     if (this.showObjPropsFn) {
@@ -367,8 +362,9 @@ export class CytoscapeService {
       ele2highlight.merge('#' + elemIds.pop());
     }
     if (newElemIndicator == MergedElemIndicatorTypes.selection) {
-      this._g.isSelectFromLoad = true;
+      this._g.isSwitch2ObjTabOnSelect = false;
       ele2highlight.select();
+      this._g.isSwitch2ObjTabOnSelect = true;
     } else if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
       this._g.highlightElems(ele2highlight);
     }

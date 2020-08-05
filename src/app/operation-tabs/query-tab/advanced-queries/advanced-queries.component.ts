@@ -27,6 +27,7 @@ export class AdvancedQueriesComponent implements OnInit {
   selectedNodes: { dbId: string, label: string }[] = [];
   selectedClass = '';
   targetOrRegulator = 0;
+  clickedNodeIdx = -1;
   addNodeBtnTxt = 'Select Nodes to Add';
   tableInput: TableViewInput = {
     columns: ['Title'], results: [], isEmphasizeOnHover: true, tableTitle: 'Query Results',
@@ -76,11 +77,19 @@ export class AdvancedQueriesComponent implements OnInit {
   }
 
   removeSelected(i: number) {
+    if (i == this.clickedNodeIdx) {
+      this.clickedNodeIdx = -1;
+      const idSelector = '#n' + this.selectedNodes[i].dbId;
+      this._g.cy.$(idSelector).unselect();
+    } else if (i < this.clickedNodeIdx) {
+      this.clickedNodeIdx--;
+    }
     this.selectedNodes.splice(i, 1);
   }
 
   removeAllSelectedNodes() {
     this.selectedNodes = [];
+    this.clickedNodeIdx = -1;
   }
 
   runQuery() {
@@ -93,17 +102,17 @@ export class AdvancedQueriesComponent implements OnInit {
       prepareDataFn = (x) => { this.fillTable(x); this._cyService.loadElementsFromDatabase(x, this.isMerge); this.higlightSeedNodes(); };
     }
     const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0]; }
-    this.ignoredTypes = this.ignoredTypes.map(x => `'${x}'`);
+    const types = this.ignoredTypes.map(x => `'${x}'`);
     if (this.selectedIdx == 0) {
-      this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.count, setDataCntFn);
-      this._dbService.getGraphOfInterest(dbIds, this.ignoredTypes, this.lengthLimit, this.isDirected, DbQueryType.std, prepareDataFn);
+      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbQueryType.count, setDataCntFn);
+      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbQueryType.std, prepareDataFn);
     } else if (this.selectedIdx == 1) {
       let dir: Neo4jEdgeDirection = this.targetOrRegulator;
       if (!this.isDirected) {
         dir = Neo4jEdgeDirection.BOTH;
       }
-      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.count, setDataCntFn);
-      this._dbService.getCommonStream(dbIds, this.ignoredTypes, this.lengthLimit, dir, DbQueryType.std, prepareDataFn);
+      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbQueryType.count, setDataCntFn);
+      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbQueryType.std, prepareDataFn);
     }
   }
 
@@ -208,5 +217,14 @@ export class AdvancedQueriesComponent implements OnInit {
         this.ignoredTypes.push(e.className);
       }
     }
+  }
+
+  selectedNodeClicked(i: number) {
+    this._g.isSwitch2ObjTabOnSelect = false;
+    this.clickedNodeIdx = i;
+    const idSelector = '#n' + this.selectedNodes[i].dbId;
+    this._g.cy.$().unselect();
+    this._g.cy.$(idSelector).select();
+    this._g.isSwitch2ObjTabOnSelect = true;
   }
 }

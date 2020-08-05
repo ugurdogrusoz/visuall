@@ -176,7 +176,9 @@ export class MapTabComponent implements OnInit {
     if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
       this._g.highlightElems(filteredClassElems);
     } else if (newElemIndicator == MergedElemIndicatorTypes.selection) {
+      this._g.isSwitch2ObjTabOnSelect = false;
       filteredClassElems.select();
+      this._g.isSwitch2ObjTabOnSelect = true;
     }
     this._g.applyClassFiltering();
     this._g.performLayout(false);
