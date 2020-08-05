@@ -29,6 +29,7 @@ export interface TableViewInput {
   isDisableHover?: boolean;
   tableTitle?: string;
   isEmphasizeOnHover?: boolean;
+  classNameOfObjects?: string;
 }
 
 export interface TableFiltering {

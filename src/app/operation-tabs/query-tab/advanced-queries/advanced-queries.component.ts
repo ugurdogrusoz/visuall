@@ -6,7 +6,7 @@ import { CytoscapeService } from 'src/app/cytoscape.service';
 import { TableViewInput, property2TableData, TableData, TableDataType } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { DbQueryType, Neo4jEdgeDirection, GraphElem } from 'src/app/db-service/data-types';
-import { getCyStyleFromColorAndWid, readTxtFile } from 'src/app/constants';
+import { getCyStyleFromColorAndWid, readTxtFile, isJson } from 'src/app/constants';
 
 @Component({
   selector: 'app-advanced-queries',
@@ -165,8 +165,7 @@ export class AdvancedQueriesComponent implements OnInit {
   fileSelected() {
     readTxtFile(this.file.nativeElement.files[0], (txt) => {
       let elems: GraphElem[] = [];
-      const fName = this.file.nativeElement.files[0].name;
-      if (fName.toLowerCase().endsWith('.csv')) {
+      if (!isJson(txt)) {
         const arr = txt.split('\n').map(x => x.split('|'));
         if (arr.length < 0) {
           return;

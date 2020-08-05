@@ -374,3 +374,12 @@ export function getCyStyleFromColorAndWid(color: string, wid: number): { nodeCss
     edgeCss: { 'line-color': color, 'target-arrow-color': color, 'width': wid }
   };
 }
+
+export function isJson(str: string) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}

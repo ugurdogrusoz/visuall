@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, P
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../constants';
-import { TableViewInput, TableFiltering, TableData, getClassNameFromProperties } from './table-view-types';
+import { TableViewInput, TableFiltering, getClassNameFromProperties } from './table-view-types';
 import { IPosition } from 'angular2-draggable';
 import { Subject, Subscription } from 'rxjs';
 import { GraphElem } from '../db-service/data-types';
@@ -255,7 +255,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  downloadAsJSON4Checked() {
+  downloadAsCSV4Checked() {
     let rows = this.params.results;
     if (!this.params.isLoadGraph) {
       rows = this.params.results.filter((_, i) => this.checkedIdx[i]);
@@ -264,7 +264,10 @@ export class TableViewComponent implements OnInit, OnDestroy {
     let objs: GraphElem[] = [];
     let prefix = this.params.isNodeData ? 'n' : 'e';
     for (const r of rows) {
-      const cName = getClassNameFromProperties(this.params.columns);
+      let cName = this.params.classNameOfObjects;
+      if (!this.params.classNameOfObjects) {
+        cName = getClassNameFromProperties(this.params.columns);
+      }
       const data = {};
       // first index is for ID
       for (let i = 1; i < r.length; i++) {

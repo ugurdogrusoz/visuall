@@ -218,7 +218,12 @@ export class GlobalVariableService {
         if (!objDatas) {
           labels += this.cy.$('#' + cyIds[i]).data(propName) + ',';
         } else {
-          labels += objDatas[i].data[propName] + ',';
+          const currData = objDatas[i].data;
+          let l = currData[propName];
+          if (!l) {
+            l = currData[Object.keys(currData)[0]]
+          }
+          labels += l + ',';
         }
       }
     }
