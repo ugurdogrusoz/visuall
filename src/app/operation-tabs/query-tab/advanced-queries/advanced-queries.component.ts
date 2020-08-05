@@ -164,12 +164,25 @@ export class AdvancedQueriesComponent implements OnInit {
 
   fileSelected() {
     readTxtFile(this.file.nativeElement.files[0], (txt) => {
-      let elems = JSON.parse(txt) as GraphElem[];
-      const fn1 = x => this.selectedNodes.find(y => y.dbId === x.id.substring(1)) === undefined;
-      if (!(elems instanceof Array)) {
-        elems = (JSON.parse(txt).nodes as any[]).filter(fn1);
+      let elems: GraphElem[] = [];
+      const fName = this.file.nativeElement.files[0].name;
+      if (fName.toLowerCase().endsWith('.csv')) {
+        const arr = txt.split('\n').map(x => x.split('|'));
+        for (let i = 1; i < arr.length; i++) {
+          const o = {};
+          for (let j = 1; j < arr.length; j++) {
+            o[arr[0][j]] = arr[i][j];
+          }
+          elems.push({ classes: arr[i][0], data: o });
+        }
       } else {
-        elems = elems.filter(x => x.data.id.startsWith('n') && fn1(x));
+        elems = JSON.parse(txt) as GraphElem[];
+        const fn1 = x => this.selectedNodes.find(y => y.dbId === x.data.id.substring(1)) === undefined;
+        if (!(elems instanceof Array)) {
+          elems = (JSON.parse(txt).nodes as any[]).filter(fn1);
+        } else {
+          elems = elems.filter(x => x.data.id.startsWith('n') && fn1(x));
+        }
       }
 
       const labels = this._g.getLabels4Elems(null, true, elems).split(',');

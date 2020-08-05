@@ -633,7 +633,7 @@ export class CytoscapeService {
     for (const o of objs) {
       arr.push([o.classes.split(' ')[0], ...Object.values(o.data) as string[]]);
     }
-    const str = arr.map(x => x.join(',')).join('\n');
+    const str = arr.map(x => x.join('|')).join('\n');
     this.str2file(str, 'visuall_objects.csv');
   }
 
