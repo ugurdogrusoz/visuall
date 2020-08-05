@@ -168,7 +168,12 @@ export class AdvancedQueriesComponent implements OnInit {
       const fName = this.file.nativeElement.files[0].name;
       if (fName.toLowerCase().endsWith('.csv')) {
         const arr = txt.split('\n').map(x => x.split('|'));
+        const idx4id = arr[0].indexOf('id');
+
         for (let i = 1; i < arr.length; i++) {
+          if (this.selectedNodes.find(x => x.dbId == arr[i][idx4id].substring(1))) {
+            continue;
+          }
           const o = {};
           for (let j = 1; j < arr.length; j++) {
             o[arr[0][j]] = arr[i][j];
