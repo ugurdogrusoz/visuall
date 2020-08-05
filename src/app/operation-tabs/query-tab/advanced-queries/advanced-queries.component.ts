@@ -168,6 +168,9 @@ export class AdvancedQueriesComponent implements OnInit {
       const fName = this.file.nativeElement.files[0].name;
       if (fName.toLowerCase().endsWith('.csv')) {
         const arr = txt.split('\n').map(x => x.split('|'));
+        if (arr.length < 0) {
+          return;
+        }
         const idx4id = arr[0].indexOf('id');
 
         for (let i = 1; i < arr.length; i++) {
@@ -175,7 +178,7 @@ export class AdvancedQueriesComponent implements OnInit {
             continue;
           }
           const o = {};
-          for (let j = 1; j < arr.length; j++) {
+          for (let j = 1; j < arr[0].length; j++) {
             o[arr[0][j]] = arr[i][j];
           }
           elems.push({ classes: arr[i][0], data: o });
