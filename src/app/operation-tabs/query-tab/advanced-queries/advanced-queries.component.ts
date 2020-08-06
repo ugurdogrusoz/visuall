@@ -3,9 +3,9 @@ import { GlobalVariableService } from 'src/app/global-variable.service';
 import properties from '../../../../assets/generated/properties.json';
 import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
 import { CytoscapeService } from 'src/app/cytoscape.service';
-import { TableViewInput, property2TableData, TableData, TableDataType } from 'src/app/table-view/table-view-types';
+import { TableViewInput, property2TableData, TableData, TableDataType, TableRowMeta, TableFiltering } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
-import { DbQueryType, Neo4jEdgeDirection, GraphElem } from 'src/app/db-service/data-types';
+import { DbQueryType, Neo4jEdgeDirection, GraphElem, HistoryMetaData } from 'src/app/db-service/data-types';
 import { getCyStyleFromColorAndWid, readTxtFile, isJson } from 'src/app/constants';
 
 @Component({
@@ -232,5 +232,18 @@ export class AdvancedQueriesComponent implements OnInit {
     this._g.cy.$().unselect();
     this._g.cy.$(idSelector).select();
     this._g.isSwitch2ObjTabOnSelect = true;
+  }
+
+  getDataForQueryResult(e: TableRowMeta) {
+    let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
+    let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: true, labels: e.tableIdx.join(',') }
+    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: false }, historyMeta);
+  }
+
+  // not decided whether to do it on client-side or backend
+  filterTable(filter: TableFiltering) {
+    // this.showStats();
+    // filterTableDatas(filter, this.tableInput, this._g.userPrefs.isIgnoreCaseInText.getValue());
+    setTimeout(() => this.tableFilled.next(true), 100);
   }
 }
