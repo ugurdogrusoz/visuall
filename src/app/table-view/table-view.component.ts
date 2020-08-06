@@ -257,16 +257,26 @@ export class TableViewComponent implements OnInit, OnDestroy {
 
   downloadAsCSV4Checked() {
     let rows = this.params.results;
+    let cNames = this.params.classNames;
     if (!this.params.isLoadGraph) {
-      rows = this.params.results.filter((_, i) => this.checkedIdx[i]);
+      rows = rows.filter((_, i) => this.checkedIdx[i]);
+      if (cNames) {
+        cNames = cNames.filter((_, i) => this.checkedIdx[i]);
+      }
     }
 
     let objs: GraphElem[] = [];
     let prefix = this.params.isNodeData ? 'n' : 'e';
-    for (const r of rows) {
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
       let cName = this.params.classNameOfObjects;
-      if (!this.params.classNameOfObjects) {
-        cName = getClassNameFromProperties(this.params.columns);
+
+      if (!cName) {
+        if (this.params.classNames && this.params.classNames[i]) {
+          cName = cNames[i];
+        } else {
+          cName = getClassNameFromProperties(this.params.columns);
+        }
       }
       const data = {};
       // first index is for ID
@@ -276,6 +286,6 @@ export class TableViewComponent implements OnInit, OnDestroy {
       data['id'] = prefix + r[0].val;
       objs.push({ classes: cName, data: data });
     }
-    this._cyService.saveAsCSV(objs)
+    this._cyService.saveAsCSV(objs);
   }
 }

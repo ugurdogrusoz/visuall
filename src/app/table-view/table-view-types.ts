@@ -30,6 +30,7 @@ export interface TableViewInput {
   tableTitle?: string;
   isEmphasizeOnHover?: boolean;
   classNameOfObjects?: string;
+  classNames?: string[];
 }
 
 export interface TableFiltering {

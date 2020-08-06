@@ -22,8 +22,6 @@ export class AdvancedQueriesComponent implements OnInit {
   ignoredTypes: string[] = [];
   lengthLimit = 2;
   isDirected = true;
-  isMerge = true;
-  isGraph = true;
   selectedNodes: { dbId: string, label: string }[] = [];
   selectedClass = '';
   targetOrRegulator = 0;
@@ -98,8 +96,8 @@ export class AdvancedQueriesComponent implements OnInit {
       return;
     }
     let prepareDataFn = (x) => { this.fillTable(x); };
-    if (this.isGraph) {
-      prepareDataFn = (x) => { this.fillTable(x); this._cyService.loadElementsFromDatabase(x, this.isMerge); this.higlightSeedNodes(); };
+    if (this.tableInput.isLoadGraph) {
+      prepareDataFn = (x) => { this.fillTable(x); this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph); this.higlightSeedNodes(); };
     }
     const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0]; }
     const types = this.ignoredTypes.map(x => `'${x}'`);
@@ -122,6 +120,7 @@ export class AdvancedQueriesComponent implements OnInit {
 
     this.tableInput.results = [];
     this.tableInput.columns = [];
+    this.tableInput.classNames = [];
 
     for (let i = 0; i < arr.length; i++) {
       const d = arr[i].properties;
@@ -144,7 +143,14 @@ export class AdvancedQueriesComponent implements OnInit {
           row[j] = { val: '', type: TableDataType.string };
         }
       }
+      this.tableInput.classNames.push(arr[i].labels[0]);
       this.tableInput.results.push(row);
+    }
+    const numCol = this.tableInput.columns.length;
+    for (let i = 0; i < this.tableInput.results.length; i++) {
+      while (this.tableInput.results[i].length <= numCol) {
+        this.tableInput.results[i].push({ val: '', type: TableDataType.string });
+      }
     }
 
     this.tableFilled.next(true);
