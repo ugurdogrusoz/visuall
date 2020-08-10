@@ -93,6 +93,7 @@ export class AdvancedQueriesComponent implements OnInit {
   }
 
   runQuery() {
+    this.tableInput.currPage = 1;
     const dbIds = this.selectedNodes.map(x => x.dbId);
     if (dbIds.length < 1) {
       return;
@@ -246,7 +247,6 @@ export class AdvancedQueriesComponent implements OnInit {
   }
 
   filterTable(filter: TableFiltering) {
-    this.tableInput.currPage = 1;
     this.tableFilter = filter;
     this.runQuery();
   }
