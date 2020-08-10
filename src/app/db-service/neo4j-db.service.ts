@@ -152,23 +152,43 @@ export class Neo4jDb implements DbService {
     this.runQuery('MATCH (m:Title) UNWIND m.genres as g return distinct g', callback, false);
   }
 
-  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, cb: (x) => void) {
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+    const t = filter.txt ?? '';
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const currPage = filter.skip ? Math.floor(filter.skip / pageSize) + 1 : 1;
+    const orderBy = filter.orderBy ? `'${filter.orderBy}'` : null;
+    let orderDir = 0;
+    if (filter.orderDirection == 'desc') {
+      orderDir = 1;
+    } else if (filter.orderDirection == '') {
+      orderDir = 2;
+    }
     if (type == DbQueryType.count) {
-      this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected})`, cb, false);
-    } else if (type == DbQueryType.std) {
-      this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected})`, cb, true);
+      this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase})`, cb, false);
     } else if (type == DbQueryType.table) {
-      this.runQuery(`CALL graphOfInterest4Table([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected})`, cb, false);
+      this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir})`, cb, false);
     }
   }
 
-  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, cb: (x) => void) {
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+    const t = filter.txt ?? '';
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const currPage = filter.skip ? Math.floor(filter.skip / pageSize) + 1 : 1;
+    const orderBy = filter.orderBy ? `'${filter.orderBy}'` : null;
+    let orderDir = 0;
+    if (filter.orderDirection == 'desc') {
+      orderDir = 1;
+    } else if (filter.orderDirection == '') {
+      orderDir = 2;
+    }
     if (type == DbQueryType.count) {
-      this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir})`, cb, false);
-    } else if (type == DbQueryType.std) {
-      this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir})`, cb, true);
+      this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase})`, cb, false);
     } else if (type == DbQueryType.table) {
-      this.runQuery(`CALL commonStream4Table([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir})`, cb, false);
+      this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir},
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir})`, cb, false);
     }
   }
 
@@ -234,6 +254,7 @@ export class Neo4jDb implements DbService {
   private extractTable(response): TableResponse {
     if (response.errors && response.errors.length > 0) {
       console.error('DB server returns erronous result', response.errors);
+      this._g.setLoadingStatus(false);
       return;
     }
     return { columns: response.results[0].columns, data: response.results[0].data.map(x => x.row) };
