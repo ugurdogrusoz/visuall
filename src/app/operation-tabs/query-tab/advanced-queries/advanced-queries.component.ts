@@ -92,8 +92,11 @@ export class AdvancedQueriesComponent implements OnInit {
     this.clickedNodeIdx = -1;
   }
 
-  runQuery() {
-    this.tableInput.currPage = 1;
+  runQuery(isFromFilter: boolean) {
+    if (!isFromFilter) {
+      this.tableFilter.skip = 0;
+      this.tableInput.currPage = 1;
+    }
     const dbIds = this.selectedNodes.map(x => x.dbId);
     if (dbIds.length < 1) {
       return;
@@ -248,7 +251,7 @@ export class AdvancedQueriesComponent implements OnInit {
 
   filterTable(filter: TableFiltering) {
     this.tableFilter = filter;
-    this.runQuery();
+    this.runQuery(true);
   }
 
   prepareElems4Cy(data) {

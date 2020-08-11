@@ -107,11 +107,19 @@ export class DbAdapterService implements DbService {
     this._db.getMovieGenres(callback);
   }
 
-  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, filter: TableFiltering,  cb: (x) => void) {
-    this._db.getGraphOfInterest(dbIds, ignoredTypes, lengthLimit, isDirected, type, filter, cb);
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+    let fn = cb;
+    if (type == DbQueryType.table) {
+      fn = (x) => { cb(x); this._g.add2GraphHistory(`Graph of interest`); };
+    }
+    this._db.getGraphOfInterest(dbIds, ignoredTypes, lengthLimit, isDirected, type, filter, fn);
   }
 
   getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
-    this._db.getCommonStream(dbIds, ignoredTypes, lengthLimit, dir, type, filter, cb);
+    let fn = cb;
+    if (type == DbQueryType.table) {
+      fn = (x) => { cb(x); this._g.add2GraphHistory(`Common target/regulator`); };
+    }
+    this._db.getCommonStream(dbIds, ignoredTypes, lengthLimit, dir, type, filter, fn);
   }
 }
