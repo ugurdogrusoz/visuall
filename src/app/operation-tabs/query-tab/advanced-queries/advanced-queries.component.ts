@@ -285,7 +285,7 @@ export class AdvancedQueriesComponent implements OnInit {
       const isSrcLoaded = this.tableInput.isMergeGraph ? this._g.cy.$('#n' + srcId).length > 0 : false;
       const isTgtLoaded = this.tableInput.isMergeGraph ? this._g.cy.$('#n' + tgtId).length > 0 : false;
       if ((nodeIdsDict[srcId] || isSrcLoaded) && (nodeIdsDict[tgtId] || isTgtLoaded)) {
-        cyData.edges.push({ properties: edges[i], startNode: srcId, endNode: tgtId, id: edgeId[i], classes: edgeClass[i] });
+        cyData.edges.push({ properties: edges[i], startNode: srcId, endNode: tgtId, id: edgeId[i], type: edgeClass[i] });
       }
     }
 
