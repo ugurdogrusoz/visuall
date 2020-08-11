@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { TableDataType, TableData, TableRowMeta, TableViewInput } from 'src/app/table-view/table-view-types';
-import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
-import { CytoscapeService } from 'src/app/cytoscape.service';
-import {HistoryMetaData } from 'src/app/db-service/data-types';
-import { ClassBasedRules } from '../../../map-tab/query-types';
-import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
+import {Component} from '@angular/core';
+import {TableRowMeta, TableViewInput} from 'src/app/table-view/table-view-types';
+import {HttpClient} from '@angular/common/http';
+import {Subject} from 'rxjs';
+import {CytoscapeService} from 'src/app/cytoscape.service';
+import {HistoryMetaData} from 'src/app/db-service/data-types';
+import {DbAdapterService} from 'src/app/db-service/db-adapter.service';
 
 
 @Component({
@@ -14,12 +13,10 @@ import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
   styleUrls: ['./sparql-search.component.css']
 })
 export class SparqlSearchComponent {
-  spqData: any;
-  objects = []; 
+  objects = [];
   inputValue: string;
   options: any;
   listValue: string[] = []; // Objects ID's
-  valueE:any;
 
 
   tableInput: TableViewInput = {
@@ -47,36 +44,21 @@ export class SparqlSearchComponent {
     return this.listValue;
   }
 
-  fillTable() {
-    for (let i = 0; i < this.spqData.data.result.nodes.length; i++) {
-      const curr = this.spqData.data.result.nodes[i];
-      this.objects.push(this.spqData.data.result);
-      let row: TableData[] = [{ val: curr.id, type: TableDataType.string }];
-      row.push({ val: curr.properties.label, type: TableDataType.string });
-      this.tableInput.results.push(row);
-    }
-    this.tableFilled.next(true);
-  }
-
   filterTable() {
     console.log('filter table: ', arguments);
   }
 
   getDataForQueryResult(e: TableRowMeta) {
-    let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
-    let historyMeta: HistoryMetaData =  { customTxt: 'Loaded from table: ', isNode: true, labels: e.tableIdx.join(',') }
-    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: true }, historyMeta);
-
-
-  /*   console.log('get data for query result: ', e);
-    this._dbService.getNeighbors(e.dbIds, (x) => { this._cyService.loadElementsFromDatabase(x, true) }); */
+    let fn = (x) => {
+      this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph)
+    };
+    let historyMeta: HistoryMetaData = {customTxt: 'Loaded from table: ', isNode: true, labels: e.tableIdx.join(',')}
+    this._dbService.getElems(e.dbIds, fn, {isEdgeQuery: true}, historyMeta);
   }
-  clearList(){
+
+  clearList() {
     this.listValue = [];
   }
-
-
-
 
 
 }
