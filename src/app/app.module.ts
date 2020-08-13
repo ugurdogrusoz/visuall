@@ -35,6 +35,7 @@ import { TabCustomizationModule } from './operation-tabs/tab-customization/tab-c
 import { SaveProfileModalComponent } from './popups/save-profile-modal/save-profile-modal.component';
 import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-queries/advanced-queries.component';
 import { TypesViewComponent } from './types-view/types-view.component';
+import { RuleTreeComponent } from './rule-tree/rule-tree.component';
 
 
 @NgModule({
@@ -66,6 +67,7 @@ import { TypesViewComponent } from './types-view/types-view.component';
     ReplacePipe,
     AdvancedQueriesComponent,
     TypesViewComponent,
+    RuleTreeComponent,
   ],
   imports: [
     BrowserModule,

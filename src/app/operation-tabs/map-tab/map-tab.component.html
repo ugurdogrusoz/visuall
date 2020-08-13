@@ -45,6 +45,15 @@
         [isStrict]="true">
       </app-property-rule>
 
+
+      <div *ngIf="queryRule2 && queryRule2.rules">
+        <span class="va-text">
+          Get <b>{{queryRule.className}}</b> where:
+        </span>
+        <app-rule-tree [root]="queryRule2.rules" (onRuleRequested)="changeFocus2PropertyRule($event)"
+          (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
+      </div>
+
       <div class="text-center borderless mx-1 my-3">
         <div>
           <div *ngIf="queryRule" class="border">

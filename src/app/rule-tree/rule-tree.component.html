@@ -1,0 +1,43 @@
+<div *ngIf="root">
+
+  <div *ngIf="!root.r.ruleOperator">
+    <span *ngIf="root.parent">
+      <a href="#" class="mx-1" (click)="changeQueryRuleOrder(root, true)">
+        <img src="assets/img/up-arrow.svg" title="Navigate Up">
+      </a>
+      <a href="#" class="nav-down-link" (click)="changeQueryRuleOrder(root, false)">
+        <img src="assets/img/down-arrow.svg" title="Navigate Down">
+      </a>
+    </span>
+    <span *ngIf="!root.r.propertyOperand"> --ALL-- </span>
+    <span>{{root.r.propertyOperand}} &nbsp; {{root.r.operator}} &nbsp; {{root.r.inputOperand}} </span>
+  </div>
+
+  <div class="d-inline-flex justify-content-center">
+    <div *ngIf="root.r.ruleOperator; else rawRule">
+      <a href="#" class="logic-op-link text-center mx-1" (click)="operatorClicked(root)">{{root.r.ruleOperator}}</a>
+    </div>
+
+    <div *ngIf="!root.r.ruleOperator">
+      <button type="button" class="btn btn-dark btn-sm va-small-text m-1"
+        (click)="addOperator(root, 'AND')">AND</button>
+      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="addOperator(root, 'OR')">OR</button>
+    </div>
+
+    <div *ngIf="root.children.length < 1 && root.parent">
+      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="addRule(root.parent)">Add
+        Rule</button>
+    </div>
+
+    <a href="#" (click)="deleteNode(root)">
+      <img src="assets/img/close.svg" title="Delete rule">
+    </a>
+  </div>
+
+  <ul *ngFor="let node of root.children; let i = index">
+    <li>
+      <app-rule-tree [root]="node" (onRuleRequested)="addRule($event)"> </app-rule-tree>
+    </li>
+  </ul>
+
+</div>

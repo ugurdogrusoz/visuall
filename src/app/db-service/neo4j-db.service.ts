@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
 import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
-import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/query-types';
+import { ClassBasedRules, Rule, ClassBasedRules2, RuleNode } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE } from '../constants';
 import AppDescription from '../../assets/app_description.json';
 import properties from '../../assets/generated/properties.json'
@@ -57,13 +57,13 @@ export class Neo4jDb implements DbService {
     this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 100`, callback);
   }
 
-  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    const cql = this.rule2cql(rules, skip, limit, type, filter);
+  getFilteringResult(rules: ClassBasedRules2, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+    const cql = this.rule2cql2(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
-  filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    const cql = this.rule2cql(rules, skip, limit, type, filter);
+  filterTable(rules: ClassBasedRules2, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+    const cql = this.rule2cql2(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
@@ -268,6 +268,13 @@ export class Neo4jDb implements DbService {
     return query;
   }
 
+  private rule2cql2(rules: ClassBasedRules2, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
+    let query = '';
+    query += this.getCql4Rules2(rules, filter);
+    query += this.generateFinalQueryBlock(filter, skip, limit, type);
+    return query;
+  }
+
   private getCql4Rules(rule: ClassBasedRules, filter: TableFiltering = null) {
     let isGenericType = false;
     if (rule.className == GENERIC_TYPE.ANY_CLASS || rule.className == GENERIC_TYPE.EDGES_CLASS || rule.className == GENERIC_TYPE.NODES_CLASS) {
@@ -312,6 +319,40 @@ export class Neo4jDb implements DbService {
     return matchClause + 'WHERE ' + conditions + '\n';
   }
 
+  private getCql4Rules2(rule: ClassBasedRules2, filter: TableFiltering = null) {
+    let isGenericType = false;
+    if (rule.className == GENERIC_TYPE.ANY_CLASS || rule.className == GENERIC_TYPE.EDGES_CLASS || rule.className == GENERIC_TYPE.NODES_CLASS) {
+      isGenericType = true;
+    }
+    let classFilter = ':' + rule.className;
+    if (isGenericType) {
+      classFilter = '';
+    }
+    let matchClause: string;
+    if (rule.isEdge) {
+      let s = AppDescription.relations[rule.className].source;
+      let t = AppDescription.relations[rule.className].target;
+      let conn = '>';
+      let isBidirectional = AppDescription.relations[rule.className].isBidirectional;
+      if (isBidirectional) {
+        conn = '';
+      }
+      matchClause = `OPTIONAL MATCH (:${s})-[x${classFilter}]-${conn}(:${t})\n`;
+    }
+    else {
+      matchClause = `OPTIONAL MATCH (x${classFilter})\n`;
+    }
+
+    let conditions = this.getCondtion4RuleNode(rule.rules);
+
+    if (filter != null && filter.txt.length > 0) {
+      let s = this.getCondition4TxtFilter(rule.isEdge, rule.className, filter.txt);
+      conditions = '(' + conditions + ') AND ' + s;
+    }
+
+    return matchClause + 'WHERE ' + conditions + '\n';
+  }
+
   private getCondition4TxtFilter(isEdge: boolean, className: string, txt: string): string {
     let s = '';
     let t = 'nodes';
@@ -337,6 +378,26 @@ export class Neo4jDb implements DbService {
     s = s.slice(0, -3)
     s = '(' + s + ')'
     return s;
+  }
+
+  private getCondtion4RuleNode(node: RuleNode): string {
+    let s = '(';
+    if (!node.r.ruleOperator) {
+      s += ' ' + this.getCondition4Rule(node.r) + ' ';
+    } else {
+      for (let i = 0; i < node.children.length; i++) {
+        if (i != node.children.length - 1) {
+          let op = '&&';
+          if (node.r.ruleOperator == 'OR') {
+            op = '||';
+          }
+          s += ' ' + this.getCondtion4RuleNode(node.children[i]) + ' ' + op;
+        } else {
+          s += ' ' + this.getCondtion4RuleNode(node.children[i]) + ' ';
+        }
+      }
+    }
+    return s + ')';
   }
 
   private getCondition4Rule(rule: Rule): string {

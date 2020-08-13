@@ -2,7 +2,7 @@ import { GENERIC_TYPE, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS } f
 
 export interface QueryRule {
   name: string;
-  rules: ClassBasedRules;
+  rules: ClassBasedRules2;
   isEditing: boolean;
   isOnDb: boolean;
   isLoadGraph: boolean;
@@ -20,6 +20,18 @@ export interface ClassBasedRules {
   isEdge: boolean;
 }
 
+export interface ClassBasedRules2 {
+  className: string;
+  rules: RuleNode;
+  isEdge: boolean;
+}
+
+export interface RuleNode {
+  r: Rule;
+  children: RuleNode[];
+  parent: RuleNode;
+}
+
 export enum PropertyCategory {
   other = 0, date = 1, finiteSet = 2
 }
@@ -29,7 +41,7 @@ export interface Rule {
   propertyType?: string;
   operator?: string;
   inputOperand?: string;
-  ruleOperator?: string;
+  ruleOperator: 'AND' | 'OR' | null;
   rawInput?: string;
   enumMapping?: string;
 }
@@ -102,6 +114,49 @@ export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules):
   return `if ( (${classCondition}) && (${propertyCondition}))`;
 }
 
+export function getBoolExpressionFromMetric2(m: ClassBasedRules2): string {
+  let classCondition = '';
+  // apply class condition
+  if (m.className.toLowerCase() == GENERIC_TYPE.EDGES_CLASS.toLowerCase()) {
+    classCondition = ` x.isEdge() `;
+  } else if (m.className.toLowerCase() == GENERIC_TYPE.NODES_CLASS.toLowerCase()) {
+    classCondition = ` x.isNode() `;
+  } else if (m.className.toLowerCase() == GENERIC_TYPE.ANY_CLASS.toLowerCase()) {
+    classCondition = ` true `;
+  } else {
+    classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;
+  }
+
+  let propertyCondition = getBoolExpressionFromRuleNode(m.rules);
+
+  if (propertyCondition.length < 1) {
+    return `if (${classCondition})`;
+  }
+  return `if ( (${classCondition}) && (${propertyCondition}))`;
+}
+
+function getBoolExpressionFromRuleNode(node: RuleNode) {
+  let s = '(';
+  if (!node.r.ruleOperator) {
+    s += ' ' + getJsExpressionForMetricRule(node.r) + ' ';
+  } else {
+    for (let i = 0; i < node.children.length; i++) {
+      if (i != node.children.length - 1) {
+        let op = '&&';
+        if (node.r.ruleOperator == 'OR') {
+          op = '||';
+        }
+        s += ' ' + getBoolExpressionFromRuleNode(node.children[i]) + ' ' + op;
+      } else {
+        s += ' ' + getBoolExpressionFromRuleNode(node.children[i]) + ' ';
+      }
+    }
+  }
+
+  return s + ')';
+}
+
+
 function getJsExpressionForMetricRule(r: Rule) {
   if (r.operator == 'One of') {
     let s = r.inputOperand;
@@ -165,4 +220,44 @@ export function rule2str(r: ClassBasedRules): string {
     }
   }
   return s;
+}
+
+function r2str(curr: Rule) {
+  let s = '';
+  let inp = '' + curr.inputOperand;
+  if (curr.propertyType == 'string') {
+    inp = `"${inp}"`;
+  }
+  s += ` (<b>${curr.propertyOperand}</b> ${curr.operator} <b>${inp}</b>) `;
+  return s;
+}
+
+export function rule2str2(r: ClassBasedRules2): string {
+  let s = `<b>${r.className}</b>`;
+  if (r.rules.children.length == 0 || !r.rules.children[0].r.propertyType) {
+    return s;
+  }
+  s += ' where ' + ruleNode2str(r.rules);
+  return s;
+}
+
+function ruleNode2str(node: RuleNode) {
+  let s = '(';
+  if (!node.r.ruleOperator) {
+    s += ' ' + r2str(node.r) + ' ';
+  } else {
+    for (let i = 0; i < node.children.length; i++) {
+      if (i != node.children.length - 1) {
+        let op = '&&';
+        if (node.r.ruleOperator == 'OR') {
+          op = '||';
+        }
+        s += ' ' + ruleNode2str(node.children[i]) + ' ' + op;
+      } else {
+        s += ' ' + ruleNode2str(node.children[i]) + ' ';
+      }
+    }
+  }
+
+  return s + ')';
 }
