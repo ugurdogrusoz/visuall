@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener} from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CytoscapeService } from '../cytoscape.service';
 import { TimebarService } from '../timebar.service';
 import { ContextMenuService } from '../context-menu/context-menu.service';
