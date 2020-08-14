@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { UserProfile } from './user-preference';
-import { QueryRule, TimebarMetric } from './operation-tabs/map-tab/query-types';
+import { QueryRule, TimebarMetric, TimebarMetric2, RuleNode, deepCopyRuleNode, deepCopyTimebarMetric, deepCopyTimebarMetrics } from './operation-tabs/map-tab/query-types';
 import { BehaviorSubject } from 'rxjs';
 import { GlobalVariableService } from './global-variable.service';
+import { deepCopy } from './constants';
 
 @Injectable({
   providedIn: 'root'
@@ -30,13 +31,31 @@ export class UserProfileService {
     }
   }
 
-  private setTimebarMetrics(t: TimebarMetric[]) {
+  private setTimebarMetrics(t: TimebarMetric2[]) {
     const p = this.getUserProfile();
     if (p) {
-      p.timebarMetrics = t;
+      let t2 = deepCopyTimebarMetrics(t);
+      for (const m of t2) {
+        this.deleteParents(m.rules);
+      }
+      p.timebarMetrics = t2;
       localStorage.setItem('profile', JSON.stringify(p));
     } else {
       localStorage.setItem('profile', JSON.stringify({ timebarMetrics: [] }));
+    }
+  }
+
+  private deleteParents(root: RuleNode) {
+    root.parent = null;
+    for (const child of root.children) {
+      this.deleteParents(child);
+    }
+  }
+
+  addParents(root: RuleNode) {
+    for (const child of root.children) {
+      child.parent = root;
+      this.addParents(child);
     }
   }
 
@@ -120,7 +139,7 @@ export class UserProfileService {
     this.setQueryRules(f);
   }
 
-  getTimebarMetrics(): TimebarMetric[] {
+  getTimebarMetrics(): TimebarMetric2[] {
     const p = this.getUserProfile();
     if (p && p.timebarMetrics) {
       return p.timebarMetrics;
@@ -128,7 +147,7 @@ export class UserProfileService {
     return [];
   }
 
-  saveTimebarMetrics(t: TimebarMetric[]) {
+  saveTimebarMetrics(t: TimebarMetric2[]) {
     this.setTimebarMetrics(t);
   }
 

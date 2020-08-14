@@ -32,6 +32,31 @@ export interface RuleNode {
   parent: RuleNode;
 }
 
+export function deepCopyRuleNode(root: RuleNode): RuleNode {
+  if (!root) {
+    return null;
+  }
+  const r: RuleNode = { r: root.r, children: [], parent: root.parent };
+  for (const child of root.children) {
+    r.children.push(deepCopyRuleNode(child));
+  }
+  return r;
+}
+
+export function deepCopyTimebarMetric(metric: TimebarMetric2): TimebarMetric2 {
+  let r: RuleNode = deepCopyRuleNode(metric.rules);
+  return { className: metric.className, incrementFn: metric.incrementFn, name: metric.name, rules: r, color: metric.color, isEdge: metric.isEdge, isEditing: metric.isEditing };
+}
+
+export function deepCopyTimebarMetrics(metrics: TimebarMetric2[]): TimebarMetric2[] {
+  let t2: TimebarMetric2[] = [];
+  for (const m of metrics) {
+    let r: RuleNode = deepCopyRuleNode(m.rules);
+    t2.push({ className: m.className, incrementFn: m.incrementFn, name: m.name, rules: r, color: m.color, isEdge: m.isEdge, isEditing: m.isEditing });
+  }
+  return t2;
+}
+
 export enum PropertyCategory {
   other = 0, date = 1, finiteSet = 2
 }
@@ -53,7 +78,7 @@ export interface RuleSync {
 }
 
 // 2 type of metric exists: sum or count. 
-// Sum: sums the property value without conditions
+// Sum: sums the property values of elements which satisfy the conditional expressions
 // Count: counts the elements which satisfy the conditional expressions
 export interface TimebarMetric {
   incrementFn: (x: any) => number;
@@ -64,6 +89,17 @@ export interface TimebarMetric {
   isEditing?: boolean;
   color?: string;
 }
+
+export interface TimebarMetric2 {
+  incrementFn: (x: any) => number;
+  rules: RuleNode;
+  name: string;
+  className: string;
+  isEdge?: boolean;
+  isEditing?: boolean;
+  color?: string;
+}
+
 
 export interface TimebarUnitData {
   isBegin: boolean;
@@ -114,7 +150,7 @@ export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules):
   return `if ( (${classCondition}) && (${propertyCondition}))`;
 }
 
-export function getBoolExpressionFromMetric2(m: ClassBasedRules2): string {
+export function getBoolExpressionFromMetric2(m: TimebarMetric2 | ClassBasedRules2): string {
   let classCondition = '';
   // apply class condition
   if (m.className.toLowerCase() == GENERIC_TYPE.EDGES_CLASS.toLowerCase()) {
