@@ -387,11 +387,7 @@ export class Neo4jDb implements DbService {
     } else {
       for (let i = 0; i < node.children.length; i++) {
         if (i != node.children.length - 1) {
-          let op = '&&';
-          if (node.r.ruleOperator == 'OR') {
-            op = '||';
-          }
-          s += ' ' + this.getCondtion4RuleNode(node.children[i]) + ' ' + op;
+          s += ' ' + this.getCondtion4RuleNode(node.children[i]) + ' ' + node.r.ruleOperator;
         } else {
           s += ' ' + this.getCondtion4RuleNode(node.children[i]) + ' ';
         }

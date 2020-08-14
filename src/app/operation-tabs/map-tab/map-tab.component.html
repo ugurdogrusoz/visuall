@@ -41,56 +41,22 @@
       </div>
 
       <!-- rule input -->
-      <app-property-rule (onRuleReady)="addRule2QueryRules($event)" [propertyChanged]="currProperties"
-        [isStrict]="true">
+      <app-property-rule [style.display]="isShowPropertyRule ? 'block' : 'none'"
+        (onRuleReady)="addRule2QueryRules($event)" [propertyChanged]="currProperties" [isStrict]="true">
       </app-property-rule>
 
 
       <div *ngIf="queryRule2 && queryRule2.rules">
         <span class="va-text">
-          Get <b>{{queryRule.className}}</b> where:
+          Get <b>{{queryRule2.className}}</b> where:
         </span>
-        <app-rule-tree [root]="queryRule2.rules" (onRuleRequested)="changeFocus2PropertyRule($event)"
+        <app-rule-tree [root]="queryRule2.rules" (onRuleRequested)="showPropertyRule($event)"
           (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
       </div>
 
       <div class="text-center borderless mx-1 my-3">
-        <div>
-          <div *ngIf="queryRule" class="border">
-            <span class="va-text">
-              Get <b>{{queryRule.className}}</b> where:
-            </span>
-            <div *ngFor="let rule of queryRule.rules; let j = index;" class="mx-1 my-2">
-              <div class="row align-items-center no-gutters">
-                <!-- up, down buttons for the rule -->
-                <div class="col-lg-2 col-sm-1 text-left">
-                  <a href="#" class="mx-1" (click)="changeQueryRuleOrder(j, true)" *ngIf="j!=0">
-                    <img src="assets/img/up-arrow.svg" title="Navigate Up">
-                  </a>
-                  <a href="#" class="nav-down-link" (click)="changeQueryRuleOrder(j, false)" *ngIf="j!=0">
-                    <img src="assets/img/down-arrow.svg" title="Navigate Down">
-                  </a>
-                </div>
-                <!-- rule body -->
-                <div class="col-lg-9 col-sm-10 text-left va-text">
-                  <a href="#" class="logic-op-link text-center mx-1" *ngIf="j!=0"
-                    (click)="ruleOperatorClicked(j, rule.ruleOperator)">{{rule.ruleOperator}}</a>
-                  <b>{{rule.propertyOperand}}</b> {{rule.operator}}
-                  <b *ngIf="rule.enumMapping;else no_enum">{{rule.enumMapping}}</b>
-                  <ng-template #no_enum><b>{{rule.inputOperand}}</b></ng-template>
-                </div>
-                <!-- delete rule button -->
-                <div class="col-1 text-right pr-1">
-                  <a href="#" (click)="deleteQueryRule(j)">
-                    <img src="assets/img/close.svg" title="Delete rule">
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="queryRule">
+        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="queryRule2">
           <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isQueryOnDb" />
             <label class="form-check-label va-text">Database</label>
@@ -107,7 +73,7 @@
           </div>
         </div>
 
-        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="queryRule">
+        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="queryRule2">
           <input class="btn btn-dark va-text m-1" type="button" [value]="changeBtnTxt" (click)="addOrUpdateRule()">
           <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runQuery()">
         </div>

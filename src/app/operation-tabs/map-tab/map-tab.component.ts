@@ -27,7 +27,6 @@ export class MapTabComponent implements OnInit {
   attributeType: string;
   isDateProp: boolean;
   currDatetimes: Date[];
-  queryRule: ClassBasedRules;
   queryRule2: ClassBasedRules2;
   currRuleNode: RuleNode;
   isQueryOnDb: boolean;
@@ -45,6 +44,7 @@ export class MapTabComponent implements OnInit {
   isAddingNewRule = false;
   changeBtnTxt = 'Update';
   currRuleName = 'New rule';
+  isShowPropertyRule = true;
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService,
     private _timebarService: TimebarService, private _profile: UserProfileService) {
@@ -90,14 +90,6 @@ export class MapTabComponent implements OnInit {
     }
   }
 
-  ruleOperatorClicked(j: number, op: string) {
-    if (op == 'OR') {
-      this.queryRule.rules[j].ruleOperator = 'AND';
-    } else {
-      this.queryRule.rules[j].ruleOperator = 'OR';
-    }
-  }
-
   changeSelectedClass() {
     const txt = this.selectedClass;
     let isNodeClassSelected: boolean = properties.nodes.hasOwnProperty(txt);
@@ -119,7 +111,6 @@ export class MapTabComponent implements OnInit {
     setTimeout(() => {
       this.currProperties.next({ properties: this.selectedClassProps, isGenericTypeSelected: isGeneric, selectedClass: this.selectedClass });
     }, 0);
-    this.queryRule2 = { className: txt, isEdge: isEdgeClassSelected, rules: null };
   }
 
   private getEdgeTypesRelated(nodeType: string): string[] {
@@ -141,54 +132,29 @@ export class MapTabComponent implements OnInit {
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
     }
-    if (!this.queryRule) {
-      this.queryRule = { className: this.selectedClass, rules: [r], isEdge: isEdge };
+    r.ruleOperator = null;
+
+    if (!this.queryRule2) {
+      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: { r: r, children: [], parent: null } };
     } else {
-      this.queryRule.rules.push(r);
-    }
-    if (!this.queryRule2.rules) {
-      r.ruleOperator = null;
-      this.queryRule2.rules = { r: r, children: [], parent: null };
-    } else {
-      r.ruleOperator = null;
       this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
     }
     this.isClassTypeLocked = true;
+    this.isShowPropertyRule = false;
   }
 
-  changeFocus2PropertyRule(e: RuleNode) {
+  showPropertyRule(e: RuleNode) {
+    this.isShowPropertyRule = true;
     this.currRuleNode = e;
-  }
-
-  deleteQueryRule(j: number) {
-    if (this.queryRule.rules.length == 1) {
-      this.queryRule = null;
-      this.isClassTypeLocked = false;
-    } else {
-      this.queryRule.rules.splice(j, 1);
-    }
   }
 
   queryRuleDeleted() {
     this.isClassTypeLocked = false;
     this.queryRule2.rules = null;
-  }
-
-  changeQueryRuleOrder(j: number, isUp: boolean) {
-    if ((isUp && j == 0) || (!isUp && j == this.queryRule.rules.length - 1)) {
-      return;
-    }
-    let idx = j + 1;
-    if (isUp) {
-      idx = j - 1;
-    }
-    let tmp = this.queryRule.rules[j];
-    this.queryRule.rules[j] = this.queryRule.rules[idx];
-    this.queryRule.rules[idx] = tmp;
+    this.isShowPropertyRule = true;
   }
 
   runQueryOnClient(cb: (s: number, end: number) => void, cbParams: any[]) {
-    let fnStr = getBoolExpressionFromMetric(this.queryRule) + ' return true; return false;';
     let fnStr2 = getBoolExpressionFromMetric2(this.queryRule2) + ' return true; return false;';
     console.log('function str 2: ', fnStr2);
 
@@ -365,8 +331,8 @@ export class MapTabComponent implements OnInit {
 
   getDataForQueryResult(e: TableRowMeta) {
     let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
-    let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: !this.queryRule.isEdge, labels: e.tableIdx.join(',') }
-    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: this.queryRule.isEdge }, historyMeta);
+    let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: !this.queryRule2.isEdge, labels: e.tableIdx.join(',') }
+    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: this.queryRule2.isEdge }, historyMeta);
   }
 
   resetRule() {
@@ -398,6 +364,7 @@ export class MapTabComponent implements OnInit {
 
   editRule(i: number) {
     let curr = this.currRules[i];
+    this.isShowPropertyRule = true;
     if (curr.isEditing) {
       return;
     }
@@ -411,7 +378,7 @@ export class MapTabComponent implements OnInit {
     this.isQueryOnDb = curr.isOnDb;
     this.tableInput.isMergeGraph = curr.isMergeGraph;
     this.tableInput.isLoadGraph = curr.isLoadGraph;
-    this.selectedClass = this.queryRule.className;
+    this.selectedClass = this.queryRule2.className;
     this.changeSelectedClass();
     this.isClassTypeLocked = true;
     this._profile.saveQueryRules(this.currRules);
