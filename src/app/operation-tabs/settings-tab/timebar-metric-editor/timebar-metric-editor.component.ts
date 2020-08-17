@@ -177,7 +177,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.isAddingNew = false;
       this.editingIdx = i;
       this.currMetrics[i].isEditing = true;
-      this.filteringRule2 = deepCopyTimebarMetric(this.currMetrics[i]);
+      this.filteringRule2 = this.currMetrics[i];
       this.currRuleNode = this.filteringRule2.rules;
       this.currMetricName = this.currMetrics[i].name;
       this.currMetricColor = this.currMetrics[i].color;
@@ -309,7 +309,6 @@ export class TimebarMetricEditorComponent implements OnInit {
       m.isEditing = false;
     }
     this.editingIdx = -1;
-    this._profile.saveTimebarMetrics(this.currMetrics);
   }
 
   private getEdgeTypesRelated(): string[] {
