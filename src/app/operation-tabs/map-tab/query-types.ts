@@ -43,6 +43,20 @@ export function deepCopyRuleNode(root: RuleNode): RuleNode {
   return r;
 }
 
+export function deepCopyQueryRule(m: QueryRule): QueryRule {
+  let r: RuleNode = deepCopyRuleNode(m.rules.rules);
+  let rules: ClassBasedRules2 = { className: m.rules.className, isEdge: m.rules.isEdge, rules: r };
+  return { isEditing: m.isEditing, isLoadGraph: m.isLoadGraph, isMergeGraph: m.isMergeGraph, isOnDb: m.isOnDb, name: m.name, rules: rules };
+}
+
+export function deepCopyQueryRules(metrics: QueryRule[]): QueryRule[] {
+  let t2: QueryRule[] = [];
+  for (const m of metrics) {
+    t2.push(deepCopyQueryRule(m));
+  }
+  return t2;
+}
+
 export function deepCopyTimebarMetric(metric: TimebarMetric2): TimebarMetric2 {
   let r: RuleNode = deepCopyRuleNode(metric.rules);
   return { className: metric.className, incrementFn: metric.incrementFn, name: metric.name, rules: r, color: metric.color, isEdge: metric.isEdge, isEditing: metric.isEditing };
@@ -51,8 +65,7 @@ export function deepCopyTimebarMetric(metric: TimebarMetric2): TimebarMetric2 {
 export function deepCopyTimebarMetrics(metrics: TimebarMetric2[]): TimebarMetric2[] {
   let t2: TimebarMetric2[] = [];
   for (const m of metrics) {
-    let r: RuleNode = deepCopyRuleNode(m.rules);
-    t2.push({ className: m.className, incrementFn: m.incrementFn, name: m.name, rules: r, color: m.color, isEdge: m.isEdge, isEditing: m.isEditing });
+    t2.push(deepCopyTimebarMetric(m));
   }
   return t2;
 }

@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import properties from '../../../assets/generated/properties.json';
-import { GENERIC_TYPE, deepCopy, COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from '../../constants';
+import { GENERIC_TYPE, COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from '../../constants';
 import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
-import { ClassOption, ClassBasedRules, Rule, RuleSync, getBoolExpressionFromMetric, QueryRule, ClassBasedRules2, RuleNode, getBoolExpressionFromMetric2 } from './query-types';
+import { ClassOption, Rule, RuleSync, QueryRule, ClassBasedRules2, RuleNode, getBoolExpressionFromMetric2, deepCopyRuleNode } from './query-types';
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from 'src/app/table-view/table-view-types';
@@ -58,9 +58,7 @@ export class MapTabComponent implements OnInit {
       if (!x) {
         return;
       }
-      if (this._profile.isStoreProfile()) {
-        this.currRules = this._profile.getQueryRules();
-      }
+      this.setCurrRulesFromLocalStorage();
     });
   }
 
@@ -78,15 +76,23 @@ export class MapTabComponent implements OnInit {
       this.classOptions.push({ text: key, isDisabled: false });
     }
 
-    if (this._profile.isStoreProfile()) {
-      this.currRules = this._profile.getQueryRules();
-    }
+    this.setCurrRulesFromLocalStorage();
     let i = this.getEditingRuleIdx();
     if (i > -1) {
       this.currRules[i].isEditing = false; // simulate click
       this.editRule(i);
     } else {
       this.newRuleClick();
+    }
+  }
+
+  private setCurrRulesFromLocalStorage() {
+    if (this._profile.isStoreProfile()) {
+      let storedRules = this._profile.getQueryRules();
+      for (const m of storedRules) {
+        this._profile.addParents(m.rules.rules);
+      }
+      this.currRules = storedRules;
     }
   }
 
@@ -134,8 +140,9 @@ export class MapTabComponent implements OnInit {
     }
     r.ruleOperator = null;
 
-    if (!this.queryRule2) {
-      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: { r: r, children: [], parent: null } };
+    if (!this.queryRule2 || !this.queryRule2.rules) {
+      this.currRuleNode = { r: r, children: [], parent: null };
+      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: this.currRuleNode };
     } else {
       this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
     }
@@ -364,7 +371,7 @@ export class MapTabComponent implements OnInit {
 
   editRule(i: number) {
     let curr = this.currRules[i];
-    this.isShowPropertyRule = true;
+    this.isShowPropertyRule = false;
     if (curr.isEditing) {
       return;
     }
@@ -373,7 +380,8 @@ export class MapTabComponent implements OnInit {
     this.resetRule();
     this.resetEditingRules();
     curr.isEditing = true;
-    this.queryRule2 = deepCopy(curr.rules);
+    // this.queryRule2 = { className: curr.rules.className, isEdge: curr.rules.isEdge, rules: deepCopyRuleNode(curr.rules.rules) };
+    this.queryRule2 = curr.rules;
     this.currRuleName = curr.name;
     this.isQueryOnDb = curr.isOnDb;
     this.tableInput.isMergeGraph = curr.isMergeGraph;
@@ -381,14 +389,12 @@ export class MapTabComponent implements OnInit {
     this.selectedClass = this.queryRule2.className;
     this.changeSelectedClass();
     this.isClassTypeLocked = true;
-    this._profile.saveQueryRules(this.currRules);
   }
 
   resetEditingRules() {
     for (let i = 0; i < this.currRules.length; i++) {
       this.currRules[i].isEditing = false;
     }
-    this._profile.saveQueryRules(this.currRules);
   }
 
   deleteRule(i: number) {
@@ -403,13 +409,14 @@ export class MapTabComponent implements OnInit {
     this.isAddingNewRule = true;
     this.changeBtnTxt = 'Add';
     this.currRuleName = 'New rule';
+    this.isShowPropertyRule = true;
     this.resetEditingRules();
     this.resetRule();
   }
 
   private updateRule() {
     let idx = this.getEditingRuleIdx();
-    this.currRules[idx].rules = deepCopy(this.queryRule2);
+    this.currRules[idx].rules = { className: this.queryRule2.className, isEdge: this.queryRule2.isEdge, rules: deepCopyRuleNode(this.queryRule2.rules) };
     this.currRules[idx].name = this.currRuleName;
     this.currRules[idx].isLoadGraph = this.tableInput.isLoadGraph;
     this.currRules[idx].isMergeGraph = this.tableInput.isMergeGraph;
@@ -431,7 +438,7 @@ export class MapTabComponent implements OnInit {
     }
     this.resetEditingRules();
     this.currRules.push({
-      rules: deepCopy(this.queryRule2),
+      rules: { className: this.queryRule2.className, isEdge: this.queryRule2.isEdge, rules: deepCopyRuleNode(this.queryRule2.rules) },
       name: this.currRuleName, isEditing: true, isOnDb: this.isQueryOnDb, isLoadGraph: this.tableInput.isLoadGraph, isMergeGraph: this.tableInput.isMergeGraph
     });
     this.isAddingNewRule = false;
