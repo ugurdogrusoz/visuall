@@ -22,8 +22,8 @@ app.listen(port);
 app.get('/urlquery/*', function (req, res) {
 	var reqURL = req.url.substr(10);
 	var data = [];
-	if(reqURL.substr(0,5).toLowerCase() == "https"){
-		var request = https.request(reqURL, function (response, body) {
+	if(reqURL.substr(0,5).toLowerCase() != "https" && reqURL.substr(0,5).toLowerCase() == "http"){
+		var request = http.request(reqURL, function (response, body) {
 			response.on('data', function (chunk) {
 				 data.push(chunk);
 			});
@@ -33,9 +33,15 @@ app.get('/urlquery/*', function (req, res) {
 
 			});
 		});
+		request.on('error', function (e) {
+			console.log(e.message);
+		});
 	}
 	else{
-		var request = http.request(reqURL, function (response, body) {
+		if (reqURL.substr(0,5).toLowerCase() != "http"){
+				reqURL = "https://" + reqURL;
+		}
+		var request = https.request(reqURL, function (response, body) {
 			response.on('data', function (chunk) {
 				data.push(chunk);
 			});
@@ -45,10 +51,11 @@ app.get('/urlquery/*', function (req, res) {
 
 			});
 		});
+		request.on('error', function (e) {
+			console.log(e.message);
+		});
 	}
-	request.on('error', function (e) {
-		console.log(e.message);
-	});
+	
 	request.end();
 });
 
