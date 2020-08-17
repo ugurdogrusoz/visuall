@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserProfile } from './user-preference';
-import { QueryRule, TimebarMetric } from './operation-tabs/map-tab/query-types';
+import { QueryRule, TimebarMetric, RuleNode, deepCopyTimebarMetrics, deepCopyQueryRules } from './operation-tabs/map-tab/query-types';
 import { BehaviorSubject } from 'rxjs';
 import { GlobalVariableService } from './global-variable.service';
 
@@ -20,23 +20,17 @@ export class UserProfileService {
     return JSON.parse(p) as UserProfile;
   }
 
-  private setQueryRules(f: QueryRule[]) {
-    const p = this.getUserProfile();
-    if (p) {
-      p.queryRules = f;
-      localStorage.setItem('profile', JSON.stringify(p));
-    } else {
-      localStorage.setItem('profile', JSON.stringify({ queryRules: [] }));
+  private deleteParents(root: RuleNode) {
+    root.parent = null;
+    for (const child of root.children) {
+      this.deleteParents(child);
     }
   }
 
-  private setTimebarMetrics(t: TimebarMetric[]) {
-    const p = this.getUserProfile();
-    if (p) {
-      p.timebarMetrics = t;
-      localStorage.setItem('profile', JSON.stringify(p));
-    } else {
-      localStorage.setItem('profile', JSON.stringify({ timebarMetrics: [] }));
+  addParents(root: RuleNode) {
+    for (const child of root.children) {
+      child.parent = root;
+      this.addParents(child);
     }
   }
 
@@ -117,7 +111,17 @@ export class UserProfileService {
   }
 
   saveQueryRules(f: QueryRule[]) {
-    this.setQueryRules(f);
+    const p = this.getUserProfile();
+    if (p) {
+      let m2 = deepCopyQueryRules(f);
+      for (const m of m2) {
+        this.deleteParents(m.rules.rules);
+      }
+      p.queryRules = m2;
+      localStorage.setItem('profile', JSON.stringify(p));
+    } else {
+      localStorage.setItem('profile', JSON.stringify({ queryRules: [] }));
+    }
   }
 
   getTimebarMetrics(): TimebarMetric[] {
@@ -129,7 +133,17 @@ export class UserProfileService {
   }
 
   saveTimebarMetrics(t: TimebarMetric[]) {
-    this.setTimebarMetrics(t);
+    const p = this.getUserProfile();
+    if (p) {
+      let t2 = deepCopyTimebarMetrics(t);
+      for (const m of t2) {
+        this.deleteParents(m.rules);
+      }
+      p.timebarMetrics = t2;
+      localStorage.setItem('profile', JSON.stringify(p));
+    } else {
+      localStorage.setItem('profile', JSON.stringify({ timebarMetrics: [] }));
+    }
   }
 
   transferUserPrefs() {

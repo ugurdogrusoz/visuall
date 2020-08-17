@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
 import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
-import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/query-types';
+import { Rule, ClassBasedRules, RuleNode } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE } from '../constants';
 import AppDescription from '../../assets/app_description.json';
 import properties from '../../assets/generated/properties.json'
@@ -58,12 +58,12 @@ export class Neo4jDb implements DbService {
   }
 
   getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    const cql = this.rule2cql(rules, skip, limit, type, filter);
+    const cql = this.rule2cql2(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
   filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    const cql = this.rule2cql(rules, skip, limit, type, filter);
+    const cql = this.rule2cql2(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
@@ -261,14 +261,14 @@ export class Neo4jDb implements DbService {
   }
 
   // ------------------------------------------------- methods for conversion to CQL -------------------------------------------------
-  private rule2cql(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
+  private rule2cql2(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
     let query = '';
-    query += this.getCql4Rules(rules, filter);
+    query += this.getCql4Rules2(rules, filter);
     query += this.generateFinalQueryBlock(filter, skip, limit, type);
     return query;
   }
 
-  private getCql4Rules(rule: ClassBasedRules, filter: TableFiltering = null) {
+  private getCql4Rules2(rule: ClassBasedRules, filter: TableFiltering = null) {
     let isGenericType = false;
     if (rule.className == GENERIC_TYPE.ANY_CLASS || rule.className == GENERIC_TYPE.EDGES_CLASS || rule.className == GENERIC_TYPE.NODES_CLASS) {
       isGenericType = true;
@@ -292,18 +292,8 @@ export class Neo4jDb implements DbService {
       matchClause = `OPTIONAL MATCH (x${classFilter})\n`;
     }
 
-    const rules = rule.rules;
-    if (!rules || rules.length < 1)
-      return '';
+    let conditions = this.getCondtion4RuleNode(rule.rules);
 
-    let whereClauseItems = [];
-    for (let i = 0; i < rules.length; i++) {
-      whereClauseItems.push(this.getCondition4Rule(rules[i]));
-      if (i < rules.length - 1) {
-        whereClauseItems.push(rules[i + 1].ruleOperator);
-      }
-    }
-    let conditions = whereClauseItems.join(' ');
     if (filter != null && filter.txt.length > 0) {
       let s = this.getCondition4TxtFilter(rule.isEdge, rule.className, filter.txt);
       conditions = '(' + conditions + ') AND ' + s;
@@ -337,6 +327,22 @@ export class Neo4jDb implements DbService {
     s = s.slice(0, -3)
     s = '(' + s + ')'
     return s;
+  }
+
+  private getCondtion4RuleNode(node: RuleNode): string {
+    let s = '(';
+    if (!node.r.ruleOperator) {
+      s += ' ' + this.getCondition4Rule(node.r) + ' ';
+    } else {
+      for (let i = 0; i < node.children.length; i++) {
+        if (i != node.children.length - 1) {
+          s += ' ' + this.getCondtion4RuleNode(node.children[i]) + ' ' + node.r.ruleOperator;
+        } else {
+          s += ' ' + this.getCondtion4RuleNode(node.children[i]) + ' ';
+        }
+      }
+    }
+    return s + ')';
   }
 
   private getCondition4Rule(rule: Rule): string {
