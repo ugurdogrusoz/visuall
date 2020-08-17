@@ -5,7 +5,7 @@ import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
-import { ClassOption, Rule, RuleSync, QueryRule, ClassBasedRules2, RuleNode, getBoolExpressionFromMetric2, deepCopyRuleNode } from './query-types';
+import { ClassOption, Rule, RuleSync, QueryRule, ClassBasedRules, RuleNode, getBoolExpressionFromMetric, deepCopyRuleNode } from './query-types';
 import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from 'src/app/table-view/table-view-types';
@@ -27,7 +27,7 @@ export class MapTabComponent implements OnInit {
   attributeType: string;
   isDateProp: boolean;
   currDatetimes: Date[];
-  queryRule2: ClassBasedRules2;
+  queryRule2: ClassBasedRules;
   currRuleNode: RuleNode;
   isQueryOnDb: boolean;
   currProperties: Subject<RuleSync> = new Subject();
@@ -162,7 +162,7 @@ export class MapTabComponent implements OnInit {
   }
 
   runQueryOnClient(cb: (s: number, end: number) => void, cbParams: any[]) {
-    let fnStr2 = getBoolExpressionFromMetric2(this.queryRule2) + ' return true; return false;';
+    let fnStr2 = getBoolExpressionFromMetric(this.queryRule2) + ' return true; return false;';
     console.log('function str 2: ', fnStr2);
 
     let filteredClassElems = this._g.cy.filter(new Function('x', fnStr2));

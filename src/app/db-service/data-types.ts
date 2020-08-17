@@ -1,12 +1,12 @@
-import { ClassBasedRules, ClassBasedRules2 } from '../operation-tabs/map-tab/query-types';
+import { ClassBasedRules } from '../operation-tabs/map-tab/query-types';
 import { TableFiltering } from '../table-view/table-view-types';
 
 export interface DbService {
   getNeighbors(elemIds: string[], callback: (x: GraphResponse) => any);
   getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta);
   getSampleData(callback: (x: GraphResponse) => any);
-  getFilteringResult(rules: ClassBasedRules2, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
-  filterTable(rules: ClassBasedRules2, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
+  filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
 }
 
 export interface GraphResponse {

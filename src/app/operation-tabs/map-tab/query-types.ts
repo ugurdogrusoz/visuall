@@ -2,7 +2,7 @@ import { GENERIC_TYPE, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS } f
 
 export interface QueryRule {
   name: string;
-  rules: ClassBasedRules2;
+  rules: ClassBasedRules;
   isEditing: boolean;
   isOnDb: boolean;
   isLoadGraph: boolean;
@@ -15,12 +15,6 @@ export interface ClassOption {
 }
 
 export interface ClassBasedRules {
-  className: string;
-  rules: Rule[];
-  isEdge: boolean;
-}
-
-export interface ClassBasedRules2 {
   className: string;
   rules: RuleNode;
   isEdge: boolean;
@@ -45,7 +39,7 @@ export function deepCopyRuleNode(root: RuleNode): RuleNode {
 
 export function deepCopyQueryRule(m: QueryRule): QueryRule {
   let r: RuleNode = deepCopyRuleNode(m.rules.rules);
-  let rules: ClassBasedRules2 = { className: m.rules.className, isEdge: m.rules.isEdge, rules: r };
+  let rules: ClassBasedRules = { className: m.rules.className, isEdge: m.rules.isEdge, rules: r };
   return { isEditing: m.isEditing, isLoadGraph: m.isLoadGraph, isMergeGraph: m.isMergeGraph, isOnDb: m.isOnDb, name: m.name, rules: rules };
 }
 
@@ -57,13 +51,13 @@ export function deepCopyQueryRules(metrics: QueryRule[]): QueryRule[] {
   return t2;
 }
 
-export function deepCopyTimebarMetric(metric: TimebarMetric2): TimebarMetric2 {
+export function deepCopyTimebarMetric(metric: TimebarMetric): TimebarMetric {
   let r: RuleNode = deepCopyRuleNode(metric.rules);
   return { className: metric.className, incrementFn: metric.incrementFn, name: metric.name, rules: r, color: metric.color, isEdge: metric.isEdge, isEditing: metric.isEditing };
 }
 
-export function deepCopyTimebarMetrics(metrics: TimebarMetric2[]): TimebarMetric2[] {
-  let t2: TimebarMetric2[] = [];
+export function deepCopyTimebarMetrics(metrics: TimebarMetric[]): TimebarMetric[] {
+  let t2: TimebarMetric[] = [];
   for (const m of metrics) {
     t2.push(deepCopyTimebarMetric(m));
   }
@@ -95,16 +89,6 @@ export interface RuleSync {
 // Count: counts the elements which satisfy the conditional expressions
 export interface TimebarMetric {
   incrementFn: (x: any) => number;
-  rules: Rule[];
-  name: string;
-  className: string;
-  isEdge?: boolean;
-  isEditing?: boolean;
-  color?: string;
-}
-
-export interface TimebarMetric2 {
-  incrementFn: (x: any) => number;
   rules: RuleNode;
   name: string;
   className: string;
@@ -127,43 +111,6 @@ export interface TimebarItem {
 }
 
 export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules): string {
-  let classCondition = '';
-  // apply class condition
-  if (m.className.toLowerCase() == GENERIC_TYPE.EDGES_CLASS.toLowerCase()) {
-    classCondition = ` x.isEdge() `;
-  } else if (m.className.toLowerCase() == GENERIC_TYPE.NODES_CLASS.toLowerCase()) {
-    classCondition = ` x.isNode() `;
-  } else if (m.className.toLowerCase() == GENERIC_TYPE.ANY_CLASS.toLowerCase()) {
-    classCondition = ` true `;
-  } else {
-    classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;
-  }
-
-  let propertyCondition = '';
-  let prevBoolExp = '';
-  for (let [i, r] of m.rules.entries()) {
-    let boolExp = '';
-    // apply property condition
-    if (r.operator != null && r.operator != undefined && r.inputOperand != null && r.inputOperand != undefined) {
-      boolExp = getJsExpressionForMetricRule(r);
-    }
-    if (i > 0 && prevBoolExp.length > 0) {
-      if (r.ruleOperator == 'OR') {
-        propertyCondition += ' || ';
-      } else {
-        propertyCondition += ' && ';
-      }
-    }
-    propertyCondition += boolExp;
-    prevBoolExp = boolExp;
-  }
-  if (propertyCondition.length < 1) {
-    return `if (${classCondition})`;
-  }
-  return `if ( (${classCondition}) && (${propertyCondition}))`;
-}
-
-export function getBoolExpressionFromMetric2(m: TimebarMetric2 | ClassBasedRules2): string {
   let classCondition = '';
   // apply class condition
   if (m.className.toLowerCase() == GENERIC_TYPE.EDGES_CLASS.toLowerCase()) {
@@ -209,7 +156,6 @@ function getBoolExpressionFromRuleNode(node: RuleNode) {
   return s + ')';
 }
 
-
 function getJsExpressionForMetricRule(r: Rule) {
   if (r.operator == 'One of') {
     let s = r.inputOperand;
@@ -253,28 +199,6 @@ function getJsExpressionForMetricRule(r: Rule) {
   }
 }
 
-export function rule2str(r: ClassBasedRules): string {
-  let s = `<b>${r.className}</b>`;
-  if (r.rules.length == 1 && !r.rules[0].propertyType) {
-    return s;
-  }
-  if (r.rules.length > 0) {
-    s += ' where ';
-  }
-  for (let i = 0; i < r.rules.length; i++) {
-    let curr = r.rules[i];
-    let inp = '' + curr.inputOperand;
-    if (curr.propertyType == 'string') {
-      inp = `"${inp}"`;
-    }
-    s += ` (<b>${curr.propertyOperand}</b> ${curr.operator} <b>${inp}</b>) `;
-    if (i != r.rules.length - 1) {
-      s += r.rules[i + 1].ruleOperator;
-    }
-  }
-  return s;
-}
-
 function r2str(curr: Rule) {
   let s = '';
   let inp = '' + curr.inputOperand;
@@ -285,7 +209,7 @@ function r2str(curr: Rule) {
   return s;
 }
 
-export function rule2str2(r: ClassBasedRules2): string {
+export function rule2str2(r: ClassBasedRules): string {
   let s = `<b>${r.className}</b>`;
   if (r.rules.children.length == 0 || !r.rules.children[0].r.propertyType) {
     return s;

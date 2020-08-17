@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
 import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
-import { ClassBasedRules, Rule, ClassBasedRules2, RuleNode } from '../operation-tabs/map-tab/query-types';
+import { Rule, ClassBasedRules, RuleNode } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE } from '../constants';
 import AppDescription from '../../assets/app_description.json';
 import properties from '../../assets/generated/properties.json'
@@ -57,12 +57,12 @@ export class Neo4jDb implements DbService {
     this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 100`, callback);
   }
 
-  getFilteringResult(rules: ClassBasedRules2, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     const cql = this.rule2cql2(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
-  filterTable(rules: ClassBasedRules2, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+  filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
     const cql = this.rule2cql2(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
@@ -261,65 +261,14 @@ export class Neo4jDb implements DbService {
   }
 
   // ------------------------------------------------- methods for conversion to CQL -------------------------------------------------
-  private rule2cql(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
-    let query = '';
-    query += this.getCql4Rules(rules, filter);
-    query += this.generateFinalQueryBlock(filter, skip, limit, type);
-    return query;
-  }
-
-  private rule2cql2(rules: ClassBasedRules2, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
+  private rule2cql2(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
     let query = '';
     query += this.getCql4Rules2(rules, filter);
     query += this.generateFinalQueryBlock(filter, skip, limit, type);
     return query;
   }
 
-  private getCql4Rules(rule: ClassBasedRules, filter: TableFiltering = null) {
-    let isGenericType = false;
-    if (rule.className == GENERIC_TYPE.ANY_CLASS || rule.className == GENERIC_TYPE.EDGES_CLASS || rule.className == GENERIC_TYPE.NODES_CLASS) {
-      isGenericType = true;
-    }
-    let classFilter = ':' + rule.className;
-    if (isGenericType) {
-      classFilter = '';
-    }
-    let matchClause: string;
-    if (rule.isEdge) {
-      let s = AppDescription.relations[rule.className].source;
-      let t = AppDescription.relations[rule.className].target;
-      let conn = '>';
-      let isBidirectional = AppDescription.relations[rule.className].isBidirectional;
-      if (isBidirectional) {
-        conn = '';
-      }
-      matchClause = `OPTIONAL MATCH (:${s})-[x${classFilter}]-${conn}(:${t})\n`;
-    }
-    else {
-      matchClause = `OPTIONAL MATCH (x${classFilter})\n`;
-    }
-
-    const rules = rule.rules;
-    if (!rules || rules.length < 1)
-      return '';
-
-    let whereClauseItems = [];
-    for (let i = 0; i < rules.length; i++) {
-      whereClauseItems.push(this.getCondition4Rule(rules[i]));
-      if (i < rules.length - 1) {
-        whereClauseItems.push(rules[i + 1].ruleOperator);
-      }
-    }
-    let conditions = whereClauseItems.join(' ');
-    if (filter != null && filter.txt.length > 0) {
-      let s = this.getCondition4TxtFilter(rule.isEdge, rule.className, filter.txt);
-      conditions = '(' + conditions + ') AND ' + s;
-    }
-
-    return matchClause + 'WHERE ' + conditions + '\n';
-  }
-
-  private getCql4Rules2(rule: ClassBasedRules2, filter: TableFiltering = null) {
+  private getCql4Rules2(rule: ClassBasedRules, filter: TableFiltering = null) {
     let isGenericType = false;
     if (rule.className == GENERIC_TYPE.ANY_CLASS || rule.className == GENERIC_TYPE.EDGES_CLASS || rule.className == GENERIC_TYPE.NODES_CLASS) {
       isGenericType = true;

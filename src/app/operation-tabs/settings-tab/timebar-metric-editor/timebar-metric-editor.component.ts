@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
 import AppDescription from '../../../../assets/app_description.json';
-import { ClassOption, TimebarMetric, TimebarMetric2, Rule, RuleSync, getBoolExpressionFromMetric2, RuleNode, deepCopyRuleNode, deepCopyTimebarMetric } from '../../map-tab/query-types';
+import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric, RuleNode, deepCopyTimebarMetric } from '../../map-tab/query-types';
 import { GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { Subject } from 'rxjs';
@@ -18,8 +18,8 @@ export class TimebarMetricEditorComponent implements OnInit {
   classOptions: ClassOption[];
   selectedClassProps: string[];
   selectedClass: string;
-  filteringRule2: TimebarMetric2;
-  currMetrics: TimebarMetric2[];
+  filteringRule2: TimebarMetric;
+  currMetrics: TimebarMetric[];
   currMetricName: string = 'new';
   currMetricColor: string = null;
   isAClassSelectedForMetric = false;
@@ -242,7 +242,7 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   private setFnsForMetrics() {
     for (let m of this.currMetrics) {
-      let fnStr = getBoolExpressionFromMetric2(m);
+      let fnStr = getBoolExpressionFromMetric(m);
       console.log(' bool expr for fn: ', fnStr);
       const isS = this.isSumRule(m.rules.r);
       if (isS) {

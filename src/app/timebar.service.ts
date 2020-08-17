@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GlobalVariableService } from './global-variable.service';
 import AppDescription from '../assets/app_description.json';
-import { TimebarMetric, TimebarMetric2 } from './operation-tabs/map-tab/query-types';
+import { TimebarMetric } from './operation-tabs/map-tab/query-types';
 import { Timebar } from '../lib/timebar/Timebar';
 import { BehaviorSubject } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class TimebarService {
 
-  shownMetrics = new BehaviorSubject<TimebarMetric2[]>(null);
+  shownMetrics = new BehaviorSubject<TimebarMetric[]>(null);
   isRandomizedLayout = false;
   private _timebarExt: Timebar;
   private _playingPeriod: number;

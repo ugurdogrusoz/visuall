@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserProfile } from './user-preference';
-import { QueryRule, TimebarMetric2, RuleNode, deepCopyTimebarMetrics, deepCopyQueryRules } from './operation-tabs/map-tab/query-types';
+import { QueryRule, TimebarMetric, RuleNode, deepCopyTimebarMetrics, deepCopyQueryRules } from './operation-tabs/map-tab/query-types';
 import { BehaviorSubject } from 'rxjs';
 import { GlobalVariableService } from './global-variable.service';
 
@@ -124,7 +124,7 @@ export class UserProfileService {
     }
   }
 
-  getTimebarMetrics(): TimebarMetric2[] {
+  getTimebarMetrics(): TimebarMetric[] {
     const p = this.getUserProfile();
     if (p && p.timebarMetrics) {
       return p.timebarMetrics;
@@ -132,7 +132,7 @@ export class UserProfileService {
     return [];
   }
 
-  saveTimebarMetrics(t: TimebarMetric2[]) {
+  saveTimebarMetrics(t: TimebarMetric[]) {
     const p = this.getUserProfile();
     if (p) {
       let t2 = deepCopyTimebarMetrics(t);
