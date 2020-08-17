@@ -16,7 +16,6 @@ export class URLLoadService {
     private _cyService: CytoscapeService) { }
 
   init() {
-
     this.route.queryParams.subscribe(async params => {
       //if there is a URL query, getData() is invoked, otherwise nothing
       this.url = await params['URL'];
@@ -25,26 +24,15 @@ export class URLLoadService {
   }
 
   getData() {
-    if (typeof this.url !== 'undefined') {
-      //if url is not null, get the data from the given route else wait for 200 ms and try again
-      this.http.get<any>(('urlquery/' + this.url), {
-        headers: { 'Content-Type': 'application/json' }
-        , observe: "body", responseType: "text" as "json"
-      }).subscribe(async data => {
 
-        this.data = new File([await data], 'Graph', { type: 'text', lastModified: Date.now() });
-
-        //data is taken as json and given to cytoscape's loadFile method as it is in navbar load
-        this._cyService.loadFile(this.data);
-      },
-        (err: HttpErrorResponse) => {
-          console.log(err.message);
-        }
-      );
-    }
-    else {
-      setTimeout(this.getData, 200);
-    }
+    this.http.get<any>(this.url, { responseType: 'blob' as 'json' }).subscribe(async data => {
+      this.data = new File([await data], 'Graph', { type: 'txt', lastModified: Date.now() });
+      //data is taken as json and given to cytoscape's loadFile method as it is in navbar load
+      this._cyService.loadFile(this.data);
+    },
+      (err: HttpErrorResponse) => {
+        console.log(err.message);
+      }
+    );
   }
-
 }
