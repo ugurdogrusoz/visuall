@@ -194,6 +194,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.isAddingNew = !this.isAddingNew;
     if (this.isAddingNew) {
       this.isHideEditing = false;
+      this.isShowPropertyRule = true;
     }
     if (!this.isHideEditing) {
       this.clearInput();

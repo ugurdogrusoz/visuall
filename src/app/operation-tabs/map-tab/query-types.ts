@@ -174,7 +174,11 @@ export function getBoolExpressionFromMetric2(m: TimebarMetric2 | ClassBasedRules
 function getBoolExpressionFromRuleNode(node: RuleNode) {
   let s = '(';
   if (!node.r.ruleOperator) {
-    s += ' ' + getJsExpressionForMetricRule(node.r) + ' ';
+    if (node.r.propertyType) {
+      s += ' ' + getJsExpressionForMetricRule(node.r) + ' ';
+    } else {
+      s += 'true';
+    }
   } else {
     for (let i = 0; i < node.children.length; i++) {
       if (i != node.children.length - 1) {
