@@ -1,7 +1,6 @@
 //Install express server
 const express = require('express');
 const http = require('http');
-const url = require('url');
 const bodyParser = require('body-parser');
 const path = require('path');
 var https = require('https');
@@ -22,41 +21,43 @@ app.listen(port);
 app.get('/urlquery/*', function (req, res) {
 	var reqURL = req.url.substr(10);
 	var data = [];
-	if(reqURL.substr(0,5).toLowerCase() != "https" && reqURL.substr(0,5).toLowerCase() == "http"){
+	if (reqURL.substr(0, 5).toLowerCase() != "https" && reqURL.substr(0, 5).toLowerCase() == "http") {
 		var request = http.request(reqURL, function (response, body) {
 			response.on('data', function (chunk) {
-				 data.push(chunk);
+				data.push(chunk);
 			});
 			response.on('end', function () {
-			var result = JSON.parse(data.join(''))
-			res.send(result);
+				var result = JSON.parse(data.join(''))
+				res.send(result);
 
 			});
 		});
 		request.on('error', function (e) {
 			console.log(e.message);
 		});
+		request.end();
 	}
-	else{
-		if (reqURL.substr(0,5).toLowerCase() != "http"){
-				reqURL = "https://" + reqURL;
+	else {
+		if (reqURL.substr(0, 5).toLowerCase() != "http") {
+			reqURL = "https://" + reqURL;
 		}
 		var request = https.request(reqURL, function (response, body) {
 			response.on('data', function (chunk) {
 				data.push(chunk);
 			});
 			response.on('end', function () {
-			var result = JSON.parse(data.join(''))
-			res.send(result);
+				var result = JSON.parse(data.join(''))
+				res.send(result);
 
 			});
 		});
 		request.on('error', function (e) {
 			console.log(e.message);
 		});
+		request.end();
 	}
-	
-	request.end();
+
+
 });
 
 app.get('/*', function (req, res) {

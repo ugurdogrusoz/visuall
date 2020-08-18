@@ -31,7 +31,6 @@
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
     "core-js": "^3.6.5",
-    "cors": "^2.8.5",
     "css": "^3.0.0",
     "cytoscape": "^3.15.2",
     "cytoscape-cise": "github:iVis-at-Bilkent/cytoscape.js-cise#develop",
@@ -53,7 +52,6 @@
     "querystring": "^0.2.0",
     "rxjs": "^6.6.0",
     "tslib": "^2.0.0",
-    "url": "^0.11.0",
     "zone.js": "^0.10.3"
   },
   "devDependencies": {
