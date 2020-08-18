@@ -21,7 +21,7 @@ app.listen(port);
 app.get('/urlquery/*', function (req, res) {
 	var reqURL = req.url.substr(10);
 	var data = [];
-	if (reqURL.substr(0, 5).toLowerCase() != "https" && reqURL.substr(0, 5).toLowerCase() == "http") {
+	if (reqURL.substr(0, 5).toLowerCase() != "https" && reqURL.substr(0, 4).toLowerCase() == "http") {
 		var request = http.request(reqURL, function (response, body) {
 			response.on('data', function (chunk) {
 				data.push(chunk);
@@ -38,7 +38,7 @@ app.get('/urlquery/*', function (req, res) {
 		request.end();
 	}
 	else {
-		if (reqURL.substr(0, 5).toLowerCase() != "http") {
+		if (reqURL.substr(0, 4).toLowerCase() != "http") {
 			reqURL = "https://" + reqURL;
 		}
 		var request = https.request(reqURL, function (response, body) {
