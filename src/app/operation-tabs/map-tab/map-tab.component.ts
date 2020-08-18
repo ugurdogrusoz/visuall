@@ -27,7 +27,7 @@ export class MapTabComponent implements OnInit {
   attributeType: string;
   isDateProp: boolean;
   currDatetimes: Date[];
-  queryRule2: ClassBasedRules;
+  queryRule: ClassBasedRules;
   currRuleNode: RuleNode;
   isQueryOnDb: boolean;
   currProperties: BehaviorSubject<RuleSync> = new BehaviorSubject(null);
@@ -135,11 +135,11 @@ export class MapTabComponent implements OnInit {
   initRules(s: 'AND' | 'OR' | 'C') {
     const isEdge = properties.edges[this.selectedClass] != undefined;
     if (s == 'AND' || s == 'OR') {
-      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: { r: { ruleOperator: s }, children: [], parent: null } };
+      this.queryRule = { className: this.selectedClass, isEdge: isEdge, rules: { r: { ruleOperator: s }, children: [], parent: null } };
     } else if (s == 'C') {
-      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: { r: null, children: [], parent: null } };
+      this.queryRule = { className: this.selectedClass, isEdge: isEdge, rules: { r: null, children: [], parent: null } };
     }
-    this.currRuleNode = this.queryRule2.rules;
+    this.currRuleNode = this.queryRule.rules;
   }
 
   addRule2QueryRules(r: Rule) {
@@ -150,8 +150,8 @@ export class MapTabComponent implements OnInit {
     }
     r.ruleOperator = null;
 
-    if (!this.queryRule2) {
-      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: { r: r, children: [], parent: null } };
+    if (!this.queryRule) {
+      this.queryRule = { className: this.selectedClass, isEdge: isEdge, rules: { r: r, children: [], parent: null } };
     } else {
       if (this.currRuleNode.r) {
         this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
@@ -171,12 +171,12 @@ export class MapTabComponent implements OnInit {
 
   queryRuleDeleted() {
     this.isClassTypeLocked = false;
-    this.queryRule2.rules = null;
+    this.queryRule.rules = null;
     this.isShowPropertyRule = true;
   }
 
   runQueryOnClient(cb: (s: number, end: number) => void, cbParams: any[]) {
-    let fnStr2 = getBoolExpressionFromMetric(this.queryRule2) + ' return true; return false;';
+    let fnStr2 = getBoolExpressionFromMetric(this.queryRule) + ' return true; return false;';
     console.log('function str 2: ', fnStr2);
 
     let filteredClassElems = this._g.cy.filter(new Function('x', fnStr2));
@@ -195,7 +195,7 @@ export class MapTabComponent implements OnInit {
   }
 
   runQueryOnDatabase(cb: (s: number, end: number) => void, cbParams: any[]) {
-    if (!this.queryRule2 || Object.keys(this.queryRule2).length === 0) {
+    if (!this.queryRule || Object.keys(this.queryRule).length === 0) {
       console.log('there is no query rule');
       return;
     }
@@ -212,20 +212,20 @@ export class MapTabComponent implements OnInit {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
-    this._dbService.getFilteringResult(this.queryRule2, filter, skip, limit, DbQueryType.std,
+    this._dbService.getFilteringResult(this.queryRule, filter, skip, limit, DbQueryType.std,
       (x) => { this._cyService.loadElementsFromDatabase(x as GraphResponse, isMerge); cb.apply(this, cbParams); });
 
   }
 
   private loadTable(skip: number, limit: number, filter: TableFiltering = null) {
-    this._dbService.getFilteringResult(this.queryRule2, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
+    this._dbService.getFilteringResult(this.queryRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
   }
 
   private getCountOfData(filter: TableFiltering = null) {
     if (filter != null) {
-      this._dbService.filterTable(this.queryRule2, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
+      this._dbService.filterTable(this.queryRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
     } else {
-      this._dbService.getFilteringResult(this.queryRule2, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
+      this._dbService.getFilteringResult(this.queryRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
     }
   }
 
@@ -236,7 +236,7 @@ export class MapTabComponent implements OnInit {
       return;
     }
 
-    this.tableInput.isNodeData = !this.queryRule2.isEdge;
+    this.tableInput.isNodeData = !this.queryRule.isEdge;
 
     if (this.tableInput.isNodeData) {
       this.tableInput.columns = Object.keys(properties['nodes'][this.selectedClass]);
@@ -250,7 +250,7 @@ export class MapTabComponent implements OnInit {
       for (let [k, v] of Object.entries(data.data[i][1])) {
         let idx = this.tableInput.columns.indexOf(k);
         if (idx > -1) {
-          d[idx + 1] = property2TableData(k, v, this.queryRule2.className, this.queryRule2.isEdge);
+          d[idx + 1] = property2TableData(k, v, this.queryRule.className, this.queryRule.isEdge);
         }
       }
       for (let j = 0; j < this.tableInput.columns.length + 1; j++) {
@@ -352,12 +352,12 @@ export class MapTabComponent implements OnInit {
 
   getDataForQueryResult(e: TableRowMeta) {
     let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
-    let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: !this.queryRule2.isEdge, labels: e.tableIdx.join(',') }
-    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: this.queryRule2.isEdge }, historyMeta);
+    let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: !this.queryRule.isEdge, labels: e.tableIdx.join(',') }
+    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: this.queryRule.isEdge }, historyMeta);
   }
 
   resetRule() {
-    this.queryRule2 = null;
+    this.queryRule = null;
     this.tableInput = {
       columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize,
       isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
@@ -379,7 +379,7 @@ export class MapTabComponent implements OnInit {
     const limit = this.tableInput.pageSize;
     this.getCountOfData(filter);
     let skip = filter.skip ? filter.skip : 0;
-    this._dbService.filterTable(this.queryRule2, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
+    this._dbService.filterTable(this.queryRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
     this.loadGraph(skip, limit, this.tableInput.isMergeGraph, this.maintainChartRange.bind(this), this._timebarService.getChartRange(), filter);
   }
 
@@ -395,12 +395,12 @@ export class MapTabComponent implements OnInit {
     this.resetEditingRules();
     curr.isEditing = true;
     // this.queryRule2 = { className: curr.rules.className, isEdge: curr.rules.isEdge, rules: deepCopyRuleNode(curr.rules.rules) };
-    this.queryRule2 = curr.rules;
+    this.queryRule = curr.rules;
     this.currRuleName = curr.name;
     this.isQueryOnDb = curr.isOnDb;
     this.tableInput.isMergeGraph = curr.isMergeGraph;
     this.tableInput.isLoadGraph = curr.isLoadGraph;
-    this.selectedClass = this.queryRule2.className;
+    this.selectedClass = this.queryRule.className;
     this.changeSelectedClass();
     this.isClassTypeLocked = true;
   }
@@ -430,7 +430,7 @@ export class MapTabComponent implements OnInit {
 
   private updateRule() {
     let idx = this.getEditingRuleIdx();
-    this.currRules[idx].rules = { className: this.queryRule2.className, isEdge: this.queryRule2.isEdge, rules: deepCopyRuleNode(this.queryRule2.rules) };
+    this.currRules[idx].rules = { className: this.queryRule.className, isEdge: this.queryRule.isEdge, rules: deepCopyRuleNode(this.queryRule.rules) };
     this.currRules[idx].name = this.currRuleName;
     this.currRules[idx].isLoadGraph = this.tableInput.isLoadGraph;
     this.currRules[idx].isMergeGraph = this.tableInput.isMergeGraph;
@@ -447,12 +447,12 @@ export class MapTabComponent implements OnInit {
   }
 
   private addRule() {
-    if (this.queryRule2 == null || this.queryRule2 == undefined) {
+    if (this.queryRule == null || this.queryRule == undefined) {
       return;
     }
     this.resetEditingRules();
     this.currRules.push({
-      rules: { className: this.queryRule2.className, isEdge: this.queryRule2.isEdge, rules: deepCopyRuleNode(this.queryRule2.rules) },
+      rules: { className: this.queryRule.className, isEdge: this.queryRule.isEdge, rules: deepCopyRuleNode(this.queryRule.rules) },
       name: this.currRuleName, isEditing: true, isOnDb: this.isQueryOnDb, isLoadGraph: this.tableInput.isLoadGraph, isMergeGraph: this.tableInput.isMergeGraph
     });
     this.isAddingNewRule = false;

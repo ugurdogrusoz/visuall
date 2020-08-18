@@ -40,17 +40,17 @@
         </select>
       </div>
 
-      <div class="form-inline justify-content-center" *ngIf="!queryRule2 || !queryRule2.rules">
+      <div class="form-inline justify-content-center" *ngIf="!queryRule || !queryRule.rules">
         <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('AND')">AND</button>
         <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('OR')">OR</button>
         <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('C')">Condition</button>
       </div>
 
-      <div *ngIf="queryRule2 && queryRule2.rules">
+      <div *ngIf="queryRule && queryRule.rules">
         <span class="va-text">
-          Get <b>{{queryRule2.className}}</b> where:
+          Get <b>{{queryRule.className}}</b> where:
         </span>
-        <app-rule-tree [root]="queryRule2.rules" (onRuleRequested)="showPropertyRule($event)"
+        <app-rule-tree [root]="queryRule.rules" (onRuleRequested)="showPropertyRule($event)"
           (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
 
         <!-- rule input -->
@@ -63,7 +63,7 @@
 
       <div class="text-center borderless mx-1 my-3">
 
-        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="queryRule2">
+        <div class="d-flex flex-wrap align-items-center justify-content-center m-1" *ngIf="queryRule">
           <div class="custom-control custom-checkbox m-1">
             <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isQueryOnDb" />
             <label class="form-check-label va-text">Database</label>
@@ -81,7 +81,7 @@
         </div>
 
         <div class="d-flex flex-wrap align-items-center justify-content-center m-1"
-          *ngIf="queryRule2 && queryRule2.rules">
+          *ngIf="queryRule && queryRule.rules">
           <input class="btn btn-dark va-text m-1" type="button" [value]="changeBtnTxt" (click)="addOrUpdateRule()">
           <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runQuery()">
         </div>
