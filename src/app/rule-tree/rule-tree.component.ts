@@ -64,5 +64,4 @@ export class RuleTreeComponent implements OnInit {
     parent.children[idx] = tmp;
   }
 
-
 }

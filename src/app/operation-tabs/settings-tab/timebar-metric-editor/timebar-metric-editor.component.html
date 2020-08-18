@@ -36,10 +36,11 @@
       </select>
     </div>
 
-    <!-- rule input -->
-    <app-property-rule [style.display]="isShowPropertyRule ? 'block' : 'none'"
-      (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties" [isStrict]="false">
-    </app-property-rule>
+    <div class="form-inline justify-content-center" *ngIf="!filteringRule2 || !filteringRule2.rules">
+      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('AND')">AND</button>
+      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('OR')">OR</button>
+      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('C')">Condition</button>
+    </div>
 
     <div *ngIf="filteringRule2 && filteringRule2.rules">
       <span class="va-text">
@@ -47,8 +48,14 @@
       </span>
       <app-rule-tree [root]="filteringRule2.rules" (onRuleRequested)="showPropertyRule($event)"
         (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
-    </div>
 
+      <!-- rule input -->
+      <div *ngIf="isShowPropertyRule">
+        <app-property-rule (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties"
+          [isStrict]="false">
+        </app-property-rule>
+      </div>
+    </div>
 
     <!-- create/edit rule -->
     <div class="text-center borderless mx-1 my-3">

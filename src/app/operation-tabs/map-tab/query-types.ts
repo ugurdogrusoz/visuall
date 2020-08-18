@@ -133,11 +133,11 @@ export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules):
 
 function getBoolExpressionFromRuleNode(node: RuleNode) {
   let s = '(';
-  if (!node.r.ruleOperator) {
-    if (node.r.propertyType) {
-      s += ' ' + getJsExpressionForMetricRule(node.r) + ' ';
-    } else {
+  if (!node.r || !node.r.ruleOperator) {
+    if (!node.r || !node.r.propertyType) {
       s += 'true';
+    } else {
+      s += ' ' + getJsExpressionForMetricRule(node.r) + ' ';
     }
   } else {
     for (let i = 0; i < node.children.length; i++) {
@@ -220,7 +220,7 @@ export function rule2str2(r: ClassBasedRules): string {
 
 function ruleNode2str(node: RuleNode) {
   let s = '(';
-  if (!node.r.ruleOperator) {
+  if (!node.r || !node.r.ruleOperator) {
     s += ' ' + r2str(node.r) + ' ';
   } else {
     for (let i = 0; i < node.children.length; i++) {

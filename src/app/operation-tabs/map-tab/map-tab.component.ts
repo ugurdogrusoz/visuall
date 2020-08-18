@@ -6,7 +6,7 @@ import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import { ClassOption, Rule, RuleSync, QueryRule, ClassBasedRules, RuleNode, getBoolExpressionFromMetric, deepCopyRuleNode } from './query-types';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from 'src/app/table-view/table-view-types';
 import { DbQueryType, GraphResponse, HistoryMetaData } from 'src/app/db-service/data-types';
@@ -30,7 +30,7 @@ export class MapTabComponent implements OnInit {
   queryRule2: ClassBasedRules;
   currRuleNode: RuleNode;
   isQueryOnDb: boolean;
-  currProperties: Subject<RuleSync> = new Subject();
+  currProperties: BehaviorSubject<RuleSync> = new BehaviorSubject(null);
   tableInput: TableViewInput = {
     columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: 0,
     isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
@@ -132,6 +132,16 @@ export class MapTabComponent implements OnInit {
     return r;
   }
 
+  initRules(s: 'AND' | 'OR' | 'C') {
+    const isEdge = properties.edges[this.selectedClass] != undefined;
+    if (s == 'AND' || s == 'OR') {
+      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: { r: { ruleOperator: s }, children: [], parent: null } };
+    } else if (s == 'C') {
+      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: { r: null, children: [], parent: null } };
+    }
+    this.currRuleNode = this.queryRule2.rules;
+  }
+
   addRule2QueryRules(r: Rule) {
     const isEdge = properties.edges[this.selectedClass] != undefined;
 
@@ -140,11 +150,15 @@ export class MapTabComponent implements OnInit {
     }
     r.ruleOperator = null;
 
-    if (!this.queryRule2 || !this.queryRule2.rules) {
-      this.currRuleNode = { r: r, children: [], parent: null };
-      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: this.currRuleNode };
+    if (!this.queryRule2) {
+      this.queryRule2 = { className: this.selectedClass, isEdge: isEdge, rules: { r: r, children: [], parent: null } };
     } else {
-      this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
+      if (this.currRuleNode.r) {
+        this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
+      } else {
+        this.currRuleNode.r = r;
+      }
+
     }
     this.isClassTypeLocked = true;
     this.isShowPropertyRule = false;
