@@ -6,7 +6,7 @@ import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import { ClassOption, Rule, RuleSync, QueryRule, ClassBasedRules, RuleNode, getBoolExpressionFromMetric, deepCopyRuleNode } from './query-types';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import AppDescription from '../../../assets/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from 'src/app/table-view/table-view-types';
 import { DbQueryType, GraphResponse, HistoryMetaData } from 'src/app/db-service/data-types';
@@ -30,7 +30,8 @@ export class MapTabComponent implements OnInit {
   queryRule: ClassBasedRules;
   currRuleNode: RuleNode;
   isQueryOnDb: boolean;
-  currProperties: BehaviorSubject<RuleSync> = new BehaviorSubject(null);
+  currProperties: RuleSync;
+  editingPropertyRule: Rule;
   tableInput: TableViewInput = {
     columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: 0,
     isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
@@ -45,6 +46,7 @@ export class MapTabComponent implements OnInit {
   changeBtnTxt = 'Update';
   currRuleName = 'New rule';
   isShowPropertyRule = true;
+  isEditingPropertyRule = false;
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService,
     private _timebarService: TimebarService, private _profile: UserProfileService) {
@@ -113,10 +115,7 @@ export class MapTabComponent implements OnInit {
     } else {
       isGeneric = true;
     }
-    // update properties component on the call stack later
-    setTimeout(() => {
-      this.currProperties.next({ properties: this.selectedClassProps, isGenericTypeSelected: isGeneric, selectedClass: this.selectedClass });
-    }, 0);
+    this.currProperties = { properties: this.selectedClassProps, isGenericTypeSelected: isGeneric, selectedClass: this.selectedClass };
   }
 
   private getEdgeTypesRelated(nodeType: string): string[] {
@@ -143,28 +142,47 @@ export class MapTabComponent implements OnInit {
   }
 
   addRule2QueryRules(r: Rule) {
-    const isEdge = properties.edges[this.selectedClass] != undefined;
-
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
     }
-    r.ruleOperator = null;
 
-    if (!this.queryRule) {
-      this.queryRule = { className: this.selectedClass, isEdge: isEdge, rules: { r: r, children: [], parent: null } };
-    } else {
-      if (this.currRuleNode.r) {
-        this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
-      } else {
+    if (this.currRuleNode.r) {
+      if (this.isEditingPropertyRule) {
         this.currRuleNode.r = r;
+        this.isEditingPropertyRule = false;
+      } else {
+        this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
       }
-
+    } else {
+      // if "Condition" is clicked at the start
+      this.currRuleNode.r = r;
     }
     this.isClassTypeLocked = true;
-    this.isShowPropertyRule = false;
+    this.isShowPropertyRule = r.ruleOperator !== null;
   }
 
   showPropertyRule(e: RuleNode) {
+    this.isShowPropertyRule = true;
+    this.currRuleNode = e;
+
+    // means edit this rule
+    if (this.currRuleNode.r && !this.currRuleNode.r.ruleOperator) {
+      if (this.isEditingPropertyRule) {
+        this.isEditingPropertyRule = false;
+        this.isShowPropertyRule = false;
+        this.changeSelectedClass();
+        this.editingPropertyRule = null;
+        return;
+      }
+      this.isEditingPropertyRule = true;
+      this.changeSelectedClass();
+      this.editingPropertyRule = e.r;
+    } else {
+      this.isEditingPropertyRule = false;
+    }
+  }
+
+  newOperator(e: RuleNode) {
     this.isShowPropertyRule = true;
     this.currRuleNode = e;
   }

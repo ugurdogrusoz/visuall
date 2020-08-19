@@ -1,6 +1,6 @@
 <div class="row m-1 no-gutters justify-content-center">
   <div class="col-3 px-1">
-    <select class="custom-select tight-select filter-form va-small-text" [(ngModel)]="selectedProp"
+    <select autofocus class="custom-select tight-select filter-form va-small-text" [(ngModel)]="selectedProp"
       [disabled]="isGenericTypeSelected" (change)="changeSelectedProp()">
       <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
     </select>
@@ -34,8 +34,8 @@
   </div>
 </div>
 <div class="draggable-content" ngResizable ngDraggable [position]="position" [rzHandles]="'all'" *ngIf="isShowTxtArea"
-  [rzMinWidth]="250" [rzMinHeight]="150" (endOffset)="onMoveEnd($event)"
-  (rzStop)="onResizeStop($event)" [style.width]="txtAreaSize.width + 'px'" [style.height]="txtAreaSize.height + 'px'">
+  [rzMinWidth]="250" [rzMinHeight]="150" (endOffset)="onMoveEnd($event)" (rzStop)="onResizeStop($event)"
+  [style.width]="txtAreaSize.width + 'px'" [style.height]="txtAreaSize.height + 'px'">
   <div class="d-flex flex-column h-100">
     <div class="flex-grow-1 h-100 m-1">
       <textarea class="va-text form-control" rows="3" cols="40" [(ngModel)]="textAreaInp"></textarea>

@@ -1,10 +1,10 @@
-import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber, DATETIME_OPERATORS } from '../constants';
 import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/query-types';
 import properties from '../../assets/generated/properties.json';
 import AppDescription from '../../assets/app_description.json';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPosition } from 'angular2-draggable';
@@ -31,8 +31,10 @@ export class PropertyRuleComponent implements OnInit {
   finiteSetPropertyMap: any = null;
   selectedClass: string;
   currInpType: string = 'text';
-  @Input() propertyChanged: BehaviorSubject<RuleSync>;
+  @Input() propertyChanged: RuleSync;
+  @Input() loadRule: Rule;
   @Input() isStrict: boolean;
+  @Input() refreshView: Subject<boolean>;
   @Output() onRuleReady = new EventEmitter<Rule>();
   @ViewChild('dateInp', { static: false }) dateInp: ElementRef;
   isShowTxtArea = false;
@@ -42,26 +44,31 @@ export class PropertyRuleComponent implements OnInit {
   constructor(private _modalService: NgbModal) { }
 
   ngOnInit() {
-    this.propertyChanged.subscribe(v => {
-      if (v) {
-        this.propertiesChanged(v.properties, v.isGenericTypeSelected, v.selectedClass);
-      }
-    });
-  }
-
-  propertiesChanged(properties: string[], isGenericTypeSelected: boolean, selectedClass: string) {
-    this.selectedClassProps = properties;
-    this.isGenericTypeSelected = isGenericTypeSelected;
-    this.selectedClass = selectedClass;
+    this.selectedClassProps = this.propertyChanged.properties;
+    this.isGenericTypeSelected = this.propertyChanged.isGenericTypeSelected;
+    this.selectedClass = this.propertyChanged.selectedClass;
     this.filterInp = '';
     this.selectedProp = null;
     this.selectedOperatorKey = null;
-    this.changeSelectedProp();
+
+    if (this.loadRule) {
+      this.filterInp = this.loadRule.inputOperand;
+      this.selectedProp = this.loadRule.propertyOperand;
+      // will set the operators according to selected property
+      this.changeSelectedProp(this.filterInp, this.loadRule.rawInput);
+      for (const opKey in this.operators) {
+        if (this.operators[opKey] == this.loadRule.operator) {
+          this.selectedOperatorKey = opKey;
+        }
+      }
+    } else {
+      this.changeSelectedProp();
+    }
   }
 
-  changeSelectedProp() {
+  changeSelectedProp(filterInp = '', unixDateValue = null) {
     this.textAreaInp = '';
-    this.filterInp = '';
+    this.filterInp = filterInp;
     let attrType = undefined;
     if (properties.nodes[this.selectedClass]) {
       attrType = properties.nodes[this.selectedClass][this.selectedProp];
@@ -97,13 +104,19 @@ export class PropertyRuleComponent implements OnInit {
       let opt = {
         defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true,
       };
+      if (unixDateValue) {
+        opt.defaultDate = new Date(unixDateValue);
+      }
 
-      flatpickr(this.dateInp.nativeElement, opt);
+      // view child gives undefined 
+      setTimeout(() => {
+        flatpickr(this.dateInp.nativeElement, opt);
+      }, 0);
     }
   }
 
+  @HostListener('document:keydown.enter', ['$event'])
   onAddRuleClick() {
-    const logicOperator = 'OR';
     const attribute = this.selectedProp;
     let value: any = this.filterInp;
     let rawValue: any = this.filterInp;
@@ -139,7 +152,7 @@ export class PropertyRuleComponent implements OnInit {
       propertyType: atType,
       rawInput: rawValue,
       inputOperand: value,
-      ruleOperator: logicOperator,
+      ruleOperator: null,
       operator: operator,
       enumMapping: mapped
     };
@@ -151,6 +164,35 @@ export class PropertyRuleComponent implements OnInit {
       return;
     }
     this.onRuleReady.emit(rule);
+  }
+
+  filterInpClicked() {
+    if (this.selectedOperatorKey != 'one of') {
+      return;
+    }
+    if (this.position.x == 0 && this.position.y == 0) {
+      this.position = { x: -130, y: 0 };
+    }
+    this.isShowTxtArea = true;
+    this.currInpType = 'text';
+  }
+
+  txtAreaPopupOk() {
+    this.filterInp = this.textAreaInp.trim().split('\n').join(',');
+    this.isShowTxtArea = false;
+  }
+
+  txtAreaPopupCancel() {
+    this.textAreaInp = this.filterInp.split(',').join('\n');
+    this.isShowTxtArea = false;
+  }
+
+  onMoveEnd(e) {
+    this.position = e;
+  }
+
+  onResizeStop(e) {
+    this.txtAreaSize = e.size;
   }
 
   private addOperators(op) {
@@ -202,32 +244,5 @@ export class PropertyRuleComponent implements OnInit {
     return true;
   }
 
-  filterInpClicked() {
-    if (this.selectedOperatorKey != 'one of') {
-      return;
-    }
-    if (this.position.x == 0 && this.position.y == 0) {
-      this.position = { x: -130, y: 0 };
-    }
-    this.isShowTxtArea = true;
-    this.currInpType = 'text';
-  }
 
-  txtAreaPopupOk() {
-    this.filterInp = this.textAreaInp.trim().split('\n').join(',');
-    this.isShowTxtArea = false;
-  }
-
-  txtAreaPopupCancel() {
-    this.textAreaInp = this.filterInp.split(',').join('\n');
-    this.isShowTxtArea = false;
-  }
-
-  onMoveEnd(e) {
-    this.position = e;
-  }
-
-  onResizeStop(e) {
-    this.txtAreaSize = e.size;
-  }
 }

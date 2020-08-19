@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { RuleNode } from '../operation-tabs/map-tab/query-types';
+import { RuleNode, Rule } from '../operation-tabs/map-tab/query-types';
 
 @Component({
   selector: 'app-rule-tree',
@@ -12,8 +12,9 @@ export class RuleTreeComponent implements OnInit {
   @Input() root: RuleNode;
   @Output() onRuleRequested = new EventEmitter<RuleNode>();
   @Output() onEmpty = new EventEmitter<boolean>();
-
+  @Output() onOperatorAdded = new EventEmitter<RuleNode>();
   currNode: RuleNode;
+  isShowChildren = true;
 
   ngOnInit(): void {
   }
@@ -32,6 +33,11 @@ export class RuleTreeComponent implements OnInit {
     curr.r = { ruleOperator: code };
     curr.children.push(newNode);
     this.currNode = curr;
+    this.operatorEmitter(curr);
+  }
+
+  operatorEmitter(r: RuleNode) {
+    this.onOperatorAdded.emit(r);
   }
 
   deleteNode(node: RuleNode) {

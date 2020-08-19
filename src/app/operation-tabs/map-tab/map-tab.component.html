@@ -50,13 +50,13 @@
         <span class="va-text">
           Get <b>{{queryRule.className}}</b> where:
         </span>
-        <app-rule-tree [root]="queryRule.rules" (onRuleRequested)="showPropertyRule($event)"
-          (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
+        <app-rule-tree [root]="queryRule.rules" (onOperatorAdded)="newOperator($event)"
+          (onRuleRequested)="showPropertyRule($event)" (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
 
         <!-- rule input -->
         <div *ngIf="isShowPropertyRule">
           <app-property-rule (onRuleReady)="addRule2QueryRules($event)" [propertyChanged]="currProperties"
-            [isStrict]="true">
+            [loadRule]="editingPropertyRule" [isStrict]="true">
           </app-property-rule>
         </div>
       </div>

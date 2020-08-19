@@ -20,3 +20,7 @@ textarea {
   height: 100%;
   resize: none !important;
 }
+
+.pointer {
+  cursor: pointer;
+}
