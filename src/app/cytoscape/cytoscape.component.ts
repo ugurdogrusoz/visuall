@@ -54,73 +54,57 @@ export class CytoscapeComponent implements OnInit {
     }
   }
 
-  // This listener is written for moving
-  // selected elements with arrow keys facility
   @HostListener('document:keydown', ['$event'])
-    moveSelectedWithArrowKeys(event: KeyboardEvent) {
+  moveSelectedWithArrowKeys(event: KeyboardEvent) {
 
-      //We don't want to store any more values than
-      //what we have in the keyDown map
-      //all keys we are interested is in keyDown map
-      //if the key is down set corresponding value true
-      if(this.keyDown[event.key] != undefined) {
-        this.keyDown[event.key] = true;
-
-        //how should prevent default be used here?
-        //for example, the default action for
-        //alt + arrowleft in chrome is to go back to previous page
-        //which seems to be prevented in Newt
-        event.preventDefault();
-      }
-
-      //shouldn't go ahead if both Alt and Shift are pressed
-      if (this.keyDown['Alt'] && this.keyDown['Shift']) {
-        return;
-      }
-
-      //decide speed of movement based on keys down
-      //should we make the numbers constants somewhere?
-      //not very meaningful by themselves though even if
-      //you set it in settings
-      //I set them based on feel in Newt implementation,
-      //I didn't find the actual numbers
-
-      //normal
-      let moveSpeed: number = 3;
-
-      //slow
-      if (this.keyDown['Alt']) {
-        moveSpeed = 1;
-      }
-      //fast
-      else if (this.keyDown['Shift']) {
-        moveSpeed = 10;
-      }
-
-      //decide the shift values in x and y axes
-      //based on key presses
-      let dx: number = 0;
-      let dy: number = 0;
-
-      dx += this.keyDown['ArrowRight'] ? moveSpeed : 0;
-      dx -= this.keyDown['ArrowLeft'] ? moveSpeed : 0;
-      dy += this.keyDown['ArrowDown'] ? moveSpeed : 0;
-      dy -= this.keyDown['ArrowUp'] ? moveSpeed :0;
-
-      //move selected by the shift values decided above
-      this._g.cy.$(':selected').shift({
-        x: dx,
-        y: dy
-      });
-
+    if (this.keyDown[event.key] === undefined) {
+      return;
     }
+    this.keyDown[event.key] = true;
+
+    // alt + arrowleft in chrome goes back to previous page
+    event.preventDefault();
+
+    // shouldn't go ahead if both Alt and Shift are pressed
+    if (this.keyDown['Alt'] && this.keyDown['Shift']) {
+      return;
+    }
+    // normal
+    let moveSpeed: number = 3;
+
+    // slow
+    if (this.keyDown['Alt']) {
+      moveSpeed = 1;
+    }
+    // fast
+    else if (this.keyDown['Shift']) {
+      moveSpeed = 10;
+    }
+
+    // decide the shift values in x and y axes
+    // based on key presses
+    let dx: number = 0;
+    let dy: number = 0;
+
+    dx += this.keyDown['ArrowRight'] ? moveSpeed : 0;
+    dx -= this.keyDown['ArrowLeft'] ? moveSpeed : 0;
+    dy += this.keyDown['ArrowDown'] ? moveSpeed : 0;
+    dy -= this.keyDown['ArrowUp'] ? moveSpeed :0;
+
+    // move selected by the shift values decided above
+    this._g.cy.nodes(':selected').shift({
+      x: dx,
+      y: dy
+    });
+
+  }
   // This listener is written for moving
   // selected elements with arrow keys facility
   @HostListener('document:keyup', ['$event'])
-    setKeyDownValues(event: KeyboardEvent) {
-      //if the key is down set corresponding value to false
-      if(this.keyDown[event.key] != undefined) {
-        this.keyDown[event.key] = false;
-      }
+  setKeyDownValues(event: KeyboardEvent) {
+    // if the key is down set corresponding value to false
+    if(this.keyDown[event.key] !== undefined) {
+      this.keyDown[event.key] = false;
     }
+  }
 }
