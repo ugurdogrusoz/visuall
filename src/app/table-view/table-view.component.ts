@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, P
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../constants';
-import { TableViewInput, TableFiltering } from './table-view-types';
+import { TableViewInput, TableFiltering, getClassNameFromProperties } from './table-view-types';
 import { IPosition } from 'angular2-draggable';
 import { Subject, Subscription } from 'rxjs';
+import { GraphElem } from '../db-service/data-types';
 
 @Pipe({ name: 'replace' })
 export class ReplacePipe implements PipeTransform {
@@ -41,7 +42,6 @@ export class TableViewComponent implements OnInit, OnDestroy {
   emphasizeRowFn: Function;
   userPrefSubs: Subscription;
   hoveredElemId = '-';
-
 
   @Input() params: TableViewInput;
   @Input() tableFilled = new Subject<boolean>();
@@ -254,5 +254,39 @@ export class TableViewComponent implements OnInit, OnDestroy {
       e.style.width = '';
       e.style.height = '';
     }
+  }
+
+  downloadAsCSV4Checked() {
+    let rows = this.params.results;
+    let cNames = this.params.classNames;
+    if (!this.params.isLoadGraph) {
+      rows = rows.filter((_, i) => this.checkedIdx[i]);
+      if (cNames) {
+        cNames = cNames.filter((_, i) => this.checkedIdx[i]);
+      }
+    }
+
+    let objs: GraphElem[] = [];
+    let prefix = this.params.isNodeData ? 'n' : 'e';
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      let cName = this.params.classNameOfObjects;
+
+      if (!cName) {
+        if (this.params.classNames && this.params.classNames[i]) {
+          cName = cNames[i];
+        } else {
+          cName = getClassNameFromProperties(this.params.columns);
+        }
+      }
+      const data = {};
+      // first index is for ID
+      for (let i = 1; i < r.length; i++) {
+        data[this.params.columns[i - 1]] = r[i].val;
+      }
+      data['id'] = prefix + r[0].val;
+      objs.push({ classes: cName, data: data });
+    }
+    this._cyService.saveAsCSV(objs);
   }
 }

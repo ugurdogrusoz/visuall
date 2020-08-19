@@ -1,5 +1,4 @@
-body,
-html {
+body, html {
   height: 100%;
 }
 
@@ -292,4 +291,21 @@ img.leaflet-marker-icon.leaflet-zoom-animated.leaflet-interactive {
 
 .marker-popup-content {
   word-break: break-all;
+}
+
+
+.tight-select {
+  background-position: center right 5px;
+  height: inherit;
+}
+
+.query-select {
+  text-align: center;
+  text-align-last: center;
+  width: auto;
+}
+
+.inp-3-char {
+  width: 5.5em;
+  height: 2em;
 }

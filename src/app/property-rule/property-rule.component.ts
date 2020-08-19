@@ -4,7 +4,7 @@ import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/query-types';
 import properties from '../../assets/generated/properties.json';
 import AppDescription from '../../assets/app_description.json';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPosition } from 'angular2-draggable';
@@ -33,7 +33,7 @@ export class PropertyRuleComponent implements OnInit {
   finiteSetPropertyMap: any = null;
   selectedClass: string;
   currInpType: string = 'text';
-  @Input() propertyChanged: Subject<RuleSync>;
+  @Input() propertyChanged: BehaviorSubject<RuleSync>;
   @Input() isStrict: boolean;
   @Output() onRuleReady = new EventEmitter<Rule>();
   @ViewChild('dateInp', { static: false }) dateInp: ElementRef;
@@ -47,7 +47,9 @@ export class PropertyRuleComponent implements OnInit {
 
   ngOnInit() {
     this.propertyChanged.subscribe(v => {
-      this.propertiesChanged(v.properties, v.isGenericTypeSelected, v.selectedClass);
+      if (v) {
+        this.propertiesChanged(v.properties, v.isGenericTypeSelected, v.selectedClass);
+      }
     });
   }
 

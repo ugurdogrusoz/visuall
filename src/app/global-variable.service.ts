@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import AppDescription from '../assets/app_description.json'
 import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS } from './constants';
-import { GraphHistoryItem } from './db-service/data-types';
+import { GraphHistoryItem, GraphElem } from './db-service/data-types';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +18,10 @@ export class GlobalVariableService {
   expandCollapseApi: any;
   hiddenClasses: Set<string>;
   setLoadingStatus: (boolean) => void;
-  isSelectFromLoad: boolean = false;
   userPrefs: UserPref = {} as UserPref;
   shownElemsChanged = new BehaviorSubject<boolean>(true);
   operationTabChanged = new BehaviorSubject<number>(1);
+  isSwitch2ObjTabOnSelect: boolean = true;
   graphHistory: GraphHistoryItem[] = [];
   showHideGraphHistory = new BehaviorSubject<boolean>(false);
   addNewGraphHistoryItem = new BehaviorSubject<boolean>(false);
@@ -182,28 +182,48 @@ export class GlobalVariableService {
     }, this.HISTORY_SNAP_DELAY);
   }
 
-  getLabels4Elems(elemIds: string[] | number[], isNode: boolean = true): string {
+  getLabels4Elems(elemIds: string[] | number[], isNode: boolean = true, objDatas: GraphElem[] = null): string {
     let cyIds: string[] = [];
     let idChar = 'n';
     if (!isNode) {
       idChar = 'e';
     }
-    for (let i = 0; i < elemIds.length; i++) {
-      cyIds.push(idChar + elemIds[i]);
+    if (objDatas) {
+      cyIds = objDatas.map(x => x.data.id);
+    } else {
+      for (let i = 0; i < elemIds.length; i++) {
+        cyIds.push(idChar + elemIds[i]);
+      }
     }
+
     let labels = '';
     let labelParent: any = AppDescription.objects;
     if (!isNode) {
       labelParent = AppDescription.relations;
     }
     for (let i = 0; i < cyIds.length; i++) {
-      let curr = this.cy.$('#' + cyIds[i]);
-      let s = labelParent.S3Port.properties.label/*[curr.className()[0]]['style']['label'] as string*/;
+      let cName = '';
+      if (!objDatas) {
+        cName = this.cy.$('#' + cyIds[i]).className()[0];
+      } else {
+        cName = objDatas[i].classes.split(' ')[0];
+      }
+
+      let s = labelParent[cName]['style']['label'] as string;
       if (s.indexOf('(') < 0) {
         labels += s + ',';
       } else {
         let propName = s.slice(s.indexOf('(') + 1, s.indexOf(')'));
-        labels += propName + ',';
+        if (!objDatas) {
+          labels += this.cy.$('#' + cyIds[i]).data(propName) + ',';
+        } else {
+          const currData = objDatas[i].data;
+          let l = currData[propName];
+          if (!l) {
+            l = currData[Object.keys(currData)[0]]
+          }
+          labels += l + ',';
+        }
       }
     }
 
@@ -219,10 +239,10 @@ export class GlobalVariableService {
   getFcoseOptions() {
     return {
       name: 'fcose',
-      // 'draft', 'default' or 'proof' 
-      // - 'draft' only applies spectral layout 
+      // 'draft', 'default' or 'proof'
+      // - 'draft' only applies spectral layout
       // - 'default' improves the quality with incremental layout (fast cooling rate)
-      // - 'proof' improves the quality with incremental layout (slow cooling rate) 
+      // - 'proof' improves the quality with incremental layout (slow cooling rate)
       quality: 'default',
       // use random node positions at beginning of layout
       // if this is set to false, then quality option must be 'proof'
@@ -277,7 +297,7 @@ export class GlobalVariableService {
       gravityCompound: 1.0,
       // Gravity range (constant)
       gravityRange: 3.8,
-      // Initial cooling factor for incremental layout  
+      // Initial cooling factor for incremental layout
       initialEnergyOnIncremental: 0.3,
 
       /* layout event callbacks */
@@ -291,18 +311,18 @@ export class GlobalVariableService {
       // -------- Mandatory parameters --------
       name: 'cise',
 
-      // ClusterInfo can be a 2D array contaning node id's or a function that returns cluster ids. 
-      // For the 2D array option, the index of the array indicates the cluster ID for all elements in 
+      // ClusterInfo can be a 2D array contaning node id's or a function that returns cluster ids.
+      // For the 2D array option, the index of the array indicates the cluster ID for all elements in
       // the collection at that index. Unclustered nodes must NOT be present in this array of clusters.
-      // 
-      // For the function, it would be given a Cytoscape node and it is expected to return a cluster id  
+      //
+      // For the function, it would be given a Cytoscape node and it is expected to return a cluster id
       // corresponding to that node. Returning negative numbers, null or undefined is fine for unclustered
-      // nodes.  
+      // nodes.
       // e.g
       // Array:                                     OR          function(node){
       //  [ ['n1','n2','n3'],                                       ...
       //    ['n5','n6']                                         }
-      //    ['n7', 'n8', 'n9', 'n10'] ]                         
+      //    ['n7', 'n8', 'n9', 'n10'] ]
       clusters: this.layout.clusters,
 
       // -------- Optional parameters --------
@@ -329,10 +349,10 @@ export class GlobalVariableService {
       padding: 30,
 
       // separation amount between nodes in a cluster
-      // note: increasing this amount will also increase the simulation time 
+      // note: increasing this amount will also increase the simulation time
       nodeSeparation: 2.5,
 
-      // Inter-cluster edge length factor 
+      // Inter-cluster edge length factor
       // (2.0 means inter-cluster edges should be twice as long as intra-cluster edges)
       idealInterClusterEdgeLengthCoefficient: 1.4,
 
@@ -397,4 +417,4 @@ export class GlobalVariableService {
       }
     }
   }
-} 
+}

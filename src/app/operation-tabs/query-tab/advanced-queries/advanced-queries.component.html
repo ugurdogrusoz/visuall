@@ -1,0 +1,91 @@
+<input #file type="file" (change)="fileSelected()" accept="text/*, .json, .csv" style="display: none;" />
+<div>
+  <div class="va-text">
+    <div class="d-flex align-items-center justify-content-center">
+      <select class="custom-select tight-select filter-form va-small-text query-select" [(ngModel)]="selectedQuery"
+        (change)="changeAdvancedQuery($event)">
+        <option ng-hide="model" value="">Please choose a query</option>
+        <option *ngFor="let p of queries" [value]="p">{{p}}</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="selectedIdx==0 || selectedIdx==1">
+  <div class="panel">
+    <div class="panel">
+      <div class="form-inline va-text m-2 justify-content-center" *ngIf="selectedIdx==1">
+        <span>Get common &nbsp;</span>
+        <input [disabled]="!isDirected" type="radio" class="form-check-input" name="optradio1"
+          (click)="targetOrRegulator = 0" value="0" [checked]="targetOrRegulator === 0"><span>target(s) &nbsp;</span>
+        <input [disabled]="!isDirected" type="radio" class="form-check-input" name="optradio1"
+          (click)="targetOrRegulator = 1" value="1" [checked]="targetOrRegulator === 1"><span> regulator(s) for</span>
+      </div>
+    </div>
+    <!-- selected nodes -->
+    <div class="panel">
+      <div class="subpanel-heading px-1" data-toggle="collapse" data-target="#elems-of-interest" aria-expanded="false">
+        <span class="panel-title accordion-toggle"><span class="va-heading3">Nodes of Interest</span></span>
+      </div>
+      <div id="elems-of-interest" class="collapse show">
+        <div class="d-flex flex-wrap justify-content-center">
+          <div *ngFor="let n of selectedNodes; let i = index;" class="rounded va-text m-1 p-1"
+            [style.border]="i==clickedNodeIdx ? '2px solid #888888':'2px solid #dee2e6'">
+            <div class="text-center pointer" (click)="selectedNodeClicked(i)">
+              <span>{{n.label}}</span>&nbsp;
+              <img src="assets/img/close.svg" (click)="removeSelected(i)" title="Remove">
+            </div>
+          </div>
+        </div>
+        <div>
+          <input class="btn btn-dark va-text m-1" type="button" value="Add Objects from File"
+            (click)="addSelectedNodesFromFile()">
+          <input class="btn btn-dark va-text m-1" type="button" [value]="addNodeBtnTxt" (click)="addSelectedNodes()">
+          <input *ngIf="selectedNodes && selectedNodes.length > 0" class="btn btn-dark va-text m-1" type="button"
+            value="Remove All" (click)="removeAllSelectedNodes()">
+        </div>
+      </div>
+    </div>
+
+    <!-- ignored types -->
+    <div class="panel">
+      <div class="subpanel-heading collapsed px-1" data-toggle="collapse" data-target="#types2consider"
+        aria-expanded="false">
+        <span class="panel-title accordion-toggle"><span class="va-heading3">Object Types to Consider</span></span>
+      </div>
+      <div id="types2consider" class="collapse">
+        <app-types-view (onFilterByType)="addRemoveType($event)"></app-types-view>
+      </div>
+    </div>
+
+    <!-- options -->
+    <div class="panel">
+      <div class="subpanel-heading collapsed px-1" data-toggle="collapse" data-target="#options" aria-expanded="false">
+        <span class="panel-title accordion-toggle"><span class="va-heading3">Options</span></span>
+      </div>
+      <div id="options" class="collapse">
+        <div class="form-inline justify-content-center">
+          <label class="form-check-label va-text">Length limit</label>
+          <div class="mx-1">
+            <input type="number" max="10" min="1" [(ngModel)]="lengthLimit" class="form-control inp-3-char va-text">
+          </div>
+          <input class="form-check-input" type="checkbox" [(ngModel)]="isDirected">
+          <label class="form-check-label va-text">Directed</label>
+        </div>
+
+
+      </div>
+    </div>
+
+    <div class="form-inline justify-content-center">
+      <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runQuery()">
+      <input class="form-check-input" type="checkbox" [(ngModel)]="tableInput.isLoadGraph">
+      <label class="form-check-label va-text">Graph&nbsp;</label>
+      <input class="form-check-input" type="checkbox" [(ngModel)]="tableInput.isMergeGraph">
+      <label class="form-check-label va-text">Merge</label>
+    </div>
+  </div>
+  <app-table-view [params]="tableInput" [tableFilled]="tableFilled"
+    (onDataForQueryResult)="getDataForQueryResult($event)" (onFilteringChanged)="filterTable($event)">
+  </app-table-view>
+</div>

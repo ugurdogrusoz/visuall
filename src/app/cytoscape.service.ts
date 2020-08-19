@@ -7,7 +7,7 @@ import { GlobalVariableService } from './global-variable.service';
 import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
-import { GraphResponse } from './db-service/data-types';
+import { GraphResponse, GraphElem } from './db-service/data-types';
 import { UserPrefHelper } from './user-pref-helper';
 import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
@@ -88,10 +88,7 @@ export class CytoscapeService {
 
   private elemSelected(e) {
     if (e.type == 'select') {
-      // do not change tab if selection is originated from load
-      if (this._g.isSelectFromLoad && this._g.userPrefs.mergedElemIndicator.getValue() == 0) {
-        this._g.isSelectFromLoad = false;
-      } else {
+      if (this._g.isSwitch2ObjTabOnSelect) {
         this._g.operationTabChanged.next(0);
       }
     }
@@ -370,8 +367,9 @@ export class CytoscapeService {
       ele2highlight.merge('#' + elemIds.pop());
     }
     if (newElemIndicator == MergedElemIndicatorTypes.selection) {
-      this._g.isSelectFromLoad = true;
+      this._g.isSwitch2ObjTabOnSelect = false;
       ele2highlight.select();
+      this._g.isSwitch2ObjTabOnSelect = true;
     } else if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
       this._g.highlightElems(ele2highlight);
     }
@@ -554,7 +552,7 @@ export class CytoscapeService {
 
   showHideTimebar(isChecked: boolean) {
     if (!isChecked) {
-      $('#cy').css('height', '90vh');
+      $('#cy').css('height', '88vh');
     } else {
       $('#cy').css('height', '75vh');
     }
@@ -571,26 +569,73 @@ export class CytoscapeService {
     });
   }
 
-  saveAsJson() {
-    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
-    if (hasAnyCollapsed) {
-      const instance = this._modalService.open(ErrorModalComponent);
-      instance.componentInstance.msg = 'Cannot save as JSON due to collapsed node(s) and/or edge(s)';
-      instance.componentInstance.title = 'Save as JSON';
-      return;
-    }
-    const json = this._g.cy.json();
-    const elements = json.elements;
-    const file = JSON.stringify(elements, undefined, 4);
-
-    const blob = new Blob([file], { type: 'text/plain' });
+  private str2file(str: string, fileName: string) {
+    const blob = new Blob([str], { type: 'text/plain' });
     const anchor = document.createElement('a');
 
-    anchor.download = 'visuall.txt';
+    anchor.download = fileName;
     anchor.href = (window.URL).createObjectURL(blob);
     anchor.dataset.downloadurl =
       ['text/plain', anchor.download, anchor.href].join(':');
     anchor.click();
+  }
+
+  saveAsJson() {
+    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
+    if (hasAnyCollapsed) {
+      const instance = this._modalService.open(ErrorModalComponent);
+      instance.componentInstance.msg = 'Cannot save due to collapsed node(s) and/or edge(s)';
+      instance.componentInstance.title = 'Save';
+      return;
+    }
+    const json = this._g.cy.json();
+    const elements = json.elements;
+    if (!elements.nodes) {
+      return;
+    }
+    this.str2file(JSON.stringify(elements, undefined, 4), 'visuall.txt');
+  }
+
+  saveSelectedAsJson() {
+    const selected = this._g.cy.$(':selected');
+    let hasAnyCollapsed = selected.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || selected.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
+    if (hasAnyCollapsed) {
+      const instance = this._modalService.open(ErrorModalComponent);
+      instance.componentInstance.msg = 'Cannot save selected objects due to collapsed node(s) and/or edge(s)';
+      instance.componentInstance.title = 'Save Selected Objects';
+      return;
+    }
+
+    const selectedNodes = selected.nodes();
+    const selectedEdges = selected.edges();
+    if (selectedEdges.length + selectedNodes.length < 1) {
+      return;
+    }
+    // according to cytoscape.js format 
+    const o = { nodes: [], edges: [] };
+    for (const e of selectedEdges) {
+      o.edges.push(e.json());
+    }
+    for (const n of selectedNodes) {
+      o.nodes.push(n.json());
+    }
+
+    this.str2file(JSON.stringify(o), 'visuall.txt');
+  }
+
+  saveAsCSV(objs: GraphElem[]) {
+    if (!objs || objs.length < 1) {
+      return;
+    }
+
+    const cols = ['className'].concat(Object.keys(objs[0].data));
+    const arr: string[][] = [];
+    arr.push(cols);
+    for (const o of objs) {
+      arr.push([o.classes.split(' ')[0], ...Object.values(o.data) as string[]]);
+    }
+    const str = arr.map(x => x.join('|')).join('\n');
+    this.str2file(str, 'visuall_objects.csv');
   }
 
   saveAsPng(isWholeGraph: boolean) {

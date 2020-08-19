@@ -1,4 +1,5 @@
 <div class="d-flex flex-wrap justify-content-end m-1" *ngIf="isShowTable">
+
   <input [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
     class="form-control va-small-text" placeholder="Search..." [(ngModel)]="filterTxt"
     (ngModelChange)="filterTxtChanged()">
@@ -8,6 +9,12 @@
   </div>
 
   <button *ngIf="!params.isHideLoadGraph" [disabled]="isLoading || !params.results || params.results.length < 1"
+    class="btn btn-sm" (click)="downloadAsCSV4Checked()">
+    <img class="img-icon m-1" [title]="params.isLoadGraph ? 'Download all objects' : 'Download selected objects'"
+      src="../assets/img/downloading-file.svg">
+  </button>
+
+  <button *ngIf="!params.isHideLoadGraph && !params.isLoadGraph" [disabled]="isLoading || !params.results || params.results.length < 1"
     class="btn btn-sm" (click)="loadGraph4Checked()">
     <img class="img-icon" title="Merge selected to graph" src="assets/img/play-button.svg">
   </button>

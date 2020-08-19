@@ -1,13 +1,13 @@
 <div class="row m-1 no-gutters justify-content-center">
   <div class="col-3 px-1">
-    <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedProp"
+    <select class="custom-select tight-select filter-form va-small-text" [(ngModel)]="selectedProp"
       [disabled]="isGenericTypeSelected" (change)="changeSelectedProp()">
       <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
     </select>
   </div>
 
   <div class="col-3 pr-1">
-    <select class="custom-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey"
+    <select class="custom-select tight-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey"
       [disabled]="isGenericTypeSelected">
       <option *ngFor="let o of operatorKeys" [value]="o">{{o}}</option>
     </select>
@@ -23,13 +23,13 @@
       <input type="text" #dateInp [disabled]="isGenericTypeSelected" class="form-control va-small-text">
     </div>
     <div [hidden]="selectedPropertyCategory != 2">
-      <select class="custom-select filter-form va-small-text" [(ngModel)]="filterInp">
+      <select class="custom-select tight-select filter-form va-small-text" [(ngModel)]="filterInp">
         <option *ngFor="let p of finiteSetPropertyMap" [value]="p.key">{{p.value}}</option>
       </select>
     </div>
   </div>
 
-  <div class="col-1 pr-1 text-center">
+  <div class="col-1 p-1 text-center">
     <img src="assets/img/add.svg" alt="Add Rule" (click)="onAddRuleClick()">
   </div>
 </div>

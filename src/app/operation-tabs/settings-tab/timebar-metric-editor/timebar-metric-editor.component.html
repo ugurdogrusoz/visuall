@@ -8,8 +8,7 @@
   <div class="d-flex flex-wrap justify-content-center">
     <!-- current metrics -->
     <div *ngFor="let r of currMetrics; let i = index;" class="rounded va-text m-1 p-1"
-      [style.border]="r.isEditing ? '2px solid #888888':'2px solid #dee2e6'"
-      [style.background-color]="r.color + 'B4'">
+      [style.border]="r.isEditing ? '2px solid #888888':'2px solid #dee2e6'" [style.background-color]="r.color + 'B4'">
       <div class="text-center">
         <span (click)="editMetric(i)" class="timebar-metric-name">{{r.name}}</span>&nbsp;
         <img src="assets/img/close.svg" (click)="deleteMetric(i)" title="Delete metric">
@@ -17,7 +16,7 @@
     </div>
     <div class="rounded va-text m-1 p-1" [style.border]="isAddingNew ? '2px solid #888888':'2px solid #dee2e6'">
       <div title="New metric" class="text-center" (click)="newMetricClick()">
-        <b class="timebar-metric-name" >new</b>&nbsp;<img src="assets/img/add.svg">
+        <b class="timebar-metric-name">new</b>&nbsp;<img src="assets/img/add.svg">
       </div>
     </div>
   </div>
@@ -30,59 +29,36 @@
 
       <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="currMetricColor"></app-color-picker>
 
-      <select title="Type" [disabled]="isAClassSelectedForMetric" class="custom-select filter-form va-text"
+      <select title="Type" [disabled]="isAClassSelectedForMetric" class="custom-select tight-select filter-form va-text"
         [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
         <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
         </option>
       </select>
     </div>
 
-    <!-- rule input -->
-    <app-property-rule (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties" [isStrict]="false">
-    </app-property-rule>
+    <div class="form-inline justify-content-center" *ngIf="!filteringRule || !filteringRule.rules">
+      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('AND')">AND</button>
+      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('OR')">OR</button>
+      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('C')">Condition</button>
+    </div>
+
+    <div *ngIf="filteringRule && filteringRule.rules">
+      <span class="va-text">
+        Get <b>{{filteringRule.className}}</b> where:
+      </span>
+      <app-rule-tree [root]="filteringRule.rules" (onRuleRequested)="showPropertyRule($event)"
+        (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
+
+      <!-- rule input -->
+      <div *ngIf="isShowPropertyRule">
+        <app-property-rule (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties"
+          [isStrict]="false">
+        </app-property-rule>
+      </div>
+    </div>
 
     <!-- create/edit rule -->
     <div class="text-center borderless mx-1 my-3">
-      <div *ngIf="filteringRule" class="border va-text">
-        <span *ngIf="!isSumMetric">Count</span>
-        <span *ngIf="isSumMetric">Sum</span>
-        <b>&nbsp;{{filteringRule.className}}&nbsp;</b>
-        <b *ngIf="isSumMetric">{{filteringRule.rules[0].propertyOperand}} </b>
-        <span
-          *ngIf="(!isSumMetric && filteringRule.rules.length > 0) || (isSumMetric && filteringRule.rules.length > 1)">&nbsp;where:</span>
-        <div *ngFor="let r of filteringRule.rules; let j = index;" class="mx-1 my-2">
-          <div class="row align-items-center no-gutters" *ngIf="!isSumRule(r)">
-            <!-- up, down buttons for the rule -->
-            <div class="col-lg-2 col-sm-1 text-left">
-              <a href="#" class="nav-up-link mx-1" (click)="changeFilterRuleOrder(j, true)" *ngIf="j!=0">
-                <img src="assets/img/up-arrow.svg" alt="Navigate Up">
-              </a>
-              <a href="#" class="nav-down-link" (click)="changeFilterRuleOrder(j, false)" *ngIf="j!=0">
-                <img src="assets/img/down-arrow.svg" alt="Navigate Down">
-              </a>
-            </div>
-            <!-- rule body -->
-            <div class="col-lg-9 col-sm-10 text-left va-text">
-              <a href="#" class="logic-op-link text-center mx-1"
-                *ngIf="(isSumMetric && j > 1) || (!isSumMetric && j > 0)"
-                (click)="ruleOperatorClicked(j, r.ruleOperator)">{{r.ruleOperator}}</a>
-              <span>
-                <b>{{r.propertyOperand}}</b>
-                <span *ngIf="r.operator && r.operator !== NOT_SELECTED"> {{r.operator}}
-                  <b *ngIf="r.category != 2">{{r.inputOperand}}</b>
-                  <b *ngIf="r.category == 2">{{r.rawInput}}</b></span>
-              </span>
-            </div>
-            <!-- delete rule button -->
-            <div class="col-1 text-right pr-1">
-              <a href="#" title="Delete rule" (click)="deleteFilterRule(j)">
-                <img src="assets/img/close.svg" alt="Delete rule">
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
         <input class="btn btn-dark va-text m-2" type="button" [value]="newStatBtnTxt" (click)="addStat()">
       </div>

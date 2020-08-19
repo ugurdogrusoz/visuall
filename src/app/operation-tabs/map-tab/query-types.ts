@@ -16,8 +16,52 @@ export interface ClassOption {
 
 export interface ClassBasedRules {
   className: string;
-  rules: Rule[];
+  rules: RuleNode;
   isEdge: boolean;
+}
+
+export interface RuleNode {
+  r: Rule;
+  children: RuleNode[];
+  parent: RuleNode;
+}
+
+export function deepCopyRuleNode(root: RuleNode): RuleNode {
+  if (!root) {
+    return null;
+  }
+  const r: RuleNode = { r: root.r, children: [], parent: root.parent };
+  for (const child of root.children) {
+    r.children.push(deepCopyRuleNode(child));
+  }
+  return r;
+}
+
+export function deepCopyQueryRule(m: QueryRule): QueryRule {
+  let r: RuleNode = deepCopyRuleNode(m.rules.rules);
+  let rules: ClassBasedRules = { className: m.rules.className, isEdge: m.rules.isEdge, rules: r };
+  return { isEditing: m.isEditing, isLoadGraph: m.isLoadGraph, isMergeGraph: m.isMergeGraph, isOnDb: m.isOnDb, name: m.name, rules: rules };
+}
+
+export function deepCopyQueryRules(metrics: QueryRule[]): QueryRule[] {
+  let t2: QueryRule[] = [];
+  for (const m of metrics) {
+    t2.push(deepCopyQueryRule(m));
+  }
+  return t2;
+}
+
+export function deepCopyTimebarMetric(metric: TimebarMetric): TimebarMetric {
+  let r: RuleNode = deepCopyRuleNode(metric.rules);
+  return { className: metric.className, incrementFn: metric.incrementFn, name: metric.name, rules: r, color: metric.color, isEdge: metric.isEdge, isEditing: metric.isEditing };
+}
+
+export function deepCopyTimebarMetrics(metrics: TimebarMetric[]): TimebarMetric[] {
+  let t2: TimebarMetric[] = [];
+  for (const m of metrics) {
+    t2.push(deepCopyTimebarMetric(m));
+  }
+  return t2;
 }
 
 export enum PropertyCategory {
@@ -29,7 +73,7 @@ export interface Rule {
   propertyType?: string;
   operator?: string;
   inputOperand?: string;
-  ruleOperator?: string;
+  ruleOperator: 'AND' | 'OR' | null;
   rawInput?: string;
   enumMapping?: string;
 }
@@ -41,17 +85,18 @@ export interface RuleSync {
 }
 
 // 2 type of metric exists: sum or count.
-// Sum: sums the property value without conditions
+// Sum: sums the property values of elements which satisfy the conditional expressions
 // Count: counts the elements which satisfy the conditional expressions
 export interface TimebarMetric {
   incrementFn: (x: any) => number;
-  rules: Rule[];
+  rules: RuleNode;
   name: string;
   className: string;
   isEdge?: boolean;
   isEditing?: boolean;
   color?: string;
 }
+
 
 export interface TimebarUnitData {
   isBegin: boolean;
@@ -78,28 +123,37 @@ export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules):
     classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;
   }
 
-  let propertyCondition = '';
-  let prevBoolExp = '';
-  for (let [i, r] of m.rules.entries()) {
-    let boolExp = '';
-    // apply property condition
-    if (r.operator != null && r.operator != undefined && r.inputOperand != null && r.inputOperand != undefined) {
-      boolExp = getJsExpressionForMetricRule(r);
-    }
-    if (i > 0 && prevBoolExp.length > 0) {
-      if (r.ruleOperator == 'OR') {
-        propertyCondition += ' || ';
-      } else {
-        propertyCondition += ' && ';
-      }
-    }
-    propertyCondition += boolExp;
-    prevBoolExp = boolExp;
-  }
+  let propertyCondition = getBoolExpressionFromRuleNode(m.rules);
+
   if (propertyCondition.length < 1) {
     return `if (${classCondition})`;
   }
   return `if ( (${classCondition}) && (${propertyCondition}))`;
+}
+
+function getBoolExpressionFromRuleNode(node: RuleNode) {
+  let s = '(';
+  if (!node.r || !node.r.ruleOperator) {
+    if (!node.r || !node.r.propertyType) {
+      s += 'true';
+    } else {
+      s += ' ' + getJsExpressionForMetricRule(node.r) + ' ';
+    }
+  } else {
+    for (let i = 0; i < node.children.length; i++) {
+      if (i != node.children.length - 1) {
+        let op = '&&';
+        if (node.r.ruleOperator == 'OR') {
+          op = '||';
+        }
+        s += ' ' + getBoolExpressionFromRuleNode(node.children[i]) + ' ' + op;
+      } else {
+        s += ' ' + getBoolExpressionFromRuleNode(node.children[i]) + ' ';
+      }
+    }
+  }
+
+  return s + ')';
 }
 
 function getJsExpressionForMetricRule(r: Rule) {
@@ -145,24 +199,42 @@ function getJsExpressionForMetricRule(r: Rule) {
   }
 }
 
-export function rule2str(r: ClassBasedRules): string {
+function r2str(curr: Rule) {
+  let s = '';
+  let inp = '' + curr.inputOperand;
+  if (curr.propertyType == 'string') {
+    inp = `"${inp}"`;
+  }
+  s += ` (<b>${curr.propertyOperand}</b> ${curr.operator} <b>${inp}</b>) `;
+  return s;
+}
+
+export function rule2str2(r: ClassBasedRules): string {
   let s = `<b>${r.className}</b>`;
-  if (r.rules.length == 1 && !r.rules[0].propertyType) {
+  if (r.rules.children.length == 0 || !r.rules.children[0].r.propertyType) {
     return s;
   }
-  if (r.rules.length > 0) {
-    s += ' where ';
-  }
-  for (let i = 0; i < r.rules.length; i++) {
-    let curr = r.rules[i];
-    let inp = '' + curr.inputOperand;
-    if (curr.propertyType == 'string') {
-      inp = `"${inp}"`;
-    }
-    s += ` (<b>${curr.propertyOperand}</b> ${curr.operator} <b>${inp}</b>) `;
-    if (i != r.rules.length - 1) {
-      s += r.rules[i + 1].ruleOperator;
-    }
-  }
+  s += ' where ' + ruleNode2str(r.rules);
   return s;
+}
+
+function ruleNode2str(node: RuleNode) {
+  let s = '(';
+  if (!node.r || !node.r.ruleOperator) {
+    s += ' ' + r2str(node.r) + ' ';
+  } else {
+    for (let i = 0; i < node.children.length; i++) {
+      if (i != node.children.length - 1) {
+        let op = '&&';
+        if (node.r.ruleOperator == 'OR') {
+          op = '||';
+        }
+        s += ' ' + ruleNode2str(node.children[i]) + ' ' + op;
+      } else {
+        s += ' ' + ruleNode2str(node.children[i]) + ' ';
+      }
+    }
+  }
+
+  return s + ')';
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
-import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta } from './data-types';
-import { ClassBasedRules, Rule } from '../operation-tabs/map-tab/query-types';
+import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
+import { Rule, ClassBasedRules, RuleNode } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE } from '../constants';
 import AppDescription from '../../assets/app_description.json';
 import properties from '../../assets/generated/properties.json'
@@ -62,12 +62,12 @@ export class Neo4jDb implements DbService {
   }
 
   getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    const cql = this.rule2cql(rules, skip, limit, type, filter);
+    const cql = this.rule2cql2(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
   filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    const cql = this.rule2cql(rules, skip, limit, type, filter);
+    const cql = this.rule2cql2(rules, skip, limit, type, filter);
     this.runQuery(cql, callback, type == DbQueryType.std);
   }
 
@@ -156,12 +156,53 @@ export class Neo4jDb implements DbService {
     this.runQuery('MATCH (m:Title) UNWIND m.genres as g return distinct g', callback, false);
   }
 
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+    const t = filter.txt ?? '';
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const currPage = filter.skip ? Math.floor(filter.skip / pageSize) + 1 : 1;
+    const orderBy = filter.orderBy ? `'${filter.orderBy}'` : null;
+    let orderDir = 0;
+    if (filter.orderDirection == 'desc') {
+      orderDir = 1;
+    } else if (filter.orderDirection == '') {
+      orderDir = 2;
+    }
+    if (type == DbQueryType.count) {
+      this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase})`, cb, false);
+    } else if (type == DbQueryType.table) {
+      this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir})`, cb, false);
+    }
+  }
+
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+    const t = filter.txt ?? '';
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const currPage = filter.skip ? Math.floor(filter.skip / pageSize) + 1 : 1;
+    const orderBy = filter.orderBy ? `'${filter.orderBy}'` : null;
+    let orderDir = 0;
+    if (filter.orderDirection == 'desc') {
+      orderDir = 1;
+    } else if (filter.orderDirection == '') {
+      orderDir = 2;
+    }
+    if (type == DbQueryType.count) {
+      this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase})`, cb, false);
+    } else if (type == DbQueryType.table) {
+      this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir},
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir})`, cb, false);
+    }
+  }
+
   private runQuery(query: string, callback: (x: any) => any, isGraphResponse = true) {
     const url = this.dbConfig.url;
     const username = this.dbConfig.username;
     const password = this.dbConfig.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
     this._g.setLoadingStatus(true);
+    console.log(query);
     this._g.statusMsg.next('Executing database query...')
     const requestBody = {
       'statements': [{
@@ -217,20 +258,21 @@ export class Neo4jDb implements DbService {
   private extractTable(response): TableResponse {
     if (response.errors && response.errors.length > 0) {
       console.error('DB server returns erronous result', response.errors);
+      this._g.setLoadingStatus(false);
       return;
     }
     return { columns: response.results[0].columns, data: response.results[0].data.map(x => x.row) };
   }
 
   // ------------------------------------------------- methods for conversion to CQL -------------------------------------------------
-  private rule2cql(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
+  private rule2cql2(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
     let query = '';
-    query += this.getCql4Rules(rules, filter);
+    query += this.getCql4Rules2(rules, filter);
     query += this.generateFinalQueryBlock(filter, skip, limit, type);
     return query;
   }
 
-  private getCql4Rules(rule: ClassBasedRules, filter: TableFiltering = null) {
+  private getCql4Rules2(rule: ClassBasedRules, filter: TableFiltering = null) {
     let isGenericType = false;
     if (rule.className == GENERIC_TYPE.ANY_CLASS || rule.className == GENERIC_TYPE.EDGES_CLASS || rule.className == GENERIC_TYPE.NODES_CLASS) {
       isGenericType = true;
@@ -254,18 +296,8 @@ export class Neo4jDb implements DbService {
       matchClause = `OPTIONAL MATCH (x${classFilter})\n`;
     }
 
-    const rules = rule.rules;
-    if (!rules || rules.length < 1)
-      return '';
+    let conditions = this.getCondtion4RuleNode(rule.rules);
 
-    let whereClauseItems = [];
-    for (let i = 0; i < rules.length; i++) {
-      whereClauseItems.push(this.getCondition4Rule(rules[i]));
-      if (i < rules.length - 1) {
-        whereClauseItems.push(rules[i + 1].ruleOperator);
-      }
-    }
-    let conditions = whereClauseItems.join(' ');
     if (filter != null && filter.txt.length > 0) {
       let s = this.getCondition4TxtFilter(rule.isEdge, rule.className, filter.txt);
       conditions = '(' + conditions + ') AND ' + s;
@@ -299,6 +331,22 @@ export class Neo4jDb implements DbService {
     s = s.slice(0, -3)
     s = '(' + s + ')'
     return s;
+  }
+
+  private getCondtion4RuleNode(node: RuleNode): string {
+    let s = '(';
+    if (!node.r.ruleOperator) {
+      s += ' ' + this.getCondition4Rule(node.r) + ' ';
+    } else {
+      for (let i = 0; i < node.children.length; i++) {
+        if (i != node.children.length - 1) {
+          s += ' ' + this.getCondtion4RuleNode(node.children[i]) + ' ' + node.r.ruleOperator;
+        } else {
+          s += ' ' + this.getCondtion4RuleNode(node.children[i]) + ' ';
+        }
+      }
+    }
+    return s + ')';
   }
 
   private getCondition4Rule(rule: Rule): string {

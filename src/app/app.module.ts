@@ -2,8 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-
+import { RouterModule } from '@angular/router';
+import {APP_BASE_HREF} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms'
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -34,6 +34,9 @@ import { SaveProfileModalComponent } from './popups/save-profile-modal/save-prof
 import { SparqlQueryComponent } from './operation-tabs/sparql-query/sparql-query.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RecommendComponent } from './operation-tabs/recommend/recommend.component';
+import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-queries/advanced-queries.component';
+import { TypesViewComponent } from './types-view/types-view.component';
+import { RuleTreeComponent } from './rule-tree/rule-tree.component';
 
 import{NzConfig, NZ_CONFIG} from 'ng-zorro-antd/core/config';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -42,11 +45,11 @@ import { SparqlSearchComponent } from './operation-tabs/sparql-search/sparql-sea
 import { EditorComponent } from './operation-tabs/sparql-query/sparql-editor/editor/editor.component';
 import { MapModalComponent } from './popups/map-modal/map-modal.component';
 
-
 const ngZorroConfig: NzConfig = {
   message: { nzTop: 120 },
   notification: { nzTop: 240 }
 };
+
 
 @NgModule({
   declarations: [
@@ -73,6 +76,9 @@ const ngZorroConfig: NzConfig = {
     GraphHistoryComponent,
     SaveProfileModalComponent,
     ReplacePipe,
+    AdvancedQueriesComponent,
+    TypesViewComponent,
+    RuleTreeComponent,
     SparqlQueryComponent,
     RecommendComponent,
     SparqlSearchComponent,
@@ -87,15 +93,15 @@ const ngZorroConfig: NzConfig = {
     AutoSizeInputModule,
     AngularDraggableModule,
     TabCustomizationModule,
+    RouterModule.forRoot([]),
+    TabCustomizationModule,
     BrowserAnimationsModule,
     NgZorroAntdModule,
     ReactiveFormsModule,
     NzInputModule,
     NzAutocompleteModule
-
-
   ],
-  providers: [{provide: NZ_CONFIG, useValue: ngZorroConfig}],
+  providers: [{provide: APP_BASE_HREF, useValue : "/" }, {provide: NZ_CONFIG, useValue: ngZorroConfig}],
   bootstrap: [AppComponent],
   entryComponents: [SaveAsPngModalComponent, QuickHelpModalComponent, AboutModalComponent, ErrorModalComponent]
 })
