@@ -14,6 +14,14 @@ export class CytoscapeComponent implements OnInit {
 
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
   cyClass = false;
+  private keyDown = {
+    'Alt': false,
+    'Shift': false,
+    'ArrowUp': false,
+    'ArrowDown': false,
+    'ArrowRight': false,
+    'ArrowLeft': false
+  }
 
   ngOnInit() {
     this._cyService.initCy(document.getElementById('cy'));
@@ -46,4 +54,57 @@ export class CytoscapeComponent implements OnInit {
     }
   }
 
+  @HostListener('document:keydown', ['$event'])
+  moveSelectedWithArrowKeys(event: KeyboardEvent) {
+
+    if (this.keyDown[event.key] === undefined) {
+      return;
+    }
+    this.keyDown[event.key] = true;
+
+    // alt + arrowleft in chrome goes back to previous page
+    event.preventDefault();
+
+    // shouldn't go ahead if both Alt and Shift are pressed
+    if (this.keyDown['Alt'] && this.keyDown['Shift']) {
+      return;
+    }
+    // normal
+    let moveSpeed: number = 3;
+
+    // slow
+    if (this.keyDown['Alt']) {
+      moveSpeed = 1;
+    }
+    // fast
+    else if (this.keyDown['Shift']) {
+      moveSpeed = 10;
+    }
+
+    // decide the shift values in x and y axes
+    // based on key presses
+    let dx: number = 0;
+    let dy: number = 0;
+
+    dx += this.keyDown['ArrowRight'] ? moveSpeed : 0;
+    dx -= this.keyDown['ArrowLeft'] ? moveSpeed : 0;
+    dy += this.keyDown['ArrowDown'] ? moveSpeed : 0;
+    dy -= this.keyDown['ArrowUp'] ? moveSpeed :0;
+
+    // move selected by the shift values decided above
+    this._g.cy.nodes(':selected').shift({
+      x: dx,
+      y: dy
+    });
+
+  }
+  // This listener is written for moving
+  // selected elements with arrow keys facility
+  @HostListener('document:keyup', ['$event'])
+  setKeyDownValues(event: KeyboardEvent) {
+    // if the key is down set corresponding value to false
+    if(this.keyDown[event.key] !== undefined) {
+      this.keyDown[event.key] = false;
+    }
+  }
 }
