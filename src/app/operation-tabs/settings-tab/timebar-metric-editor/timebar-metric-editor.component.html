@@ -59,7 +59,8 @@
 
     <!-- create/edit rule -->
     <div class="text-center borderless mx-1 my-3">
-      <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
+      <div class="d-flex align-items-center justify-content-center m-1"
+        *ngIf="filteringRule && filteringRule.rules && filteringRule.rules.r && (!filteringRule.rules.r.ruleOperator || (filteringRule.rules.r.ruleOperator && filteringRule.rules.children.length > 0) )">
         <input class="btn btn-dark va-text m-2" type="button" [value]="newStatBtnTxt" (click)="addStat()">
       </div>
     </div>

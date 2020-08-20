@@ -171,7 +171,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.isEditingPropertyRule = false;
     }
   }
-  
+
   newOperator(e: RuleNode) {
     this.isShowPropertyRule = true;
     this.currRuleNode = e;
@@ -181,7 +181,11 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.isAClassSelectedForMetric = false;
     this.filteringRule.rules = null;
     this.isShowPropertyRule = true;
-    this.isSumMetric = this.isSumRule(this.filteringRule.rules.r);
+    if (this.filteringRule.rules) {
+      this.isSumMetric = this.isSumRule(this.filteringRule.rules.r);
+    } else {
+      this.isSumMetric = false;
+    }
   }
 
   deleteMetric(i: number) {
