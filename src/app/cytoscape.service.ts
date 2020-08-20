@@ -213,7 +213,10 @@ export class CytoscapeService {
     }
 
     let cyEdges = [];
-    let collapsedEdgeIds = this.getCollapsedEdgeIds();
+    let collapsedEdgeIds = {};
+    if (isIncremental) {
+      collapsedEdgeIds = this.getCollapsedEdgeIds();
+    }
     for (let i = 0; i < edges.length; i++) {
       let cyEdgeId = 'e' + edges[i].id;
       if (collapsedEdgeIds[cyEdgeId]) {
@@ -329,7 +332,7 @@ export class CytoscapeService {
     }
   }
 
-  getCollapsedEdgeIds(): any {
+  private getCollapsedEdgeIds(): any {
     let compoundEdges = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS);
     let collapsedEdgeIds = {};
     for (let i = 0; i < compoundEdges.length; i++) {
