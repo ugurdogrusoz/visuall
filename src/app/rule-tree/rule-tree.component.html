@@ -3,7 +3,7 @@
   <button class="btn btn-outline-secondary btn-sm va-small-text mr-1" *ngIf="root.children && root.children.length > 0"
     (click)="isShowChildren = !isShowChildren">{{isShowChildren ? '-' : '+'}}</button>
 
-  <div *ngIf="root.r" class="d-inline-flex justify-content-center">
+  <div *ngIf="root.r" class="d-inline-flex justify-content-center va-text">
     <span *ngIf="!root.r.ruleOperator">
       <span *ngIf="root.parent">
         <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, true)">
@@ -13,8 +13,10 @@
           <img src="assets/img/down-arrow.svg" title="Navigate Down">
         </a>
       </span>
-      <span *ngIf="!root.r.propertyOperand"> --ALL-- </span>
-      <span class="va-text">{{root.r.propertyOperand}} {{root.r.operator}} {{root.r.inputOperand}}</span>
+      <span *ngIf="!root.r.propertyOperand"> ALL </span>
+      <span>{{root.r.propertyOperand}} {{root.r.operator}} </span>
+      <span *ngIf="root.r.enumMapping;else no_enum">{{root.r.enumMapping}}</span>
+      <ng-template #no_enum><span>{{root.r.inputOperand}}</span></ng-template>
     </span>
 
     <span>
@@ -51,7 +53,8 @@
   <div [style.display]="isShowChildren ? 'block' : 'none'">
     <ul *ngFor="let node of root.children; let i = index">
       <li>
-        <app-rule-tree [root]="node" (onOperatorAdded)="operatorEmitter($event)" (onRuleRequested)="addRule($event)"> </app-rule-tree>
+        <app-rule-tree [root]="node" (onOperatorAdded)="operatorEmitter($event)" (onRuleRequested)="addRule($event)">
+        </app-rule-tree>
       </li>
     </ul>
   </div>
