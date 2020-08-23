@@ -579,7 +579,7 @@ export class CytoscapeService {
   }
 
   saveAsJson() {
-    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
+    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_NODE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
     if (hasAnyCollapsed) {
       const instance = this._modalService.open(ErrorModalComponent);
       instance.componentInstance.msg = 'Cannot save due to collapsed node(s) and/or edge(s)';
@@ -596,7 +596,7 @@ export class CytoscapeService {
 
   saveSelectedAsJson() {
     const selected = this._g.cy.$(':selected');
-    let hasAnyCollapsed = selected.nodes('.' + C.COLLAPSED_EDGE_CLASS).length > 0 || selected.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
+    let hasAnyCollapsed = selected.nodes('.' + C.COLLAPSED_NODE_CLASS).length > 0 || selected.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
     if (hasAnyCollapsed) {
       const instance = this._modalService.open(ErrorModalComponent);
       instance.componentInstance.msg = 'Cannot save selected objects due to collapsed node(s) and/or edge(s)';
