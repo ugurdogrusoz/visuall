@@ -1,53 +1,51 @@
 <div *ngIf="root">
 
-  <button class="btn btn-outline-secondary btn-sm va-small-text mr-1" *ngIf="root.children && root.children.length > 0"
-    (click)="isShowChildren = !isShowChildren">{{isShowChildren ? '-' : '+'}}</button>
+  <span [ngClass]="{'move-caret': !isShowChildren}" class="tree pointer va-heading1 text-center mr-1"
+    *ngIf="root.children && root.children.length > 0" (click)="isShowChildren=!isShowChildren"></span>
 
-  <div *ngIf="root.r" class="d-inline-flex justify-content-center va-text">
+
+  <div *ngIf="root.r" class="va-text">
     <span *ngIf="!root.r.ruleOperator">
       <span *ngIf="root.parent">
         <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, true)">
-          <img src="assets/img/up-arrow.svg" title="Navigate Up">
+          <img src="assets/img/up-arrow.svg" title="Move Up">
         </a>
         <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, false)">
-          <img src="assets/img/down-arrow.svg" title="Navigate Down">
+          <img src="assets/img/down-arrow.svg" title="Move Down">
         </a>
       </span>
-      <span *ngIf="!root.r.propertyOperand"> ALL </span>
-      <span>{{root.r.propertyOperand}} {{root.r.operator}} </span>
-      <span *ngIf="root.r.enumMapping;else no_enum">{{root.r.enumMapping}}</span>
-      <ng-template #no_enum><span>{{root.r.inputOperand}}</span></ng-template>
+      <span [ngClass]="{'curr-condition rounded': root.isEditing}">
+        <span *ngIf="!root.r.propertyOperand"> ALL </span>
+        <span>{{root.r.propertyOperand}} {{root.r.operator}} </span>
+        <span *ngIf="root.r.enumMapping;else no_enum">{{root.r.enumMapping}}</span>
+        <ng-template #no_enum><span>{{root.r.inputOperand}}</span></ng-template>
+      </span>
     </span>
 
-    <span>
-      <span *ngIf="root.r.ruleOperator">
-        <a href="#" class="logic-op-link text-center mr-1" (click)="operatorClicked(root)">{{root.r.ruleOperator}}</a>
-      </span>
-
-      <span *ngIf="!root.r.ruleOperator">
-        <div ngbDropdown class="d-inline-block">
-          <div class="mx-1 text-center">
-            <img src="assets/img/add.svg" alt="Add Rule" ngbDropdownToggle>
-          </div>
-          <div ngbDropdownMenu>
-            <button ngbDropdownItem type="button" class="btn btn-dark btn-sm va-small-text"
-              (click)="addOperator(root, 'AND')">AND</button>
-            <button ngbDropdownItem type="button" class="btn btn-dark btn-sm va-small-text"
-              (click)="addOperator(root, 'OR')">OR</button>
-            <button ngbDropdownItem *ngIf="root.children.length < 1 && root.parent" type="button"
-              class="btn btn-dark btn-sm va-small-text" (click)="addRule(root.parent)">Condition</button>
-          </div>
-        </div>
-      </span>
-
-      <a *ngIf="!root.r.ruleOperator" href="#" class="mr-1" (click)="addRule(root)">
-        <img src="assets/img/edit.svg" title="Edit">
-      </a>
-
-      <a href="#" class="mr-1" (click)="deleteNode(root)">
-        <img src="assets/img/close.svg" title="Delete">
-      </a>
+    <span *ngIf="root.r.ruleOperator">
+      <a href="#" class="logic-op-link va-text text-center mr-1"
+        (click)="operatorClicked(root)">{{root.r.ruleOperator}}</a>
     </span>
+
+    <div *ngIf="!root.r.ruleOperator" class="dropdown-container d-flex d-inline-flex flex-column">
+      <span class="mx-2 text-center">
+        <img title="Add" src="assets/img/add.svg" alt="Add Rule" (click)="isShowDropDown=!isShowDropDown">
+      </span>
+      <div *ngIf="isShowDropDown" class="dropdown4add">
+        <button type="button" class="p-1 dropdown-item va-small-text" (click)="addOperator(root, 'AND')">AND</button>
+        <button type="button" class="p-1 dropdown-item va-small-text" (click)="addOperator(root, 'OR')">OR</button>
+        <button *ngIf="root.children.length < 1 && root.parent" type="button" class="p-1 dropdown-item va-small-text"
+          (click)="addRule(root.parent)">Condition</button>
+      </div>
+    </div>
+
+    <a *ngIf="!root.r.ruleOperator" href="#" class="mr-2" (click)="addRule(root)">
+      <img src="assets/img/edit.svg" title="Edit">
+    </a>
+
+    <a href="#" (click)="deleteNode(root)">
+      <img src="assets/img/close.svg" title="Delete">
+    </a>
   </div>
 
   <div [style.display]="isShowChildren ? 'block' : 'none'">

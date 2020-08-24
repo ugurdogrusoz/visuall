@@ -6,4 +6,42 @@ img {
 
 ul {
   list-style-type: none;
+  margin-bottom: 2px;
+}
+
+.move-caret::after {
+  -ms-transform: rotate(90deg);
+  /* IE 9 */
+  -webkit-transform: rotate(90deg);
+  /* Safari */
+  transform: rotate(90deg);
+}
+
+.tree::after {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.dropdown4add {
+  position: absolute;
+  z-index: 1000;
+  overflow: auto;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: .25rem;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block!important;
+}
+
+.curr-condition {
+  background: #DAE0E5;
 }

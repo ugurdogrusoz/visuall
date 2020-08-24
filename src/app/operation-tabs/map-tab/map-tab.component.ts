@@ -29,6 +29,7 @@ export class MapTabComponent implements OnInit {
   currDatetimes: Date[];
   queryRule: ClassBasedRules;
   currRuleNode: RuleNode;
+  editedRuleNode: Subject<RuleNode> = new Subject<RuleNode>();
   isQueryOnDb: boolean;
   currProperties: RuleSync;
   editingPropertyRule: Rule;
@@ -150,6 +151,7 @@ export class MapTabComponent implements OnInit {
       if (this.isEditingPropertyRule) {
         this.currRuleNode.r = r;
         this.isEditingPropertyRule = false;
+        this.editedRuleNode.next(this.currRuleNode);
       } else {
         this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
       }

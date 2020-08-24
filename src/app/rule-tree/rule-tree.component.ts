@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { RuleNode, Rule } from '../operation-tabs/map-tab/query-types';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-rule-tree',
@@ -10,13 +11,20 @@ export class RuleTreeComponent implements OnInit {
 
   constructor() { }
   @Input() root: RuleNode;
+  @Input() editedRuleNode: Subject<RuleNode>;
   @Output() onRuleRequested = new EventEmitter<RuleNode>();
   @Output() onEmpty = new EventEmitter<boolean>();
   @Output() onOperatorAdded = new EventEmitter<RuleNode>();
   currNode: RuleNode;
   isShowChildren = true;
+  isShowDropDown = false;
 
   ngOnInit(): void {
+    if (this.editedRuleNode) {
+      this.editedRuleNode.subscribe(x => {
+        x.isEditing = false;
+      });
+    }
   }
 
   operatorClicked(r: RuleNode) {
@@ -52,6 +60,11 @@ export class RuleTreeComponent implements OnInit {
   }
 
   addRule(curr: RuleNode) {
+    // since component is recursive, we should only set it once
+    if (!this.root.parent) {
+      curr.isEditing = !curr.isEditing;
+    }
+    this.isShowDropDown = false;
     this.onRuleRequested.emit(curr);
   }
 

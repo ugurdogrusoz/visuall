@@ -16,11 +16,11 @@
   <div class="col-5 pr-1">
     <div [hidden]="selectedPropertyCategory != 0">
       <input [type]="currInpType" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected"
-        (click)="filterInpClicked()" class="form-control filter-form filter-input va-small-text"
+        (click)="filterInpClicked()" class="tight-select form-control filter-form filter-input va-small-text"
         placeholder="Filter...">
     </div>
     <div [hidden]="selectedPropertyCategory != 1">
-      <input type="text" #dateInp [disabled]="isGenericTypeSelected" class="form-control va-small-text">
+      <input type="text" #dateInp [disabled]="isGenericTypeSelected" class="tight-select filter-form form-control va-small-text">
     </div>
     <div [hidden]="selectedPropertyCategory != 2">
       <select class="custom-select tight-select filter-form va-small-text" [(ngModel)]="filterInp">
@@ -29,8 +29,8 @@
     </div>
   </div>
 
-  <div class="col-1 p-1 text-center">
-    <img src="assets/img/add.svg" alt="Add Rule" (click)="onAddRuleClick()">
+  <div class="col-1 text-center">
+    <img src="assets/img/tick.svg" alt="Add Rule" (click)="onAddRuleClick()">
   </div>
 </div>
 <div class="draggable-content" ngResizable ngDraggable [position]="position" [rzHandles]="'all'" *ngIf="isShowTxtArea"
