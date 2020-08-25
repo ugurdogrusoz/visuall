@@ -32,7 +32,6 @@ export class TimebarMetricEditorComponent implements OnInit {
   editingPropertyRule: Rule;
   currRuleNode: RuleNode;
   isShowPropertyRule = true;
-  isEditingPropertyRule = false;
 
   constructor(private _timeBarService: TimebarService, private _profile: UserProfileService) {
     this.classOptions = [];
@@ -134,9 +133,8 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.filteringRule.name = this.currMetricName;
     this.filteringRule.color = this.currMetricColor;
     if (this.currRuleNode.r) {
-      if (this.isEditingPropertyRule) {
+      if (this.currRuleNode.isEditing) {
         this.currRuleNode.r = r;
-        this.isEditingPropertyRule = false;
       } else {
         this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
       }
@@ -151,25 +149,24 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.isShowPropertyRule = r.ruleOperator !== null;
   }
 
-  showPropertyRule(e: RuleNode) {
-    this.isShowPropertyRule = true;
-    this.currRuleNode = e;
-
-    // means edit this rule
-    if (this.currRuleNode.r && !this.currRuleNode.r.ruleOperator) {
-      if (this.isEditingPropertyRule) {
-        this.isEditingPropertyRule = false;
-        this.isShowPropertyRule = false;
-        this.changeSelectedClass();
-        this.editingPropertyRule = null;
-        return;
-      }
-      this.isEditingPropertyRule = true;
-      this.changeSelectedClass();
-      this.editingPropertyRule = e.r;
-    } else {
-      this.isEditingPropertyRule = false;
+  showPropertyRule(e: { node: RuleNode, isEdit: boolean }) {
+    this.currRuleNode = e.node;
+    // means edit is clicked in rule tree
+    if (!e.isEdit) {
+      this.isShowPropertyRule = true;
+      return;
     }
+    this.isShowPropertyRule = false;
+    // let the UI for property rule re-rendered
+    setTimeout(() => {
+      this.isShowPropertyRule = e.node.isEditing;
+      this.changeSelectedClass();
+      if (e.node.isEditing) {
+        this.editingPropertyRule = e.node.r;
+      } else {
+        this.editingPropertyRule = null;
+      }
+    });
   }
 
   newOperator(e: RuleNode) {

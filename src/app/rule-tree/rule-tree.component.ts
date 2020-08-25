@@ -12,7 +12,7 @@ export class RuleTreeComponent implements OnInit {
   constructor() { }
   @Input() root: RuleNode;
   @Input() editedRuleNode: Subject<RuleNode>;
-  @Output() onRuleRequested = new EventEmitter<RuleNode>();
+  @Output() onRuleRequested = new EventEmitter<{ node: RuleNode, isEdit: boolean }>();
   @Output() onEmpty = new EventEmitter<boolean>();
   @Output() onOperatorAdded = new EventEmitter<RuleNode>();
   currNode: RuleNode;
@@ -57,19 +57,22 @@ export class RuleTreeComponent implements OnInit {
     }
   }
 
-  addRule(curr: RuleNode) {
+  addRule(e: { node: RuleNode, isEdit: boolean }) {
     // since component is recursive, we should only set it once
-    if (!this.root.parent) {
-      curr.isEditing = !curr.isEditing;
+    if (!this.root.parent && e.isEdit) {
+      if (!e.node.isEditing) {
+        this.clearAllEditings(this.root);
+      }
+      e.node.isEditing = !e.node.isEditing;
     }
-    this.onRuleRequested.emit(curr);
+    this.onRuleRequested.emit(e);
   }
 
   btnFromDropdownClicked(e: 'AND' | 'OR' | 'C') {
     if (e != 'C') {
       this.addOperator(this.root, e);
     } else {
-      this.addRule(this.root);
+      this.addRule({ node: this.root, isEdit: false });
     }
   }
 
@@ -86,6 +89,13 @@ export class RuleTreeComponent implements OnInit {
     let tmp = parent.children[j];
     parent.children[j] = parent.children[idx];
     parent.children[idx] = tmp;
+  }
+
+  clearAllEditings(r: RuleNode) {
+    r.isEditing = false;
+    for (const child of r.children) {
+      this.clearAllEditings(child);
+    }
   }
 
 }

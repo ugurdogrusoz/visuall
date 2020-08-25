@@ -1,19 +1,19 @@
 <div *ngIf="root">
 
-  <span [ngClass]="{'move-caret': !isShowChildren}" class="tree pointer va-heading1 text-center mr-1"
+  <span [ngClass]="{'move-caret': !isShowChildren}" class="tree pointer va-heading1 text-center"
     *ngIf="root.children && root.children.length > 0" (click)="isShowChildren=!isShowChildren"></span>
 
-  <span *ngIf="root.r" class="va-text">
+  <span *ngIf="root.r" class="va-text" [ngClass]="{'curr-condition rounded': root.isEditing}">
+    <span *ngIf="root.parent">
+      <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, true)">
+        <img src="assets/img/up-arrow.svg" title="Move up">
+      </a>
+      <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, false)">
+        <img src="assets/img/down-arrow.svg" title="Move down">
+      </a>
+    </span>
     <span *ngIf="!root.r.ruleOperator">
-      <span *ngIf="root.parent">
-        <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, true)">
-          <img src="assets/img/up-arrow.svg" title="Move Up">
-        </a>
-        <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, false)">
-          <img src="assets/img/down-arrow.svg" title="Move Down">
-        </a>
-      </span>
-      <span [ngClass]="{'curr-condition rounded': root.isEditing}">
+      <span>
         <span *ngIf="!root.r.propertyOperand"> ALL </span>
         <span>{{root.r.propertyOperand}} {{root.r.operator}} </span>
         <span *ngIf="root.r.enumMapping;else no_enum">{{root.r.enumMapping}}</span>
@@ -26,7 +26,7 @@
         (click)="operatorClicked(root)">{{root.r.ruleOperator}}</a>
     </span>
 
-    <a *ngIf="!root.r.ruleOperator" href="#" class="mx-2" (click)="addRule(root)">
+    <a *ngIf="!root.r.ruleOperator" href="#" class="mx-2" (click)="addRule({node: root, isEdit: true})">
       <img src="assets/img/edit.svg" title="Edit">
     </a>
 
@@ -44,6 +44,12 @@
       <li>
         <app-rule-dropdown *ngIf="i == root.children.length - 1" (btnClicked)="btnFromDropdownClicked($event)"
           [isShowConditionBtn]="true">
+        </app-rule-dropdown>
+      </li>
+    </ul>
+    <ul *ngIf="root.children.length < 1 && root.r && root.r.ruleOperator">
+      <li>
+        <app-rule-dropdown (btnClicked)="btnFromDropdownClicked($event)" [isShowConditionBtn]="true">
         </app-rule-dropdown>
       </li>
     </ul>
