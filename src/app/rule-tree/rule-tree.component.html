@@ -3,8 +3,7 @@
   <span [ngClass]="{'move-caret': !isShowChildren}" class="tree pointer va-heading1 text-center mr-1"
     *ngIf="root.children && root.children.length > 0" (click)="isShowChildren=!isShowChildren"></span>
 
-
-  <div *ngIf="root.r" class="va-text">
+  <span *ngIf="root.r" class="va-text">
     <span *ngIf="!root.r.ruleOperator">
       <span *ngIf="root.parent">
         <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, true)">
@@ -27,32 +26,25 @@
         (click)="operatorClicked(root)">{{root.r.ruleOperator}}</a>
     </span>
 
-    <div *ngIf="!root.r.ruleOperator" class="dropdown-container d-flex d-inline-flex flex-column">
-      <span class="mx-2 text-center">
-        <img title="Add" src="assets/img/add.svg" alt="Add Rule" (click)="isShowDropDown=!isShowDropDown">
-      </span>
-      <div *ngIf="isShowDropDown" class="dropdown4add">
-        <button type="button" class="p-1 dropdown-item va-small-text" (click)="addOperator(root, 'AND')">AND</button>
-        <button type="button" class="p-1 dropdown-item va-small-text" (click)="addOperator(root, 'OR')">OR</button>
-        <button *ngIf="root.children.length < 1 && root.parent" type="button" class="p-1 dropdown-item va-small-text"
-          (click)="addRule(root.parent)">Condition</button>
-      </div>
-    </div>
-
-    <a *ngIf="!root.r.ruleOperator" href="#" class="mr-2" (click)="addRule(root)">
+    <a *ngIf="!root.r.ruleOperator" href="#" class="mx-2" (click)="addRule(root)">
       <img src="assets/img/edit.svg" title="Edit">
     </a>
 
     <a href="#" (click)="deleteNode(root)">
       <img src="assets/img/close.svg" title="Delete">
     </a>
-  </div>
+  </span>
 
   <div [style.display]="isShowChildren ? 'block' : 'none'">
     <ul *ngFor="let node of root.children; let i = index">
       <li>
         <app-rule-tree [root]="node" (onOperatorAdded)="operatorEmitter($event)" (onRuleRequested)="addRule($event)">
         </app-rule-tree>
+      </li>
+      <li>
+        <app-rule-dropdown *ngIf="i == root.children.length - 1" (btnClicked)="btnFromDropdownClicked($event)"
+          [isShowConditionBtn]="true">
+        </app-rule-dropdown>
       </li>
     </ul>
   </div>

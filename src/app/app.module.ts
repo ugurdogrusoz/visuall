@@ -36,6 +36,7 @@ import { SaveProfileModalComponent } from './popups/save-profile-modal/save-prof
 import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-queries/advanced-queries.component';
 import { TypesViewComponent } from './types-view/types-view.component';
 import { RuleTreeComponent } from './rule-tree/rule-tree.component';
+import { RuleDropdownComponent } from './rule-dropdown/rule-dropdown.component';
 
 
 @NgModule({
@@ -68,6 +69,7 @@ import { RuleTreeComponent } from './rule-tree/rule-tree.component';
     AdvancedQueriesComponent,
     TypesViewComponent,
     RuleTreeComponent,
+    RuleDropdownComponent,
   ],
   imports: [
     BrowserModule,

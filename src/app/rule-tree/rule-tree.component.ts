@@ -17,7 +17,6 @@ export class RuleTreeComponent implements OnInit {
   @Output() onOperatorAdded = new EventEmitter<RuleNode>();
   currNode: RuleNode;
   isShowChildren = true;
-  isShowDropDown = false;
 
   ngOnInit(): void {
     if (this.editedRuleNode) {
@@ -37,11 +36,10 @@ export class RuleTreeComponent implements OnInit {
   }
 
   addOperator(curr: RuleNode, code: 'AND' | 'OR') {
-    const newNode: RuleNode = { r: curr.r, children: [], parent: curr };
-    curr.r = { ruleOperator: code };
+    const newNode: RuleNode = { r: { ruleOperator: code }, children: [], parent: curr };
     curr.children.push(newNode);
-    this.currNode = curr;
-    this.operatorEmitter(curr);
+    this.currNode = newNode;
+    this.operatorEmitter(newNode);
   }
 
   operatorEmitter(r: RuleNode) {
@@ -64,8 +62,15 @@ export class RuleTreeComponent implements OnInit {
     if (!this.root.parent) {
       curr.isEditing = !curr.isEditing;
     }
-    this.isShowDropDown = false;
     this.onRuleRequested.emit(curr);
+  }
+
+  btnFromDropdownClicked(e: 'AND' | 'OR' | 'C') {
+    if (e != 'C') {
+      this.addOperator(this.root, e);
+    } else {
+      this.addRule(this.root);
+    }
   }
 
   changeQueryRuleOrder(node: RuleNode, isUp: boolean) {

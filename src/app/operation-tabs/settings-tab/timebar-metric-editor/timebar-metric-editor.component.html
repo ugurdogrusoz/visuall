@@ -36,16 +36,15 @@
       </select>
     </div>
 
-    <div class="form-inline justify-content-center" *ngIf="!filteringRule || !filteringRule.rules">
-      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('AND')">AND</button>
-      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('OR')">OR</button>
-      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('C')">Condition</button>
+    <div>
+      <span class="va-text">
+        Get <b *ngIf="filteringRule">{{filteringRule.className}}</b> where:&nbsp;
+      </span>
+      <app-rule-dropdown *ngIf="!filteringRule || !filteringRule.rules" (btnClicked)="initRules($event)"
+        [isShowConditionBtn]="true"></app-rule-dropdown>
     </div>
 
     <div *ngIf="filteringRule && filteringRule.rules">
-      <span class="va-text">
-        Get <b>{{filteringRule.className}}</b> where:
-      </span>
       <app-rule-tree [root]="filteringRule.rules" (onOperatorAdded)="newOperator($event)"
         (onRuleRequested)="showPropertyRule($event)" (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
 

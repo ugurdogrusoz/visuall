@@ -42,19 +42,11 @@
 
       <div class="form-inline justify-content-center">
         <span class="va-text">
-          Get <b *ngIf="queryRule">{{queryRule.className}}</b> where:
+          Get <b *ngIf="queryRule">{{queryRule.className}}</b> where:&nbsp;
         </span>
 
-        <div ngbDropdown *ngIf="!queryRule || !queryRule.rules" class="d-inline-block">
-          <span class="mx-2 text-center">
-            <img title="Add" src="assets/img/add.svg" alt="Add Rule" class="pointer" ngbDropdownToggle>
-          </span>
-          <div ngbDropdownMenu>
-            <button class="va-text" ngbDropdownItem (click)="initRules('AND')">AND</button>
-            <button class="va-text" ngbDropdownItem (click)="initRules('OR')">OR</button>
-            <button class="va-text" ngbDropdownItem (click)="initRules('C')">Condition</button>
-          </div>
-        </div>
+        <app-rule-dropdown *ngIf="!queryRule || !queryRule.rules" (btnClicked)="initRules($event)"
+          [isShowConditionBtn]="true"></app-rule-dropdown>
       </div>
 
       <div *ngIf="queryRule && queryRule.rules">
