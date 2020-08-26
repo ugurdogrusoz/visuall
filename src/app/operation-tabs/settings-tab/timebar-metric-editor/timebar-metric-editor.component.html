@@ -45,8 +45,9 @@
     </div>
 
     <div *ngIf="filteringRule && filteringRule.rules">
-      <app-rule-tree [root]="filteringRule.rules" (onOperatorAdded)="newOperator($event)"
-        (onRuleRequested)="showPropertyRule($event)" (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
+      <app-rule-tree [root]="filteringRule.rules" [editedRuleNode]="editedRuleNode"
+        (onOperatorAdded)="newOperator($event)" (onRuleRequested)="showPropertyRule($event)"
+        (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
 
       <!-- rule input -->
       <div *ngIf="isShowPropertyRule">

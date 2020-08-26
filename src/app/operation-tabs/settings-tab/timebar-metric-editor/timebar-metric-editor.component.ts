@@ -4,8 +4,8 @@ import AppDescription from '../../../../assets/app_description.json';
 import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric, RuleNode, deepCopyTimebarMetric } from '../../map-tab/query-types';
 import { GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
-import { BehaviorSubject } from 'rxjs';
 import { UserProfileService } from 'src/app/user-profile.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-timebar-metric-editor',
@@ -32,6 +32,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   editingPropertyRule: Rule;
   currRuleNode: RuleNode;
   isShowPropertyRule = true;
+  editedRuleNode: Subject<RuleNode> = new Subject<RuleNode>();
 
   constructor(private _timeBarService: TimebarService, private _profile: UserProfileService) {
     this.classOptions = [];
@@ -135,6 +136,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     if (this.currRuleNode.r) {
       if (this.currRuleNode.isEditing) {
         this.currRuleNode.r = r;
+        this.editedRuleNode.next(this.currRuleNode);
       } else {
         this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
       }
