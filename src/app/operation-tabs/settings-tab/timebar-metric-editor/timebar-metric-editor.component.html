@@ -38,7 +38,7 @@
 
     <div>
       <span class="va-text">
-        Get <b *ngIf="filteringRule">{{filteringRule.className}}</b> where:&nbsp;
+        Get <b *ngIf="selectedClass">{{selectedClass}}</b> where:&nbsp;
       </span>
       <app-rule-dropdown *ngIf="!filteringRule || !filteringRule.rules" (btnClicked)="initRules($event)"
         [isShowConditionBtn]="true"></app-rule-dropdown>

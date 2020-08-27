@@ -1,21 +1,28 @@
 <div *ngIf="root">
 
-  <span [ngClass]="{'move-caret': !isShowChildren}" class="tree pointer va-heading1 text-center"
-    *ngIf="root.children && root.children.length > 0" (click)="isShowChildren=!isShowChildren"></span>
+  <span class="caret pointer va-heading1 text-center" *ngIf="root.children && root.children.length > 0"
+    (click)="isShowChildren=!isShowChildren">
+    <ng-container *ngIf="isShowChildren">
+      <span title="collapse">&#11206;</span>
+    </ng-container>
+    <ng-container *ngIf="!isShowChildren">
+      <span title="expand">&#11208;</span>
+    </ng-container>
+  </span>
 
-  <span *ngIf="root.r" class="va-text" [ngClass]="{'curr-condition rounded': root.isEditing}">
-    <span *ngIf="root.parent">
-      <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, true)">
-        <img src="assets/img/up-arrow.svg" title="Move up">
-      </a>
-      <a href="#" class="mr-1" (click)="changeQueryRuleOrder(root, false)">
-        <img src="assets/img/down-arrow.svg" title="Move down">
-      </a>
+  <span *ngIf="root.r" class="va-text padding4 rounded" [ngClass]="{'curr-condition': root.isEditing}">
+    <span *ngIf="root.parent" class="va-heading1 mr-2">
+      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, true)" class="caret pointer" title="Move up">
+        &#11205;
+      </span>
+      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, false)" class="caret pointer" title="Move down">
+        &#11206;
+      </span>
     </span>
     <span *ngIf="!root.r.ruleOperator">
       <span>
         <span *ngIf="!root.r.propertyOperand"> ALL </span>
-        <span>{{root.r.propertyOperand}} {{root.r.operator}} </span>
+        <span><i>{{root.r.propertyOperand}}</i> {{root.r.operator}} </span>
         <span *ngIf="root.r.enumMapping;else no_enum">{{root.r.enumMapping}}</span>
         <ng-template #no_enum><span>{{root.r.inputOperand}}</span></ng-template>
       </span>

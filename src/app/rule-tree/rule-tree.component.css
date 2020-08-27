@@ -7,24 +7,18 @@ img {
 ul {
   list-style-type: none;
   margin-bottom: 2px;
+  padding-inline-start: 24px;
 }
 
-.move-caret::after {
-  -ms-transform: rotate(90deg);
-  /* IE 9 */
-  -webkit-transform: rotate(90deg);
-  /* Safari */
-  transform: rotate(90deg);
-}
-
-.tree::after {
-  content: "\25B6";
-  color: black;
+.caret {
+  color: #666666;
   display: inline-block;
-  margin-right: 6px;
 }
 
 .curr-condition {
-  background: #DAE0E5;
+  background: #F0F2F4;
+}
+
+.padding4 {
   padding: 4px;
 }

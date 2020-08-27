@@ -21,3 +21,7 @@ img {
   height: 16px;
   cursor: pointer;
 }
+
+.dd-item {
+  padding: 0.37rem !important;
+}

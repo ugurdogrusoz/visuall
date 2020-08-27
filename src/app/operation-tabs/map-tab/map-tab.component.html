@@ -42,7 +42,7 @@
 
       <div class="form-inline justify-content-center">
         <span class="va-text">
-          Get <b *ngIf="queryRule">{{queryRule.className}}</b> where:&nbsp;
+          Get <b *ngIf="selectedClass">{{selectedClass}}</b> where:&nbsp;
         </span>
 
         <app-rule-dropdown *ngIf="!queryRule || !queryRule.rules" (btnClicked)="initRules($event)"
