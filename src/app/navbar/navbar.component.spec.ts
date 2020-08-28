@@ -4,6 +4,7 @@ import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 
 import { NavbarComponent } from './navbar.component';
 import { DebugElement } from '@angular/core';
@@ -26,7 +27,8 @@ describe('NavbarComponent', () => {
         { provide: Neo4jDb, useClass: DbServiceStub },
         { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
         NgbModal
-      ]
+      ],
+      imports: [ActivatedRoute]
     })
       .compileComponents();
   }));
@@ -57,7 +59,7 @@ describe('NavbarComponent', () => {
 
   it('should save as JSON', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi01');
     expect(btn.textContent).toEqual('Save as JSON');
     btn.click();
@@ -69,7 +71,7 @@ describe('NavbarComponent', () => {
 
   it('should save as PNG', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi02');
     expect(btn.textContent).toEqual('Save as PNG...');
     btn.click();
@@ -81,7 +83,7 @@ describe('NavbarComponent', () => {
 
   it('should Delete Selected', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi10');
     expect(btn.textContent).toEqual('Delete Selected');
     btn.click();
@@ -93,7 +95,7 @@ describe('NavbarComponent', () => {
 
   it('should Hide Selected', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi20');
     expect(btn.textContent).toEqual('Hide Selected');
     btn.click();
@@ -105,7 +107,7 @@ describe('NavbarComponent', () => {
 
   it('should Show All', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi21');
     expect(btn.textContent).toEqual('Show All');
     btn.click();
@@ -117,7 +119,7 @@ describe('NavbarComponent', () => {
 
   it('should highlight Search...', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi30');
     expect(btn.textContent).toEqual('Search...');
     btn.click();
@@ -129,7 +131,7 @@ describe('NavbarComponent', () => {
 
   it('should hightlight Selected', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi31');
     expect(btn.textContent).toEqual('Selected');
     btn.click();
@@ -141,7 +143,7 @@ describe('NavbarComponent', () => {
 
   it('should hightlight Neighbors of Selected', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi32');
     expect(btn.textContent).toEqual('Neighbors of Selected');
     btn.click();
@@ -153,7 +155,7 @@ describe('NavbarComponent', () => {
 
   it('should hightlight Remove Highlights', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi33');
     expect(btn.textContent).toEqual('Remove Highlights');
     btn.click();
@@ -165,7 +167,7 @@ describe('NavbarComponent', () => {
 
   it('should Perform Layout', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi40');
     expect(btn.textContent).toEqual('Perform Layout');
     btn.click();
@@ -177,7 +179,7 @@ describe('NavbarComponent', () => {
 
   it('should Recalculate Layout', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi41');
     expect(btn.textContent).toEqual('Recalculate Layout');
     btn.click();
@@ -189,7 +191,7 @@ describe('NavbarComponent', () => {
 
   it('should Quick Help', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi50');
     expect(btn.textContent).toEqual('Quick Help');
     btn.click();
@@ -201,7 +203,7 @@ describe('NavbarComponent', () => {
 
   it('should About', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi51');
     expect(btn.textContent).toEqual('About');
     btn.click();
@@ -213,7 +215,7 @@ describe('NavbarComponent', () => {
 
   it('should Sample Data', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi60');
     expect(btn.textContent).toEqual('Sample Data');
     btn.click();
@@ -225,7 +227,7 @@ describe('NavbarComponent', () => {
 
   it('should All Data', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi61');
     expect(btn.textContent).toEqual('All Data');
     btn.click();
@@ -237,7 +239,7 @@ describe('NavbarComponent', () => {
 
   it('should Clear Data', async(() => {
     spyOn(component, 'triggerAct');
-    
+
     const btn = nativeElem.querySelector('#nbi62');
     expect(btn.textContent).toEqual('Clear Data');
     btn.click();

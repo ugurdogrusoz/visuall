@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { GraphHistoryComponent } from './graph-history.component';
 
 describe('GraphHistoryComponent', () => {
@@ -8,9 +8,10 @@ describe('GraphHistoryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GraphHistoryComponent ]
+      declarations: [GraphHistoryComponent],
+      imports: [HttpClientTestingModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

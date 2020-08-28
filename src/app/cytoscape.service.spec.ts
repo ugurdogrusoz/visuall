@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CytoscapeService } from './cytoscape.service';
 import { GlobalVariableService } from './global-variable.service';
 import { Neo4jDb } from './db-service/neo4j-db.service';
@@ -17,7 +17,8 @@ describe('CytoscapeService', () => {
         { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
         { provide: Neo4jDb, useClass: DbServiceStub },
         { provide: TimebarService, useClass: TimebarServiceStub },
-      ]
+      ],
+      imports: [HttpClientTestingModule]
     })
   });
 

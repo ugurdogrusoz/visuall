@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { GlobalVariableService } from '../global-variable.service';
 import { HttpClient } from '@angular/common/http';
 import { Neo4jDb } from './neo4j-db.service';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 class GlobalVariableServiceStub { }
 class HttpClientStub { }
 
@@ -12,7 +12,8 @@ describe('DbService', () => {
       providers: [Neo4jDb,
         { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
         { provide: HttpClient, useClass: HttpClientStub },
-      ]
+      ],
+      imports: [HttpClientTestingModule]
     })
   });
 

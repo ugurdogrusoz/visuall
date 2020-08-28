@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { GlobalVariableService } from '../../global-variable.service';
 import { ObjectTabComponent } from './object-tab.component';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import cytoscape from 'cytoscape';
 
 class GlobalVariableServiceStub { cy = cytoscape(); }
@@ -14,8 +16,10 @@ describe('ObjectTabComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ObjectTabComponent],
       providers: [
+        HttpClientModule,
         { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
-      ]
+      ],
+      imports: [HttpClientTestingModule]
     })
       .compileComponents();
   }));

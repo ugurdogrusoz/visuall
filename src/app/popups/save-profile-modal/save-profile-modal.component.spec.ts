@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SaveProfileModalComponent } from './save-profile-modal.component';
 
 describe('SaveProfileModalComponent', () => {
@@ -8,9 +9,11 @@ describe('SaveProfileModalComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SaveProfileModalComponent ]
+      imports: [HttpClientTestingModule],
+      declarations: [SaveProfileModalComponent],
+      providers: [NgbActiveModal]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -13,6 +13,7 @@ import { SettingsTabComponent } from './operation-tabs/settings-tab/settings-tab
 import { Query0Component } from './operation-tabs/query-tab/query0/query0.component';
 import { Query1Component } from './operation-tabs/query-tab/query1/query1.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 describe('AppComponent', () => {
@@ -22,7 +23,8 @@ describe('AppComponent', () => {
         AppComponent, NavbarComponent, ToolbarComponent, CytoscapeComponent, TimebarComponent, OperationTabsComponent,
         MapTabComponent, GroupTabComponent, ObjectTabComponent, QueryTabComponent, SettingsTabComponent, Query0Component, Query1Component
       ],
-      imports: [FormsModule, HttpClientModule]
+      imports: [FormsModule, HttpClientModule],
+      providers: [ActivatedRoute]
     }).compileComponents();
   }));
 
