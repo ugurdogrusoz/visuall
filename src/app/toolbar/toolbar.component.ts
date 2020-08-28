@@ -51,7 +51,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
         { imgSrc: 'assets/img/toolbar/layout-static.svg', title: 'Recalculate Layout', fn: 'reLayout', isStd: true, isRegular: true }]
       },
       {
-        div: 5, items: [{ imgSrc: 'assets/img/toolbar/quick-help.svg', title: 'Quick help', fn: 'openQuickHelp', isStd: true, isRegular: true },
+        div: 5, items: [{ imgSrc: 'assets/img/toolbar/quick-help.svg', title: 'Quick Help', fn: 'openQuickHelp', isStd: true, isRegular: true },
         { imgSrc: 'assets/img/toolbar/about.svg', title: 'About', fn: 'openAbout', isStd: true, isRegular: true }]
       },
     ];
