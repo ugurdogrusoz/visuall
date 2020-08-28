@@ -3,3 +3,22 @@ img {
   height: 16px;
   cursor: pointer;
 }
+
+ul {
+  list-style-type: none;
+  margin-bottom: 2px;
+  padding-inline-start: 24px;
+}
+
+.caret {
+  color: #666666;
+  display: inline-block;
+}
+
+.curr-condition {
+  background: #F0F2F4;
+}
+
+.padding4 {
+  padding: 4px;
+}

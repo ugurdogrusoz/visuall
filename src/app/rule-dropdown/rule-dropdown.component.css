@@ -1,0 +1,27 @@
+.dropdown-content {
+  position: absolute;
+  z-index: 1000;
+  overflow: auto;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: .25rem;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block !important;
+}
+
+img {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.dd-item {
+  padding: 0.37rem !important;
+}

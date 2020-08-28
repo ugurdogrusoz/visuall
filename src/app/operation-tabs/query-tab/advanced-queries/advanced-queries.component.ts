@@ -106,7 +106,8 @@ export class AdvancedQueriesComponent implements OnInit {
       prepareDataFn = (x) => {
         this.fillTable(x);
         this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(x), this.tableInput.isMergeGraph);
-        this.higlightSeedNodes();
+        this.highlightSeedNodes();
+        this.highlightTargetRegulators(x);
       };
     }
     const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0][0]; }
@@ -165,7 +166,7 @@ export class AdvancedQueriesComponent implements OnInit {
     this.tableFilled.next(true);
   }
 
-  private higlightSeedNodes() {
+  private highlightSeedNodes() {
     const dbIds = this.selectedNodes.map(x => x.dbId);
     const seedNodes = this._g.cy.nodes(dbIds.map(x => '#n' + x).join());
     // add a new higlight style
@@ -179,6 +180,22 @@ export class AdvancedQueriesComponent implements OnInit {
     } else {
       this._g.viewUtils.highlight(seedNodes, 0);
     }
+  }
+
+  private highlightTargetRegulators(data) {
+    const idxTargetRegulator = data.columns.indexOf('targetRegulatorNodeIds');
+    const dbIds = data.data[0][idxTargetRegulator];
+    if (!dbIds || dbIds.length < 1) {
+      return;
+    }
+    const cyNodes = this._g.cy.nodes(dbIds.map(x => '#n' + x).join());
+
+    // add a new higlight style
+    if (this._g.userPrefs.highlightStyles.length < 3) {
+      const cyStyle = getCyStyleFromColorAndWid('#04f06a', 4.5);
+      this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
+    }
+    this._g.viewUtils.highlight(cyNodes, 2);
   }
 
   addSelectedNodesFromFile() {

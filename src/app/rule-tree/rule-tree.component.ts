@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { RuleNode } from '../operation-tabs/map-tab/query-types';
+import { RuleNode, Rule } from '../operation-tabs/map-tab/query-types';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-rule-tree',
@@ -10,12 +11,19 @@ export class RuleTreeComponent implements OnInit {
 
   constructor() { }
   @Input() root: RuleNode;
-  @Output() onRuleRequested = new EventEmitter<RuleNode>();
+  @Input() editedRuleNode: Subject<RuleNode>;
+  @Output() onRuleRequested = new EventEmitter<{ node: RuleNode, isEdit: boolean }>();
   @Output() onEmpty = new EventEmitter<boolean>();
-
+  @Output() onOperatorAdded = new EventEmitter<RuleNode>();
   currNode: RuleNode;
+  isShowChildren = true;
 
   ngOnInit(): void {
+    if (this.editedRuleNode) {
+      this.editedRuleNode.subscribe(x => {
+        x.isEditing = false;
+      });
+    }
   }
 
   operatorClicked(r: RuleNode) {
@@ -28,10 +36,14 @@ export class RuleTreeComponent implements OnInit {
   }
 
   addOperator(curr: RuleNode, code: 'AND' | 'OR') {
-    const newNode: RuleNode = { r: curr.r, children: [], parent: curr };
-    curr.r = { ruleOperator: code };
+    const newNode: RuleNode = { r: { ruleOperator: code }, children: [], parent: curr };
     curr.children.push(newNode);
-    this.currNode = curr;
+    this.currNode = newNode;
+    this.operatorEmitter(newNode);
+  }
+
+  operatorEmitter(r: RuleNode) {
+    this.onOperatorAdded.emit(r);
   }
 
   deleteNode(node: RuleNode) {
@@ -45,8 +57,23 @@ export class RuleTreeComponent implements OnInit {
     }
   }
 
-  addRule(curr: RuleNode) {
-    this.onRuleRequested.emit(curr);
+  addRule(e: { node: RuleNode, isEdit: boolean }) {
+    // since component is recursive, we should only set it once
+    if (!this.root.parent && e.isEdit) {
+      if (!e.node.isEditing) {
+        this.clearAllEditings(this.root);
+      }
+      e.node.isEditing = !e.node.isEditing;
+    }
+    this.onRuleRequested.emit(e);
+  }
+
+  btnFromDropdownClicked(e: 'AND' | 'OR' | 'C') {
+    if (e != 'C') {
+      this.addOperator(this.root, e);
+    } else {
+      this.addRule({ node: this.root, isEdit: false });
+    }
   }
 
   changeQueryRuleOrder(node: RuleNode, isUp: boolean) {
@@ -62,6 +89,13 @@ export class RuleTreeComponent implements OnInit {
     let tmp = parent.children[j];
     parent.children[j] = parent.children[idx];
     parent.children[idx] = tmp;
+  }
+
+  clearAllEditings(r: RuleNode) {
+    r.isEditing = false;
+    for (const child of r.children) {
+      this.clearAllEditings(child);
+    }
   }
 
 }

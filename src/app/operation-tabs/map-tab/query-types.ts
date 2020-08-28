@@ -24,6 +24,7 @@ export interface RuleNode {
   r: Rule;
   children: RuleNode[];
   parent: RuleNode;
+  isEditing?: boolean;
 }
 
 export function deepCopyRuleNode(root: RuleNode): RuleNode {

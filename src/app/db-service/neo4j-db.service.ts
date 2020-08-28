@@ -169,7 +169,7 @@ export class Neo4jDb implements DbService {
       orderDir = 2;
     }
     if (type == DbQueryType.count) {
-      this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase})`, cb, false);
+      this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase}, ${pageSize})`, cb, false);
     } else if (type == DbQueryType.table) {
       this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
       ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir})`, cb, false);
@@ -189,7 +189,7 @@ export class Neo4jDb implements DbService {
       orderDir = 2;
     }
     if (type == DbQueryType.count) {
-      this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase})`, cb, false);
+      this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase}, ${pageSize})`, cb, false);
     } else if (type == DbQueryType.table) {
       this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir},
       ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir})`, cb, false);

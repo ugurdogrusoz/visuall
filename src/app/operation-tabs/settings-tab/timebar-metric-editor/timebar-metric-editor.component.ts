@@ -4,8 +4,8 @@ import AppDescription from '../../../../assets/app_description.json';
 import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric, RuleNode, deepCopyTimebarMetric } from '../../map-tab/query-types';
 import { GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
-import { BehaviorSubject } from 'rxjs';
 import { UserProfileService } from 'src/app/user-profile.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-timebar-metric-editor',
@@ -28,16 +28,18 @@ export class TimebarMetricEditorComponent implements OnInit {
   isAddingNew = false;
   isGenericTypeSelected = true;
   isSumMetric = false;
-  currProperties: BehaviorSubject<RuleSync> = new BehaviorSubject(null);
+  currProperties: RuleSync;
+  editingPropertyRule: Rule;
   currRuleNode: RuleNode;
   isShowPropertyRule = true;
+  editedRuleNode: Subject<RuleNode> = new Subject<RuleNode>();
 
   constructor(private _timeBarService: TimebarService, private _profile: UserProfileService) {
     this.classOptions = [];
     this.selectedClassProps = [];
     this.filteringRule = null
     const andCond: Rule = { ruleOperator: 'AND' };
-    const genreCond: Rule = { propertyOperand: 'genres', propertyType: 'list', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: null, operator: 'in' };
+    const genreCond: Rule = { propertyOperand: 'genres', propertyType: 'list', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: null, operator: 'In' };
     const lowRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: null, operator: '<=' };
     const higRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '8', inputOperand: '8', ruleOperator: null, operator: '>=' };
 
@@ -86,6 +88,9 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   initRules(s: 'AND' | 'OR' | 'C') {
     const isEdge = properties.edges[this.selectedClass] != undefined;
+    if (!this.currMetricName) {
+      this.currMetricName = '';
+    }
     if (s == 'AND' || s == 'OR') {
       this.filteringRule = { rules: { r: { ruleOperator: s }, children: [], parent: null }, name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: this.selectedClass, color: this.currMetricColor };
     } else if (s == 'C') {
@@ -118,41 +123,55 @@ export class TimebarMetricEditorComponent implements OnInit {
     } else {
       this.isGenericTypeSelected = true;
     }
-    // update properties component on the call stack later
-    setTimeout(() => {
-      this.currProperties.next({ properties: this.selectedClassProps, isGenericTypeSelected: false, selectedClass: this.selectedClass });
-    }, 0);
+    this.currProperties = { properties: this.selectedClassProps, isGenericTypeSelected: false, selectedClass: this.selectedClass };
   }
 
   addRule2FilteringRules(r: Rule) {
-    const isEdge = properties.edges.hasOwnProperty(this.selectedClass);
-    r.ruleOperator = null;
-
     if (r.propertyType == 'datetime') {
       r.inputOperand = new Date(r.rawInput).toLocaleString();
     }
-    if (!this.filteringRule || !this.filteringRule.rules) {
-      if (!this.currMetricName) {
-        this.currMetricName = '';
-      }
-      this.currRuleNode = { r: r, children: [], parent: null };
-      this.filteringRule = { rules: this.currRuleNode, name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: this.selectedClass, color: this.currMetricColor };
-    } else {
-      this.filteringRule.name = this.currMetricName;
-      this.filteringRule.color = this.currMetricColor;
-      if (this.currRuleNode.r) {
-        this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
-      } else {
+
+    this.filteringRule.name = this.currMetricName;
+    this.filteringRule.color = this.currMetricColor;
+    if (this.currRuleNode.r) {
+      if (this.currRuleNode.isEditing) {
         this.currRuleNode.r = r;
+        this.editedRuleNode.next(this.currRuleNode);
+      } else {
+        this.currRuleNode.children.push({ r: r, children: [], parent: this.currRuleNode });
       }
+    } else {
+      // if "Condition" is clicked at the start
+      this.currRuleNode.r = r;
     }
+
     this.putSumRule2Root(r);
     this.isAClassSelectedForMetric = true;
     this.isSumMetric = this.isSumRule(this.filteringRule.rules.r); // sum rule should be at the root if it exists 
-    this.isShowPropertyRule = false;
+    this.isShowPropertyRule = r.ruleOperator !== null;
   }
 
-  showPropertyRule(e: RuleNode) {
+  showPropertyRule(e: { node: RuleNode, isEdit: boolean }) {
+    this.currRuleNode = e.node;
+    // means edit is clicked in rule tree
+    if (!e.isEdit) {
+      this.isShowPropertyRule = true;
+      return;
+    }
+    this.isShowPropertyRule = false;
+    // let the UI for property rule re-rendered
+    setTimeout(() => {
+      this.isShowPropertyRule = e.node.isEditing;
+      this.changeSelectedClass();
+      if (e.node.isEditing) {
+        this.editingPropertyRule = e.node.r;
+      } else {
+        this.editingPropertyRule = null;
+      }
+    });
+  }
+
+  newOperator(e: RuleNode) {
     this.isShowPropertyRule = true;
     this.currRuleNode = e;
   }
@@ -161,7 +180,11 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.isAClassSelectedForMetric = false;
     this.filteringRule.rules = null;
     this.isShowPropertyRule = true;
-    this.isSumMetric = this.isSumRule(this.filteringRule.rules.r);
+    if (this.filteringRule.rules) {
+      this.isSumMetric = this.isSumRule(this.filteringRule.rules.r);
+    } else {
+      this.isSumMetric = false;
+    }
   }
 
   deleteMetric(i: number) {

@@ -37,6 +37,7 @@ import { RecommendComponent } from './operation-tabs/recommend/recommend.compone
 import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-queries/advanced-queries.component';
 import { TypesViewComponent } from './types-view/types-view.component';
 import { RuleTreeComponent } from './rule-tree/rule-tree.component';
+import { RuleDropdownComponent } from './rule-dropdown/rule-dropdown.component';
 
 import{NzConfig, NZ_CONFIG} from 'ng-zorro-antd/core/config';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -83,7 +84,8 @@ const ngZorroConfig: NzConfig = {
     RecommendComponent,
     SparqlSearchComponent,
     EditorComponent,
-    MapModalComponent
+    MapModalComponent,
+    RuleDropdownComponent,
   ],
   imports: [
     BrowserModule,

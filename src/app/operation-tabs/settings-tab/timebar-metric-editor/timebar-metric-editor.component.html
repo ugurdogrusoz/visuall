@@ -36,30 +36,31 @@
       </select>
     </div>
 
-    <div class="form-inline justify-content-center" *ngIf="!filteringRule || !filteringRule.rules">
-      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('AND')">AND</button>
-      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('OR')">OR</button>
-      <button type="button" class="btn btn-dark btn-sm va-small-text m-1" (click)="initRules('C')">Condition</button>
+    <div>
+      <span class="va-text">
+        Get <b *ngIf="selectedClass">{{selectedClass}}</b> where:&nbsp;
+      </span>
+      <app-rule-dropdown *ngIf="!filteringRule || !filteringRule.rules" (btnClicked)="initRules($event)"
+        [isShowConditionBtn]="true"></app-rule-dropdown>
     </div>
 
     <div *ngIf="filteringRule && filteringRule.rules">
-      <span class="va-text">
-        Get <b>{{filteringRule.className}}</b> where:
-      </span>
-      <app-rule-tree [root]="filteringRule.rules" (onRuleRequested)="showPropertyRule($event)"
+      <app-rule-tree [root]="filteringRule.rules" [editedRuleNode]="editedRuleNode"
+        (onOperatorAdded)="newOperator($event)" (onRuleRequested)="showPropertyRule($event)"
         (onEmpty)="queryRuleDeleted()"> </app-rule-tree>
 
       <!-- rule input -->
       <div *ngIf="isShowPropertyRule">
         <app-property-rule (onRuleReady)="addRule2FilteringRules($event)" [propertyChanged]="currProperties"
-          [isStrict]="false">
+          [loadRule]="editingPropertyRule" [isStrict]="false">
         </app-property-rule>
       </div>
     </div>
 
     <!-- create/edit rule -->
     <div class="text-center borderless mx-1 my-3">
-      <div class="d-flex align-items-center justify-content-center m-1" *ngIf="filteringRule">
+      <div class="d-flex align-items-center justify-content-center m-1"
+        *ngIf="filteringRule && filteringRule.rules && filteringRule.rules.r && (!filteringRule.rules.r.ruleOperator || (filteringRule.rules.r.ruleOperator && filteringRule.rules.children.length > 0) )">
         <input class="btn btn-dark va-text m-2" type="button" [value]="newStatBtnTxt" (click)="addStat()">
       </div>
     </div>

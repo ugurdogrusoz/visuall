@@ -1,47 +1,65 @@
 <div *ngIf="root">
 
-  <div *ngIf="root.r">
-    <div *ngIf="!root.r.ruleOperator">
-      <span *ngIf="root.parent">
-        <a href="#" class="mx-1" (click)="changeQueryRuleOrder(root, true)">
-          <img src="assets/img/up-arrow.svg" title="Navigate Up">
-        </a>
-        <a href="#" class="nav-down-link" (click)="changeQueryRuleOrder(root, false)">
-          <img src="assets/img/down-arrow.svg" title="Navigate Down">
-        </a>
+  <span class="caret pointer va-heading1 text-center" *ngIf="root.children && root.children.length > 0"
+    (click)="isShowChildren=!isShowChildren">
+    <ng-container *ngIf="isShowChildren">
+      <span title="collapse">&#11206;</span>
+    </ng-container>
+    <ng-container *ngIf="!isShowChildren">
+      <span title="expand">&#11208;</span>
+    </ng-container>
+  </span>
+
+  <span *ngIf="root.r" class="va-text padding4 rounded" [ngClass]="{'curr-condition': root.isEditing}">
+    <span *ngIf="root.parent" class="va-heading1 mr-2">
+      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, true)" class="caret pointer" title="Move up">
+        &#11205;
       </span>
-      &nbsp;
-      <span *ngIf="!root.r.propertyOperand"> --ALL-- </span>
-      <span class="va-text">{{root.r.propertyOperand}} {{root.r.operator}} {{root.r.inputOperand}}</span>
-    </div>
+      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, false)" class="caret pointer" title="Move down">
+        &#11206;
+      </span>
+    </span>
+    <span *ngIf="!root.r.ruleOperator">
+      <span>
+        <span *ngIf="!root.r.propertyOperand"> ALL </span>
+        <span><i>{{root.r.propertyOperand}}</i> {{root.r.operator}} </span>
+        <span *ngIf="root.r.enumMapping;else no_enum">{{root.r.enumMapping}}</span>
+        <ng-template #no_enum><span>{{root.r.inputOperand}}</span></ng-template>
+      </span>
+    </span>
 
-    <div class="d-inline-flex justify-content-center">
-      <div *ngIf="root.r.ruleOperator">
-        <a href="#" class="logic-op-link text-center mx-1" (click)="operatorClicked(root)">{{root.r.ruleOperator}}</a>
-      </div>
+    <span *ngIf="root.r.ruleOperator">
+      <a href="#" class="logic-op-link va-text text-center mr-1"
+        (click)="operatorClicked(root)">{{root.r.ruleOperator}}</a>
+    </span>
 
-      <div *ngIf="!root.r.ruleOperator">
-        <button type="button" class="btn btn-dark btn-sm va-small-text m-1"
-          (click)="addOperator(root, 'AND')">AND</button>
-        <button type="button" class="btn btn-dark btn-sm va-small-text m-1"
-          (click)="addOperator(root, 'OR')">OR</button>
-      </div>
+    <a *ngIf="!root.r.ruleOperator" href="#" class="mx-2" (click)="addRule({node: root, isEdit: true})">
+      <img src="assets/img/edit.svg" title="Edit">
+    </a>
 
-      <div *ngIf="root.children.length < 1 && root.parent">
-        <button type="button" class="btn btn-dark btn-sm va-small-text m-1"
-          (click)="addRule(root.parent)">Condition</button>
-      </div>
+    <a href="#" (click)="deleteNode(root)">
+      <img src="assets/img/close.svg" title="Delete">
+    </a>
+  </span>
 
-      <a href="#" class="m-1" (click)="deleteNode(root)">
-        <img src="assets/img/close.svg" title="Delete rule">
-      </a>
-    </div>
+  <div [style.display]="isShowChildren ? 'block' : 'none'">
+    <ul *ngFor="let node of root.children; let i = index">
+      <li>
+        <app-rule-tree [root]="node" (onOperatorAdded)="operatorEmitter($event)" (onRuleRequested)="addRule($event)">
+        </app-rule-tree>
+      </li>
+      <li>
+        <app-rule-dropdown *ngIf="i == root.children.length - 1" (btnClicked)="btnFromDropdownClicked($event)"
+          [isShowConditionBtn]="true">
+        </app-rule-dropdown>
+      </li>
+    </ul>
+    <ul *ngIf="root.children.length < 1 && root.r && root.r.ruleOperator">
+      <li>
+        <app-rule-dropdown (btnClicked)="btnFromDropdownClicked($event)" [isShowConditionBtn]="true">
+        </app-rule-dropdown>
+      </li>
+    </ul>
   </div>
-
-  <ul *ngFor="let node of root.children; let i = index">
-    <li>
-      <app-rule-tree [root]="node" (onRuleRequested)="addRule($event)"> </app-rule-tree>
-    </li>
-  </ul>
 
 </div>
