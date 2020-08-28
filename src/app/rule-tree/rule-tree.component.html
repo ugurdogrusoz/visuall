@@ -3,20 +3,20 @@
   <span class="caret pointer va-heading1 text-center" *ngIf="root.children && root.children.length > 0"
     (click)="isShowChildren=!isShowChildren">
     <ng-container *ngIf="isShowChildren">
-      <span title="collapse">&#11206;</span>
+      <span title="Collapse"><span class="white-down-triangle"></span></span>
     </ng-container>
     <ng-container *ngIf="!isShowChildren">
-      <span title="expand">&#11208;</span>
+      <span title="Expand"><span class="white-right-triangle"></span></span>
     </ng-container>
   </span>
 
   <span *ngIf="root.r" class="va-text padding4 rounded" [ngClass]="{'curr-condition': root.isEditing}">
     <span *ngIf="root.parent" class="va-heading1 mr-2">
-      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, true)" class="caret pointer" title="Move up">
-        &#11205;
+      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, true)" class="pointer" title="Move up">
+        <span class="black-up-triangle"></span>
       </span>
-      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, false)" class="caret pointer" title="Move down">
-        &#11206;
+      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, false)" class="pointer" title="Move down">
+        <span class="black-down-triangle"></span>
       </span>
     </span>
     <span *ngIf="!root.r.ruleOperator">
@@ -29,7 +29,7 @@
     </span>
 
     <span *ngIf="root.r.ruleOperator">
-      <a href="#" class="logic-op-link va-text text-center mr-1"
+      <a href="#" class="logic-op-link va-text text-center mx-1"
         (click)="operatorClicked(root)">{{root.r.ruleOperator}}</a>
     </span>
 

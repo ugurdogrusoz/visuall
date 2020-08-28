@@ -20,5 +20,26 @@ ul {
 }
 
 .padding4 {
-  padding: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.black-up-triangle::after {
+  content: "\25B2";
+  display: inline-block;
+}
+
+.black-down-triangle::after {
+  content: "\25BC";
+  display: inline-block;
+}
+
+.white-down-triangle::after {
+  content: "\25BD";
+  display: inline-block;
+}
+
+.white-right-triangle::after {
+  content: "\25B7";
+  display: inline-block;
 }
