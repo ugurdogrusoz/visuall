@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
-import {DbQueryMeta, DbQueryType, DbService, GraphResponse, TableResponse} from './data-types';
+import {DbQueryMeta, DbQueryType, DbService, GraphResponse, Neo4jEdgeDirection, TableResponse} from './data-types';
 import { ClassBasedRules } from '../operation-tabs/map-tab/query-types';
 import { TableFiltering } from '../table-view/table-view-types';
 import { Neo4jDb } from './neo4j-db.service';
@@ -318,5 +318,11 @@ export class SparqlDbService implements DbService {
       return;
     }
     return {columns: response.results[0].columns, data: response.results[0].data.map(x => x.row)};
+  }
+
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+  }
+
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
   }
 }
