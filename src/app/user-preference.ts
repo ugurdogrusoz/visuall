@@ -17,6 +17,8 @@ export interface UserPref {
   mergedElemIndicator: BehaviorSubject<MergedElemIndicatorTypes>;
   groupingOption: BehaviorSubject<GroupingOptionTypes>;
   nodeLabelWrap: BehaviorSubject<TextWrapTypes>;
+  isLimitDbQueries2range: BehaviorSubject<boolean>;
+  dbQueryTimeRange: { start: BehaviorSubject<number>, end: BehaviorSubject<number> },
   dataPageSize: BehaviorSubject<number>;
   queryHistoryLimit: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;

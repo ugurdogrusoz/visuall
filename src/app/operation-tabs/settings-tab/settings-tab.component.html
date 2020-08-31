@@ -26,8 +26,8 @@
         <label class="form-check-label va-text">Group using &nbsp;</label>
         <div class="form-check-inline va-text" *ngFor="let str of groupingOptions; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'groupingOption')"
-              name="optradio2" [checked]="i==groupingOption">{{str}}
+            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'groupingOption')" name="optradio2"
+              [checked]="i==groupingOption">{{str}}
           </label>
         </div>
       </div>
@@ -66,6 +66,20 @@
           <a href="#" title="Add new style" (click)="addHighlightStyle()" class="m-1">
             <img src="../../../assets/img/add.svg" alt="Add new style">
           </a>
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <input class="form-check-input" type="checkbox" [(ngModel)]="isLimitDbQueries2range"
+          (change)="settingChanged(isLimitDbQueries2range, 'isLimitDbQueries2range')">
+        <label class="form-check-label va-text">Limit database queries to time range:</label>
+        <div class="mx-1 d-flex d-inline">
+          <input type="text" #dbQueryDate1 [disabled]="!isLimitDbQueries2range"
+            class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
+          <span>-</span>
+          <input type="text" #dbQueryDate2 [disabled]="!isLimitDbQueries2range"
+            class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
         </div>
       </div>
     </div>

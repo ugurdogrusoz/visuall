@@ -3,6 +3,10 @@
   height: 2em;
 }
 
+.inp-10-ch {
+  width: 10em;
+}
+
 input[type=range] {
   height: 10px;
   -webkit-appearance: none;
@@ -117,4 +121,8 @@ img {
   width: 16px;
   height: 16px;
   cursor: pointer;
+}
+
+input:disabled {
+  cursor: not-allowed;
 }

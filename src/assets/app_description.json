@@ -544,6 +544,11 @@
     "isStoreUserProfile": true,
     "isCollapseEdgesBasedOnType": false,
     "isCollapseMultiEdgesOnLoad": true,
+    "isLimitDbQueries2range": true,
+    "dbQueryTimeRange": {
+      "start": 1596229200000,
+      "end": 1598907600000
+    },
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
     "tableColumnLimit": 3,

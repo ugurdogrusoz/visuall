@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting, GroupingOptionTypes } from 'src/app/user-preference';
 import { UserProfileService } from 'src/app/user-profile.service';
 import { BehaviorSubject } from 'rxjs';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, getCyStyleFromColorAndWid } from 'src/app/constants';
+import flatpickr from 'flatpickr';
 
 @Component({
   selector: 'app-settings-tab',
@@ -19,6 +20,9 @@ export class SettingsTabComponent implements OnInit {
   timebarPlayingPeriod: number;
   timebarZoomingStep: number;
   compoundPadding: string;
+  @ViewChild('dbQueryDate1', { static: false }) dbQueryDate1: ElementRef;
+  @ViewChild('dbQueryDate2', { static: false }) dbQueryDate2: ElementRef;
+  isLimitDbQueries2range: boolean;
   dataPageSize: number;
   queryHistoryLimit: number;
   tableColumnLimit: number;
@@ -75,6 +79,30 @@ export class SettingsTabComponent implements OnInit {
         this.fillUIFromMemory();
       }
     });
+    this.setDates4DbQuery();
+  }
+
+  private setDates4DbQuery() {
+    setTimeout(() => {
+      const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+      const opt1 = {
+        defaultDate: new Date(d1), enableTime: true, enableSeconds: true, time_24hr: true,
+        onChange: (x) => {
+          this._g.userPrefs.dbQueryTimeRange.start.next(this.dbQueryDate1.nativeElement['_flatpickr'].selectedDates[0].getTime());
+          this._profile.saveUserPrefs();
+        }
+      };
+      const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+      const opt2 = {
+        defaultDate: new Date(d2), enableTime: true, enableSeconds: true, time_24hr: true, minDate: new Date(d1),
+        onChange: (x) => {
+          this._g.userPrefs.dbQueryTimeRange.end.next(this.dbQueryDate2.nativeElement['_flatpickr'].selectedDates[0].getTime());
+          this._profile.saveUserPrefs();
+        }
+      };
+      flatpickr(this.dbQueryDate1.nativeElement, opt1);
+      flatpickr(this.dbQueryDate2.nativeElement, opt2);
+    }, 0);
   }
 
   private fillUIFromMemory() {
@@ -104,6 +132,7 @@ export class SettingsTabComponent implements OnInit {
     this.highlightWidth = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].wid.getValue();
     this.compoundPadding = up.compoundPadding.getValue();
     this.isStoreUserProfile = up.isStoreUserProfile.getValue();
+    this.isLimitDbQueries2range = up.isLimitDbQueries2range.getValue();
 
     this.timebarBoolSettings[0].isEnable = up_t.isEnabled.getValue();
     this.timebarBoolSettings[1].isEnable = up_t.isHideDisconnectedNodesOnAnim.getValue();

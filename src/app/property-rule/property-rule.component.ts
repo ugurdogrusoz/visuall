@@ -4,7 +4,7 @@ import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/query-types';
 import properties from '../../assets/generated/properties.json';
 import AppDescription from '../../assets/app_description.json';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPosition } from 'angular2-draggable';
