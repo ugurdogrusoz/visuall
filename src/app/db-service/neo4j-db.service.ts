@@ -167,11 +167,20 @@ export class Neo4jDb implements DbService {
     } else if (filter.orderDirection == '') {
       orderDir = 2;
     }
+    const timeMap = this.getTimebarMapping4Java();
+    let d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+    let d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+    if (!this._g.userPrefs.isLimitDbQueries2range.getValue()) {
+      d1 = 0;
+      d2 = 0;
+    }
+
     if (type == DbQueryType.count) {
-      this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase}, ${pageSize})`, cb, false);
+      this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase},
+       ${pageSize}, ${timeMap}, ${d1}, ${d2})`, cb, false);
     } else if (type == DbQueryType.table) {
       this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
-      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir})`, cb, false);
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2})`, cb, false);
     }
   }
 
@@ -187,12 +196,33 @@ export class Neo4jDb implements DbService {
     } else if (filter.orderDirection == '') {
       orderDir = 2;
     }
+    const timeMap = this.getTimebarMapping4Java();
+    let d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+    let d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+    if (!this._g.userPrefs.isLimitDbQueries2range.getValue()) {
+      d1 = 0;
+      d2 = 0;
+    }
+
     if (type == DbQueryType.count) {
-      this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase}, ${pageSize})`, cb, false);
+      this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase},
+       ${pageSize}, ${timeMap}, ${d1}, ${d2})`, cb, false);
     } else if (type == DbQueryType.table) {
       this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir},
-      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir})`, cb, false);
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2})`, cb, false);
     }
+  }
+
+  private getTimebarMapping4Java(): string {
+    // {Person:["start_t", "end_t"]}
+    const mapping = AppDescription.timebarDataMapping;
+    let s = '{'
+    for (const k in mapping) {
+      s += k + ':["' + mapping[k].begin_datetime + '","' + mapping[k].end_datetime + '"],';
+    }
+    s = s.slice(0, -1);
+    s += '}'
+    return s;
   }
 
   private dateFilterFromUserPref(varName: string, isNode: boolean): string {
