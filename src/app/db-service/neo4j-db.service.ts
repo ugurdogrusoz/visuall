@@ -42,7 +42,10 @@ export class Neo4jDb implements DbService {
     }
     edgeCql += ']-';
 
-    this.runQuery(`MATCH p=(n)${edgeCql}(${targetCql}) WHERE ${idFilter} RETURN p`, callback);
+    let f2 = this.dateFilterFromUserPref('n', true);
+    f2 += this.dateFilterFromUserPref('e', false);
+
+    this.runQuery(`MATCH p=(n)${edgeCql}(${targetCql}) WHERE ${idFilter} ${f2} RETURN p`, callback);
   }
 
   getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta) {
@@ -192,6 +195,33 @@ export class Neo4jDb implements DbService {
     }
   }
 
+  private dateFilterFromUserPref(varName: string, isNode: boolean): string {
+    if (!this._g.userPrefs.isLimitDbQueries2range.getValue()) {
+      return '';
+    }
+    let s = '';
+    let keys = [];
+
+    if (isNode) {
+      keys = Object.keys(AppDescription.objects);
+    } else {
+      keys = Object.keys(AppDescription.relations);
+    }
+
+    const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+    const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+    s = ' AND ('
+    for (const k of keys) {
+      const p1 = varName + '.' + AppDescription.timebarDataMapping[k].begin_datetime;
+      const p2 = varName + '.' + AppDescription.timebarDataMapping[k].end_datetime;
+      // const 
+      s += `(${p1} IS NULL OR ${p1} > ${d1}) AND (${p2} IS NULL OR ${p2} < ${d2}) AND`
+    }
+    s = s.slice(0, -4)
+    s += ')'
+    return s;
+  }
+
   private runQuery(query: string, callback: (x: any) => any, isGraphResponse = true) {
     const url = this.dbConfig.url;
     const username = this.dbConfig.username;
@@ -298,6 +328,7 @@ export class Neo4jDb implements DbService {
       let s = this.getCondition4TxtFilter(rule.isEdge, rule.className, filter.txt);
       conditions = '(' + conditions + ') AND ' + s;
     }
+    conditions += this.dateFilterFromUserPref('x', !rule.isEdge);
 
     return matchClause + 'WHERE ' + conditions + '\n';
   }
@@ -420,8 +451,8 @@ export class Neo4jDb implements DbService {
         s += ` toString(${cols[i]}) CONTAINS '${filter.txt}' OR `;
       }
     }
-    s = s.slice(0, -3)
-    s = 'AND (' + s + ')'
+    s = s.slice(0, -3);
+    s = 'AND (' + s + ')';
     return s;
   }
 
@@ -459,7 +490,5 @@ export class Neo4jDb implements DbService {
     }
     return cql;
   }
-
   // ------------------------------------------------- end of methods for conversion to CQL -------------------------------------------------
-
 }
