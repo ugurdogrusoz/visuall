@@ -29,6 +29,7 @@ export class UserPrefHelper {
       up.dataPageSize.subscribe(x => { this.dataPageSizeChanged(x); });
       up.tableColumnLimit.subscribe(x => { this.tableColumnLimitChanged(x); });
       up.compoundPadding.subscribe(x => { this.changeCompoundPadding(x); });
+      up.objectInclusionType.subscribe(x => { tb.changeGraphInclusionType(x); });
 
       upT.isEnabled.subscribe(x => this.isEnableTimebar(x));
       upT.isHideDisconnectedNodesOnAnim.subscribe(x => { tb.setisHideDisconnectedNodes(x); });
@@ -36,7 +37,6 @@ export class UserPrefHelper {
       upT.playingStep.subscribe(x => { tb.changeStep(x); });
       upT.playingPeriod.subscribe(x => { tb.changePeriod(x); });
       upT.zoomingStep.subscribe(x => { tb.changeZoomStep(x); });
-      upT.graphInclusionType.subscribe(x => { tb.changeGraphInclusionType(x); });
       upT.statsInclusionType.subscribe(x => { tb.changeStatsInclusionType(x); });
     });
   }

@@ -30,6 +30,9 @@ export const CSS_FONT_NAME = 'Arial';
 export const CLUSTER_CLASS = 'Cluster';
 export const LAYOUT_ANIM_DUR = 500;
 
+export const LONG_MAX =  '9000000036854776000'
+export const LONG_MIN = '-9000000036854776000';
+
 export const GENERIC_TYPE = {
   ANY_CLASS: 'Any Object',
   NOT_SELECTED: '───',

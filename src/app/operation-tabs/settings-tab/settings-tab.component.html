@@ -84,6 +84,17 @@
       </div>
     </div>
     <div class="card border-0 m-1">
+      <div class="form">
+        <div class="form-check-label va-text">Object inclusion type: </div>
+        <div class="form-check-inline va-text" *ngFor="let str of timebarGraphInclusionTypes; let i = index;">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'objectInclusionType')"
+              name="optradio4" [checked]="i==graphInclusionType">{{str}}
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
       <div class="form-inline">
         <label class="form-check-label va-text">Query result limit</label>
         <div class="mx-1">
@@ -177,17 +188,6 @@
         <div>
           <input (click)="settingChanged(timebarZoomingStep, 'timebar.zoomingStep')" type="range"
             [(ngModel)]="timebarZoomingStep" min="0" max="100" [disabled]="!timebarBoolSettings[0].isEnable">
-        </div>
-      </div>
-    </div>
-    <div class="card border-0 m-1">
-      <div class="form">
-        <div class="form-check-label va-text">Graph inclusion type: </div>
-        <div class="form-check-inline va-text" *ngFor="let str of timebarGraphInclusionTypes; let i = index;">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'timebar.graphInclusionType')"
-              name="optradio4" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==graphInclusionType">{{str}}
-          </label>
         </div>
       </div>
     </div>

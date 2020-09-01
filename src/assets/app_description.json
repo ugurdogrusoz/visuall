@@ -428,8 +428,7 @@
       }
     }
   },
-  "generalStyles": [
-    {
+  "generalStyles": [{
       "selector": ".hidden",
       "style": {
         "display": "none"
@@ -514,8 +513,7 @@
       }
     }
   ],
-  "overrideStyles": [
-    {
+  "overrideStyles": [{
       "selector": "node.ellipsis_label",
       "style": {
         "label": "data(__label__)"
@@ -552,8 +550,7 @@
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
     "tableColumnLimit": 3,
-    "highlightStyles": [
-      {
+    "highlightStyles": [{
         "wid": 4.5,
         "color": "#FCE903"
       },
@@ -573,12 +570,13 @@
     "compoundPadding": "5%",
     "edgeCollapseLimit": 2,
     "avgNodeSize": 40,
+    "objectInclusionType": 0,
+
     "timebar": {
       "isEnabled": false,
       "playingStep": 50,
       "playingPeriod": 1350,
       "zoomingStep": 50,
-      "graphInclusionType": 0,
       "statsInclusionType": 0,
       "isHideDisconnectedNodesOnAnim": false,
       "min": -59011466152000,

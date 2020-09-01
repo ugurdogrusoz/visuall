@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
 import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
 import { Rule, ClassBasedRules, RuleNode } from '../operation-tabs/map-tab/query-types';
-import { GENERIC_TYPE } from '../constants';
+import { GENERIC_TYPE, LONG_MAX, LONG_MIN } from '../constants';
 import AppDescription from '../../assets/app_description.json';
 import properties from '../../assets/generated/properties.json'
 import { TableFiltering } from '../table-view/table-view-types';
+import { TimebarGraphInclusionTypes } from '../user-preference';
 
 @Injectable({
   providedIn: 'root'
@@ -240,12 +241,22 @@ export class Neo4jDb implements DbService {
 
     const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
     const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+    const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
+    const mapping = AppDescription.timebarDataMapping;
+
     s = ' AND ('
     for (const k of keys) {
-      const p1 = varName + '.' + AppDescription.timebarDataMapping[k].begin_datetime;
-      const p2 = varName + '.' + AppDescription.timebarDataMapping[k].end_datetime;
-      // const 
-      s += `(${p1} IS NULL OR ${p1} > ${d1}) AND (${p2} IS NULL OR ${p2} < ${d2}) AND`
+      const p1 = `COALESCE(${varName}.${mapping[k].begin_datetime}, ${LONG_MIN})`;
+      const p2 = `COALESCE(${varName}.${mapping[k].end_datetime}, ${LONG_MAX})`;
+      const bothNull = `(${varName}.${mapping[k].end_datetime} IS NULL AND ${varName}.${mapping[k].begin_datetime} IS NULL)`
+      if (inclusionType == TimebarGraphInclusionTypes.overlaps) {
+        s += `(${bothNull} OR (${p1} <= ${d2} AND ${p2} >= ${d1})) AND`;
+      } else if (inclusionType == TimebarGraphInclusionTypes.contains) {
+        s += `(${bothNull} OR (${d1} <= ${p1} AND ${d2} >= ${p2})) AND`;
+      } else if (inclusionType == TimebarGraphInclusionTypes.contained_by) {
+        s += `(${bothNull} OR (${p1} <= ${d1} AND ${p2} >= ${d2})) AND`;
+      }
+
     }
     s = s.slice(0, -4)
     s += ')'

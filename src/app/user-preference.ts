@@ -26,6 +26,8 @@ export interface UserPref {
   currHighlightIdx: BehaviorSubject<number>;
   compoundPadding: BehaviorSubject<string>;
   edgeCollapseLimit: BehaviorSubject<number>
+  objectInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
+
 
   timebar: {
     isEnabled: BehaviorSubject<boolean>;
@@ -34,7 +36,6 @@ export interface UserPref {
     playingStep: BehaviorSubject<number>;
     playingPeriod: BehaviorSubject<number>;
     zoomingStep: BehaviorSubject<number>;
-    graphInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
     statsInclusionType: BehaviorSubject<TimebarStatsInclusionTypes>;
   }
 }

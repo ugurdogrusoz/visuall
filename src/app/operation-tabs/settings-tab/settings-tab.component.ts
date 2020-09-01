@@ -94,7 +94,7 @@ export class SettingsTabComponent implements OnInit {
       };
       const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
       const opt2 = {
-        defaultDate: new Date(d2), enableTime: true, enableSeconds: true, time_24hr: true, minDate: new Date(d1),
+        defaultDate: new Date(d2), enableTime: true, enableSeconds: true, time_24hr: true,
         onChange: (x) => {
           this._g.userPrefs.dbQueryTimeRange.end.next(this.dbQueryDate2.nativeElement['_flatpickr'].selectedDates[0].getTime());
           this._profile.saveUserPrefs();
@@ -133,6 +133,7 @@ export class SettingsTabComponent implements OnInit {
     this.compoundPadding = up.compoundPadding.getValue();
     this.isStoreUserProfile = up.isStoreUserProfile.getValue();
     this.isLimitDbQueries2range = up.isLimitDbQueries2range.getValue();
+    this.graphInclusionType = up.objectInclusionType.getValue();
 
     this.timebarBoolSettings[0].isEnable = up_t.isEnabled.getValue();
     this.timebarBoolSettings[1].isEnable = up_t.isHideDisconnectedNodesOnAnim.getValue();
@@ -140,7 +141,6 @@ export class SettingsTabComponent implements OnInit {
     this.timebarPlayingStep = up_t.playingStep.getValue();
     this.timebarPlayingPeriod = up_t.playingPeriod.getValue();
     this.timebarZoomingStep = up_t.zoomingStep.getValue();
-    this.graphInclusionType = up_t.graphInclusionType.getValue();
     this.statsInclusionType = up_t.statsInclusionType.getValue();
 
     this.setHighlightStyles();
