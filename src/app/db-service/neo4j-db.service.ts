@@ -175,13 +175,13 @@ export class Neo4jDb implements DbService {
       d1 = 0;
       d2 = 0;
     }
-
+    const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
     if (type == DbQueryType.count) {
       this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase},
-       ${pageSize}, ${timeMap}, ${d1}, ${d2})`, cb, false);
+       ${pageSize}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
     } else if (type == DbQueryType.table) {
       this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
-      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2})`, cb, false);
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
     }
   }
 
@@ -197,6 +197,7 @@ export class Neo4jDb implements DbService {
     } else if (filter.orderDirection == '') {
       orderDir = 2;
     }
+    const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
     const timeMap = this.getTimebarMapping4Java();
     let d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
     let d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
@@ -207,10 +208,10 @@ export class Neo4jDb implements DbService {
 
     if (type == DbQueryType.count) {
       this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase},
-       ${pageSize}, ${timeMap}, ${d1}, ${d2})`, cb, false);
+       ${pageSize}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
     } else if (type == DbQueryType.table) {
-      this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir},
-      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2})`, cb, false);
+      this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, ${pageSize}, ${currPage},
+       '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
     }
   }
 
