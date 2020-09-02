@@ -247,6 +247,9 @@ export class Neo4jDb implements DbService {
 
     s = ' AND ('
     for (const k of keys) {
+      if (!mapping[k]) {
+        continue;
+      }
       const p1 = `COALESCE(${varName}.${mapping[k].begin_datetime}, ${LONG_MIN})`;
       const p2 = `COALESCE(${varName}.${mapping[k].end_datetime}, ${LONG_MAX})`;
       const bothNull = `(${varName}.${mapping[k].end_datetime} IS NULL AND ${varName}.${mapping[k].begin_datetime} IS NULL)`
