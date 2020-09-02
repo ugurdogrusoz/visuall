@@ -5,6 +5,8 @@ import { UserProfileService } from 'src/app/user-profile.service';
 import { BehaviorSubject } from 'rxjs';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, getCyStyleFromColorAndWid } from 'src/app/constants';
 import flatpickr from 'flatpickr';
+import { ErrorModalComponent } from 'src/app/popups/error-modal/error-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-settings-tab',
@@ -43,7 +45,7 @@ export class SettingsTabComponent implements OnInit {
   highlightStyleIdx = 0;
   isStoreUserProfile = true;
 
-  constructor(private _g: GlobalVariableService, private _profile: UserProfileService) {
+  constructor(private _g: GlobalVariableService, private _profile: UserProfileService, private _modalService: NgbModal) {
     this._profile.onLoadFromFile.subscribe(x => {
       if (!x) {
         return;
@@ -87,22 +89,44 @@ export class SettingsTabComponent implements OnInit {
       const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
       const opt1 = {
         defaultDate: new Date(d1), enableTime: true, enableSeconds: true, time_24hr: true,
-        onChange: (x) => {
-          this._g.userPrefs.dbQueryTimeRange.start.next(this.dbQueryDate1.nativeElement['_flatpickr'].selectedDates[0].getTime());
+        onChange: (x, _, instance) => {
+          const dateTime = x[0].getTime();
+          const startDate = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+          const endDate = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+          if (dateTime >= endDate) {
+            instance.setDate(startDate);
+            this.showDateTimeError('Start date should be smaller than end date.');
+            return;
+          }
+          this._g.userPrefs.dbQueryTimeRange.start.next(dateTime);
           this._profile.saveUserPrefs();
         }
       };
       const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
       const opt2 = {
         defaultDate: new Date(d2), enableTime: true, enableSeconds: true, time_24hr: true,
-        onChange: (x) => {
-          this._g.userPrefs.dbQueryTimeRange.end.next(this.dbQueryDate2.nativeElement['_flatpickr'].selectedDates[0].getTime());
+        onChange: (x, _, instance) => {
+          const dateTime = x[0].getTime();
+          const startDate = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+          const endDate = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+          if (dateTime <= startDate) {
+            instance.setDate(endDate);
+            this.showDateTimeError('End date should be greater than end date.');
+            return;
+          }
+          this._g.userPrefs.dbQueryTimeRange.end.next(dateTime);
           this._profile.saveUserPrefs();
         }
       };
       flatpickr(this.dbQueryDate1.nativeElement, opt1);
       flatpickr(this.dbQueryDate2.nativeElement, opt2);
     }, 0);
+  }
+
+  private showDateTimeError(msg: string) {
+    const instance = this._modalService.open(ErrorModalComponent);
+    instance.componentInstance.msg = msg;
+    instance.componentInstance.title = 'Date Selection';
   }
 
   private fillUIFromMemory() {
