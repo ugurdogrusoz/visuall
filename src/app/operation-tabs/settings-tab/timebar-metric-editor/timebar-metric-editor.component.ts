@@ -28,7 +28,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   isAddingNew = false;
   isGenericTypeSelected = true;
   isSumMetric = false;
-  currProperties: RuleSync;
+  currProperties: Subject<RuleSync> = new Subject<RuleSync>();
   editingPropertyRule: Rule;
   currRuleNode: RuleNode;
   isShowPropertyRule = true;
@@ -97,6 +97,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       this.filteringRule = { rules: { r: null, children: [], parent: null }, name: this.currMetricName, incrementFn: null, isEdge: isEdge, className: this.selectedClass, color: this.currMetricColor };
     }
     this.currRuleNode = this.filteringRule.rules;
+    this.changeSelectedClass();
   }
 
   getStyleForMetric(m: TimebarMetric) {
@@ -123,7 +124,9 @@ export class TimebarMetricEditorComponent implements OnInit {
     } else {
       this.isGenericTypeSelected = true;
     }
-    this.currProperties = { properties: this.selectedClassProps, isGenericTypeSelected: false, selectedClass: this.selectedClass };
+    setTimeout(() => {
+      this.currProperties.next({ properties: this.selectedClassProps, isGenericTypeSelected: false, selectedClass: this.selectedClass });
+    }, 0);
   }
 
   addRule2FilteringRules(r: Rule) {

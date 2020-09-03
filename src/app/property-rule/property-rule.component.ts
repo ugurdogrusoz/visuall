@@ -31,7 +31,7 @@ export class PropertyRuleComponent implements OnInit {
   finiteSetPropertyMap: any = null;
   selectedClass: string;
   currInpType: string = 'text';
-  @Input() propertyChanged: RuleSync;
+  @Input() propertyChanged: Subject<RuleSync>;
   @Input() loadRule: Rule;
   @Input() isStrict: boolean;
   @Input() refreshView: Subject<boolean>;
@@ -44,9 +44,13 @@ export class PropertyRuleComponent implements OnInit {
   constructor(private _modalService: NgbModal) { }
 
   ngOnInit() {
-    this.selectedClassProps = this.propertyChanged.properties;
-    this.isGenericTypeSelected = this.propertyChanged.isGenericTypeSelected;
-    this.selectedClass = this.propertyChanged.selectedClass;
+    this.propertyChanged.subscribe(x => { this.updateView(x.properties, x.isGenericTypeSelected, x.selectedClass) });
+  }
+
+  updateView(props: string[], isGeneric: boolean, cName: string) {
+    this.selectedClassProps = props;
+    this.isGenericTypeSelected = isGeneric;
+    this.selectedClass = cName;
     this.filterInp = '';
     this.selectedProp = null;
     this.selectedOperatorKey = null;

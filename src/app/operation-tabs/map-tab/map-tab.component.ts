@@ -31,7 +31,7 @@ export class MapTabComponent implements OnInit {
   currRuleNode: RuleNode;
   editedRuleNode: Subject<RuleNode> = new Subject<RuleNode>();
   isQueryOnDb: boolean;
-  currProperties: RuleSync;
+  currProperties: Subject<RuleSync> = new Subject<RuleSync>();
   editingPropertyRule: Rule;
   tableInput: TableViewInput = {
     columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: 0,
@@ -115,7 +115,9 @@ export class MapTabComponent implements OnInit {
     } else {
       isGeneric = true;
     }
-    this.currProperties = { properties: this.selectedClassProps, isGenericTypeSelected: isGeneric, selectedClass: this.selectedClass };
+    setTimeout(() => {
+      this.currProperties.next({ properties: this.selectedClassProps, isGenericTypeSelected: isGeneric, selectedClass: this.selectedClass });
+    }, 0);
   }
 
   private getEdgeTypesRelated(nodeType: string): string[] {
@@ -139,6 +141,7 @@ export class MapTabComponent implements OnInit {
       this.queryRule = { className: this.selectedClass, isEdge: isEdge, rules: { r: null, children: [], parent: null } };
     }
     this.currRuleNode = this.queryRule.rules;
+    this.changeSelectedClass();
   }
 
   addRule2QueryRules(r: Rule) {
