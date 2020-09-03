@@ -95,7 +95,7 @@ export class SettingsTabComponent implements OnInit {
           const endDate = this._g.userPrefs.dbQueryTimeRange.end.getValue();
           if (dateTime >= endDate) {
             instance.setDate(startDate);
-            this.showDateTimeError('Start date should be smaller than end date.');
+            this.showDateTimeError('Start datetime should be earlier than end datetime');
             return;
           }
           this._g.userPrefs.dbQueryTimeRange.start.next(dateTime);
@@ -111,7 +111,7 @@ export class SettingsTabComponent implements OnInit {
           const endDate = this._g.userPrefs.dbQueryTimeRange.end.getValue();
           if (dateTime <= startDate) {
             instance.setDate(endDate);
-            this.showDateTimeError('End date should be greater than end date.');
+            this.showDateTimeError('End datetime should be later than start datetime');
             return;
           }
           this._g.userPrefs.dbQueryTimeRange.end.next(dateTime);
