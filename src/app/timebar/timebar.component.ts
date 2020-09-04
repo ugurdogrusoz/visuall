@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { TimebarService } from '../timebar.service';
-import { TIME_UNITS, MIN_DATE, MAX_DATE } from '../constants';
+import { TIME_UNITS } from '../constants';
 import flatpickr from 'flatpickr';
 import { Locale } from 'flatpickr/dist/types/locale';
 import { GlobalVariableService } from '../global-variable.service';
@@ -79,7 +79,9 @@ export class TimebarComponent implements OnInit {
       domElem.nativeElement._flatpickr.setDate(date);
     } else {
       instance = flatpickr(domElem.nativeElement, {
-        defaultDate: new Date(date), minDate: MIN_DATE, maxDate: MAX_DATE, enableTime: true, enableSeconds: true, time_24hr: true, formatDate: this.formatDate.bind(this)
+        defaultDate: new Date(date), enableTime: true, enableSeconds: true, time_24hr: true, formatDate: this.formatDate.bind(this),
+        minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
+        maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
       });
       instance.setDate(date);
       if (isStart) {

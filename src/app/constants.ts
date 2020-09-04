@@ -6,8 +6,6 @@ export const EV_MOUSE_ON = 'mouseover';
 export const EV_MOUSE_OFF = 'mouseout';
 export const DATE_PROP_START = 'start_time';
 export const DATE_PROP_END = 'end_time';
-export const MIN_DATE = -59011466152000; // Fri Jan 01 0100 00:00:00 GMT+0155
-export const MAX_DATE = 32503669200000;  // Wed Jan 01 3000 00:00:00 GMT+0300
 export const CY_BATCH_END_DELAY = 100;
 export const OBJ_INFO_UPDATE_DELAY = 200;
 
