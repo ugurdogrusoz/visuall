@@ -100,7 +100,9 @@ export class SettingsTabComponent implements OnInit {
           }
           this._g.userPrefs.dbQueryTimeRange.start.next(dateTime);
           this._profile.saveUserPrefs();
-        }
+        },
+        minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
+        maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
       };
       const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
       const opt2 = {
@@ -116,7 +118,9 @@ export class SettingsTabComponent implements OnInit {
           }
           this._g.userPrefs.dbQueryTimeRange.end.next(dateTime);
           this._profile.saveUserPrefs();
-        }
+        },
+        minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
+        maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
       };
       flatpickr(this.dbQueryDate1.nativeElement, opt1);
       flatpickr(this.dbQueryDate2.nativeElement, opt2);

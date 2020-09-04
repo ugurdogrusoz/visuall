@@ -28,9 +28,13 @@ export class Query0Component implements OnInit {
     this.movieCnt = 40;
     let opt = {
       defaultDate: new Date(1960, 0, 1, 0, 0, 0), enableTime: true, enableSeconds: true, time_24hr: true,
+      minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
+      maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
     };
     let opt2 = {
       defaultDate: new Date(2020, 11, 31, 0, 0, 0), enableTime: true, enableSeconds: true, time_24hr: true,
+      minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
+      maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
     };
 
     flatpickr('#query0-inp1', opt);

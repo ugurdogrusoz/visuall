@@ -544,8 +544,8 @@
     "isCollapseMultiEdgesOnLoad": true,
     "isLimitDbQueries2range": true,
     "dbQueryTimeRange": {
-      "start": 1596229200000,
-      "end": 1598907600000
+      "start": -5364669352000,
+      "end": 4102434000000
     },
     "dataPageSize": 15,
     "queryHistoryLimit": 10,

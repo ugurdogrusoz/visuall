@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPosition } from 'angular2-draggable';
+import { GlobalVariableService } from '../global-variable.service';
 
 @Component({
   selector: 'app-property-rule',
@@ -41,7 +42,7 @@ export class PropertyRuleComponent implements OnInit {
   txtAreaSize: { width: number, height: number } = { width: 250, height: 150 };
   position: IPosition = { x: 0, y: 0 };
 
-  constructor(private _modalService: NgbModal) { }
+  constructor(private _modalService: NgbModal, private _g: GlobalVariableService) { }
 
   ngOnInit() {
     this.propertyChanged.subscribe(x => { this.updateView(x.properties, x.isGenericTypeSelected, x.selectedClass) });
@@ -107,6 +108,8 @@ export class PropertyRuleComponent implements OnInit {
       this.addOperators(DATETIME_OPERATORS);
       let opt = {
         defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true,
+        minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
+        maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
       };
       if (unixDateValue) {
         opt.defaultDate = new Date(unixDateValue);
