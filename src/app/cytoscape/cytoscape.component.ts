@@ -63,7 +63,9 @@ export class CytoscapeComponent implements OnInit {
     this.keyDown[event.key] = true;
 
     // alt + arrowleft in chrome goes back to previous page
-    event.preventDefault();
+    if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && event.altKey) {
+      event.preventDefault();
+    }
 
     // shouldn't go ahead if both Alt and Shift are pressed
     if (this.keyDown['Alt'] && this.keyDown['Shift']) {
@@ -89,7 +91,7 @@ export class CytoscapeComponent implements OnInit {
     dx += this.keyDown['ArrowRight'] ? moveSpeed : 0;
     dx -= this.keyDown['ArrowLeft'] ? moveSpeed : 0;
     dy += this.keyDown['ArrowDown'] ? moveSpeed : 0;
-    dy -= this.keyDown['ArrowUp'] ? moveSpeed :0;
+    dy -= this.keyDown['ArrowUp'] ? moveSpeed : 0;
 
     // move selected by the shift values decided above
     this._g.cy.nodes(':selected').shift({
@@ -103,7 +105,7 @@ export class CytoscapeComponent implements OnInit {
   @HostListener('document:keyup', ['$event'])
   setKeyDownValues(event: KeyboardEvent) {
     // if the key is down set corresponding value to false
-    if(this.keyDown[event.key] !== undefined) {
+    if (this.keyDown[event.key] !== undefined) {
       this.keyDown[event.key] = false;
     }
   }
