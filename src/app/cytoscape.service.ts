@@ -549,11 +549,6 @@ export class CytoscapeService {
 
 
   showHideTimebar(isChecked: boolean) {
-    if (!isChecked) {
-      $('#cy').css('height', '88vh');
-    } else {
-      $('#cy').css('height', '75vh');
-    }
     this._g.cy.resize();
     this._timebarService.showHideTimebar(isChecked);
     setTimeout(() => { this._cyExtService.setNavigatorPosition() }, 0);

@@ -31,6 +31,7 @@ export class GlobalVariableService {
   statusMsg = new BehaviorSubject<string>('');
   isUseCiseLayout = false;
   performLayout: Function;
+  cyNaviPositionSetter: any;
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);

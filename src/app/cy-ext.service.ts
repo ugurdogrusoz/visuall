@@ -18,7 +18,6 @@ import panzoom from 'cytoscape-panzoom';
 })
 export class CyExtService {
   cyNavi: any;
-  cyNaviPositionSetter: EventListenerOrEventListenerObject;
 
   constructor(private _g: GlobalVariableService) { }
 
@@ -57,7 +56,7 @@ export class CyExtService {
       return;
     }
     const cyNaviClass = 'cytoscape-navigator-wrapper';
-    $('.cyContainer').append(`<div class='${cyNaviClass}'></div>`);
+    $('#cy').append(`<div class='${cyNaviClass}'></div>`);
 
     this.setNavigatorPosition();
     let defaults = {
@@ -85,12 +84,12 @@ export class CyExtService {
     };
 
     this.cyNavi = this._g.cy.navigator(defaults);  // get navigator instance, nav
-    this.cyNaviPositionSetter = this.setNavigatorPosition.bind(this);
-    window.removeEventListener('resize', this.cyNaviPositionSetter);
-    window.removeEventListener('scroll', this.cyNaviPositionSetter);
+    this._g.cyNaviPositionSetter = this.setNavigatorPosition.bind(this);
+    window.removeEventListener('resize', this._g.cyNaviPositionSetter);
+    window.removeEventListener('scroll', this._g.cyNaviPositionSetter);
 
-    window.addEventListener('resize', this.cyNaviPositionSetter);
-    window.addEventListener('scroll', this.cyNaviPositionSetter);
+    window.addEventListener('resize', this._g.cyNaviPositionSetter);
+    window.addEventListener('scroll', this._g.cyNaviPositionSetter);
     // to render navigator, fire zoom event
     this._g.cy.zoom(this._g.cy.zoom() + 0.00001);
     // to prevent expandCollapse extension's blocking 
@@ -98,8 +97,8 @@ export class CyExtService {
   }
 
   unbindNavigatorExtension() {
-    window.removeEventListener('resize', this.cyNaviPositionSetter);
-    window.removeEventListener('scroll', this.cyNaviPositionSetter);
+    window.removeEventListener('resize', this._g.cyNaviPositionSetter);
+    window.removeEventListener('scroll', this._g.cyNaviPositionSetter);
     if (!this.cyNavi) {
       return;
     }
@@ -109,8 +108,11 @@ export class CyExtService {
   }
 
   setNavigatorPosition() {
+    if (!this._g.userPrefs.isShowOverviewWindow.getValue()) {
+      return;
+    }
     const navSelector = '.cytoscape-navigator-wrapper';
-    const containerSelector = '.cyContainer';
+    const containerSelector = '#cy';
 
     const topCy = $(containerSelector).offset().top - window.scrollY;
     const leftCy = $(containerSelector).offset().left;

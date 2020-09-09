@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { TimebarService } from '../timebar.service';
-import { TIME_UNITS } from '../constants';
+import { TIME_UNITS, CY_NAVI_POSITION_WAIT_DUR } from '../constants';
 import flatpickr from 'flatpickr';
 import { Locale } from 'flatpickr/dist/types/locale';
 import { GlobalVariableService } from '../global-variable.service';
@@ -119,6 +119,11 @@ export class TimebarComponent implements OnInit {
   }
 
   showHide(isHide: boolean) {
+    if (isHide != this.isHide) {
+      setTimeout(() => {
+        this._g.cyNaviPositionSetter();
+      }, CY_NAVI_POSITION_WAIT_DUR);
+    }
     this.isHide = isHide;
   }
 
@@ -128,6 +133,9 @@ export class TimebarComponent implements OnInit {
     }
     if (this._g.cy.$().length < 1) {
       this.isHide = true;
+      setTimeout(() => {
+        this._g.cyNaviPositionSetter();
+      }, CY_NAVI_POSITION_WAIT_DUR);
     }
   }
 
