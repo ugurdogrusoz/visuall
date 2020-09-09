@@ -42,7 +42,9 @@
     "style": {
       "font-size": "13px",
       "text-outline-color": "#ffffff",
-      "text-outline-width": "2px"
+      "text-outline-width": "2px",
+      "control-point-step-size": 13,
+      "curve-style": "bezier"
     }
   },
   {
@@ -78,7 +80,6 @@
     "style": {
       "font-size": "7px",
       "line-style": "dotted",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "text-rotation": "autorotate"
     }
@@ -121,7 +122,6 @@
       "font-size": "7px",
       "line-color": "#f5c4ca",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#f5c4ca",
       "text-rotation": "autorotate"
@@ -135,7 +135,6 @@
       "font-size": "7px",
       "line-color": "#f5c4ca",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "circle",
       "target-arrow-color": "#f5c4ca",
       "text-rotation": "autorotate"
@@ -149,7 +148,6 @@
       "font-size": "7px",
       "line-color": "#b3f2eb",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#b3f2eb",
       "text-rotation": "autorotate"
@@ -163,7 +161,6 @@
       "font-size": "7px",
       "line-color": "#b3f2eb",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "circle",
       "target-arrow-color": "#b3f2eb",
       "text-rotation": "autorotate"
@@ -177,7 +174,6 @@
       "font-size": "7px",
       "line-color": "#b3f2eb",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "tee",
       "target-arrow-color": "#b3f2eb",
       "text-rotation": "autorotate"
@@ -191,7 +187,6 @@
       "font-size": "7px",
       "line-color": "#abcaf2",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
@@ -205,7 +200,6 @@
       "font-size": "7px",
       "line-color": "#abcaf2",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
@@ -219,7 +213,6 @@
       "font-size": "7px",
       "line-color": "#abcaf2",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
@@ -233,7 +226,6 @@
       "font-size": "7px",
       "line-color": "#abcaf2",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
@@ -247,7 +239,6 @@
       "font-size": "7px",
       "line-color": "#abcaf2",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
@@ -261,7 +252,6 @@
       "font-size": "7px",
       "line-color": "#abcaf2",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#abcaf2",
       "text-rotation": "autorotate"
@@ -275,7 +265,6 @@
       "font-size": "7px",
       "line-color": "#aaaaaa",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#aaaaaa",
       "text-rotation": "autorotate"
@@ -289,7 +278,6 @@
       "font-size": "7px",
       "line-color": "#aaaaaa",
       "line-style": "solid",
-      "curve-style": "bezier",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "#aaaaaa",
       "text-rotation": "autorotate"
