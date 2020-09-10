@@ -11,6 +11,7 @@ import { GraphElem, ElemAsQueryParam } from '../db-service/data-types';
 export class ElemOfInterestComponent implements OnInit {
 
   @Input() header: string;
+  @Input() typeScope: string[];
   @ViewChild('file', { static: false }) file;
   @Output() selectedElemsChanged = new EventEmitter<ElemAsQueryParam[]>();
 
@@ -48,7 +49,7 @@ export class ElemOfInterestComponent implements OnInit {
     const labels = this._g.getLabels4Elems(dbIds).split(',');
     const types = selectedNodes.map(x => x.classes()[0]);
     for (let i = 0; i < labels.length; i++) {
-      if (this.selectedNodes.findIndex(x => x.dbId == dbIds[i]) < 0) {
+      if (this.selectedNodes.findIndex(x => x.dbId == dbIds[i]) < 0 && this.isValidType(types[i])) {
         this.selectedNodes.push({ dbId: dbIds[i], label: types[i] + ':' + labels[i] });
       }
     }
@@ -90,8 +91,10 @@ export class ElemOfInterestComponent implements OnInit {
         }
       }
 
+      elems = elems.filter(x => this.isValidType(x.classes.split(' ')[0]));
       const labels = this._g.getLabels4Elems(null, true, elems).split(',');
       this.selectedNodes = this.selectedNodes.concat(elems.map((x, i) => { return { dbId: x.data.id.substring(1), label: x.classes.split(' ')[0] + ':' + labels[i] } }));
+
       this.selectedElemsChanged.next(this.selectedNodes);
     });
   }
@@ -112,6 +115,13 @@ export class ElemOfInterestComponent implements OnInit {
     this.selectedNodes = [];
     this.clickedNodeIdx = -1;
     this.selectedElemsChanged.next(this.selectedNodes);
+  }
+
+  private isValidType(className: string): boolean {
+    if (!this.typeScope) {
+      return true;
+    }
+    return this.typeScope.includes(className);
   }
 
 }
