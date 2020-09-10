@@ -54,3 +54,8 @@ export interface GraphElem {
   data: any;
   classes: string;
 }
+
+export interface ElemAsQueryParam {
+  dbId: string;
+  label: string;
+}

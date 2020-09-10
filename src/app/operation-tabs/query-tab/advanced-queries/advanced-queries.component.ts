@@ -5,7 +5,7 @@ import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { TableViewInput, property2TableData, TableData, TableDataType, TableFiltering, TableRowMeta } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
-import { DbQueryType, Neo4jEdgeDirection, GraphElem, HistoryMetaData } from 'src/app/db-service/data-types';
+import { DbQueryType, Neo4jEdgeDirection, GraphElem, HistoryMetaData, ElemAsQueryParam } from 'src/app/db-service/data-types';
 import { getCyStyleFromColorAndWid, readTxtFile, isJson } from 'src/app/constants';
 
 @Component({
@@ -22,7 +22,7 @@ export class AdvancedQueriesComponent implements OnInit {
   ignoredTypes: string[] = [];
   lengthLimit = 2;
   isDirected = true;
-  selectedNodes: { dbId: string, label: string }[] = [];
+  selectedNodes: ElemAsQueryParam[] = [];
   selectedClass = '';
   targetOrRegulator = 0;
   clickedNodeIdx = -1;
@@ -123,6 +123,10 @@ export class AdvancedQueriesComponent implements OnInit {
       this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbQueryType.count, this.tableFilter, setDataCntFn);
       this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbQueryType.table, this.tableFilter, prepareDataFn);
     }
+  }
+
+  setSelected(x: ElemAsQueryParam[]) {
+    this.selectedNodes = x;
   }
 
   // fill table from graph response

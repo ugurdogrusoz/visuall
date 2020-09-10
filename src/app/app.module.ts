@@ -37,6 +37,7 @@ import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-qu
 import { TypesViewComponent } from './types-view/types-view.component';
 import { RuleTreeComponent } from './rule-tree/rule-tree.component';
 import { RuleDropdownComponent } from './rule-dropdown/rule-dropdown.component';
+import { ElemOfInterestComponent } from './elem-of-interest/elem-of-interest.component';
 
 
 @NgModule({
@@ -70,6 +71,7 @@ import { RuleDropdownComponent } from './rule-dropdown/rule-dropdown.component';
     TypesViewComponent,
     RuleTreeComponent,
     RuleDropdownComponent,
+    ElemOfInterestComponent,
   ],
   imports: [
     BrowserModule,

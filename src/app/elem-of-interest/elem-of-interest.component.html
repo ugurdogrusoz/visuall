@@ -1,0 +1,23 @@
+<input #file type="file" (change)="fileSelected()" accept="text/*, .json, .csv" style="display: none;" />
+
+<div class="subpanel-heading px-1" data-toggle="collapse" data-target="#elems-of-interest" aria-expanded="false">
+  <span class="panel-title accordion-toggle"><span class="va-heading3">{{header}}</span></span>
+</div>
+<div id="elems-of-interest" class="collapse show">
+  <div class="d-flex flex-wrap justify-content-center">
+    <div *ngFor="let n of selectedNodes; let i = index;" class="rounded va-text m-1 p-1"
+      [style.border]="i==clickedNodeIdx ? '2px solid #888888':'2px solid #dee2e6'">
+      <div class="text-center pointer" (click)="selectedNodeClicked(i)">
+        <span>{{n.label}}</span>&nbsp;
+        <img src="assets/img/close.svg" (click)="removeSelected(i)" title="Remove">
+      </div>
+    </div>
+  </div>
+  <div>
+    <input class="btn btn-dark va-text m-1" type="button" value="Add Objects from File"
+      (click)="addSelectedNodesFromFile()">
+    <input class="btn btn-dark va-text m-1" type="button" [value]="addNodeBtnTxt" (click)="addSelectedNodes()">
+    <input *ngIf="selectedNodes && selectedNodes.length > 0" class="btn btn-dark va-text m-1" type="button"
+      value="Remove All" (click)="removeAllSelectedNodes()">
+  </div>
+</div>
