@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { GlobalVariableService } from '../global-variable.service';
 import { PropertyRuleComponent } from './property-rule.component';
+
+class GlobalVariableServiceStub { }
 
 describe('PropertyRuleComponent', () => {
   let component: PropertyRuleComponent;
@@ -8,9 +10,10 @@ describe('PropertyRuleComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PropertyRuleComponent ]
+      declarations: [PropertyRuleComponent],
+      providers: [{ provide: GlobalVariableService, useClass: GlobalVariableServiceStub }]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
