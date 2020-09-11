@@ -1,10 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Neo4jDb } from '../db-service/neo4j-db.service';
+import { DbAdapterService } from '../db-service/db-adapter.service';
 import { GlobalVariableService } from '../global-variable.service';
+import { NavbarCustomizationService } from './navbar-customization.service';
+import { UserProfileService } from '../user-profile.service';
 import { CytoscapeService } from '../cytoscape.service';
+import { URLLoadService } from '../load-from-url.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { By } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
 
 import { NavbarComponent } from './navbar.component';
 import { DebugElement } from '@angular/core';
@@ -12,6 +13,9 @@ import { DebugElement } from '@angular/core';
 class CytoscapeServiceStub { }
 class DbServiceStub { }
 class GlobalVariableServiceStub { }
+class NavbarCustomizationServiceStub { }
+class UserProfileServiceStub { }
+class URLLoadServiceStub { }
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -24,11 +28,14 @@ describe('NavbarComponent', () => {
       declarations: [NavbarComponent],
       providers: [
         { provide: CytoscapeService, useClass: CytoscapeServiceStub },
-        { provide: Neo4jDb, useClass: DbServiceStub },
+        { provide: DbAdapterService, useClass: DbServiceStub },
         { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
+        { provide: NavbarCustomizationService, useClass: NavbarCustomizationServiceStub },
+        { provide: UserProfileService, useClass: UserProfileServiceStub },
+        { provide: URLLoadService, useClass: URLLoadServiceStub },
         NgbModal
       ],
-      imports: [ActivatedRoute]
+      imports: []
     })
       .compileComponents();
   }));
