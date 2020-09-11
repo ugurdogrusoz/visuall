@@ -3,14 +3,14 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { CytoscapeComponent } from './cytoscape.component';
 import { CytoscapeService } from '../cytoscape.service';
-import { TimebarService } from '../timebar.service';
+import { GlobalVariableService } from '../global-variable.service';
+import { MarqueeZoomService } from './marquee-zoom.service';
+import { ContextMenuService } from '../context-menu/context-menu.service';
 
-class CytoscapeServiceStub {
-  initCy() { }
-}
-class TimebarServiceStub {
-  init() { }
-}
+class CytoscapeServiceStub { initCy() { } }
+class GlobalVariableServiceStub { }
+class ContextMenuServiceStub { }
+class MarqueeZoomServiceStub { }
 
 describe('CytoscapeComponent', () => {
   let component: CytoscapeComponent;
@@ -21,7 +21,9 @@ describe('CytoscapeComponent', () => {
       declarations: [CytoscapeComponent],
       providers: [
         { provide: CytoscapeService, useClass: CytoscapeServiceStub },
-        { provide: TimebarService, useClass: TimebarServiceStub },
+        { provide: GlobalVariableService, useClass: GlobalVariableServiceStub },
+        { provide: ContextMenuService, useClass: ContextMenuServiceStub },
+        { provide: MarqueeZoomService, useClass: MarqueeZoomServiceStub },
       ],
       imports: [HttpClientModule]
     })
