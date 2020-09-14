@@ -67,7 +67,6 @@ export class CytoscapeService {
 
     this.bindComponentSelector();
     this._marqueeZoomService.init();
-    this.addOtherStyles();
     (<any>window).cy = this._g.cy;
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
     this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
@@ -98,55 +97,6 @@ export class CytoscapeService {
     if (this.showStatsFn) {
       this.showStatsFn();
     }
-  }
-
-  // some styles uses functions, so they can't be added using JSON
-  private addOtherStyles() {
-    this._g.cy.startBatch();
-
-    this._g.cy.style().selector('edge.' + C.COLLAPSED_EDGE_CLASS)
-      .style({
-        'label': (e) => {
-          return '(' + e.data('collapsedEdges').length + ')';
-        },
-        'width': (e) => {
-          let n = e.data('collapsedEdges').length;
-          return (3 + Math.log2(n)) + 'px';
-        },
-        'line-color': this.setColor4CompoundEdge.bind(this),
-        'target-arrow-color': this.setColor4CompoundEdge.bind(this),
-        'target-arrow-shape': this.setTargetArrowShape.bind(this),
-      })
-      .update();
-
-    setTimeout(() => { this._g.cy.endBatch(); }, C.CY_BATCH_END_DELAY);
-  }
-
-  private doElemsMultiClasses(elems) {
-    let classDict = {};
-    for (let i = 0; i < elems.length; i++) {
-      let classes = elems[i].classes();
-      for (let j = 0; j < classes.length; j++) {
-        classDict[classes[j]] = true;
-      }
-    }
-    return Object.keys(classDict).length > 1;
-  }
-
-  private setColor4CompoundEdge(e) {
-    let collapsedEdges = e.data('collapsedEdges');
-    if (this.doElemsMultiClasses(collapsedEdges)) {
-      return '#b3b3b3';
-    }
-    return collapsedEdges[0].style('line-color')
-  }
-
-  private setTargetArrowShape(e) {
-    let collapsedEdges = e.data('collapsedEdges');
-    if (this.doElemsMultiClasses(collapsedEdges)) {
-      return 'triangle';
-    }
-    return collapsedEdges[0].style('target-arrow-shape')
   }
 
   private applyStyle4NewElements() {

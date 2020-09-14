@@ -3,7 +3,7 @@ import { UserPref, GroupingOptionTypes } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import appPref from '../assets/appPref.json';
-import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS } from './constants';
+import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS, CY_BATCH_END_DELAY } from './constants';
 import { GraphHistoryItem, GraphElem } from './db-service/data-types';
 
 @Injectable({
@@ -56,6 +56,7 @@ export class GlobalVariableService {
     // set cytoscape.js style dynamicly
     this._http.get('./assets/generated/stylesheet.json').subscribe(x => {
       this.cy.style(x);
+      this.addOtherStyles();
     }, (e) => { console.log('error: ', e); });
 
   }
@@ -166,10 +167,6 @@ export class GlobalVariableService {
 
   getGraphElemSet() {
     return new Set<string>(this.cy.elements().map(x => x.id()));
-  }
-
-  setStyleFromJson(json) {
-    this.cy.style(json);
   }
 
   highlightElems(elems) {
@@ -429,5 +426,54 @@ export class GlobalVariableService {
         this.cy.remove(clusterNodes[i]);
       }
     }
+  }
+
+  // some styles uses functions, so they can't be added using JSON
+  private addOtherStyles() {
+    this.cy.startBatch();
+
+    this.cy.style().selector('edge.' + COLLAPSED_EDGE_CLASS)
+      .style({
+        'label': (e) => {
+          return '(' + e.data('collapsedEdges').length + ')';
+        },
+        'width': (e) => {
+          let n = e.data('collapsedEdges').length;
+          return (3 + Math.log2(n)) + 'px';
+        },
+        'line-color': this.setColor4CompoundEdge.bind(this),
+        'target-arrow-color': this.setColor4CompoundEdge.bind(this),
+        'target-arrow-shape': this.setTargetArrowShape.bind(this),
+      })
+      .update();
+
+    setTimeout(() => { this.cy.endBatch(); }, CY_BATCH_END_DELAY);
+  }
+
+  private setColor4CompoundEdge(e) {
+    let collapsedEdges = e.data('collapsedEdges');
+    if (this.doElemsMultiClasses(collapsedEdges)) {
+      return '#b3b3b3';
+    }
+    return collapsedEdges[0].style('line-color')
+  }
+
+  private setTargetArrowShape(e) {
+    let collapsedEdges = e.data('collapsedEdges');
+    if (this.doElemsMultiClasses(collapsedEdges)) {
+      return 'triangle';
+    }
+    return collapsedEdges[0].style('target-arrow-shape')
+  }
+
+  private doElemsMultiClasses(elems) {
+    let classDict = {};
+    for (let i = 0; i < elems.length; i++) {
+      let classes = elems[i].classes();
+      for (let j = 0; j < classes.length; j++) {
+        classDict[classes[j]] = true;
+      }
+    }
+    return Object.keys(classDict).length > 1;
   }
 } 
