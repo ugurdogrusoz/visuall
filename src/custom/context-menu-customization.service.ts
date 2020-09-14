@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CytoscapeService } from '../cytoscape.service';
-import { DbAdapterService } from '../db-service/db-adapter.service';
-import { GlobalVariableService } from '../global-variable.service';
-import { ContextMenuItem } from './icontext-menu';
+import { CytoscapeService } from '../app/cytoscape.service';
+import { DbAdapterService } from '../app/db-service/db-adapter.service';
+import { GlobalVariableService } from '../app/global-variable.service';
+import { ContextMenuItem } from '../app/context-menu/icontext-menu';
 import axios from 'axios';
-import { DbQueryMeta, HistoryMetaData } from '../db-service/data-types';
+import { DbQueryMeta, HistoryMetaData } from '../app/db-service/data-types';
 
 @Injectable({
   providedIn: 'root'

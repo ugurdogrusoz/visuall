@@ -1,34 +1,38 @@
 let fs = require('fs');
 const css = require('css');
 
-// Check given inputs for filename
-if (process.argv.length !== 3) {
-  console.log('Give model filename as input: \nnode style-generator.js {filename}');
-  return;
+main();
+
+function main() {
+  // Check given inputs for filename
+  if (process.argv.length !== 3) {
+    console.log('Give model filename as input: \nnode style-generator.js {filename}');
+    return;
+  }
+
+  let app_desc_file = 'custom/config/app_description.json';
+  if (process.argv.length === 3) {
+    app_desc_file = process.argv[2];
+  }
+
+  const app_desc = readFile(app_desc_file);
+  const cy_style = readFile('assets/cy-style.json');
+  parseAppDescription(JSON.parse(app_desc), JSON.parse(cy_style));
 }
 
-const filename = process.argv[2];
-
-const model = readFile(filename);
-parseAppDescription(model);
-
-function parseAppDescription(model) {
-  const data = JSON.parse(model);
+function parseAppDescription(app_desc, cy_style) {
 
   let stylesheet = [];
   let properties = { nodes: {}, edges: {} };
 
-  updateHtmlCss(data);
-
-  // Apply required fixed styles
-  setFixedStyles(stylesheet, data['generalStyles']);
+  updateHtmlCss(app_desc);
 
   // Generate stylesheet.json & properties.json for nodes and edges
-  setCyStyles(data['objects'], stylesheet, properties, false);
-  setCyStyles(data['relations'], stylesheet, properties);
+  setCyStyles(app_desc['objects'], stylesheet, properties, false);
+  setCyStyles(app_desc['relations'], stylesheet, properties);
 
   // Apply styles that should override existing styles
-  setFixedStyles(stylesheet, data['overrideStyles']);
+  setFixedStyles(stylesheet, cy_style);
 
   let path = 'assets/generated/';
   // Beautify JSON output with 2 space tabs and write to file
@@ -40,7 +44,7 @@ function updateHtmlCss(data) {
   const indexFileName = 'index.html';
   const cssFileName = 'styles.css';
 
-  processCssFile(cssFileName, data.appPreferences.style);
+  processCssFile(cssFileName, data.cssStyle);
   processIndexFile(indexFileName, data.appInfo);
 }
 

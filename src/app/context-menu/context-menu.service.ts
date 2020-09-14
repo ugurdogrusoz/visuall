@@ -5,7 +5,7 @@ import * as $ from 'jquery';
 import { CytoscapeService } from '../cytoscape.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
-import { ContextMenuCustomizationService } from './context-menu-customization.service';
+import { ContextMenuCustomizationService } from '../../custom/context-menu-customization.service';
 import properties from '../../assets/generated/properties.json';
 import { COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from './../constants';
 

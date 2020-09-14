@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { NavbarDropdown } from './inavbar';
-import { GlobalVariableService } from '../global-variable.service';
+import { NavbarDropdown } from '../app/navbar/inavbar';
+import { GlobalVariableService } from '../app/global-variable.service';
 
 @Injectable({
   providedIn: 'root'

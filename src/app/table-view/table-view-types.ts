@@ -1,5 +1,5 @@
 import properties from '../../assets/generated/properties.json';
-import AppDescription from '../../assets/app_description.json';
+import AppDescription from '../../custom/config/app_description.json';
 import { isSubset } from '../constants';
 
 export enum TableDataType {

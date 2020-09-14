@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ToolbarDiv } from './itoolbar';
-import { GlobalVariableService } from '../global-variable.service';
+import { ToolbarDiv } from '../app/toolbar/itoolbar';
+import { GlobalVariableService } from '../app/global-variable.service';
 
 
 @Injectable({

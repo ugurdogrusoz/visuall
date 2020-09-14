@@ -4,7 +4,7 @@ import { formatNumber } from '@angular/common';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { ColorPickerComponent } from 'src/app/color-picker/color-picker.component';
 import { debounce2, debounce } from 'src/app/constants';
-import AppDescription from '../../../../assets/app_description.json';
+import AppDescription from '../../../../custom/config/app_description.json';
 
 @Component({
   selector: 'app-graph-theoretic-properties-tab',

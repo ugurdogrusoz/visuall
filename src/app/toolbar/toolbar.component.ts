@@ -7,7 +7,7 @@ import { QuickHelpModalComponent } from '../popups/quick-help-modal/quick-help-m
 import { GlobalVariableService } from '../global-variable.service';
 import { getPropNamesFromObj } from '../constants';
 import entityMap from '../../assets/generated/properties.json';
-import { ToolbarCustomizationService } from './toolbar-customization.service';
+import { ToolbarCustomizationService } from '../../custom/toolbar-customization.service';
 import { ToolbarDiv, ToolbarAction } from './itoolbar';
 
 @Component({

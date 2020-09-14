@@ -3,7 +3,7 @@ import { TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENER
 import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/query-types';
 import properties from '../../assets/generated/properties.json';
-import AppDescription from '../../assets/app_description.json';
+import AppDescription from '../../custom/config/app_description.json';
 import { Subject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

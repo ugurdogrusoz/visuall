@@ -31,7 +31,7 @@ import { ErrorModalComponent } from './popups/error-modal/error-modal.component'
 import { AngularDraggableModule } from 'angular2-draggable';
 import { GraphTheoreticPropertiesTabComponent } from './operation-tabs/map-tab/graph-theoretic-properties-tab/graph-theoretic-properties-tab.component';
 import { GraphHistoryComponent } from './graph-history/graph-history.component';
-import { TabCustomizationModule } from './operation-tabs/tab-customization/tab-customization.module';
+import { CustomizationModule } from '../custom/customization.module';
 import { SaveProfileModalComponent } from './popups/save-profile-modal/save-profile-modal.component';
 import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-queries/advanced-queries.component';
 import { TypesViewComponent } from './types-view/types-view.component';
@@ -80,7 +80,7 @@ import { ElemOfInterestComponent } from './elem-of-interest/elem-of-interest.com
     NgbModule,
     AutoSizeInputModule,
     AngularDraggableModule,
-    TabCustomizationModule,
+    CustomizationModule,
     RouterModule.forRoot([]),
   ],
   providers: [{provide: APP_BASE_HREF, useValue : "/" }],

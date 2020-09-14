@@ -4,7 +4,7 @@ import { GlobalVariableService } from '../global-variable.service';
 import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
 import { Rule, ClassBasedRules, RuleNode } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE, LONG_MAX, LONG_MIN } from '../constants';
-import AppDescription from '../../assets/app_description.json';
+import AppDescription from '../../custom/config/app_description.json';
 import properties from '../../assets/generated/properties.json'
 import { TableFiltering } from '../table-view/table-view-types';
 import { TimebarGraphInclusionTypes } from '../user-preference';
@@ -14,7 +14,7 @@ import { TimebarGraphInclusionTypes } from '../user-preference';
 })
 export class Neo4jDb implements DbService {
 
-  // default database config, in case it is not read from visuall-config.json
+  // default database config, in case it is not read from db-config.json
   private dbConfig = {
     url: 'http://ivis.cs.bilkent.edu.tr:3001/db/data/transaction/commit',
     username: 'neo4j',
@@ -22,7 +22,11 @@ export class Neo4jDb implements DbService {
   };
 
   constructor(private _http: HttpClient, private _g: GlobalVariableService) {
-    this._g.getConfig().subscribe(x => { this.dbConfig = x['database'] }, error => console.log('getConfig err: ', error));
+    // do not read config file if running on our demo server. We cannot add file to free heroku server.
+    // that's why we did a manual checking exceptionally for heroku
+    if (!document.baseURI.includes('visuall.herokuapp.com')) {
+      this._g.getDbConfig().subscribe(x => { this.dbConfig = x as any }, error => console.log('getConfig err: ', error));
+    }
   }
 
   getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, meta?: DbQueryMeta) {

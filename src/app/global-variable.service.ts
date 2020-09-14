@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserPref, GroupingOptionTypes } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import AppDescription from '../assets/app_description.json'
+import AppDescription from '../custom/config/app_description.json';
 import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS } from './constants';
 import { GraphHistoryItem, GraphElem } from './db-service/data-types';
 
@@ -39,7 +39,7 @@ export class GlobalVariableService {
     delete AppDescription.appPreferences['style'];
     this.setUserPrefs(AppDescription.appPreferences, this.userPrefs);
     // set user preferences dynamically
-    this._http.get('./assets/app_description.json').subscribe(x => {
+    this._http.get('./custom/config/app_description.json').subscribe(x => {
       delete x['appPreferences']['style'];
       this.setUserPrefs(x['appPreferences'], this.userPrefs);
       this.isUserPrefReady.next(true);
@@ -79,8 +79,8 @@ export class GlobalVariableService {
     }
   }
 
-  public getConfig() {
-    return this._http.get('./assets/visuall-config.json');
+  public getDbConfig() {
+    return this._http.get('../custom/config/db-config.json');
   }
 
   runLayout() {

@@ -243,7 +243,7 @@ To prevent conflicts, you should **not** modify [app.module.ts file](../src/app/
 
 
 ## Database connection
-To connect the database, visuall needs to read database connection information. Visual reads a file named **visuall-config.json**. The file should be added by the developer. Since the content of the file is environment dependent, it is written to `.gitignore` to be ignored. The file should be inside the folder **\assets**. An example file content is given below
+To connect the database, visuall needs to read database connection information. Visual reads a file named **db-config.json**. The file should be added by the developer. Since the content of the file is environment dependent, it is written to `.gitignore` to be ignored. The file should be inside the folder **\assets**. An example file content is given below
 ```
 {
   "database": {

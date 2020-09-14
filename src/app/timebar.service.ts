@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GlobalVariableService } from './global-variable.service';
-import AppDescription from '../assets/app_description.json';
+import AppDescription from '../custom/config/app_description.json';
 import { TimebarMetric } from './operation-tabs/map-tab/query-types';
 import { Timebar } from '../lib/timebar/Timebar';
 import { BehaviorSubject } from 'rxjs';

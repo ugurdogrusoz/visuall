@@ -11,7 +11,7 @@ import { GraphResponse, GraphElem } from './db-service/data-types';
 import { UserPrefHelper } from './user-pref-helper';
 import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
-import { LouvainClustering } from './LouvainClustering';
+import { LouvainClustering } from '../lib/louvain-clustering/LouvainClustering';
 import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CyExtService } from './cy-ext.service';

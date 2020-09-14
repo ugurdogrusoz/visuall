@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import properties from '../../../../assets/generated/properties.json';
-import AppDescription from '../../../../assets/app_description.json';
+import AppDescription from '../../../../custom/config/app_description.json';
 import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric, RuleNode, deepCopyTimebarMetric } from '../../map-tab/query-types';
 import { GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';

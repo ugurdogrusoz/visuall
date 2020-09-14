@@ -7,7 +7,7 @@ import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import { ClassOption, Rule, RuleSync, QueryRule, ClassBasedRules, RuleNode, getBoolExpressionFromMetric, deepCopyRuleNode } from './query-types';
 import { Subject } from 'rxjs';
-import AppDescription from '../../../assets/app_description.json';
+import AppDescription from '../../../custom/config/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from 'src/app/table-view/table-view-types';
 import { DbQueryType, GraphResponse, HistoryMetaData } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
