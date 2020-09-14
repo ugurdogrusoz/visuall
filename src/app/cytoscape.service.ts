@@ -952,7 +952,7 @@ export class CytoscapeService {
   bindComponentSelector() {
     let isSelectionLocked: boolean = false;
 
-    this._g.cy.on('taphold', 'node', (e) => {
+    this._g.cy.on('taphold', 'node, edge', (e) => {
       if (!e.originalEvent.shiftKey) {
         return;
       }
@@ -962,7 +962,7 @@ export class CytoscapeService {
       isSelectionLocked = true;
     });
 
-    this._g.cy.on('free', 'node', () => {
+    this._g.cy.on('tapend', 'node, edge', () => {
       if (!isSelectionLocked) {
         return;
       }
