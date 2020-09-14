@@ -70,15 +70,16 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   changeSelectedProp(filterInp = '', unixDateValue = null) {
+    const model = this._g.dataModel.getValue();
     this.textAreaInp = '';
     this.filterInp = filterInp;
     let attrType = undefined;
-    if (this._g.dataModel.nodes[this.selectedClass]) {
-      attrType = this._g.dataModel.nodes[this.selectedClass][this.selectedProp];
-    } else if (this._g.dataModel.edges[this.selectedClass]) {
-      attrType = this._g.dataModel.edges[this.selectedClass][this.selectedProp];
+    if (model.nodes[this.selectedClass]) {
+      attrType = model.nodes[this.selectedClass][this.selectedProp];
+    } else if (model.edges[this.selectedClass]) {
+      attrType = model.edges[this.selectedClass][this.selectedProp];
     }
-    if (this._g.dataModel.edges[this.selectedProp]) {
+    if (model.edges[this.selectedProp]) {
       attrType = 'edge';
     }
     this.attributeType = attrType;
@@ -208,7 +209,7 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   private getPropertyCategory(): PropertyCategory {
-    let m = this._g.appDescription.enumMapping;
+    let m = this._g.appDescription.getValue().enumMapping;
     this.finiteSetPropertyMap = null;
     if (m && m[this.selectedClass] && m[this.selectedClass][this.selectedProp]) {
       this.finiteSetPropertyMap = m[this.selectedClass][this.selectedProp];

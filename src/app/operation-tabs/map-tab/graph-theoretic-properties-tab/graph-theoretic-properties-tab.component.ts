@@ -4,7 +4,6 @@ import { formatNumber } from '@angular/common';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { ColorPickerComponent } from 'src/app/color-picker/color-picker.component';
 import { debounce2, debounce } from 'src/app/constants';
-import AppDescription from '../../../../custom/config/app_description.json';
 
 @Component({
   selector: 'app-graph-theoretic-properties-tab',
@@ -37,9 +36,11 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   ngOnInit() {
     this._cyService.setRemovePoppersFn(this.destroyCurrentPoppers.bind(this));
     this._g.cy.on('remove', (e) => { this.destroyPopper(e.target.id()) });
-    if (AppDescription.appPreferences.avgNodeSize) {
-      this.currNodeSize = AppDescription.appPreferences.avgNodeSize;
-    }
+    this._g.appDescription.subscribe(x => {
+      if (x !== null && x.appPreferences.avgNodeSize) {
+        this.currNodeSize = x.appPreferences.avgNodeSize;
+      }
+    })
   }
 
   runProperty() {

@@ -32,8 +32,8 @@ export class GlobalVariableService {
   isUseCiseLayout = false;
   performLayout: Function;
   cyNaviPositionSetter: any;
-  appDescription: any;
-  dataModel: any;
+  appDescription = new BehaviorSubject<any>(null);
+  dataModel = new BehaviorSubject<any>(null);
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
@@ -45,7 +45,7 @@ export class GlobalVariableService {
 
       // set user prefered values. These will be overriden if "Store User Profile" is checked
       this._http.get('./custom/config/app_description.json').subscribe(x => {
-        this.appDescription = x;
+        this.appDescription.next(x);
         this.setUserPrefs(x['appPreferences'], this.userPrefs);
         this.isUserPrefReady.next(true);
       }, (e) => { console.log('error: ', e); });
@@ -61,9 +61,8 @@ export class GlobalVariableService {
     }, (e) => { console.log('error: ', e); });
 
     this._http.get('./assets/generated/properties.json').subscribe(x => {
-      this.dataModel = x;
+      this.dataModel.next(x);
     }, (e) => { console.log('error: ', e); });
-
   }
 
   private setUserPrefs(obj: any, userPref: any) {
@@ -212,9 +211,9 @@ export class GlobalVariableService {
     }
 
     let labels = '';
-    let labelParent: any = this.appDescription.objects;
+    let labelParent: any = this.appDescription.getValue().objects;
     if (!isNode) {
-      labelParent = this.appDescription.relations;
+      labelParent = this.appDescription.getValue().relations;
     }
     for (let i = 0; i < cyIds.length; i++) {
       let cName = '';

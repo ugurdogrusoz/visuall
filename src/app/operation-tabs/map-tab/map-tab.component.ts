@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import properties from '../../../assets/generated/properties.json';
 import { GENERIC_TYPE, COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from '../../constants';
 import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
@@ -7,7 +6,6 @@ import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import { ClassOption, Rule, RuleSync, QueryRule, ClassBasedRules, RuleNode, getBoolExpressionFromMetric, deepCopyRuleNode } from './query-types';
 import { Subject } from 'rxjs';
-import AppDescription from '../../../custom/config/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from 'src/app/table-view/table-view-types';
 import { DbQueryType, GraphResponse, HistoryMetaData } from 'src/app/db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
@@ -67,25 +65,35 @@ export class MapTabComponent implements OnInit {
   ngOnInit() {
     this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
 
-    for (const key in properties.nodes) {
-      this.classOptions.push({ text: key, isDisabled: false });
-      if (this.selectedClassProps.length == 0) {
-        this.selectedClassProps = Object.keys(properties.nodes[key]);
+    this._g.appDescription.subscribe(x => {
+      if (x === null) {
+        return;
       }
-    }
+      this._g.dataModel.subscribe(x2 => {
+        if (x2 === null) {
+          return;
+        }
+        for (const key in x2.nodes) {
+          this.classOptions.push({ text: key, isDisabled: false });
+          if (this.selectedClassProps.length == 0) {
+            this.selectedClassProps = Object.keys(x2.nodes[key]);
+          }
+        }
 
-    for (const key in properties.edges) {
-      this.classOptions.push({ text: key, isDisabled: false });
-    }
+        for (const key in x2.edges) {
+          this.classOptions.push({ text: key, isDisabled: false });
+        }
 
-    this.setCurrRulesFromLocalStorage();
-    let i = this.getEditingRuleIdx();
-    if (i > -1) {
-      this.currRules[i].isEditing = false; // simulate click
-      this.editRule(i);
-    } else {
-      this.newRuleClick();
-    }
+        this.setCurrRulesFromLocalStorage();
+        let i = this.getEditingRuleIdx();
+        if (i > -1) {
+          this.currRules[i].isEditing = false; // simulate click
+          this.editRule(i);
+        } else {
+          this.newRuleClick();
+        }
+      });
+    });
   }
 
   private setCurrRulesFromLocalStorage() {
@@ -100,6 +108,7 @@ export class MapTabComponent implements OnInit {
 
   changeSelectedClass() {
     const txt = this.selectedClass;
+    const properties = this._g.dataModel.getValue();
     let isNodeClassSelected: boolean = properties.nodes.hasOwnProperty(txt);
     let isEdgeClassSelected: boolean = properties.edges.hasOwnProperty(txt);
     this.selectedClassProps.length = 0;
@@ -122,10 +131,10 @@ export class MapTabComponent implements OnInit {
 
   private getEdgeTypesRelated(nodeType: string): string[] {
     let r: string[] = [];
-
+    const a = this._g.appDescription.getValue();
     const txt = this.selectedClass.toLowerCase();
-    for (let k of Object.keys(AppDescription.relations)) {
-      const v = AppDescription.relations[k];
+    for (let k of Object.keys(a.relations)) {
+      const v = a.relations[k];
       if (v.source.toLowerCase() == txt || v.target.toLowerCase() == txt) {
         r.push(k);
       }
@@ -134,6 +143,7 @@ export class MapTabComponent implements OnInit {
   }
 
   initRules(s: 'AND' | 'OR' | 'C') {
+    const properties = this._g.dataModel.getValue();
     const isEdge = properties.edges[this.selectedClass] != undefined;
     if (s == 'AND' || s == 'OR') {
       this.queryRule = { className: this.selectedClass, isEdge: isEdge, rules: { r: { ruleOperator: s }, children: [], parent: null } };
@@ -257,7 +267,7 @@ export class MapTabComponent implements OnInit {
     }
 
     this.tableInput.isNodeData = !this.queryRule.isEdge;
-
+    const properties = this._g.dataModel.getValue();
     if (this.tableInput.isNodeData) {
       this.tableInput.columns = Object.keys(properties['nodes'][this.selectedClass]);
     } else {

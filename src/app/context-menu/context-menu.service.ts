@@ -94,9 +94,10 @@ export class ContextMenuService {
     if (!ele) {
       return;
     }
+    const model = this._g.dataModel.getValue();
     const classes = ele.className();
     for (let c of classes) {
-      if (this._g.dataModel.nodes[c] || this._g.dataModel.edges[c]) {
+      if (model.nodes[c] || model.edges[c]) {
         this._g.cy.$('.' + c).select();
       }
     }

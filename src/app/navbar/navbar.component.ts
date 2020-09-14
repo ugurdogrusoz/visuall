@@ -7,7 +7,6 @@ import { SaveAsPngModalComponent } from '../popups/save-as-png-modal/save-as-png
 import { AboutModalComponent } from '../popups/about-modal/about-modal.component';
 import { QuickHelpModalComponent } from '../popups/quick-help-modal/quick-help-modal.component';
 import * as $ from 'jquery';
-import AppDescription from '../../custom/config/app_description.json';
 import { NavbarCustomizationService } from '../../custom/navbar-customization.service';
 import { NavbarDropdown, NavbarAction } from './inavbar';
 import { UserProfileService } from '../user-profile.service';
@@ -31,7 +30,7 @@ export class NavbarComponent implements OnInit {
 
   constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _modalService: NgbModal,
     private _g: GlobalVariableService, private _customizationService: NavbarCustomizationService, private _profile: UserProfileService,
-     private _urlload: URLLoadService) {
+    private _urlload: URLLoadService) {
     this.menu = [
       {
         dropdown: 'File', actions: [{ txt: 'Load...', id: 'nbi00', fn: 'loadFile', isStd: true },
@@ -81,8 +80,12 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.toolName = AppDescription.appInfo.name;
-    this.toolLogo = AppDescription.appInfo.icon;
+    this._g.appDescription.subscribe(x => {
+      if (x != null) {
+        this.toolName = x.appInfo.name;
+        this.toolLogo = x.appInfo.icon;
+      }
+    })
     this.mergeCustomMenu();
     this._urlload.init();
   }

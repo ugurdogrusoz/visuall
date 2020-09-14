@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COLLAPSED_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY, CLUSTER_CLASS } from '../../constants';
-import properties from '../../../assets/generated/properties.json';
 import * as $ from 'jquery';
 import AppDescription from '../../../custom/config/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, property2TableData, filterTableDatas } from 'src/app/table-view/table-view-types';
@@ -41,22 +40,32 @@ export class ObjectTabComponent implements OnInit {
   }
 
   ngOnInit() {
-    properties.edges = properties.edges;
-    this.nodeClasses = new Set([]);
-    this.edgeClasses = new Set([]);
-    for (const key in properties.nodes) {
-      this.nodeClasses.add(key);
-    }
+    this._g.appDescription.subscribe(x => {
+      if (x === null) {
+        return;
+      }
+      this._g.dataModel.subscribe(x2 => {
+        if (x2 === null) {
+          return;
+        }
+        x2.edges = x2.edges;
+        this.nodeClasses = new Set([]);
+        this.edgeClasses = new Set([]);
+        for (const key in x2.nodes) {
+          this.nodeClasses.add(key);
+        }
 
-    for (const key in properties.edges) {
-      this.edgeClasses.add(key);
-    }
+        for (const key in x2.edges) {
+          this.edgeClasses.add(key);
+        }
 
-    this._g.shownElemsChanged.subscribe(() => { this.showStats() });
-    this.showObjectProps();
-    this.showStats();
-    this._cyService.showObjPropsFn = debounce(this.showObjectProps, OBJ_INFO_UPDATE_DELAY).bind(this);
-    this._cyService.showStatsFn = debounce(this.showStats, OBJ_INFO_UPDATE_DELAY).bind(this)
+        this._g.shownElemsChanged.subscribe(() => { this.showStats() });
+        this.showObjectProps();
+        this.showStats();
+        this._cyService.showObjPropsFn = debounce(this.showObjectProps, OBJ_INFO_UPDATE_DELAY).bind(this);
+        this._cyService.showStatsFn = debounce(this.showStats, OBJ_INFO_UPDATE_DELAY).bind(this);
+      });
+    });
   }
 
   showObjectProps() {
@@ -75,7 +84,7 @@ export class ObjectTabComponent implements OnInit {
     const selectedNonMeta = selected.not('.' + COLLAPSED_EDGE_CLASS);
     let props: { [x: string]: any; }, classNames: any[];
     [props, classNames] = this.getCommonObjectProps(selectedNonMeta);
-
+    const properties = this._g.dataModel.getValue();
     // remove undefined but somehow added properties (cuz of extensions)
     let definedProperties = getPropNamesFromObj([properties.nodes, properties.edges], false);
     for (let k in props) {
@@ -121,6 +130,7 @@ export class ObjectTabComponent implements OnInit {
     for (let i = 0; i < elemTypesArr.length; i++) {
       elemTypes[elemTypesArr[i]] = true;
     }
+    const properties = this._g.dataModel.getValue();
     let definedProperties = {};
     for (let edgeType in elemTypes) {
       if (isNode) {
@@ -196,6 +206,7 @@ export class ObjectTabComponent implements OnInit {
     if (selectedCount === 1) {
       propKeys = this.orderPropertyKeysIf1Selected(classNames) || propKeys;
     }
+    const properties = this._g.dataModel.getValue();
     for (const key of propKeys) {
 
       // Replace - and _ with space
@@ -302,6 +313,7 @@ export class ObjectTabComponent implements OnInit {
   }
 
   orderPropertyKeysIf1Selected(classNames) {
+    const properties = this._g.dataModel.getValue();
     const nodeProps = properties.nodes[classNames];
     const edgeProps = properties.edges[classNames];
     if (nodeProps) {

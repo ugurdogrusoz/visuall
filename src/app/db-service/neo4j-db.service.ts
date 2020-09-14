@@ -219,7 +219,7 @@ export class Neo4jDb implements DbService {
 
   private getTimebarMapping4Java(): string {
     // {Person:["start_t", "end_t"]}
-    const mapping = this._g.appDescription.timebarDataMapping;
+    const mapping = this._g.appDescription.getValue().timebarDataMapping;
     let s = '{'
     for (const k in mapping) {
       s += k + ':["' + mapping[k].begin_datetime + '","' + mapping[k].end_datetime + '"],';
@@ -237,15 +237,15 @@ export class Neo4jDb implements DbService {
     let keys = [];
 
     if (isNode) {
-      keys = Object.keys(this._g.appDescription.objects);
+      keys = Object.keys(this._g.appDescription.getValue().objects);
     } else {
-      keys = Object.keys(this._g.appDescription.relations);
+      keys = Object.keys(this._g.appDescription.getValue().relations);
     }
 
     const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
     const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
-    const mapping = this._g.appDescription.timebarDataMapping;
+    const mapping = this._g.appDescription.getValue().timebarDataMapping;
 
     s = ' AND ('
     for (const k of keys) {
@@ -356,10 +356,10 @@ export class Neo4jDb implements DbService {
     }
     let matchClause: string;
     if (rule.isEdge) {
-      let s = this._g.appDescription.relations[rule.className].source;
-      let t = this._g.appDescription.relations[rule.className].target;
+      let s = this._g.appDescription.getValue().relations[rule.className].source;
+      let t = this._g.appDescription.getValue().relations[rule.className].target;
       let conn = '>';
-      let isBidirectional = this._g.appDescription.relations[rule.className].isBidirectional;
+      let isBidirectional = this._g.appDescription.getValue().relations[rule.className].isBidirectional;
       if (isBidirectional) {
         conn = '';
       }
@@ -386,7 +386,8 @@ export class Neo4jDb implements DbService {
     if (isEdge) {
       t = 'edges';
     }
-    let p = this._g.dataModel[t][className];
+
+    let p = this._g.dataModel.getValue()[t][className];
     for (let k in p) {
       if (p[k] !== 'list') {
         if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
