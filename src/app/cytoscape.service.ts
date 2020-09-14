@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import cytoscape from 'cytoscape';
-import stylesheet from '../assets/generated/stylesheet.json';
 import * as C from './constants';
-import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
 import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
@@ -36,7 +34,6 @@ export class CytoscapeService {
     this._g.layout = this._g.getFcoseOptions();
     this._g.cy = cytoscape({
       container: containerElem,
-      style: stylesheet,
       layout: this._g.layout,
       // initial viewport state:
       zoom: 1,

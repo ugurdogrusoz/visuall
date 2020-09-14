@@ -14,7 +14,6 @@ import { UserProfileService } from '../user-profile.service';
 import { readTxtFile, CLUSTER_CLASS } from '../constants';
 import { SaveProfileModalComponent } from '../popups/save-profile-modal/save-profile-modal.component';
 import { URLLoadService } from '../load-from-url.service';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-navbar',

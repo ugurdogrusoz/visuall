@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserPref, GroupingOptionTypes } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import AppDescription from '../custom/config/app_description.json';
+import appPref from '../assets/appPref.json';
 import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS } from './constants';
 import { GraphHistoryItem, GraphElem } from './db-service/data-types';
 
@@ -32,20 +32,32 @@ export class GlobalVariableService {
   isUseCiseLayout = false;
   performLayout: Function;
   cyNaviPositionSetter: any;
+  appDescription: any;
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
     // set user preferences staticly (necessary for rendering html initially)
-    delete AppDescription.appPreferences['style'];
-    this.setUserPrefs(AppDescription.appPreferences, this.userPrefs);
-    // set user preferences dynamically
-    this._http.get('./custom/config/app_description.json').subscribe(x => {
-      delete x['appPreferences']['style'];
-      this.setUserPrefs(x['appPreferences'], this.userPrefs);
-      this.isUserPrefReady.next(true);
-    });
+    this.setUserPrefs(appPref, this.userPrefs);
+    // set default values dynamically
+    this._http.get('./assets/appPref.json').subscribe(x => {
+      this.setUserPrefs(x, this.userPrefs);
+
+      // set user prefered values. These will be overriden if "Store User Profile" is checked
+      this._http.get('./custom/config/app_description.json').subscribe(x => {
+        this.appDescription = x;
+        this.setUserPrefs(x['appPreferences'], this.userPrefs);
+        this.isUserPrefReady.next(true);
+      }, (e) => { console.log('error: ', e); });
+    }, (e) => { console.log('error: ', e); });
+
     let isGraphEmpty = () => { return this.cy.elements().not(':hidden, :transparent').length > 0 };
     this.performLayout = debounce(this.performLayoutFn, LAYOUT_ANIM_DUR, true, isGraphEmpty);
+
+    // set cytoscape.js style dynamicly
+    this._http.get('./assets/generated/stylesheet.json').subscribe(x => {
+      this.cy.style(x);
+    }, (e) => { console.log('error: ', e); });
+
   }
 
   private setUserPrefs(obj: any, userPref: any) {
@@ -198,9 +210,9 @@ export class GlobalVariableService {
     }
 
     let labels = '';
-    let labelParent: any = AppDescription.objects;
+    let labelParent: any = this.appDescription.objects;
     if (!isNode) {
-      labelParent = AppDescription.relations;
+      labelParent = this.appDescription.relations;
     }
     for (let i = 0; i < cyIds.length; i++) {
       let cName = '';
