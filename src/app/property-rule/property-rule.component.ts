@@ -2,8 +2,6 @@ import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef, 
 import { TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber, DATETIME_OPERATORS } from '../constants';
 import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/query-types';
-import properties from '../../assets/generated/properties.json';
-import AppDescription from '../../custom/config/app_description.json';
 import { Subject } from 'rxjs';
 import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -75,12 +73,12 @@ export class PropertyRuleComponent implements OnInit {
     this.textAreaInp = '';
     this.filterInp = filterInp;
     let attrType = undefined;
-    if (properties.nodes[this.selectedClass]) {
-      attrType = properties.nodes[this.selectedClass][this.selectedProp];
-    } else if (properties.edges[this.selectedClass]) {
-      attrType = properties.edges[this.selectedClass][this.selectedProp];
+    if (this._g.dataModel.nodes[this.selectedClass]) {
+      attrType = this._g.dataModel.nodes[this.selectedClass][this.selectedProp];
+    } else if (this._g.dataModel.edges[this.selectedClass]) {
+      attrType = this._g.dataModel.edges[this.selectedClass][this.selectedProp];
     }
-    if (properties.edges[this.selectedProp]) {
+    if (this._g.dataModel.edges[this.selectedProp]) {
       attrType = 'edge';
     }
     this.attributeType = attrType;
@@ -210,7 +208,7 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   private getPropertyCategory(): PropertyCategory {
-    let m = AppDescription.enumMapping;
+    let m = this._g.appDescription.enumMapping;
     this.finiteSetPropertyMap = null;
     if (m && m[this.selectedClass] && m[this.selectedClass][this.selectedProp]) {
       this.finiteSetPropertyMap = m[this.selectedClass][this.selectedProp];

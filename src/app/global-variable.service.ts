@@ -33,6 +33,7 @@ export class GlobalVariableService {
   performLayout: Function;
   cyNaviPositionSetter: any;
   appDescription: any;
+  dataModel: any;
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
@@ -57,6 +58,10 @@ export class GlobalVariableService {
     this._http.get('./assets/generated/stylesheet.json').subscribe(x => {
       this.cy.style(x);
       this.addOtherStyles();
+    }, (e) => { console.log('error: ', e); });
+
+    this._http.get('./assets/generated/properties.json').subscribe(x => {
+      this.dataModel = x;
     }, (e) => { console.log('error: ', e); });
 
   }

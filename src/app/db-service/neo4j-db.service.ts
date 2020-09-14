@@ -4,8 +4,6 @@ import { GlobalVariableService } from '../global-variable.service';
 import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
 import { Rule, ClassBasedRules, RuleNode } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE, LONG_MAX, LONG_MIN } from '../constants';
-import AppDescription from '../../custom/config/app_description.json';
-import properties from '../../assets/generated/properties.json'
 import { TableFiltering } from '../table-view/table-view-types';
 import { TimebarGraphInclusionTypes } from '../user-preference';
 
@@ -221,7 +219,7 @@ export class Neo4jDb implements DbService {
 
   private getTimebarMapping4Java(): string {
     // {Person:["start_t", "end_t"]}
-    const mapping = AppDescription.timebarDataMapping;
+    const mapping = this._g.appDescription.timebarDataMapping;
     let s = '{'
     for (const k in mapping) {
       s += k + ':["' + mapping[k].begin_datetime + '","' + mapping[k].end_datetime + '"],';
@@ -239,15 +237,15 @@ export class Neo4jDb implements DbService {
     let keys = [];
 
     if (isNode) {
-      keys = Object.keys(AppDescription.objects);
+      keys = Object.keys(this._g.appDescription.objects);
     } else {
-      keys = Object.keys(AppDescription.relations);
+      keys = Object.keys(this._g.appDescription.relations);
     }
 
     const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
     const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
-    const mapping = AppDescription.timebarDataMapping;
+    const mapping = this._g.appDescription.timebarDataMapping;
 
     s = ' AND ('
     for (const k of keys) {
@@ -358,10 +356,10 @@ export class Neo4jDb implements DbService {
     }
     let matchClause: string;
     if (rule.isEdge) {
-      let s = AppDescription.relations[rule.className].source;
-      let t = AppDescription.relations[rule.className].target;
+      let s = this._g.appDescription.relations[rule.className].source;
+      let t = this._g.appDescription.relations[rule.className].target;
       let conn = '>';
-      let isBidirectional = AppDescription.relations[rule.className].isBidirectional;
+      let isBidirectional = this._g.appDescription.relations[rule.className].isBidirectional;
       if (isBidirectional) {
         conn = '';
       }
@@ -388,7 +386,7 @@ export class Neo4jDb implements DbService {
     if (isEdge) {
       t = 'edges';
     }
-    let p = properties[t][className];
+    let p = this._g.dataModel[t][className];
     for (let k in p) {
       if (p[k] !== 'list') {
         if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
