@@ -85,8 +85,7 @@ app-operation-tabs {
 
 .root {
   display: grid;
-  grid-template-areas:
-    'nb nb'
+  grid-template-areas: 'nb nb'
     'tb tb'
     'cy ot'
     'ti ti';

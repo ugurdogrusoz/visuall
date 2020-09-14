@@ -4,12 +4,6 @@ const css = require('css');
 main();
 
 function main() {
-  // Check given inputs for filename
-  if (process.argv.length !== 3) {
-    console.log('Give model filename as input: \nnode style-generator.js {filename}');
-    return;
-  }
-
   let app_desc_file = 'custom/config/app_description.json';
   if (process.argv.length === 3) {
     app_desc_file = process.argv[2];
@@ -27,12 +21,15 @@ function parseAppDescription(app_desc, cy_style) {
 
   updateHtmlCss(app_desc);
 
+  // Apply styles that should be at the base
+  setFixedStyles(stylesheet, cy_style.general);
+
   // Generate stylesheet.json & properties.json for nodes and edges
   setCyStyles(app_desc['objects'], stylesheet, properties, false);
   setCyStyles(app_desc['relations'], stylesheet, properties);
 
   // Apply styles that should override existing styles
-  setFixedStyles(stylesheet, cy_style);
+  setFixedStyles(stylesheet, cy_style.override);
 
   let path = 'assets/generated/';
   // Beautify JSON output with 2 space tabs and write to file
