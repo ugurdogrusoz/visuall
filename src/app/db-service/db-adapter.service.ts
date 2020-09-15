@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import { DbService, GraphResponse, TableResponse, DbQueryType, HistoryMetaData, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
-import { Neo4jDb } from './neo4j-db.service';
 import { ClassBasedRules, rule2str2 } from '../operation-tabs/map-tab/query-types';
 import { TableFiltering } from '../table-view/table-view-types';
 import { GlobalVariableService } from '../global-variable.service';
+import { CustomizationModule } from 'src/custom/customization.module';
 
 @Injectable({
   providedIn: 'root'
 })
 // functions that are not defined due to interface DbService might be deleted
 export class DbAdapterService implements DbService {
+  private _db = null;
   // put prefered database service type as argument 
-  constructor(private _db: Neo4jDb, private _g: GlobalVariableService) {
+  constructor(private _g: GlobalVariableService) {
+    this._db = CustomizationModule.db;
   }
 
   // ----------------------- DbService interface methods starts -------------------------------
