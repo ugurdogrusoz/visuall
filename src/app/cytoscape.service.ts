@@ -71,7 +71,6 @@ export class CytoscapeService {
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
     this._g.cy.on('select unselect add remove tap', () => { this.statsChanged() });
     this._g.cy.on('add', C.debounce(this.applyStyle4NewElements, C.CY_BATCH_END_DELAY).bind(this));
-    this._timebarService.init();
     this.userPrefHelper.listen4UserPref();
     this._g.listen4graphEvents();
   }

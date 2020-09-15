@@ -128,14 +128,17 @@ export class TimebarComponent implements OnInit {
   }
 
   hideIfEmpty() {
-    if (this.isHide) {
-      return;
-    }
-    if (this._g.cy.$().length < 1) {
-      this.isHide = true;
-      setTimeout(() => {
-        this._g.cyNaviPositionSetter();
-      }, CY_NAVI_POSITION_WAIT_DUR);
+    if (this._g.cy.$(':visible').length < 1) {
+      // change if needed
+      if (!this.isHide) {
+        this.isHide = true;
+        setTimeout(() => {
+          this._g.cyNaviPositionSetter();
+        }, CY_NAVI_POSITION_WAIT_DUR);
+      }
+    } else if (this._g.userPrefs.timebar.isEnabled.getValue() && this.isHide) {
+      this.isHide = false;
+      this.s.showHideTimebar(true);
     }
   }
 

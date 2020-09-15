@@ -82,7 +82,7 @@ export class TimebarService {
     this.showHideFn = fn;
   }
 
-  init() {
+  private init() {
     const m = AppDescription.timebarDataMapping; // mapping for timebar
     const s = AppDescription.appPreferences.timebar; // settings for timebar
     const e = { // events (functions to be called in extension)
@@ -106,82 +106,142 @@ export class TimebarService {
   }
 
   coverVisibleRange() {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.coverVisibleRange();
   }
 
   coverAllTimes() {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.coverAllTimes();
   }
 
   changeZoom(isIncrease: boolean) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.changeZoom(isIncrease);
   }
 
   moveCursor(isLeft: boolean) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.moveCursor(isLeft);
   }
 
   setChartRange(s: number, e: number) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setGraphRange(s, e);
   }
 
   getChartRange(): number[] {
+    if (!this._timebarExt) {
+      return;
+    }
     return this._timebarExt.getGraphRange();
   }
 
   // ----------------------------------------- start of timebar settings  -----------------------------------------
   showHideTimebar(isActive: boolean) {
-    this._timebarExt.setSetting('isEnabled', isActive);
+    // call init only once
+    if (isActive && this._g.cy.$(':visible').length > 0 && !this._timebarExt) {
+      this.init();
+    }
+    if (this._timebarExt) {
+      this._timebarExt.setSetting('isEnabled', isActive);
+    }
   }
 
   setisHideDisconnectedNodes(val: boolean) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setSetting('isHideDisconnectedNodesOnAnim', val);
   }
 
   changePeriod(v: number) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._playingPeriod = v;
     this._timebarExt.setSetting('playingPeriod', v);
   }
 
   changeStep(v: number) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setSetting('playingStep', v);
   }
 
   changeZoomStep(v: number) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setSetting('zoomingStep', v);
   }
 
   changeGraphInclusionType(i: number) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setSetting('graphInclusionType', i);
   }
 
   changeStatsInclusionType(i: number) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setSetting('statsInclusionType', i);
   }
 
   setIsMaintainGraphRange(v: boolean) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setSetting('isMaintainGraphRange', v);
   }
   // ----------------------------------------- end of timebar settings  -----------------------------------------
 
 
   onStatsChanged(f) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setEventListener('statsRangeChanged', f);
   }
 
   onGraphChanged(f) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setEventListener('graphRangeChanged', f);
   }
 
   playTiming(callback: (isShowPlay: boolean) => void) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.playTiming(callback);
   }
 
   getCurrTimeUnit(): number {
+    if (!this._timebarExt) {
+      return;
+    }
     return this._timebarExt.getCurrTimeUnit();
   }
 
   getGraphRangeRatio(): number {
+    if (!this._timebarExt) {
+      return;
+    }
     return this._timebarExt.getGraphRangeRatio();
   }
 }
