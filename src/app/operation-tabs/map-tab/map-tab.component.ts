@@ -280,7 +280,8 @@ export class MapTabComponent implements OnInit {
       for (let [k, v] of Object.entries(data.data[i][1])) {
         let idx = this.tableInput.columns.indexOf(k);
         if (idx > -1) {
-          d[idx + 1] = property2TableData(k, v, this.queryRule.className, this.queryRule.isEdge);
+          const enumMapping = this._g.appDescription.getValue().enumMapping;
+          d[idx + 1] = property2TableData(properties, enumMapping, k, v, this.queryRule.className, this.queryRule.isEdge);
         }
       }
       for (let j = 0; j < this.tableInput.columns.length + 1; j++) {

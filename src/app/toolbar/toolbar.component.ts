@@ -6,7 +6,6 @@ import { AboutModalComponent } from '../popups/about-modal/about-modal.component
 import { QuickHelpModalComponent } from '../popups/quick-help-modal/quick-help-modal.component';
 import { GlobalVariableService } from '../global-variable.service';
 import { getPropNamesFromObj } from '../constants';
-import entityMap from '../../assets/generated/properties.json';
 import { ToolbarCustomizationService } from '../../custom/toolbar-customization.service';
 import { ToolbarDiv, ToolbarAction } from './itoolbar';
 
@@ -140,6 +139,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
   }
 
   generateCyQueryForStrSearch(pattern) {
+    const entityMap = this._g.dataModel.getValue();
     const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['string']);
     let cyQuery = '';
     let caseInsensitive = '';
@@ -155,6 +155,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
   }
 
   findInListProps(txt) {
+    const entityMap = this._g.dataModel.getValue();
     const listPropNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['list']);
     return this._g.cy.filter(function (e) {
       const d = e.data();
@@ -179,6 +180,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
     if (!n) {
       return this._g.cy.collection();
     }
+    const entityMap = this._g.dataModel.getValue();
     const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['int', 'float']);
     let cyQuery = '';
     for (const name of Array.from(propNames)) {

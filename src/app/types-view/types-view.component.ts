@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import properties from '../../assets/generated/properties.json';
+import { GlobalVariableService } from '../global-variable.service';
 
 @Component({
   selector: 'app-types-view',
@@ -14,21 +14,25 @@ export class TypesViewComponent implements OnInit {
   showEdgeClass = {};
   @Output() onFilterByType = new EventEmitter<{ className: string, willBeShowed: boolean }>();
 
-  constructor() {
+  constructor(private _g: GlobalVariableService) {
     this.nodeClasses = new Set([]);
     this.edgeClasses = new Set([]);
   }
 
   ngOnInit(): void {
-    for (const key in properties.nodes) {
-      this.nodeClasses.add(key);
-      this.showNodeClass[key] = true;
-    }
+    this._g.dataModel.subscribe(x => {
+      if (x) {
+        for (const key in x.nodes) {
+          this.nodeClasses.add(key);
+          this.showNodeClass[key] = true;
+        }
 
-    for (const key in properties.edges) {
-      this.edgeClasses.add(key);
-      this.showEdgeClass[key] = true;
-    }
+        for (const key in x.edges) {
+          this.edgeClasses.add(key);
+          this.showEdgeClass[key] = true;
+        }
+      }
+    });
   }
 
   filterElesByClass(className: string, isNode: boolean) {

@@ -264,7 +264,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
         cNames = cNames.filter((_, i) => this.checkedIdx[i]);
       }
     }
-
+    const props = this._g.dataModel.getValue();
     let objs: GraphElem[] = [];
     let prefix = this.params.isNodeData ? 'n' : 'e';
     for (let i = 0; i < rows.length; i++) {
@@ -275,7 +275,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
         if (this.params.classNames && this.params.classNames[i]) {
           cName = cNames[i];
         } else {
-          cName = getClassNameFromProperties(this.params.columns);
+          cName = getClassNameFromProperties(props, this.params.columns);
         }
       }
       const data = {};

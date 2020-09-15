@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COLLAPSED_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY, CLUSTER_CLASS } from '../../constants';
 import * as $ from 'jquery';
-import AppDescription from '../../../custom/config/app_description.json';
 import { TableViewInput, TableData, TableDataType, TableFiltering, property2TableData, filterTableDatas } from 'src/app/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { CytoscapeService } from 'src/app/cytoscape.service';
@@ -147,6 +146,7 @@ export class ObjectTabComponent implements OnInit {
     this.multiObjTableInp.results = [];
 
     let elemTypeCnt = {};
+    const enumMapping = this._g.appDescription.getValue().enumMapping;
     for (let i = 0; i < elems.length; i++) {
       let className = elems[i].classes()[0];
       if (elemTypeCnt[className]) {
@@ -156,7 +156,7 @@ export class ObjectTabComponent implements OnInit {
       }
       let row: TableData[] = [{ type: TableDataType.string, val: '#' + idMappingForHighlight[elems[i].id()] }, { type: TableDataType.string, val: className }];
       for (let j in definedProperties) {
-        row.push(property2TableData(j, elems[i].data(j) ?? '', className, !isNode));
+        row.push(property2TableData(properties, enumMapping, j, elems[i].data(j) ?? '', className, !isNode));
       }
       this.multiObjTableInp.results.push(row);
     }
@@ -325,17 +325,18 @@ export class ObjectTabComponent implements OnInit {
   }
 
   getMappedProperty(className: string, propertyName: string, propertyValue: string): string {
-    let classes = Object.keys(AppDescription.enumMapping);
+    const a = this._g.appDescription.getValue();
+    let classes = Object.keys(a.enumMapping);
     let c = classes.find(x => x == className);
     if (!c) {
       return propertyValue;
     }
 
-    const mapping = AppDescription.enumMapping[c][propertyName];
+    const mapping = a.enumMapping[c][propertyName];
     if (!mapping) {
       return propertyValue;
     }
-    const val = AppDescription.enumMapping[c][propertyName][propertyValue];
+    const val = a.enumMapping[c][propertyName][propertyValue];
     if (val != null || val != undefined) {
       return val;
     }

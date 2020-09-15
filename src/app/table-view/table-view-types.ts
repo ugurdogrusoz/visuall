@@ -1,5 +1,3 @@
-import properties from '../../assets/generated/properties.json';
-import AppDescription from '../../custom/config/app_description.json';
 import { isSubset } from '../constants';
 
 export enum TableDataType {
@@ -45,7 +43,7 @@ export interface TableRowMeta {
   tableIdx: number[];
 }
 
-export function property2TableData(propName: string, propVal: any, className: string, isEdge: boolean): TableData {
+export function property2TableData(properties, enumMapping, propName: string, propVal: any, className: string, isEdge: boolean): TableData {
   let t = '';
   if (isEdge) {
     t = properties.edges[className][propName];
@@ -55,7 +53,7 @@ export function property2TableData(propName: string, propVal: any, className: st
   if (t === undefined || t == null) {
     return { val: propVal, type: TableDataType.string };
   } else if (t.startsWith('enum')) {
-    const mapping = AppDescription.enumMapping[className][propName][propVal];
+    const mapping = enumMapping[className][propName][propVal];
     if (mapping) {
       return { val: mapping, type: TableDataType.enum };
     }
@@ -76,7 +74,7 @@ export function property2TableData(propName: string, propVal: any, className: st
   }
 }
 
-export function getClassNameFromProperties(propNames: string[]): string {
+export function getClassNameFromProperties(properties, propNames: string[]): string {
 
   for (let nodeClass in properties.nodes) {
     if (isSubset(Object.keys(properties.nodes[nodeClass]), propNames)) {
@@ -89,7 +87,7 @@ export function getClassNameFromProperties(propNames: string[]): string {
       return edgeClass;
     }
   }
-  console.log('could not find class from properties')
+  console.log('could not find class from')
   return null;
 }
 

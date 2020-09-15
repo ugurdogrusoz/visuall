@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import properties from '../../../../assets/generated/properties.json';
-import AppDescription from '../../../../custom/config/app_description.json';
 import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric, RuleNode, deepCopyTimebarMetric } from '../../map-tab/query-types';
 import { GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { UserProfileService } from 'src/app/user-profile.service';
 import { Subject } from 'rxjs';
+import { GlobalVariableService } from 'src/app/global-variable.service';
 
 @Component({
   selector: 'app-timebar-metric-editor',
@@ -34,7 +33,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   isShowPropertyRule = true;
   editedRuleNode: Subject<RuleNode> = new Subject<RuleNode>();
 
-  constructor(private _timeBarService: TimebarService, private _profile: UserProfileService) {
+  constructor(private _g: GlobalVariableService, private _timeBarService: TimebarService, private _profile: UserProfileService) {
     this.classOptions = [];
     this.selectedClassProps = [];
     this.filteringRule = null
@@ -70,24 +69,35 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.classOptions.push({ text: GENERIC_TYPE.ANY_CLASS, isDisabled: false });
-    this.classOptions.push({ text: GENERIC_TYPE.NODES_CLASS, isDisabled: false });
-    for (const key in properties.nodes) {
-      this.classOptions.push({ text: key, isDisabled: false });
-      if (this.selectedClassProps.length == 0) {
-        this.selectedClassProps = Object.keys(properties.nodes[key]);
-      }
-    }
+    this._g.appDescription.subscribe(x => {
+      if (x) {
+        this._g.dataModel.subscribe(x2 => {
+          if (x2) {
+            this.classOptions.push({ text: GENERIC_TYPE.ANY_CLASS, isDisabled: false });
+            this.classOptions.push({ text: GENERIC_TYPE.NODES_CLASS, isDisabled: false });
 
-    this.classOptions.push({ text: GENERIC_TYPE.EDGES_CLASS, isDisabled: false });
-    for (const key in properties.edges) {
-      this.classOptions.push({ text: key, isDisabled: false });
-    }
-    this.clearInput();
+            for (const key in x2.nodes) {
+              this.classOptions.push({ text: key, isDisabled: false });
+              if (this.selectedClassProps.length == 0) {
+                this.selectedClassProps = Object.keys(x2.nodes[key]);
+              }
+            }
+
+            this.classOptions.push({ text: GENERIC_TYPE.EDGES_CLASS, isDisabled: false });
+            for (const key in x2.edges) {
+              this.classOptions.push({ text: key, isDisabled: false });
+            }
+            this.clearInput();
+          }
+        }, (e) => { console.log('error: ', e); });
+      }
+    }, (e) => { console.log('error: ', e); });
+
   }
 
   initRules(s: 'AND' | 'OR' | 'C') {
-    const isEdge = properties.edges[this.selectedClass] != undefined;
+    const p = this._g.dataModel.getValue();
+    const isEdge = p.edges[this.selectedClass] != undefined;
     if (!this.currMetricName) {
       this.currMetricName = '';
     }
@@ -109,17 +119,18 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   changeSelectedClass() {
     const txt = this.selectedClass;
-    let isNodeClassSelected: boolean = properties.nodes.hasOwnProperty(txt);
-    let isEdgeClassSelected: boolean = properties.edges.hasOwnProperty(txt);
+    const p = this._g.dataModel.getValue();
+    let isNodeClassSelected: boolean = p.nodes.hasOwnProperty(txt);
+    let isEdgeClassSelected: boolean = p.edges.hasOwnProperty(txt);
     this.selectedClassProps.length = 0;
     this.selectedClassProps.push(GENERIC_TYPE.NOT_SELECTED);
 
     if (isNodeClassSelected) {
-      this.selectedClassProps.push(...Object.keys(properties.nodes[txt]));
+      this.selectedClassProps.push(...Object.keys(p.nodes[txt]));
       this.selectedClassProps.push(...this.getEdgeTypesRelated());
       this.isGenericTypeSelected = false;
     } else if (isEdgeClassSelected) {
-      this.selectedClassProps.push(...Object.keys(properties.edges[txt]));
+      this.selectedClassProps.push(...Object.keys(p.edges[txt]));
       this.isGenericTypeSelected = false;
     } else {
       this.isGenericTypeSelected = true;
@@ -354,10 +365,10 @@ export class TimebarMetricEditorComponent implements OnInit {
 
   private getEdgeTypesRelated(): string[] {
     let r: string[] = [];
-
+    const a = this._g.appDescription.getValue();
     const txt = this.selectedClass.toLowerCase();
-    for (let k of Object.keys(AppDescription.relations)) {
-      const v = AppDescription.relations[k];
+    for (let k of Object.keys(a.relations)) {
+      const v = a.relations[k];
       if (v.source.toLowerCase() == txt || v.target.toLowerCase() == txt) {
         r.push(k);
       }

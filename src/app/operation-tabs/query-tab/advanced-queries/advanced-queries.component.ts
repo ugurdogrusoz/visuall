@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GlobalVariableService } from 'src/app/global-variable.service';
-import properties from '../../../../assets/generated/properties.json';
 import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 import { TableViewInput, property2TableData, TableData, TableDataType, TableFiltering, TableRowMeta } from 'src/app/table-view/table-view-types';
@@ -40,13 +39,17 @@ export class AdvancedQueriesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._g.dataModel.subscribe(x => {
+      if (x) {
+        for (const n in x.nodes) {
+          this.nodeEdgeClasses.push(n);
+        }
+        for (const e in x.edges) {
+          this.nodeEdgeClasses.push(e);
+        }
+      }
+    });
     this.selectedQuery = '';
-    for (const n in properties.nodes) {
-      this.nodeEdgeClasses.push(n);
-    }
-    for (const e in properties.edges) {
-      this.nodeEdgeClasses.push(e);
-    }
     this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; this.tableInput.currPage = 1; this.tableFilter.skip = 0; });
   }
 
@@ -142,7 +145,8 @@ export class AdvancedQueriesComponent implements OnInit {
     this.tableInput.results = [];
     this.tableInput.columns = [];
     this.tableInput.classNames = [];
-
+    const enumMapping = this._g.appDescription.getValue().enumMapping;
+    const props = this._g.dataModel.getValue();
     for (let i = 0; i < nodes.length; i++) {
       const d = nodes[i];
       delete d['tconst'];
@@ -153,9 +157,9 @@ export class AdvancedQueriesComponent implements OnInit {
         const idx = this.tableInput.columns.indexOf(n);
         if (idx == -1) {
           this.tableInput.columns.push(n);
-          row[this.tableInput.columns.length] = property2TableData(n, d[n], nodeClass[i], false);
+          row[this.tableInput.columns.length] = property2TableData(props, enumMapping, n, d[n], nodeClass[i], false);
         } else {
-          row[idx + 1] = property2TableData(n, d[n], nodeClass[i], false);
+          row[idx + 1] = property2TableData(props, enumMapping, n, d[n], nodeClass[i], false);
         }
       }
       // fill empty columns
