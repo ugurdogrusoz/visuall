@@ -16,6 +16,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class SettingsTabComponent implements OnInit {
   generalBoolSettings: BoolSetting[];
   timebarBoolSettings: BoolSetting[];
+  selectionColor: string;
   highlightWidth: number;
   highlightColor: string;
   timebarPlayingStep: number;
@@ -173,6 +174,10 @@ export class SettingsTabComponent implements OnInit {
 
     this.setHighlightStyles();
     this.highlightStyleSelected(this._g.userPrefs.currHighlightIdx.getValue());
+
+    if(!this.selectionColor){
+      this.selectionColor = "#d3d3d3";
+    }
   }
 
   private setHighlightStyles() {
@@ -222,6 +227,12 @@ export class SettingsTabComponent implements OnInit {
 
   onColorSelected(c: string) {
     this.highlightColor = c;
+  }
+
+  onSelColorSelected(c: string) {
+    this.selectionColor = c;
+    this._g.cy.style().selector('core').style({ 'selection-box-color': c })
+    this._g.cy.style().selector(':selected').style({ 'overlay-color': c }).update();
   }
 
   // used to change border width or color. One of them should be defined. (exclusively)
