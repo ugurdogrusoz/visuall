@@ -1,12 +1,14 @@
 import { ClassBasedRules } from '../operation-tabs/map-tab/query-types';
-import { TableFiltering } from '../table-view/table-view-types';
+import { TableFiltering } from '../../shared/table-view/table-view-types';
 
 export interface DbService {
-  getNeighbors(elemIds: string[], callback: (x: GraphResponse) => any);
+  getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, queryMeta?: DbQueryMeta);
   getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta);
   getSampleData(callback: (x: GraphResponse) => any);
   getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
   filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, filter: TableFiltering, cb: (x) => void);
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, filter: TableFiltering, cb: (x) => void);
 }
 
 export interface GraphResponse {

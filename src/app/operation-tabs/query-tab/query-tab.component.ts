@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CustomizationModule } from 'src/custom/customization.module';
 
 @Component({
   selector: 'app-query-tab',
@@ -6,12 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./query-tab.component.css']
 })
 export class QueryTabComponent implements OnInit {
-  queryTypes: string[];
+  queries: any[];
   selectedQuery: string;
   selectedIdx: number;
 
   constructor() {
-    this.queryTypes = ['Get actors by title counts', 'Get titles by genre'];
+    this.queries = CustomizationModule.queries;
     this.selectedIdx = -1;
   }
 
@@ -20,6 +21,6 @@ export class QueryTabComponent implements OnInit {
   }
 
   changeQuery(event) {
-    this.selectedIdx = this.queryTypes.findIndex(x => x == event.target.value);
+    this.selectedIdx = this.queries.findIndex(x => x.text == event.target.value);
   }
 }

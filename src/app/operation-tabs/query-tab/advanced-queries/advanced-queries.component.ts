@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { GlobalVariableService } from 'src/app/global-variable.service';
 import { DbAdapterService } from 'src/app/db-service/db-adapter.service';
 import { CytoscapeService } from 'src/app/cytoscape.service';
-import { TableViewInput, property2TableData, TableData, TableDataType, TableFiltering, TableRowMeta } from 'src/app/table-view/table-view-types';
+import { TableViewInput, property2TableData, TableData, TableDataType, TableFiltering, TableRowMeta } from 'src/shared/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { DbQueryType, Neo4jEdgeDirection, GraphElem, HistoryMetaData, ElemAsQueryParam } from 'src/app/db-service/data-types';
 import { getCyStyleFromColorAndWid, readTxtFile, isJson } from 'src/app/constants';

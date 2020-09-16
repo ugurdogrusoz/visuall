@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
-import {APP_BASE_HREF} from '@angular/common';
+import { APP_BASE_HREF } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -19,10 +19,7 @@ import { ObjectTabComponent } from './operation-tabs/object-tab/object-tab.compo
 import { MapTabComponent } from './operation-tabs/map-tab/map-tab.component';
 import { SettingsTabComponent } from './operation-tabs/settings-tab/settings-tab.component';
 import { QueryTabComponent } from './operation-tabs/query-tab/query-tab.component';
-import { Query0Component } from './operation-tabs/query-tab/query0/query0.component';
 import { GroupTabComponent } from './operation-tabs/map-tab/group-tab/group-tab.component';
-import { Query1Component } from './operation-tabs/query-tab/query1/query1.component';
-import { TableViewComponent, ReplacePipe } from './table-view/table-view.component';
 import { TimebarMetricEditorComponent } from './operation-tabs/settings-tab/timebar-metric-editor/timebar-metric-editor.component';
 import { ColorPickerComponent } from './color-picker/color-picker.component';
 import { AutoSizeInputModule } from 'ngx-autosize-input';
@@ -38,6 +35,7 @@ import { TypesViewComponent } from './types-view/types-view.component';
 import { RuleTreeComponent } from './rule-tree/rule-tree.component';
 import { RuleDropdownComponent } from './rule-dropdown/rule-dropdown.component';
 import { ElemOfInterestComponent } from './elem-of-interest/elem-of-interest.component';
+import { SharedModule } from 'src/shared/shared.module';
 
 
 @NgModule({
@@ -55,10 +53,7 @@ import { ElemOfInterestComponent } from './elem-of-interest/elem-of-interest.com
     MapTabComponent,
     SettingsTabComponent,
     QueryTabComponent,
-    Query0Component,
     GroupTabComponent,
-    Query1Component,
-    TableViewComponent,
     TimebarMetricEditorComponent,
     ColorPickerComponent,
     PropertyRuleComponent,
@@ -66,7 +61,6 @@ import { ElemOfInterestComponent } from './elem-of-interest/elem-of-interest.com
     GraphTheoreticPropertiesTabComponent,
     GraphHistoryComponent,
     SaveProfileModalComponent,
-    ReplacePipe,
     AdvancedQueriesComponent,
     TypesViewComponent,
     RuleTreeComponent,
@@ -81,9 +75,10 @@ import { ElemOfInterestComponent } from './elem-of-interest/elem-of-interest.com
     AutoSizeInputModule,
     AngularDraggableModule,
     CustomizationModule,
+    SharedModule,
     RouterModule.forRoot([]),
   ],
-  providers: [{provide: APP_BASE_HREF, useValue : "/" }],
+  providers: [{ provide: APP_BASE_HREF, useValue: "/" }],
   bootstrap: [AppComponent],
   entryComponents: [SaveAsPngModalComponent, QuickHelpModalComponent, AboutModalComponent, ErrorModalComponent]
 })

@@ -1,5 +1,3 @@
-import { isSubset } from '../constants';
-
 export enum TableDataType {
   string = 0, number = 1, datetime = 2, enum = 3
 }
@@ -136,4 +134,24 @@ export function filterTableDatas(filter: TableFiltering, inp: TableViewInput, is
     inp.resultCnt = inp.results.length;
   }
   inp.results = inp.results.slice(skip, skip + inp.pageSize);
+}
+
+/** check whether a2 is a subset of a1.
+ * @param  {} a1 is an array
+ * @param  {} a2 is an array
+ */
+export function isSubset(a1, a2) {
+  let superSet = {};
+  for (let i = 0; i < a1.length; i++) {
+    const e = a1[i] + typeof a1[i];
+    superSet[e] = true;
+  }
+
+  for (let i = 0; i < a2.length; i++) {
+    const e = a2[i] + typeof a2[i];
+    if (!superSet[e]) {
+      return false;
+    }
+  }
+  return true;
 }

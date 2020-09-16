@@ -18,17 +18,20 @@
       <div>
         <div class="va-text">
           <div class="d-flex align-items-center justify-content-center">
-            <select class="custom-select tight-select filter-form va-small-text query-select" [(ngModel)]="selectedQuery"
-              (change)="changeQuery($event)">
+            <select class="custom-select tight-select filter-form va-small-text query-select"
+              [(ngModel)]="selectedQuery" (change)="changeQuery($event)">
               <option ng-hide="model" value="">Please choose a query</option>
-              <option *ngFor="let p of queryTypes" [value]="p">{{p}}</option>
+              <option *ngFor="let p of queries" [value]="p.text">{{p.text}}</option>
             </select>
           </div>
         </div>
       </div>
 
-      <app-query0 *ngIf="selectedIdx==0"></app-query0>
-      <app-query1 *ngIf="selectedIdx==1"></app-query1>
+      <div *ngFor="let t of queries; let i = index">
+        <div *ngIf="i == selectedIdx">
+          <ng-container *ngComponentOutlet="t.component"></ng-container>
+        </div>
+      </div>
     </div>
   </div>
 </div>

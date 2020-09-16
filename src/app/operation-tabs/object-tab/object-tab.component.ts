@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COLLAPSED_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY, CLUSTER_CLASS } from '../../constants';
 import * as $ from 'jquery';
-import { TableViewInput, TableData, TableDataType, TableFiltering, property2TableData, filterTableDatas } from 'src/app/table-view/table-view-types';
+import { TableViewInput, TableData, TableDataType, TableFiltering, property2TableData, filterTableDatas } from 'src/shared/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { CytoscapeService } from 'src/app/cytoscape.service';
 

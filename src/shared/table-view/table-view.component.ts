@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, Pipe, PipeTransform } from '@angular/core';
-import { GlobalVariableService } from '../global-variable.service';
-import { CytoscapeService } from '../cytoscape.service';
-import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../constants';
+import { GlobalVariableService } from '../../app/global-variable.service';
+import { CytoscapeService } from '../../app/cytoscape.service';
+import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../../app/constants';
 import { TableViewInput, TableFiltering, getClassNameFromProperties } from './table-view-types';
 import { IPosition } from 'angular2-draggable';
 import { Subject, Subscription } from 'rxjs';
-import { GraphElem } from '../db-service/data-types';
+import { GraphElem } from '../../app/db-service/data-types';
 
 @Pipe({ name: 'replace' })
 export class ReplacePipe implements PipeTransform {

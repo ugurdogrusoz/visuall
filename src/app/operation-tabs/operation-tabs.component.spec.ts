@@ -6,8 +6,6 @@ import { MapTabComponent } from './map-tab/map-tab.component';
 import { ObjectTabComponent } from '../operation-tabs/object-tab/object-tab.component';
 import { QueryTabComponent } from '../operation-tabs/query-tab/query-tab.component';
 import { SettingsTabComponent } from '../operation-tabs/settings-tab/settings-tab.component';
-import { Query0Component } from '../operation-tabs/query-tab/query0/query0.component';
-import { Query1Component } from '../operation-tabs/query-tab/query1/query1.component';
 
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -31,7 +29,7 @@ describe('OperationTabsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [OperationTabsComponent, MapTabComponent, GroupTabComponent, ObjectTabComponentStub, QueryTabComponent, SettingsTabComponent, Query0Component, Query1Component],
+      declarations: [OperationTabsComponent, MapTabComponent, GroupTabComponent, ObjectTabComponentStub, QueryTabComponent, SettingsTabComponent],
       imports: [FormsModule, HttpClientModule]
     })
       .compileComponents();

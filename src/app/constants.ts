@@ -189,26 +189,6 @@ export function union(setA, setB) {
   return _union;
 }
 
-/** check whether a2 is a subset of a1.
- * @param  {} a1 is an array
- * @param  {} a2 is an array
- */
-export function isSubset(a1, a2) {
-  let superSet = {};
-  for (let i = 0; i < a1.length; i++) {
-    const e = a1[i] + typeof a1[i];
-    superSet[e] = true;
-  }
-
-  for (let i = 0; i < a2.length; i++) {
-    const e = a2[i] + typeof a2[i];
-    if (!superSet[e]) {
-      return false;
-    }
-  }
-  return true;
-}
-
 export function isClose(a1: number, a2: number, margin = 1000) {
   return Math.abs(a1 - a2) < margin;
 }

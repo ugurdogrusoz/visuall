@@ -2,23 +2,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { Query1Component } from './query1.component';
+import { Query0Component } from './query0.component';
 
-describe('Query1Component', () => {
-  let component: Query1Component;
-  let fixture: ComponentFixture<Query1Component>;
+describe('Query0Component', () => {
+  let component: Query0Component;
+  let fixture: ComponentFixture<Query0Component>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ Query1Component ],
+      declarations: [Query0Component],
       imports: [FormsModule, HttpClientModule]
-
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(Query1Component);
+    fixture = TestBed.createComponent(Query0Component);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

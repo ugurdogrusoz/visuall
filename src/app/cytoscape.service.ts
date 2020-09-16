@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import cytoscape from 'cytoscape';
 import * as C from './constants';
 import { GlobalVariableService } from './global-variable.service';
-import { DbAdapterService } from './db-service/db-adapter.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse, GraphElem } from './db-service/data-types';
@@ -22,7 +21,7 @@ export class CytoscapeService {
   showObjPropsFn: Function;
   showStatsFn: Function;
   louvainClusterer: LouvainClustering;
-  constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _timebarService: TimebarService, private _cyExtService: CyExtService,
+  constructor(private _g: GlobalVariableService, private _timebarService: TimebarService, private _cyExtService: CyExtService,
     private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService, private _modalService: NgbModal) {
     this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g, this._profile);
     this.louvainClusterer = new LouvainClustering();
@@ -134,11 +133,6 @@ export class CytoscapeService {
 
   setNavigatorPosition() {
     this._cyExtService.setNavigatorPosition();
-  }
-
-  getNeighbors(event) {
-    const ele = event.target || event.cyTarget;
-    this._dbService.getNeighbors([ele.id().substr(1)], (x) => { this.loadElementsFromDatabase(x, true) });
   }
 
   loadElementsFromDatabase(data: GraphResponse, isIncremental: boolean) {
