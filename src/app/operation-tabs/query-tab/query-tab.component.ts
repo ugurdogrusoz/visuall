@@ -7,7 +7,7 @@ import { CustomizationModule } from 'src/custom/customization.module';
   styleUrls: ['./query-tab.component.css']
 })
 export class QueryTabComponent implements OnInit {
-  queries: any[];
+  queries: { component: any, text: string }[];
   selectedQuery: string;
   selectedIdx: number;
 

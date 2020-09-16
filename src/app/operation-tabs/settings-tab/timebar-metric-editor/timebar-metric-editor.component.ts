@@ -5,6 +5,7 @@ import { TimebarService } from '../../../timebar.service';
 import { UserProfileService } from 'src/app/user-profile.service';
 import { Subject } from 'rxjs';
 import { GlobalVariableService } from 'src/app/global-variable.service';
+import { CustomizationModule } from 'src/custom/customization.module';
 
 @Component({
   selector: 'app-timebar-metric-editor',
@@ -37,24 +38,8 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.classOptions = [];
     this.selectedClassProps = [];
     this.filteringRule = null
-    const andCond: Rule = { ruleOperator: 'AND' };
-    const genreCond: Rule = { propertyOperand: 'genres', propertyType: 'list', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: null, operator: 'In' };
-    const lowRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: null, operator: '<=' };
-    const higRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '8', inputOperand: '8', ruleOperator: null, operator: '>=' };
-
-    const root1: RuleNode = { r: andCond, parent: null, children: [] };
-    const root2: RuleNode = { r: andCond, parent: null, children: [] };
-    const child1: RuleNode = { r: genreCond, parent: root1, children: [] };
-    const child2: RuleNode = { r: lowRateCond, parent: root1, children: [] };
-    const child3: RuleNode = { r: genreCond, parent: root2, children: [] };
-    const child4: RuleNode = { r: higRateCond, parent: root2, children: [] };
-
-    root1.children = [child1, child2];
-    root2.children = [child3, child4];
-
-    this.currMetrics = [
-      { incrementFn: null, name: 'lowly rated comedies', className: 'Title', rules: root1, color: '#3366cc' },
-      { incrementFn: null, name: 'highly rated comedies', className: 'Title', rules: root2, color: '#ff9900' }];
+    
+    this.currMetrics = CustomizationModule.defaultTimebarMetrics;
 
     this.setCurrMetricsFromLocalStorage();
     this.setFnsForMetrics();

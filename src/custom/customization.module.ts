@@ -6,6 +6,7 @@ import { Query0Component } from './queries/query0/query0.component';
 import { Query1Component } from './queries/query1/query1.component';
 import { SharedModule } from 'src/shared/shared.module';
 import { FormsModule } from '@angular/forms';
+import { Rule, RuleNode, TimebarMetric } from 'src/app/operation-tabs/map-tab/query-types';
 
 // import { AsdComponent } from './asd/asd.component';
 // import statements for custom components should be here
@@ -26,7 +27,26 @@ export class CustomizationModule {
   static operationTabs: { component: any, text: string }[] = [];
   static queries: { component: any, text: string }[] = [{ component: Query0Component, text: 'Get actors by title counts' }, { component: Query1Component, text: 'Get titles by genre' }];
   static db: DbService;
+  static defaultTimebarMetrics: TimebarMetric[];
   constructor(private _db: Neo4jDb) {
     CustomizationModule.db = _db;
+
+    const andCond: Rule = { ruleOperator: 'AND' };
+    const genreCond: Rule = { propertyOperand: 'genres', propertyType: 'list', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: null, operator: 'In' };
+    const lowRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: null, operator: '<=' };
+    const higRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '8', inputOperand: '8', ruleOperator: null, operator: '>=' };
+
+    const root1: RuleNode = { r: andCond, parent: null, children: [] };
+    const root2: RuleNode = { r: andCond, parent: null, children: [] };
+    const child1: RuleNode = { r: genreCond, parent: root1, children: [] };
+    const child2: RuleNode = { r: lowRateCond, parent: root1, children: [] };
+    const child3: RuleNode = { r: genreCond, parent: root2, children: [] };
+    const child4: RuleNode = { r: higRateCond, parent: root2, children: [] };
+
+    root1.children = [child1, child2];
+    root2.children = [child3, child4];
+    CustomizationModule.defaultTimebarMetrics = [
+      { incrementFn: null, name: 'lowly rated comedies', className: 'Title', rules: root1, color: '#3366cc' },
+      { incrementFn: null, name: 'highly rated comedies', className: 'Title', rules: root2, color: '#ff9900' }];
   }
 }
