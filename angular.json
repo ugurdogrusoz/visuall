@@ -21,7 +21,7 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/custom"
+              "src/app/custom"
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
