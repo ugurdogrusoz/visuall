@@ -96,10 +96,6 @@ export class GlobalVariableService {
     }
   }
 
-  public getDbConfig() {
-    return this._http.get('/app/custom/config/db-config.json');
-  }
-
   runLayout() {
     const elems4layout = this.cy.elements().not(':hidden, :transparent');
     if (elems4layout.length < 1) {

@@ -6,31 +6,20 @@ import { Rule, ClassBasedRules, RuleNode } from '../operation-tabs/map-tab/query
 import { GENERIC_TYPE, LONG_MAX, LONG_MIN } from '../constants';
 import { TableFiltering } from '../../shared/table-view/table-view-types';
 import { TimebarGraphInclusionTypes } from '../user-preference';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Neo4jDb implements DbService {
 
-  // default database config, in case it is not read from db-config.json
-  private dbConfig = {
-    url: 'http://ivis.cs.bilkent.edu.tr:3001/db/data/transaction/commit',
-    username: 'neo4j',
-    password: '123'
-  };
-
-  constructor(private _http: HttpClient, private _g: GlobalVariableService) {
-    // do not read config file if running on our demo server. We cannot add file to free heroku server.
-    // that's why we did a manual checking exceptionally for heroku
-    if (!document.baseURI.includes('visuall.herokuapp.com')) {
-      this._g.getDbConfig().subscribe(x => { this.dbConfig = x as any }, error => console.log('getConfig err: ', error));
-    }
-  }
+  constructor(private _http: HttpClient, private _g: GlobalVariableService) { }
 
   runQuery(query: string, callback: (x: any) => any, isGraphResponse = true) {
-    const url = this.dbConfig.url;
-    const username = this.dbConfig.username;
-    const password = this.dbConfig.password;
+    const conf = environment.dbConfig;
+    const url = conf.url;
+    const username = conf.username;
+    const password = conf.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
     this._g.setLoadingStatus(true);
     console.log(query);
@@ -214,7 +203,7 @@ export class Neo4jDb implements DbService {
     s += ')'
     return s;
   }
-  
+
   private extractGraph(response): GraphResponse {
     let nodes = [];
     let edges = [];

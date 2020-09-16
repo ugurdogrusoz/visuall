@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "heroku-postbuild": "ng build",
+    "heroku-postbuild": "ng build --configuration=heroku",
     "prod": "ng build --prod && node server.js",
     "serve-public": "ng serve --host 0.0.0.0",
     "build-prod": "ng build --prod"
