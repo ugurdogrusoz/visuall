@@ -7,7 +7,7 @@
   </span>
 
 </div>
-<div *ngIf="isShow">
+<div [ngClass]="{'max-h500': isShow, 'max-h0': !isShow}">
   <div class="d-flex flex-wrap justify-content-center">
     <div *ngFor="let n of selectedNodes; let i = index;" class="rounded va-text m-1 p-1"
       [style.border]="i==clickedNodeIdx ? '2px solid #888888':'2px solid #dee2e6'">

@@ -18,3 +18,15 @@ img {
   float: right;
   padding-right: 4px;
 }
+
+.max-h500 {
+  max-height: 500px;
+  transition: max-height 0.35s ease-in;
+  overflow: auto;
+}
+
+.max-h0 {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease-out;
+}
