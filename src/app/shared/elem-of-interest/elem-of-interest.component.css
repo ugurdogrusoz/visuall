@@ -2,3 +2,19 @@ img {
   width: 16px;
   height: 16px;
 }
+
+
+.down-icon:after {
+  font-family: 'FontAwesome', sans-serif;
+  content: "\f077";
+  float: right;
+  padding-right: 4px;
+}
+
+/* symbol for "collapsed" panels */
+.up-icon:after {
+  font-family: 'FontAwesome', sans-serif;
+  content: "\f078";
+  float: right;
+  padding-right: 4px;
+}

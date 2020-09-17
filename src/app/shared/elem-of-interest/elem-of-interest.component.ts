@@ -18,7 +18,8 @@ export class ElemOfInterestComponent implements OnInit {
   selectedNodes: ElemAsQueryParam[] = [];
   clickedNodeIdx = -1;
   addNodeBtnTxt = 'Select Nodes to Add';
-
+  isShow = true;
+  
   constructor(private _g: GlobalVariableService) { }
 
   ngOnInit(): void {
