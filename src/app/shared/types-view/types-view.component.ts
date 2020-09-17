@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { GlobalVariableService } from '../../visuall/global-variable.service';
 
 @Component({
@@ -13,6 +13,7 @@ export class TypesViewComponent implements OnInit {
   edgeClasses: Set<string>;
   showEdgeClass = {};
   @Output() onFilterByType = new EventEmitter<{ className: string, willBeShowed: boolean }>();
+  @Input() classList: string[];
 
   constructor(private _g: GlobalVariableService) {
     this.nodeClasses = new Set([]);
@@ -23,13 +24,17 @@ export class TypesViewComponent implements OnInit {
     this._g.dataModel.subscribe(x => {
       if (x) {
         for (const key in x.nodes) {
-          this.nodeClasses.add(key);
-          this.showNodeClass[key] = true;
+          if (!this.classList || this.classList.includes(key)) {
+            this.nodeClasses.add(key);
+            this.showNodeClass[key] = true;
+          }
         }
 
         for (const key in x.edges) {
-          this.edgeClasses.add(key);
-          this.showEdgeClass[key] = true;
+          if (!this.classList || this.classList.includes(key)) {
+            this.edgeClasses.add(key);
+            this.showEdgeClass[key] = true;
+          }
         }
       }
     });
