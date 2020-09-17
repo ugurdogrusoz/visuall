@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { GlobalVariableService } from '../global-variable.service';
+import { GlobalVariableService } from '../../visuall/global-variable.service';
 
 @Component({
   selector: 'app-types-view',
