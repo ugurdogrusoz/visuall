@@ -179,6 +179,7 @@ export class MapTabComponent implements OnInit {
     // means edit is clicked in rule tree
     if (!e.isEdit) {
       this.isShowPropertyRule = true;
+      this.changeSelectedClass();
       return;
     }
     this.isShowPropertyRule = false;

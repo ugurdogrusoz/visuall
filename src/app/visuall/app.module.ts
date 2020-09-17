@@ -30,10 +30,8 @@ import { GraphTheoreticPropertiesTabComponent } from './operation-tabs/map-tab/g
 import { GraphHistoryComponent } from './graph-history/graph-history.component';
 import { SaveProfileModalComponent } from './popups/save-profile-modal/save-profile-modal.component';
 import { AdvancedQueriesComponent } from './operation-tabs/query-tab/advanced-queries/advanced-queries.component';
-import { TypesViewComponent } from './types-view/types-view.component';
 import { RuleTreeComponent } from './rule-tree/rule-tree.component';
 import { RuleDropdownComponent } from './rule-dropdown/rule-dropdown.component';
-import { ElemOfInterestComponent } from './elem-of-interest/elem-of-interest.component';
 import { SharedModule } from '../shared/shared.module';
 import { CustomizationModule } from '../custom/customization.module';
 
@@ -61,10 +59,8 @@ import { CustomizationModule } from '../custom/customization.module';
     GraphHistoryComponent,
     SaveProfileModalComponent,
     AdvancedQueriesComponent,
-    TypesViewComponent,
     RuleTreeComponent,
     RuleDropdownComponent,
-    ElemOfInterestComponent,
   ],
   imports: [
     BrowserModule,

@@ -3,7 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  dbConfig: {
+    url: 'http://localhost:7474/db/data/transaction/commit',
+    username: 'neo4j',
+    password: '123'
+  }
 };
 
 /*

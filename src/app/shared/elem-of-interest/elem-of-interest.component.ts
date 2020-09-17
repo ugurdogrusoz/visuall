@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angular/core';
-import { GlobalVariableService } from '../global-variable.service';
-import { readTxtFile, isJson } from '../constants';
-import { GraphElem, ElemAsQueryParam } from '../db-service/data-types';
+import { GlobalVariableService } from '../../visuall/global-variable.service';
+import { readTxtFile, isJson } from '../../visuall/constants';
+import { GraphElem, ElemAsQueryParam } from '../../visuall/db-service/data-types';
 
 @Component({
   selector: 'app-elem-of-interest',
@@ -18,7 +18,8 @@ export class ElemOfInterestComponent implements OnInit {
   selectedNodes: ElemAsQueryParam[] = [];
   clickedNodeIdx = -1;
   addNodeBtnTxt = 'Select Nodes to Add';
-
+  isShow = true;
+  
   constructor(private _g: GlobalVariableService) { }
 
   ngOnInit(): void {
