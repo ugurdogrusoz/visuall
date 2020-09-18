@@ -3,7 +3,7 @@ import { GlobalVariableService } from '../../../global-variable.service';
 import { formatNumber } from '@angular/common';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { ColorPickerComponent } from '../../../color-picker/color-picker.component';
-import { debounce2, debounce } from '../../../constants';
+import { debounce2, debounce, COLLAPSED_EDGE_CLASS } from '../../../constants';
 
 @Component({
   selector: 'app-graph-theoretic-properties-tab',
@@ -13,14 +13,21 @@ import { debounce2, debounce } from '../../../constants';
 export class GraphTheoreticPropertiesTabComponent implements OnInit {
 
   theoreticProps: { text: string, fn: string, arg: any }[] = [
-    { text: 'Degree Centrality', fn: 'degreeCentrality', arg: '' }, { text: 'Normalized Degree Centrality', fn: 'degreeCentralityNormalized', arg: '' },
-    { text: 'Closeness Centrality', fn: 'closenessCentrality', arg: '' }, { text: 'Normalized Closeness Centrality', fn: 'closenessCentralityNormalized', arg: '' },
-    { text: 'Betweenness Centrality', fn: 'betweennessCentrality', arg: '' }, { text: 'Normalized Betweenness Centrality', fn: 'betweennessCentralityNormalized', arg: '' },
-    { text: 'Page Rank', fn: 'pageRank', arg: '' }];
+    { text: 'Degree Centrality', fn: 'degreeCentrality', arg: '' },
+    { text: 'Normalized Degree Centrality', fn: 'degreeCentralityNormalized', arg: '' },
+    { text: 'Inter-Group Degree Centrality', fn: 'interGroupDegreeCentrality', arg: '' },
+    { text: 'Normalized Inter-Group Degree Centrality', fn: 'interGroupDegreeCentralityNormalized', arg: '' },
+    { text: 'Closeness Centrality', fn: 'closenessCentrality', arg: '' },
+    { text: 'Normalized Closeness Centrality', fn: 'closenessCentralityNormalized', arg: '' },
+    { text: 'Betweenness Centrality', fn: 'betweennessCentrality', arg: '' },
+    { text: 'Normalized Betweenness Centrality', fn: 'betweennessCentralityNormalized', arg: '' },
+    { text: 'Page Rank', fn: 'pageRank', arg: '' }
+  ];
   isOnSelected = false;
   isDirectedGraph = false;
   isMapNodeSizes = true;
   isMapBadgeSizes = false;
+  isConsiderOriginalEdges = false;
   selectedPropFn: string = '';
   poppedData: { popper: HTMLDivElement, elem: any, fn: Function, fn2: Function }[] = [];
   UPDATE_POPPER_WAIT = 100;
@@ -31,6 +38,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   readonly NODE_SIZE = 40;
   maxPropValue = 0;
   currNodeSize = this.NODE_SIZE;
+
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) { }
 
   ngOnInit() {
@@ -40,7 +48,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
       if (x !== null && x.appPreferences.avgNodeSize) {
         this.currNodeSize = x.appPreferences.avgNodeSize;
       }
-    })
+    });
   }
 
   runProperty() {
@@ -59,12 +67,19 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     this.setBadgeColorsAndCoords();
   }
 
+  private edgeWeightFn(edge) {
+    if (this.isConsiderOriginalEdges && edge.hasClass(COLLAPSED_EDGE_CLASS)) {
+      return edge.data('collapsedEdges').length;
+    }
+    return 1;
+  }
+
   degreeCentrality() {
-    let elems = this._g.cy.nodes(this.cySelector);
+    const elems = this._g.cy.nodes(this.cySelector);
     for (let i = 0; i < elems.length; i++) {
-      let e = elems[i];
-      let r = this._g.cy.$(this.cySelector).degreeCentrality({ root: e, directed: this.isDirectedGraph });
-      let badges = [];
+      const e = elems[i];
+      const r = this._g.cy.$(this.cySelector).degreeCentrality({ root: e, directed: this.isDirectedGraph, alpha: 1, weight: this.edgeWeightFn.bind(this) });
+      const badges = [];
       if (this.isDirectedGraph) {
         badges.push(r.indegree);
         badges.push(r.outdegree);
@@ -77,7 +92,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
 
   degreeCentralityNormalized() {
     let elems = this._g.cy.nodes(this.cySelector);
-    let r = this._g.cy.$(this.cySelector).degreeCentralityNormalized({ directed: this.isDirectedGraph });
+    let r = this._g.cy.$(this.cySelector).degreeCentralityNormalized({ directed: this.isDirectedGraph, alpha: 1, weight: this.edgeWeightFn.bind(this) });
     for (let i = 0; i < elems.length; i++) {
       let badges = [];
       let e = elems[i];
@@ -91,11 +106,110 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     }
   }
 
+  interGroupDegreeCentrality() {
+    const elems = this._g.cy.nodes(this.cySelector);
+    for (let i = 0; i < elems.length; i++) {
+      const e = elems[i];
+      const r = this.calcuateInterGroupDegree(e);
+      const badges = [];
+      if (this.isDirectedGraph) {
+        badges.push(r.indegree);
+        badges.push(r.outdegree);
+      } else {
+        badges.push(r.degree);
+      }
+      this.generateBadge4Elem(e, badges);
+    }
+  }
+
+  interGroupDegreeCentralityNormalized() {
+    const elems = this._g.cy.nodes(this.cySelector);
+    const allBadges = [];
+    let maxD = -1, maxIn = -1, maxOut = -1;
+
+    for (let i = 0; i < elems.length; i++) {
+      const e = elems[i];
+      const r = this.calcuateInterGroupDegree(e);
+      const badges = [];
+      if (this.isDirectedGraph) {
+        badges.push(r.indegree);
+        if (r.indegree > maxIn) {
+          maxIn = r.indegree;
+        }
+        badges.push(r.outdegree);
+        if (r.outdegree > maxOut) {
+          maxOut = r.outdegree;
+        }
+      } else {
+        if (r.degree > maxD) {
+          maxD = r.degree;
+        }
+        badges.push(r.degree);
+      }
+      allBadges.push(badges);
+    }
+    if (maxD == 0) {
+      maxD = 1;
+    }
+    if (maxIn == 0) {
+      maxIn = 1;
+    }
+    if (maxOut == 0) {
+      maxOut = 1;
+    }
+
+    for (let i = 0; i < elems.length; i++) {
+      const e = elems[i];
+      const badges = allBadges[i];
+      if (this.isDirectedGraph) {
+        badges[0] /= maxIn;
+        badges[1] /= maxOut;
+      } else {
+        badges[0] /= maxD;
+      }
+      this.generateBadge4Elem(e, badges);
+    }
+  }
+
+  private calcuateInterGroupDegree(e) {
+    if (!e.parent()) {
+      if (this.isDirectedGraph) {
+        return { degree: 0 };
+      }
+      return { indegree: 0, outdegree: 0 };
+    }
+
+    const myParent = e.parent();
+    const myParentId = myParent.id();
+    const subgraph = this._g.cy.$(this.cySelector);
+
+    let outDegree = 0;
+    const outgoers = e.outgoers(); // returns edge and its target in an ordered collection 
+    for (let i = 0; i < outgoers.length; i = i + 2) {
+      if (subgraph.contains(outgoers[i + 1]) && outgoers[i + 1].parent().id() != myParentId) {
+        outDegree += this.edgeWeightFn(outgoers[i]);
+      }
+    }
+
+    let inDegree = 0;
+    const incomers = e.incomers(); // returns edge and its source in an ordered collection 
+    for (let i = 0; i < incomers.length; i = i + 2) {
+      if (subgraph.contains(incomers[i + 1]) && incomers[i + 1].parent().id() != myParentId) {
+        inDegree += this.edgeWeightFn(incomers[i]);
+      }
+    }
+
+    if (this.isDirectedGraph) {
+      return { indegree: inDegree, outdegree: outDegree };
+    }
+    return { degree: inDegree + outDegree };
+  }
+
   closenessCentrality() {
     let elems = this._g.cy.nodes(this.cySelector);
     for (let i = 0; i < elems.length; i++) {
       let e = elems[i];
-      let r = this._g.cy.$(this.cySelector).closenessCentrality({ root: e, directed: this.isDirectedGraph });
+      let r = this._g.cy.$(this.cySelector).closenessCentrality({ root: e, directed: this.isDirectedGraph, weight: this.edgeWeightFn.bind(this) });
       let badges = [r];
       this.generateBadge4Elem(e, badges);
     }
@@ -103,7 +217,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
 
   closenessCentralityNormalized() {
     let elems = this._g.cy.nodes(this.cySelector);
-    let r = this._g.cy.$(this.cySelector).closenessCentralityNormalized({ directed: this.isDirectedGraph });
+    let r = this._g.cy.$(this.cySelector).closenessCentralityNormalized({ directed: this.isDirectedGraph, weight: this.edgeWeightFn.bind(this) });
     for (let i = 0; i < elems.length; i++) {
       let badges = [r.closeness(elems[i])];
       this.generateBadge4Elem(elems[i], badges);
@@ -112,7 +226,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
 
   betweennessCentrality() {
     let elems = this._g.cy.nodes(this.cySelector);
-    let r = this._g.cy.$(this.cySelector).betweennessCentrality({ directed: this.isDirectedGraph });
+    let r = this._g.cy.$(this.cySelector).betweennessCentrality({ directed: this.isDirectedGraph, weight: this.edgeWeightFn.bind(this) });
     for (let i = 0; i < elems.length; i++) {
       let badges = [r.betweenness(elems[i])];
       this.generateBadge4Elem(elems[i], badges);
@@ -121,7 +235,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
 
   betweennessCentralityNormalized() {
     let elems = this._g.cy.nodes(this.cySelector);
-    let r = this._g.cy.$(this.cySelector).betweennessCentrality({ directed: this.isDirectedGraph });
+    let r = this._g.cy.$(this.cySelector).betweennessCentrality({ directed: this.isDirectedGraph, weight: this.edgeWeightFn.bind(this) });
     for (let i = 0; i < elems.length; i++) {
       let badges = [r.betweennessNormalized(elems[i])];
       this.generateBadge4Elem(elems[i], badges);
@@ -138,7 +252,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   }
 
   generateBadge4Elem(e, badges: number[]) {
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = this.getHtml(badges);
     div.style.position = 'absolute';
     div.style.top = '0px';
@@ -157,13 +271,21 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
       e.addClass('graphTheoreticDisplay');
     }
 
-    let fn = debounce2(() => { this.setBadgeCoords(e, div); }, this.UPDATE_POPPER_WAIT, () => { this.showHideBadge(false, div); }).bind(this);
-    let fn2 = debounce(() => { this.setBadgeVisibility(e, div); }, this.UPDATE_POPPER_WAIT * 2).bind(this);
+    const positionHandlerFn = debounce2(
+      () => {
+        this.setBadgeCoords(e, div);
+        this.setBadgeCoordsOfChildren(e);
+      },
+      this.UPDATE_POPPER_WAIT,
+      () => {
+        this.showHideBadge(false, div);
+      }).bind(this);
+    const styleHandlerFn = debounce(() => { this.setBadgeVisibility(e, div); }, this.UPDATE_POPPER_WAIT * 2).bind(this);
 
-    e.on('position', fn);
-    e.on('style', fn2);
-    this._g.cy.on('pan zoom resize', fn);
-    this.poppedData.push({ popper: div, elem: e, fn: fn, fn2: fn2 });
+    e.on('position', positionHandlerFn);
+    e.on('style', styleHandlerFn);
+    this._g.cy.on('pan zoom resize', positionHandlerFn);
+    this.poppedData.push({ popper: div, elem: e, fn: positionHandlerFn, fn2: styleHandlerFn });
   }
 
   private setBadgeCoords(e, div: HTMLDivElement) {
@@ -189,6 +311,21 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
       div.style.transform = `translate(${bb.x2 - deltaW4Scale - w * z1}px, ${bb.y1 - deltaH4Scale}px) scale(${z1})`;
       this.showHideBadge(e.visible(), div);
     }, 0);
+  }
+
+  private setBadgeCoordsOfChildren(e) {
+    const elems = e.children();
+    for (let i = 0; i < elems.length; i++) {
+      const child = elems[i];
+      if (child.isParent()) {
+        this.setBadgeCoordsOfChildren(child);
+      } else {
+        const idx = this.poppedData.findIndex(x => x.elem.id() == child.id());
+        if (idx > -1) {
+          this.setBadgeCoords(this.poppedData[idx].elem, this.poppedData[idx].popper);
+        }
+      }
+    }
   }
 
   private setBadgeVisibility(e, div: HTMLDivElement) {

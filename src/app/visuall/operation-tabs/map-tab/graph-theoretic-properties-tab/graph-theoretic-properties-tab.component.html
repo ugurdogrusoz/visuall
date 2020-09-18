@@ -12,6 +12,10 @@
       <label class="form-check-label va-text">Directed</label>
     </div>
     <div class="custom-control custom-checkbox m-1">
+      <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isConsiderOriginalEdges" />
+      <label class="form-check-label va-text">Consider original edges instead</label>
+    </div>
+    <div class="custom-control custom-checkbox m-1">
       <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isMapNodeSizes" />
       <label class="form-check-label va-text">Adjust node size</label>
     </div>
