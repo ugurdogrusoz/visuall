@@ -184,17 +184,19 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
     const subgraph = this._g.cy.$(this.cySelector);
 
     let outDegree = 0;
-    const outgoers = e.outgoers(); // returns edge and its target in an ordered collection 
-    for (let i = 0; i < outgoers.length; i = i + 2) {
-      if (subgraph.contains(outgoers[i + 1]) && outgoers[i + 1].parent().id() != myParentId) {
+    const outgoers = e.outgoers('edge');
+    for (let i = 0; i < outgoers.length; i++) {
+      const tgt = outgoers[i].target();
+      if (subgraph.contains(tgt) && tgt.parent().id() != myParentId) {
         outDegree += this.edgeWeightFn(outgoers[i]);
       }
     }
 
     let inDegree = 0;
-    const incomers = e.incomers(); // returns edge and its source in an ordered collection 
-    for (let i = 0; i < incomers.length; i = i + 2) {
-      if (subgraph.contains(incomers[i + 1]) && incomers[i + 1].parent().id() != myParentId) {
+    const incomers = e.incomers('edge');
+    for (let i = 0; i < incomers.length; i++) {
+      const src = incomers[i].source();
+      if (subgraph.contains(src) && src.parent().id() != myParentId) {
         inDegree += this.edgeWeightFn(incomers[i]);
       }
     }
