@@ -8,9 +8,9 @@ describe('workspace-project App', () => {
     page = new AppPage();
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to ng-visuall!');
+  it('should get sample data', async () => {
+    await page.navigateTo();
+    expect(page.getSampleData()).toEqual('Welcome to ng-visuall!');
   });
 
   afterEach(async () => {

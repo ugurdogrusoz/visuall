@@ -14,13 +14,13 @@
     <ul class="navbar-nav heading mr-auto">
       <input #file type="file" (change)="fileSelected()" accept="text/*, .json, .vall" style="display: none;" />
 
-      <li class="nav-item" *ngFor="let item of menu">
+      <li class="nav-item" *ngFor="let item of menu; let i = index">
         <div class="dropdown">
-          <button id="file-dropdown" class="btn btn-light dropdown-toggle va-heading1" type="button"
+          <button [id]="'file-dropdown' + i" class="btn btn-light dropdown-toggle va-heading1" type="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {{item.dropdown}}
           </button>
-          <div class="dropdown-menu" aria-labelledby="file-dropdown">
+          <div class="dropdown-menu" [aria-labelledby]="'file-dropdown' + i">
             <button class="dropdown-item va-text" type="button" *ngFor="let act of item.actions" id="{{act.id}}"
               (click)="triggerAct(act)">{{act.txt}}</button>
           </div>
