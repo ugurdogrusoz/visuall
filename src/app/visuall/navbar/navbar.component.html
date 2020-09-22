@@ -16,11 +16,11 @@
 
       <li class="nav-item" *ngFor="let item of menu; let i = index">
         <div class="dropdown">
-          <button [id]="'file-dropdown' + i" class="btn btn-light dropdown-toggle va-heading1" type="button"
+          <button class="btn btn-light dropdown-toggle va-heading1" type="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {{item.dropdown}}
           </button>
-          <div class="dropdown-menu" [aria-labelledby]="'file-dropdown' + i">
+          <div class="dropdown-menu">
             <button class="dropdown-item va-text" type="button" *ngFor="let act of item.actions" id="{{act.id}}"
               (click)="triggerAct(act)">{{act.txt}}</button>
           </div>

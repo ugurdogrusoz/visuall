@@ -17,4 +17,8 @@ export class AppPage {
     console.log('after click to sample data');
     return '';
   }
+
+  getButtons() {
+    return element.all(by.css('button.dropdown-toggle'));
+  }
 }
