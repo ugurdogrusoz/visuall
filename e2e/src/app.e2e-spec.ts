@@ -60,6 +60,11 @@ describe('workspace-project App', () => {
     expect(page.nestedQueryByRuleRule()).toEqual(true);
   });
 
+  it('Table of Query By Rule should work properly ', async () => {
+    page.navigateTo();
+    expect(page.testTableOfQueryByRuleRule()).toEqual(true);
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);

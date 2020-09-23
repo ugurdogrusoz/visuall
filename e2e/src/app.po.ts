@@ -167,4 +167,54 @@ export class AppPage {
     element(by.cssContainingText('option', type)).click();
     await browser.sleep(this.ANIM_WAIT);
   }
+
+  async testTableOfQueryByRuleRule() {
+    await this.beginQueryByRule();
+    element(by.buttonText('Condition')).click();
+    await browser.sleep(this.ANIM_WAIT);
+    // add empty rule
+    element(by.css('img[title="Add/Update"]')).click();
+    await browser.sleep(this.ANIM_WAIT);
+
+    // uncheck graph
+    element(by.css('input.cb-is-load-graph')).click();
+    await browser.sleep(this.ANIM_WAIT);
+
+    element(by.css('input[value="Execute"]')).click();
+    await browser.sleep(this.SAMPLE_DATA_WAIT);
+
+    const el = element(by.css('input[placeholder="Search..."]'));
+    el.clear();
+    el.sendKeys('Tom');
+    await browser.sleep(this.SAMPLE_DATA_WAIT);
+
+    // order by 
+    element(by.cssContainingText('a.table-header', 'birth year')).click();
+    await browser.sleep(this.SAMPLE_DATA_WAIT * 1.5);
+
+    // merge selected to grahp
+    element(by.css('input.cb-table-all')).click();
+    element(by.css('img[title="Merge selected to graph"]')).click();
+    await browser.sleep(this.SAMPLE_DATA_WAIT);
+    
+    // download as CSV
+    element(by.css('img[title="Download selected objects"]')).click();
+    await browser.sleep(this.ANIM_WAIT);
+
+    // check graph
+    element(by.css('input.cb-is-load-graph')).click();
+    await browser.sleep(this.ANIM_WAIT);
+
+    const cntElem1 = await browser.executeScript(`return cy.$().length`) as number;
+
+    // load next page
+    element.all(by.css('a.page-link')).last().click();
+    await browser.sleep(this.SAMPLE_DATA_WAIT);
+
+    const cntElem2 = await browser.executeScript(`return cy.$().length`) as number;
+
+    const hasAllToms = await browser.executeScript(`return cy.$("[primary_name *= 'Tom']").length > 0 && cy.$("[primary_name *= 'Tom']").length == cy.$().length`);
+    return hasAllToms && (cntElem1 * 2) === cntElem2;
+
+  }
 }
