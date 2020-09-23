@@ -45,6 +45,21 @@ describe('workspace-project App', () => {
     expect(page.queryByConditionRuleGetAll('COMPOSER', true)).toEqual(true);
   });
 
+  it('Edit Query by Rule Condition', async () => {
+    page.navigateTo();
+    expect(page.editQueryByRule()).toEqual(true);
+  });
+
+  it('Should be able to delete rule and change class of the rule in Query by Rule Condition', async () => {
+    page.navigateTo();
+    expect(page.deleteQueryByRuleRule()).toEqual(true);
+  });
+
+  it('Should be able to run a nested rule in Query by Rule', async () => {
+    page.navigateTo();
+    expect(page.nestedQueryByRuleRule()).toEqual(true);
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);

@@ -1,8 +1,8 @@
 <div class="row m-1 no-gutters justify-content-center">
   <div class="col-3 px-1">
-    <select autofocus class="custom-select tight-select filter-form va-small-text" [(ngModel)]="selectedProp"
+    <select autofocus class="custom-select tight-select filter-form va-small-text prop" [(ngModel)]="selectedProp"
       [disabled]="isGenericTypeSelected" (change)="changeSelectedProp()">
-      <option *ngFor="let p of selectedClassProps" [value]="p">{{p}}</option>
+      <option *ngFor="let p of selectedClassProps" [value]="p" class="prop-opt">{{p}}</option>
     </select>
   </div>
 
