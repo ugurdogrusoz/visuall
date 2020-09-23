@@ -124,6 +124,12 @@ export class MapTabComponent implements OnInit {
     } else {
       isGeneric = true;
     }
+    // update query rule if it exists
+    if (this.queryRule) {
+      this.queryRule.className = this.selectedClass;
+      this.queryRule.isEdge = isEdgeClassSelected;
+    }
+
     setTimeout(() => {
       this.currProperties.next({ properties: this.selectedClassProps, isGenericTypeSelected: isGeneric, selectedClass: this.selectedClass });
     }, 0);

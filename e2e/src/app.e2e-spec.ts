@@ -9,9 +9,10 @@ describe('workspace-project App', () => {
     browser.waitForAngularEnabled(false);
   });
 
-  it('should have 7 buttons on navbar', async () => {
+  it('should have at least 7 buttons on navbar', async () => {
     page.navigateTo();
-    expect(page.getButtons().count()).toEqual(7);
+    const cnt = await page.getButtons().count();
+    expect(cnt >= 7).toEqual(true);
   });
 
   it('"Data>Sample Data" should bring some visible data', async () => {
@@ -29,9 +30,19 @@ describe('workspace-project App', () => {
     expect(page.filterByEdgeType()).toEqual(true);
   });
 
-  it('Query by rule', async () => {
+  it('Query by AND rule birth > 1994 && death < 2020', async () => {
     page.navigateTo();
-    expect(page.queryByRule()).toEqual(true);
+    expect(page.queryByAndRule()).toEqual(true);
+  });
+
+  it('Query by Condition get All Persons', async () => {
+    page.navigateTo();
+    expect(page.queryByConditionRuleGetAll('Person', false)).toEqual(true);
+  });
+
+  it('Query by Condition get All COMPOSER', async () => {
+    page.navigateTo();
+    expect(page.queryByConditionRuleGetAll('COMPOSER', true)).toEqual(true);
   });
 
   afterEach(async () => {
