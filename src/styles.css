@@ -82,6 +82,7 @@ app-timebar {
 app-operation-tabs {
   grid-area: ot;
   padding-left: 10px;
+  overflow-y: scroll;
 }
 
 .root {
