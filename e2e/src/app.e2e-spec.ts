@@ -70,6 +70,11 @@ describe('workspace-project App', () => {
     expect(page.testClientSideFiltering()).toEqual(true);
   });
 
+  it('Can add/remove Query By Rule', async () => {
+    page.navigateTo();
+    expect(page.testAddRemoveRules2QueryByRule()).toEqual(true);
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);

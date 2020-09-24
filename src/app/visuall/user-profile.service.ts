@@ -120,7 +120,7 @@ export class UserProfileService {
       p.queryRules = m2;
       localStorage.setItem('profile', JSON.stringify(p));
     } else {
-      localStorage.setItem('profile', JSON.stringify({ queryRules: [] }));
+      localStorage.setItem('profile', JSON.stringify({ queryRules: f }));
     }
   }
 

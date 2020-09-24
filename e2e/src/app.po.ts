@@ -92,9 +92,13 @@ export class AppPage {
   }
 
   async beginQueryByRule() {
-    element(by.cssContainingText('b.va-heading2', 'Query by Rule')).click();
-    await browser.sleep(this.ANIM_WAIT);
+    await this.openQueryByRuleSubTab();
     element(by.css('img[alt="Add Rule"]')).click();
+    await browser.sleep(this.ANIM_WAIT);
+  }
+
+  async openQueryByRuleSubTab() {
+    element(by.cssContainingText('b.va-heading2', 'Query by Rule')).click();
     await browser.sleep(this.ANIM_WAIT);
   }
 
@@ -218,7 +222,6 @@ export class AppPage {
     const cntElem3 = await browser.executeScript(`return cy.$().length`) as number;
 
     return hasAllToms && (cntElem1 * 2) === cntElem2 && cntElem3 == cntElem1;
-
   }
 
   async testClientSideFiltering() {
@@ -243,6 +246,25 @@ export class AppPage {
     const cntSelected = await browser.executeScript(`return cy.$(':selected').length;`);
     return isGotData && cntFiltered > 0 && cntSelected === cntFiltered;
 
+  }
+
+  async testAddRemoveRules2QueryByRule() {
+    await this.beginQueryByRule();
+    element(by.buttonText('Condition')).click();
+    await browser.sleep(this.ANIM_WAIT);
+
+    element(by.css('img[title="Add/Update"]')).click();
+    await browser.sleep(this.ANIM_WAIT);
+
+    element(by.css('input[value="Add"]')).click();
+    await browser.sleep(this.ANIM_WAIT);
+
+    // reload the page, the new rule should be also reloaded
+    await this.navigateTo();
+
+    await this.openQueryByRuleSubTab();
+    element(by.css('img[title="Delete query rule"]')).click();
+    return true;
   }
 
   async openTab(s: string) {
