@@ -2,36 +2,35 @@ import { Component, OnInit } from '@angular/core';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { areSetsEqual } from '../../../constants';
 import { GlobalVariableService } from '../../../global-variable.service';
-
+import { GroupCustomizationService } from '../../../../custom/group-customization.service';
 @Component({
   selector: 'app-group-tab',
   templateUrl: './group-tab.component.html',
   styleUrls: ['./group-tab.component.css']
 })
 export class GroupTabComponent implements OnInit {
-  options: any[];
-  selectedOption: any;
+  options: { name: string, fn: any }[];
+  selectedOption: string;
   prevGraph: Set<string>;
   currGraph: Set<string>;
 
-
-  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
+  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _customizationService: GroupCustomizationService) { }
 
   ngOnInit() {
-    this.options = ['None', 'By the Louvain modularity algorithm', 'By the Markov clustering algorithm', 'By director'];
-    this.selectedOption = this.options[0];
+    this.options = [{ name: 'None', fn: null },
+    { name: 'By the Louvain modularity algorithm', fn: () => { this._cyService.louvainClustering(); } },
+    { name: 'By the Markov clustering algorithm', fn: () => { this._cyService.markovClustering(); } },
+    ].concat(this._customizationService.clusteringMethods)
+    
+    this.selectedOption = this.options[0].name;
   }
 
   optionChanged() {
-    const idx = this.options.findIndex((x) => x == this.selectedOption);
+    const idx = this.options.findIndex((x) => x.name == this.selectedOption);
     this._cyService.expandAllCompounds();
     this._cyService.deleteClusteringNodes();
-    if (idx == 1) {
-      this._cyService.louvainClustering();
-    } else if (idx == 2) {
-      this._cyService.markovClustering();
-    } else if (idx == 3) {
-      this._cyService.clusterByDirector();
+    if (idx > -1 && this.options[idx].fn) {
+      this.options[idx].fn();
     }
     this._g.performLayout(false);
     this.setGraphState();
@@ -46,7 +45,7 @@ export class GroupTabComponent implements OnInit {
     this.setGraphState();
     // set radio to None because graph has changed 
     if (!areSetsEqual(this.prevGraph, this.currGraph)) {
-      this.selectedOption = this.options[0];
+      this.selectedOption = this.options[0].name;
     }
   }
 }

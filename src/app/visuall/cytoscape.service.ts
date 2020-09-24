@@ -597,7 +597,7 @@ export class CytoscapeService {
     this.runLayoutIfNoTimebar();
   }
 
-  private addParentNode(idSuffix: string | number, parent = undefined) {
+  addParentNode(idSuffix: string | number, parent = undefined) {
     const id = 'c' + idSuffix;
     const parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id);
     this._g.cy.add(parentNode);
