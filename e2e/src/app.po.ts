@@ -197,7 +197,7 @@ export class AppPage {
     element(by.css('img[title="Download selected objects"]')).click();
     await browser.sleep(this.ANIM_WAIT);
 
-    // check graph
+    // check "Graph"
     element(by.css('input.cb-is-load-graph')).click();
     await browser.sleep(this.ANIM_WAIT);
 
@@ -206,11 +206,18 @@ export class AppPage {
     // load next page
     element.all(by.css('a.page-link')).last().click();
     await browser.sleep(this.SAMPLE_DATA_WAIT);
-
     const cntElem2 = await browser.executeScript(`return cy.$().length`) as number;
-
     const hasAllToms = await browser.executeScript(`return cy.$("[primary_name *= 'Tom']").length > 0 && cy.$("[primary_name *= 'Tom']").length == cy.$().length`);
-    return hasAllToms && (cntElem1 * 2) === cntElem2;
+
+    // uncheck "Merge"
+    element(by.css('input.cb-is-merge-graph')).click();
+    await browser.sleep(this.ANIM_WAIT);
+    // load next page
+    element.all(by.css('a.page-link')).last().click();
+    await browser.sleep(this.SAMPLE_DATA_WAIT);
+    const cntElem3 = await browser.executeScript(`return cy.$().length`) as number;
+
+    return hasAllToms && (cntElem1 * 2) === cntElem2 && cntElem3 == cntElem1;
 
   }
 
