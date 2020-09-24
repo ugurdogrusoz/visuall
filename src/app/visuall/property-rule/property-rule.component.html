@@ -7,9 +7,9 @@
   </div>
 
   <div class="col-3 pr-1">
-    <select class="custom-select tight-select filter-form va-small-text" [(ngModel)]="selectedOperatorKey"
+    <select class="custom-select tight-select filter-form va-small-text prop-op-key" [(ngModel)]="selectedOperatorKey"
       [disabled]="isGenericTypeSelected">
-      <option *ngFor="let o of operatorKeys" [value]="o">{{o}}</option>
+      <option *ngFor="let o of operatorKeys" [value]="o" class="prop-op-key">{{o}}</option>
     </select>
   </div>
 

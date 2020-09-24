@@ -75,17 +75,13 @@ export class AppPage {
   }
 
   async addPropertyRule(prop: string, op: string, inp: string) {
-    element.all(by.css('select.prop')).get(0).click();
-    await browser.sleep(this.ANIM_WAIT);
     element(by.cssContainingText('option.prop-opt', prop)).click();
     await browser.sleep(this.ANIM_WAIT);
-    element.all(by.tagName('select')).get(2).click();
+    element(by.cssContainingText('option.prop-op-key', op)).click();
     await browser.sleep(this.ANIM_WAIT);
-    element(by.cssContainingText('option', op)).click();
+    element(by.css('input[placeholder="Filter..."]')).clear();
     await browser.sleep(this.ANIM_WAIT);
-    const inpEl = element(by.css('input[placeholder="Filter..."]'));
-    inpEl.clear();
-    inpEl.sendKeys(inp);
+    element(by.css('input[placeholder="Filter..."]')).sendKeys(inp);
     await browser.sleep(this.ANIM_WAIT);
     element(by.css('img[title="Add/Update"]')).click();
     await browser.sleep(this.ANIM_WAIT);
@@ -196,7 +192,7 @@ export class AppPage {
     element(by.css('input.cb-table-all')).click();
     element(by.css('img[title="Merge selected to graph"]')).click();
     await browser.sleep(this.SAMPLE_DATA_WAIT);
-    
+
     // download as CSV
     element(by.css('img[title="Download selected objects"]')).click();
     await browser.sleep(this.ANIM_WAIT);
@@ -216,5 +212,39 @@ export class AppPage {
     const hasAllToms = await browser.executeScript(`return cy.$("[primary_name *= 'Tom']").length > 0 && cy.$("[primary_name *= 'Tom']").length == cy.$().length`);
     return hasAllToms && (cntElem1 * 2) === cntElem2;
 
+  }
+
+  async testClientSideFiltering() {
+    const isGotData = await this.getSampleData();
+    await this.openTab('Settings');
+    await this.setShowQueryResults(1);
+    await this.openTab('Map');
+
+    await this.beginQueryByRule();
+    element(by.buttonText('Condition')).click();
+    await browser.sleep(this.ANIM_WAIT);
+    await this.addPropertyRule('ACTOR', '>', '3');
+
+    // check database
+    element(by.css('input.cb-is-on-db')).click();
+    await browser.sleep(this.ANIM_WAIT);
+
+    element(by.css('input[value="Execute"]')).click();
+    await browser.sleep(this.ANIM_WAIT);
+
+    const cntFiltered = await browser.executeScript(`return cy.$(':selected').filter(x => x.connectedEdges('.ACTOR').length > 3).length;`);
+    const cntSelected = await browser.executeScript(`return cy.$(':selected').length;`);
+    return isGotData && cntFiltered > 0 && cntSelected === cntFiltered;
+
+  }
+
+  async openTab(s: string) {
+    element(by.cssContainingText('a.nav-link', s)).click();
+    await browser.sleep(this.ANIM_WAIT);
+  }
+
+  async setShowQueryResults(idx: number) {
+    element.all(by.css('input[name="optradio1"]')).get(idx).click();
+    await browser.sleep(this.ANIM_WAIT);
   }
 }

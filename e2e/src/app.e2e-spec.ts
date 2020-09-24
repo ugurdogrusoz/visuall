@@ -65,6 +65,11 @@ describe('workspace-project App', () => {
     expect(page.testTableOfQueryByRuleRule()).toEqual(true);
   });
 
+  it('Client-side filtering should work properly on Query By Rule', async () => {
+    page.navigateTo();
+    expect(page.testClientSideFiltering()).toEqual(true);
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);
