@@ -1,5 +1,4 @@
-body,
-html {
+body, html {
   height: 100%;
 }
 
@@ -87,10 +86,7 @@ app-operation-tabs {
 
 .root {
   display: grid;
-  grid-template-areas: 'nb nb'
-    'tb tb'
-    'cy ot'
-    'ti ti';
+  grid-template-areas: 'nb nb' 'tb tb' 'cy ot' 'ti ti';
   height: 99vh;
   grid-template-columns: 75% 25%;
   grid-template-rows: min-content min-content auto max-content;
@@ -282,14 +278,12 @@ app-operation-tabs {
 
 .query-input {
   width: 60px;
-  height: 2rem;
   display: inline;
   margin-top: 2px;
 }
 
 .query-input-wide {
   width: 105px;
-  height: 2rem;
   display: inline;
   margin-top: 2px;
 }
@@ -321,7 +315,6 @@ app-operation-tabs {
 
 .inp-3-char {
   width: 5.5em;
-  height: 2em;
 }
 
 .pointer {
@@ -334,4 +327,8 @@ app-operation-tabs {
   -ms-user-select: none;
   /* IE 10+ */
   user-select: none;
+}
+
+.std-inp-hei {
+  height: 2em;
 }

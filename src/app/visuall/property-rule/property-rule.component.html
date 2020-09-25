@@ -1,13 +1,13 @@
 <div class="row m-1 no-gutters justify-content-center">
   <div class="col-3 px-1">
-    <select autofocus class="custom-select tight-select filter-form va-small-text prop" [(ngModel)]="selectedProp"
+    <select autofocus class="custom-select std-inp-hei tight-select filter-form va-small-text prop" [(ngModel)]="selectedProp"
       [disabled]="isGenericTypeSelected" (change)="changeSelectedProp()">
       <option *ngFor="let p of selectedClassProps" [value]="p" class="prop-opt">{{p}}</option>
     </select>
   </div>
 
   <div class="col-3 pr-1">
-    <select class="custom-select tight-select filter-form va-small-text prop-op-key" [(ngModel)]="selectedOperatorKey"
+    <select class="custom-select std-inp-hei tight-select filter-form va-small-text prop-op-key" [(ngModel)]="selectedOperatorKey"
       [disabled]="isGenericTypeSelected">
       <option *ngFor="let o of operatorKeys" [value]="o" class="prop-op-key">{{o}}</option>
     </select>
@@ -16,14 +16,14 @@
   <div class="col-5 pr-1">
     <div [hidden]="selectedPropertyCategory != 0">
       <input [type]="currInpType" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected"
-        (click)="filterInpClicked()" class="tight-select form-control filter-form filter-input va-small-text"
+        (click)="filterInpClicked()" class="tight-select std-inp-hei form-control filter-form filter-input va-small-text"
         placeholder="Filter...">
     </div>
     <div [hidden]="selectedPropertyCategory != 1">
-      <input type="text" #dateInp [disabled]="isGenericTypeSelected" class="tight-select filter-form form-control va-small-text">
+      <input type="text" #dateInp [disabled]="isGenericTypeSelected" class="tight-select std-inp-hei filter-form form-control va-small-text">
     </div>
     <div [hidden]="selectedPropertyCategory != 2">
-      <select class="custom-select tight-select filter-form va-small-text" [(ngModel)]="filterInp">
+      <select class="custom-select tight-select std-inp-hei filter-form va-small-text" [(ngModel)]="filterInp">
         <option *ngFor="let p of finiteSetPropertyMap" [value]="p.key">{{p.value}}</option>
       </select>
     </div>

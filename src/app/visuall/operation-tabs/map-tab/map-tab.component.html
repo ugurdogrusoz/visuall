@@ -32,10 +32,12 @@
 
       <div class="form-inline m-2 justify-content-center">
         <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
-          [(ngModel)]="currRuleName" class="tight-select filter-form form-control name-inp m-1 va-small-text">
-        <select class="custom-select tight-select filter-form va-small-text rule-class" [disabled]="isClassTypeLocked"
-          [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
-          <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" class="rule-class-opt" [value]="opt.text">{{opt.text}}
+          [(ngModel)]="currRuleName"
+          class="tight-select filter-form form-control std-inp-hei name-inp m-1 va-small-text">
+        <select class="custom-select tight-select std-inp-hei filter-form va-small-text rule-class"
+          [disabled]="isClassTypeLocked" [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
+          <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" class="rule-class-opt"
+            [value]="opt.text">{{opt.text}}
           </option>
         </select>
       </div>
@@ -70,21 +72,21 @@
             <label class="form-check-label va-text">Database</label>
           </div>
           <div class="custom-control custom-checkbox m-1">
-            <input type="checkbox" class="form-check-input cb-filter cb-is-load-graph" [(ngModel)]="tableInput.isLoadGraph"
-              [disabled]="!isQueryOnDb" />
+            <input type="checkbox" class="form-check-input cb-filter cb-is-load-graph"
+              [(ngModel)]="tableInput.isLoadGraph" [disabled]="!isQueryOnDb" />
             <label class="form-check-label va-text">Graph</label>
           </div>
           <div class="custom-control custom-checkbox m-1">
-            <input type="checkbox" class="form-check-input cb-filter cb-is-merge-graph" [(ngModel)]="tableInput.isMergeGraph"
-              [disabled]="!isQueryOnDb" />
+            <input type="checkbox" class="form-check-input cb-filter cb-is-merge-graph"
+              [(ngModel)]="tableInput.isMergeGraph" [disabled]="!isQueryOnDb" />
             <label class="form-check-label va-text">Merge</label>
           </div>
         </div>
 
         <div class="d-flex flex-wrap align-items-center justify-content-center m-1"
           *ngIf="queryRule && queryRule.rules && queryRule.rules.r && (!queryRule.rules.r.ruleOperator || (queryRule.rules.r.ruleOperator && queryRule.rules.children.length > 0) )">
-          <input class="btn btn-dark va-text m-1" type="button" [value]="changeBtnTxt" (click)="addOrUpdateRule()">
-          <input class="btn btn-dark va-text m-1" type="button" value="Execute" (click)="runQuery()">
+          <input class="btn btn-sm btn-dark va-text m-1" type="button" [value]="changeBtnTxt" (click)="addOrUpdateRule()">
+          <input class="btn btn-sm btn-dark va-text m-1" type="button" value="Execute" (click)="runQuery()">
         </div>
 
       </div>
