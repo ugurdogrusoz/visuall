@@ -17,7 +17,8 @@ export class ElemOfInterestComponent implements OnInit {
 
   selectedNodes: ElemAsQueryParam[] = [];
   clickedNodeIdx = -1;
-  addNodeBtnTxt = 'Select Nodes to Add';
+  addNodeBtnTxt = 'Select nodes to add';
+  addNodeBtnImg = 'assets/img/add-selection-cursor.svg';
   isShow = true;
   
   constructor(private _g: GlobalVariableService) { }
@@ -37,10 +38,12 @@ export class ElemOfInterestComponent implements OnInit {
   addSelectedNodes() {
     if (this._g.isSwitch2ObjTabOnSelect) {
       this._g.isSwitch2ObjTabOnSelect = false;
-      this.addNodeBtnTxt = 'Complete Selection';
+      this.addNodeBtnTxt = 'Complete selection';
+      this.addNodeBtnImg = 'assets/img/tick.svg'
       return;
     }
-    this.addNodeBtnTxt = 'Select Nodes to Add';
+    this.addNodeBtnTxt = 'Select nodes to add';
+    this.addNodeBtnImg = 'assets/img/add-selection-cursor.svg'
     this._g.isSwitch2ObjTabOnSelect = true;
     const selectedNodes = this._g.cy.nodes(':selected');
     if (selectedNodes.length < 1) {

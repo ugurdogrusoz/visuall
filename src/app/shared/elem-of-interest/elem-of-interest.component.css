@@ -1,4 +1,4 @@
-img {
+.icon {
   width: 16px;
   height: 16px;
 }
@@ -29,4 +29,10 @@ img {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.35s ease-out;
+}
+
+.img-btn {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
 }
