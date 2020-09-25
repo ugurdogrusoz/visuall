@@ -3,7 +3,6 @@
   height: 16px;
 }
 
-
 .down-icon:after {
   font-family: 'FontAwesome', sans-serif;
   content: "\f077";
@@ -12,6 +11,7 @@
 }
 
 /* symbol for "collapsed" panels */
+
 .up-icon:after {
   font-family: 'FontAwesome', sans-serif;
   content: "\f078";
@@ -35,4 +35,24 @@
   width: 24px;
   height: 24px;
   cursor: pointer;
+}
+
+.highlighted-btn {
+  animation-name: borderanim;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: reverse;
+}
+
+@keyframes borderanim {
+  0% {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+  }
+  50% {
+    box-shadow: 0 0 white;
+  }
+  100% {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+  }
 }

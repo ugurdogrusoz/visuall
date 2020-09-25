@@ -18,10 +18,15 @@
     </div>
   </div>
   <div>
-    <img src="assets/img/add-from-file.svg" class="img-btn m-1" title="Add objects from file"
-      (click)="addSelectedNodesFromFile()">
-    <img [src]="addNodeBtnImg" class="img-btn m-1" [title]="addNodeBtnTxt" (click)="addSelectedNodes()">
-    <img *ngIf="selectedNodes && selectedNodes.length > 0" src="assets/img/delete-bin.svg" class="img-btn m-1"
-      (click)="removeAllSelectedNodes(i)" title="Remove all">
+    <button class="btn btn-sm m-1">
+      <img src="assets/img/add-from-file.svg" class="img-btn" title="Add objects from file"
+        (click)="addSelectedNodesFromFile()">
+    </button>
+    <button class="btn btn-sm m-1" [ngClass]="{'highlighted-btn': addNodeBtnTxt == 'Complete selection'}">
+      <img [src]="addNodeBtnImg" class="img-btn" [title]="addNodeBtnTxt" (click)="addSelectedNodes()">
+    </button>
+    <button *ngIf="selectedNodes && selectedNodes.length > 0" class="btn btn-sm m-1">
+      <img src="assets/img/delete-bin.svg" class="img-btn" (click)="removeAllSelectedNodes(i)" title="Remove all">
+    </button>
   </div>
 </div>
