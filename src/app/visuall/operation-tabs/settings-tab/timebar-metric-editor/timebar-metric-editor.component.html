@@ -30,7 +30,7 @@
       <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="currMetricColor"></app-color-picker>
 
       <select title="Type" [disabled]="isAClassSelectedForMetric"
-        class="std-inp-hei custom-select tight-select filter-form va-text" [(ngModel)]="selectedClass"
+        class="std-inp-hei custom-select tight-select filter-form va-small-text" [(ngModel)]="selectedClass"
         (change)="changeSelectedClass()">
         <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
         </option>

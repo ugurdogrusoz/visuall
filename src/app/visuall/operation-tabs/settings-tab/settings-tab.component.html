@@ -54,7 +54,7 @@
             </option>
           </select>
           <input type="number" max="20" min="1" (change)="bandPassHighlightWidth()" [(ngModel)]="highlightWidth"
-            class="form-control inp-3-char std-inp-hei va-text" placeholder="width">
+            class="form-control inp-3-char std-inp-hei va-small-text" placeholder="width">
           <app-color-picker (onColorSelected)="onColorSelected($event)" [currColor]="highlightColor"
             class="align-middle"></app-color-picker>
           <a href="#" title="Update this style" (click)="changeHighlightStyle()" class="m-1">
@@ -99,7 +99,7 @@
         <label class="form-check-label va-text">Query result limit</label>
         <div class="mx-1">
           <input type="number" max="10000" min="1" (keydown.enter)="settingChanged(dataPageSize, 'dataPageSize')"
-            [(ngModel)]="dataPageSize" class="form-control inp-3-char std-inp-hei va-text">
+            [(ngModel)]="dataPageSize" class="form-control inp-3-char std-inp-hei va-small-text">
         </div>
       </div>
     </div>
@@ -109,7 +109,7 @@
         <div class="mx-1">
           <input type="number" max="100" min="1"
             (keydown.enter)="settingChanged(queryHistoryLimit, 'queryHistoryLimit')" [(ngModel)]="queryHistoryLimit"
-            class="form-control inp-3-char std-inp-hei va-text">
+            class="form-control inp-3-char std-inp-hei va-small-text">
         </div>
       </div>
     </div>
@@ -118,7 +118,7 @@
         <label class="form-check-label va-text">Maximum number of columns in tables</label>
         <div class="mx-1">
           <input type="number" max="100" min="1" (keydown.enter)="settingChanged(tableColumnLimit, 'tableColumnLimit')"
-            [(ngModel)]="tableColumnLimit" class="form-control inp-3-char std-inp-hei va-text">
+            [(ngModel)]="tableColumnLimit" class="form-control inp-3-char std-inp-hei va-small-text">
         </div>
       </div>
     </div>
@@ -128,7 +128,7 @@
         <div class="mx-1">
           <input type="number" max="100" min="1"
             (keydown.enter)="settingChanged(edgeCollapseLimit, 'edgeCollapseLimit')" [(ngModel)]="edgeCollapseLimit"
-            class="form-control inp-3-char std-inp-hei va-text">
+            class="form-control inp-3-char std-inp-hei va-small-text">
         </div>
       </div>
     </div>
@@ -137,7 +137,7 @@
         <label class="form-check-label va-text">Compound padding</label>
         <div class="mx-1">
           <input type="text" (keydown.enter)="settingChanged(compoundPadding, 'compoundPadding')"
-            [(ngModel)]="compoundPadding" class="form-control inp-3-char std-inp-hei va-text">
+            [(ngModel)]="compoundPadding" class="form-control inp-3-char std-inp-hei va-small-text">
         </div>
       </div>
     </div>
