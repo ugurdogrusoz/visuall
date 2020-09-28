@@ -4,7 +4,7 @@ const css = require('css');
 main();
 
 function main() {
-  let app_desc_file = 'custom/config/app_description.json';
+  let app_desc_file = 'app/custom/config/app_description.json';
   if (process.argv.length === 3) {
     app_desc_file = process.argv[2];
   }

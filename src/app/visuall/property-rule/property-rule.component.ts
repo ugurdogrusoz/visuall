@@ -209,7 +209,7 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   private getPropertyCategory(): PropertyCategory {
-    let m = this._g.appDescription.getValue().enumMapping;
+    let m = this._g.getEnumMapping();
     this.finiteSetPropertyMap = null;
     if (m && m[this.selectedClass] && m[this.selectedClass][this.selectedProp]) {
       this.finiteSetPropertyMap = m[this.selectedClass][this.selectedProp];

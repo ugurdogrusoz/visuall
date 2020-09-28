@@ -146,7 +146,7 @@ export class ObjectTabComponent implements OnInit {
     this.multiObjTableInp.results = [];
 
     let elemTypeCnt = {};
-    const enumMapping = this._g.appDescription.getValue().enumMapping;
+    const enumMapping = this._g.getEnumMapping();
     for (let i = 0; i < elems.length; i++) {
       let className = elems[i].classes()[0];
       if (elemTypeCnt[className]) {
@@ -325,18 +325,18 @@ export class ObjectTabComponent implements OnInit {
   }
 
   getMappedProperty(className: string, propertyName: string, propertyValue: string): string {
-    const a = this._g.appDescription.getValue();
-    let classes = Object.keys(a.enumMapping);
+    const enumMap = this._g.appDescription.getValue().enumMapping;
+    let classes = Object.keys(enumMap);
     let c = classes.find(x => x == className);
     if (!c) {
       return propertyValue;
     }
 
-    const mapping = a.enumMapping[c][propertyName];
+    const mapping = enumMap[c][propertyName];
     if (!mapping) {
       return propertyValue;
     }
-    const val = a.enumMapping[c][propertyName][propertyValue];
+    const val = enumMap[c][propertyName][propertyValue];
     if (val != null || val != undefined) {
       return val;
     }

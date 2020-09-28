@@ -34,6 +34,7 @@ export class GlobalVariableService {
   cyNaviPositionSetter: any;
   appDescription = new BehaviorSubject<any>(null);
   dataModel = new BehaviorSubject<any>(null);
+  enums = new BehaviorSubject<any>(null);
 
   constructor(private _http: HttpClient) {
     this.hiddenClasses = new Set([]);
@@ -63,31 +64,10 @@ export class GlobalVariableService {
     this._http.get('./assets/generated/properties.json').subscribe(x => {
       this.dataModel.next(x);
     }, (e) => { console.log('error: ', e); });
-  }
 
-  private setUserPrefs(obj: any, userPref: any) {
-    if (obj === undefined || obj === null) {
-      return;
-    }
-    for (let k in obj) {
-      let prop = obj[k];
-      if (isPrimitiveType(prop)) {
-        if (userPref[k]) {
-          (userPref[k] as BehaviorSubject<any>).next(prop);
-        } else {
-          userPref[k] = new BehaviorSubject(prop);
-        }
-      } else {
-        if (!userPref[k]) {
-          if (prop instanceof Array) {
-            userPref[k] = [];
-          } else {
-            userPref[k] = {};
-          }
-        }
-        this.setUserPrefs(obj[k], userPref[k]);
-      }
-    }
+    this._http.get('/app/custom/config/enums.json').subscribe(x => {
+      this.enums.next(x);
+    }, (e) => { console.log('error: ', e); });
   }
 
   transfer2UserPrefs(u: any) {
@@ -114,19 +94,6 @@ export class GlobalVariableService {
       elems4layout.layout(this.layout).run();
     }
     this.statusMsg.next('Rendering graph...');
-  }
-
-  private performLayoutFn(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = LAYOUT_ANIM_DUR) {
-    if (!this.userPrefs.isAutoIncrementalLayoutOnChange.getValue() && !isRandomize && !isDirectCommand) {
-      this.cy.fit();
-      return;
-    }
-    if (this.userPrefs.groupingOption.getValue() != GroupingOptionTypes.clusterId) {
-      this.layout = this.getFcoseOptions();
-    }
-    this.layout.animationDuration = animationDuration;
-    this.switchLayoutRandomization(isRandomize);
-    this.runLayout();
   }
 
   switchLayoutRandomization(isRandomize: boolean) {
@@ -316,6 +283,65 @@ export class GlobalVariableService {
     };
   }
 
+  // delete/expand compounds if they don't have any visible elements
+  handleCompoundsOnHideDelete() {
+    const metaEdges = this.cy.edges('.' + COLLAPSED_EDGE_CLASS);
+    // some collapsed edges should be expanded, or their data should be updated
+    for (let i = 0; i < metaEdges.length; i++) {
+      const collapsedEdges = metaEdges[i].data('collapsedEdges');
+      if (collapsedEdges.filter(':visible').length < 2) {
+        this.expandCollapseApi.expandEdges(metaEdges[i]);
+      } else {
+        metaEdges[i].data('collapsedEdges', collapsedEdges.filter(':visible'))
+        this.cy.add(collapsedEdges.not(':visible'));
+      }
+    }
+
+    const metaNodes = this.cy.nodes('.' + COLLAPSED_NODE_CLASS);
+    // First, expand the collapsed if they don't have anything visible inside
+    for (let i = 0; i < metaNodes.length; i++) {
+      const collapsedChildren = metaNodes[i].data('collapsedChildren');
+      if (collapsedChildren.filter(':visible').length < 1) {
+        this.expandCollapseApi.expand(metaNodes[i], { layoutBy: null, fisheye: false, animate: false });
+      }
+    }
+
+    //if an expanded compound does not have anything visible, delete it
+    const clusterNodes = this.cy.nodes('.' + CLUSTER_CLASS).not('.' + COLLAPSED_NODE_CLASS);
+    for (let i = 0; i < clusterNodes.length; i++) {
+      // if there are empty compounds, delete them
+      const children = clusterNodes[i].children();
+      if (children.filter(':visible').length < 1) {
+        children.move({ parent: null });
+        this.cy.remove(clusterNodes[i]);
+      }
+    }
+  }
+
+  getEnumMapping(): any {
+    const mapping = this.appDescription.getValue().enumMapping;
+    const enums = this.enums.getValue();
+    for (const k in mapping) {
+      for (const k2 in mapping[k]) {
+        mapping[k][k2] = enums[k2];
+      }
+    }
+    return mapping;
+  }
+
+  private performLayoutFn(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = LAYOUT_ANIM_DUR) {
+    if (!this.userPrefs.isAutoIncrementalLayoutOnChange.getValue() && !isRandomize && !isDirectCommand) {
+      this.cy.fit();
+      return;
+    }
+    if (this.userPrefs.groupingOption.getValue() != GroupingOptionTypes.clusterId) {
+      this.layout = this.getFcoseOptions();
+    }
+    this.layout.animationDuration = animationDuration;
+    this.switchLayoutRandomization(isRandomize);
+    this.runLayout();
+  }
+
   private getCiseOptions() {
     return {
       // -------- Mandatory parameters --------
@@ -393,37 +419,27 @@ export class GlobalVariableService {
     };
   }
 
-  // delete/expand compounds if they don't have any visible elements
-  handleCompoundsOnHideDelete() {
-    const metaEdges = this.cy.edges('.' + COLLAPSED_EDGE_CLASS);
-    // some collapsed edges should be expanded, or their data should be updated
-    for (let i = 0; i < metaEdges.length; i++) {
-      const collapsedEdges = metaEdges[i].data('collapsedEdges');
-      if (collapsedEdges.filter(':visible').length < 2) {
-        this.expandCollapseApi.expandEdges(metaEdges[i]);
+  private setUserPrefs(obj: any, userPref: any) {
+    if (obj === undefined || obj === null) {
+      return;
+    }
+    for (let k in obj) {
+      let prop = obj[k];
+      if (isPrimitiveType(prop)) {
+        if (userPref[k]) {
+          (userPref[k] as BehaviorSubject<any>).next(prop);
+        } else {
+          userPref[k] = new BehaviorSubject(prop);
+        }
       } else {
-        metaEdges[i].data('collapsedEdges', collapsedEdges.filter(':visible'))
-        this.cy.add(collapsedEdges.not(':visible'));
-      }
-    }
-
-    const metaNodes = this.cy.nodes('.' + COLLAPSED_NODE_CLASS);
-    // First, expand the collapsed if they don't have anything visible inside
-    for (let i = 0; i < metaNodes.length; i++) {
-      const collapsedChildren = metaNodes[i].data('collapsedChildren');
-      if (collapsedChildren.filter(':visible').length < 1) {
-        this.expandCollapseApi.expand(metaNodes[i], { layoutBy: null, fisheye: false, animate: false });
-      }
-    }
-
-    //if an expanded compound does not have anything visible, delete it
-    const clusterNodes = this.cy.nodes('.' + CLUSTER_CLASS).not('.' + COLLAPSED_NODE_CLASS);
-    for (let i = 0; i < clusterNodes.length; i++) {
-      // if there are empty compounds, delete them
-      const children = clusterNodes[i].children();
-      if (children.filter(':visible').length < 1) {
-        children.move({ parent: null });
-        this.cy.remove(clusterNodes[i]);
+        if (!userPref[k]) {
+          if (prop instanceof Array) {
+            userPref[k] = [];
+          } else {
+            userPref[k] = {};
+          }
+        }
+        this.setUserPrefs(obj[k], userPref[k]);
       }
     }
   }

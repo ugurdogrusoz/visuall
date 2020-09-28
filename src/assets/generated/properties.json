@@ -22,7 +22,7 @@
       "shooting_start_date": "datetime",
       "production_end_date": "datetime",
       "production_start_date": "datetime",
-      "title_type": "string"
+      "title_type": "enum,string"
     }
   },
   "edges": {

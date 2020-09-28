@@ -45,7 +45,7 @@
         "shooting_start_date": "datetime",
         "production_end_date": "datetime",
         "production_start_date": "datetime",
-        "title_type": "string"
+        "title_type": "enum,string"
       },
       "style": {
         "label": "data(primary_title)",
@@ -398,21 +398,8 @@
   },
   "enumMapping": {
     "Title": {
-      "is_adult": {
-        "0": "No",
-        "1": "Yes"
-      },
-      "title_type": {
-        "short": "Short movie",
-        "movie": "Movie",
-        "tvSeries": "TV series",
-        "tvEpisode": "TV episode",
-        "tvMiniSeries": "TV mini-series",
-        "videoGame": "Video game",
-        "tvMovie": "TV movie",
-        "video": "Video",
-        "tvSpecial": "TV special"
-      }
+      "is_adult": "is_adult",
+      "title_type": "title_type"
     }
   },
   "appPreferences": {
