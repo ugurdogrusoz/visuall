@@ -11,6 +11,7 @@ import { GraphHistoryItem, GraphElem } from './db-service/data-types';
 })
 export class GlobalVariableService {
   private HISTORY_SNAP_DELAY = 1500; // we should wait for layout to finish
+  private _isSetEnums = false;
   cy: any;
   viewUtils: any;
   layoutUtils: any;
@@ -319,13 +320,18 @@ export class GlobalVariableService {
   }
 
   getEnumMapping(): any {
+    // changes value inside `this.appDescription.getValue().enumMapping` since it works on reference
     const mapping = this.appDescription.getValue().enumMapping;
+    if (this._isSetEnums) {
+      return mapping;
+    }
     const enums = this.enums.getValue();
     for (const k in mapping) {
       for (const k2 in mapping[k]) {
-        mapping[k][k2] = enums[k2];
+        mapping[k][k2] = enums[mapping[k][k2]];
       }
     }
+    this._isSetEnums = true;
     return mapping;
   }
 
