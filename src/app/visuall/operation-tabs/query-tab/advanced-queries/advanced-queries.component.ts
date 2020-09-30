@@ -145,7 +145,7 @@ export class AdvancedQueriesComponent implements OnInit {
     this.tableInput.results = [];
     this.tableInput.columns = [];
     this.tableInput.classNames = [];
-    const enumMapping = this._g.appDescription.getValue().enumMapping;
+    const enumMapping = this._g.getEnumMapping();
     const props = this._g.dataModel.getValue();
     for (let i = 0; i < nodes.length; i++) {
       const d = nodes[i];

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DbAdapterService } from '../db-service/db-adapter.service';
 import { GlobalVariableService } from '../global-variable.service';
-import { NavbarCustomizationService } from './navbar-customization.service';
+import { NavbarCustomizationService } from '../../custom/navbar-customization.service';
 import { UserProfileService } from '../user-profile.service';
 import { CytoscapeService } from '../cytoscape.service';
 import { URLLoadService } from '../load-from-url.service';

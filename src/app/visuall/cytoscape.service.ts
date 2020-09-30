@@ -65,6 +65,7 @@ export class CytoscapeService {
     this._cyExtService.bindExtensions();
 
     this.bindComponentSelector();
+    this.bindSelectObjOfThisType();
     this._marqueeZoomService.init();
     (<any>window).cy = this._g.cy;
     this._g.cy.on('select unselect', (e) => { this.elemSelected(e) });
@@ -596,7 +597,7 @@ export class CytoscapeService {
     this.runLayoutIfNoTimebar();
   }
 
-  private addParentNode(idSuffix: string | number, parent = undefined) {
+  addParentNode(idSuffix: string | number, parent = undefined) {
     const id = 'c' + idSuffix;
     const parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id);
     this._g.cy.add(parentNode);
@@ -890,13 +891,44 @@ export class CytoscapeService {
   }
 
   bindComponentSelector() {
-    let isSelectionLocked: boolean = false;
+    let isSelectionLocked = false;
 
     this._g.cy.on('taphold', 'node, edge', (e) => {
       if (!e.originalEvent.shiftKey) {
         return;
       }
       e.target.component().select();
+      // it selects current node again to prevent that, disable selection until next tap event
+      this._g.cy.autounselectify(true);
+      isSelectionLocked = true;
+    });
+
+    this._g.cy.on('tapend', 'node, edge', () => {
+      if (!isSelectionLocked) {
+        return;
+      }
+      // wait to prevent unselect clicked node, after tapend 
+      setTimeout(() => {
+        this._g.cy.autounselectify(false);
+        isSelectionLocked = false;
+      }, 100);
+    });
+  }
+
+  bindSelectObjOfThisType() {
+    let isSelectionLocked = false;
+
+    this._g.cy.on('taphold', 'node, edge', (e) => {
+      if (!e.originalEvent.ctrlKey) {
+        return;
+      }
+      const model = this._g.dataModel.getValue();
+      const classes = e.target.className();
+      for (let c of classes) {
+        if (model.nodes[c] || model.edges[c]) {
+          this._g.cy.$('.' + c).select();
+        }
+      }
       // it selects current node again to prevent that, disable selection until next tap event
       this._g.cy.autounselectify(true);
       isSelectionLocked = true;

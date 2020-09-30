@@ -124,6 +124,12 @@ export class MapTabComponent implements OnInit {
     } else {
       isGeneric = true;
     }
+    // update query rule if it exists
+    if (this.queryRule) {
+      this.queryRule.className = this.selectedClass;
+      this.queryRule.isEdge = isEdgeClassSelected;
+    }
+
     setTimeout(() => {
       this.currProperties.next({ properties: this.selectedClassProps, isGenericTypeSelected: isGeneric, selectedClass: this.selectedClass });
     }, 0);
@@ -281,7 +287,7 @@ export class MapTabComponent implements OnInit {
       for (let [k, v] of Object.entries(data.data[i][1])) {
         let idx = this.tableInput.columns.indexOf(k);
         if (idx > -1) {
-          const enumMapping = this._g.appDescription.getValue().enumMapping;
+          const enumMapping = this._g.getEnumMapping();
           d[idx + 1] = property2TableData(properties, enumMapping, k, v, this.queryRule.className, this.queryRule.isEdge);
         }
       }

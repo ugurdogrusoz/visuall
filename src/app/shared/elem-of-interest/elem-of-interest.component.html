@@ -13,15 +13,20 @@
       [style.border]="i==clickedNodeIdx ? '2px solid #888888':'2px solid #dee2e6'">
       <div class="text-center pointer" (click)="selectedNodeClicked(i)">
         <span>{{n.label}}</span>&nbsp;
-        <img src="assets/img/close.svg" (click)="removeSelected(i)" title="Remove">
+        <img class="icon" src="assets/img/close.svg" (click)="removeSelected(i)" title="Remove">
       </div>
     </div>
   </div>
   <div>
-    <input class="btn btn-dark va-text m-1" type="button" value="Add Objects from File"
-      (click)="addSelectedNodesFromFile()">
-    <input class="btn btn-dark va-text m-1" type="button" [value]="addNodeBtnTxt" (click)="addSelectedNodes()">
-    <input *ngIf="selectedNodes && selectedNodes.length > 0" class="btn btn-dark va-text m-1" type="button"
-      value="Remove All" (click)="removeAllSelectedNodes()">
+    <button class="btn btn-sm m-1">
+      <img src="assets/img/add-from-file.svg" class="img-btn" title="Add objects from file"
+        (click)="addSelectedNodesFromFile()">
+    </button>
+    <button class="btn btn-sm m-1" [ngClass]="{'highlighted-btn': addNodeBtnTxt == 'Complete selection'}">
+      <img [src]="addNodeBtnImg" class="img-btn" [title]="addNodeBtnTxt" (click)="addSelectedNodes()">
+    </button>
+    <button *ngIf="selectedNodes && selectedNodes.length > 0" class="btn btn-sm m-1">
+      <img src="assets/img/delete-bin.svg" class="img-btn" (click)="removeAllSelectedNodes(i)" title="Remove all">
+    </button>
   </div>
 </div>

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Neo4jDb } from '../../../visuall/db-service/neo4j-db.service';
 import { CytoscapeService } from '../../../visuall/cytoscape.service';
 import { GlobalVariableService } from '../../../visuall/global-variable.service';
-import flatpickr from 'flatpickr';
 import { TableViewInput, TableDataType, TableFiltering, TableRowMeta } from '../../../shared/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { buildIdFilter, getOrderByExpression4Query, getQueryCondition4TxtFilter } from '../query-helper';
@@ -27,52 +26,38 @@ export class Query0Component implements OnInit {
 
   ngOnInit() {
     this.movieCnt = 40;
-    let opt = {
-      defaultDate: new Date(1960, 0, 1, 0, 0, 0), enableTime: true, enableSeconds: true, time_24hr: true,
-      minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
-      maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
-    };
-    let opt2 = {
-      defaultDate: new Date(2020, 11, 31, 0, 0, 0), enableTime: true, enableSeconds: true, time_24hr: true,
-      minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
-      maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
-    };
-
-    flatpickr('#query0-inp1', opt);
-    flatpickr('#query0-inp2', opt2);
     this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
   }
 
   prepareQuery() {
-
-    let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
-    let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
-    let skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
-
-    this.getCountOfData(d1, d2);
-    this.loadTable(d1, d2, skip);
-    this.loadGraph(d1, d2, skip);
+    const skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
+    this.getCountOfData();
+    this.loadTable(skip);
+    this.loadGraph(skip);
   }
 
-  getCountOfData(d1: number, d2: number, filter?: TableFiltering) {
+  getCountOfData(filter?: TableFiltering) {
     const cb = (x) => { this.tableInput.resultCnt = x.data[0] };
-    let txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
-    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
-    WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
+    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    const dateFilter = this.getDateRangeCQL();
+
+    const cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
+    WHERE ${dateFilter} 
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${this.movieCnt} ${txtCondition}
     RETURN DISTINCT COUNT(*)`;
     this._dbService.runQuery(cql, cb, false);
   }
 
-  loadTable(d1: number, d2: number, skip: number, filter?: TableFiltering) {
+  loadTable(skip: number, filter?: TableFiltering) {
     const cb = (x) => this.fillTable(x);
-    let txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
-    let ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
-    let orderExpr = getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
+    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    const ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
+    const orderExpr = getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
+    const dateFilter = this.getDateRangeCQL();
 
-    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
-    WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
+    const cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
+    WHERE ${dateFilter}
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${this.movieCnt} ${txtCondition}
     RETURN DISTINCT ID(n) as id, n.primary_name as Actor, degree as Count 
@@ -80,18 +65,18 @@ export class Query0Component implements OnInit {
     this._dbService.runQuery(cql, cb, false);
   }
 
-  loadGraph(d1: number, d2: number, skip: number, filter?: TableFiltering) {
+  loadGraph(skip: number, filter?: TableFiltering) {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
-    let cb = (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph);
+    const cb = (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph);
+    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    const ui2Db = { 'Actor': 'n.primary_name', 'Count': 'degree' };
+    const orderExpr = getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
+    const dateFilter = this.getDateRangeCQL();
 
-    let txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
-    let ui2Db = { 'Actor': 'n.primary_name', 'Count': 'degree' };
-    let orderExpr = getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
-
-    let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
-      WHERE r.act_begin >= ${d1} AND r.act_end <= ${d2}  
+    const cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
+      WHERE ${dateFilter}  
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
       WHERE degree >= ${this.movieCnt} ${txtCondition}
       RETURN DISTINCT n, edges, degree 
@@ -109,8 +94,8 @@ export class Query0Component implements OnInit {
   }
 
   getDataForQueryResult(e: TableRowMeta) {
-    let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
-    let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
+    let d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+    let d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
     let s = `Get actors by title counts with: "${new Date(d1).toLocaleString()}", "${new Date(d2).toLocaleString()}", "${this.movieCnt}"`;
     if (e.tableIdx) {
       s += ', ' + e.tableIdx.join(',');
@@ -134,13 +119,21 @@ export class Query0Component implements OnInit {
 
   filterTable(filter: TableFiltering) {
     this.tableInput.currPage = 1;
-    let d1 = document.querySelector('#query0-inp1')['_flatpickr'].selectedDates[0].getTime();
-    let d2 = document.querySelector('#query0-inp2')['_flatpickr'].selectedDates[0].getTime();
-    this.getCountOfData(d1, d2, filter);
-    let skip = filter.skip ? filter.skip : 0;
-    this.loadTable(d1, d2, skip, filter);
+    this.getCountOfData(filter);
+    const skip = filter.skip ? filter.skip : 0;
+    this.loadTable(skip, filter);
     if (this.tableInput.isLoadGraph) {
-      this.loadGraph(d1, d2, skip, filter);
+      this.loadGraph(skip, filter);
     }
+  }
+
+  private getDateRangeCQL() {
+    const isLimit = this._g.userPrefs.isLimitDbQueries2range.getValue();
+    if (!isLimit) {
+      return 'TRUE';
+    }
+    const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+    const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+    return `r.act_begin >= ${d1} AND r.act_end <= ${d2}`;
   }
 }

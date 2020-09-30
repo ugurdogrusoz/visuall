@@ -25,12 +25,13 @@
     <!-- name and type input -->
     <div class="form-inline m-1 justify-content-center">
       <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
-        [(ngModel)]="currMetricName" class="form-control name-inp my-1 va-small-text">
+        [(ngModel)]="currMetricName" class="std-inp-hei form-control name-inp my-1 va-small-text">
 
       <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="currMetricColor"></app-color-picker>
 
-      <select title="Type" [disabled]="isAClassSelectedForMetric" class="custom-select tight-select filter-form va-text"
-        [(ngModel)]="selectedClass" (change)="changeSelectedClass()">
+      <select title="Type" [disabled]="isAClassSelectedForMetric"
+        class="std-inp-hei custom-select tight-select filter-form va-small-text" [(ngModel)]="selectedClass"
+        (change)="changeSelectedClass()">
         <option [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
         </option>
       </select>
@@ -61,7 +62,7 @@
     <div class="text-center borderless mx-1 my-3">
       <div class="d-flex align-items-center justify-content-center m-1"
         *ngIf="filteringRule && filteringRule.rules && filteringRule.rules.r && (!filteringRule.rules.r.ruleOperator || (filteringRule.rules.r.ruleOperator && filteringRule.rules.children.length > 0) )">
-        <input class="btn btn-dark va-text m-2" type="button" [value]="newStatBtnTxt" (click)="addStat()">
+        <input class="btn btn-sm btn-dark va-text m-2" type="button" [value]="newStatBtnTxt" (click)="addStat()">
       </div>
     </div>
   </div>

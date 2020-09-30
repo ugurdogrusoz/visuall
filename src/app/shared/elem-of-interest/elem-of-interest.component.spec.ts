@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { GlobalVariableService } from '../global-variable.service';
+import { GlobalVariableService } from '../../visuall/global-variable.service';
 import { ElemOfInterestComponent } from './elem-of-interest.component';
 
 class GlobalVariableServiceStub { }

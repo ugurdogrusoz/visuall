@@ -2,17 +2,12 @@
   <div class="va-text">
     <div class="d-flex align-items-center justify-content-center">
       Get actors who played in at least
-      <input type="number" [(ngModel)]="movieCnt" class="form-control query-input va-small-text m-1"> titles
-    </div>
-    <div class="d-flex d-inline align-items-center justify-content-center"> between
-      <input type="text" id="query0-inp1" class="form-control query-input-wide va-small-text m-1">
-      <div>and</div>
-      <input type="text" id="query0-inp2" class="form-control query-input-wide va-small-text m-1">
+      <input type="number" [(ngModel)]="movieCnt" class="form-control query-input std-inp-hei va-small-text m-1"> titles
     </div>
   </div>
 </div>
 <div class="d-flex align-items-center justify-content-center m-1">
-  <input class="btn btn-dark va-text m-2 center" type="button" (click)="prepareQuery()" value="Execute">
+  <input class="btn btn-sm btn-dark va-text m-2 center" type="button" (click)="prepareQuery()" value="Execute">
 
   <div class="custom-control custom-checkbox m-1">
     <input type="checkbox" class="form-check-input" [(ngModel)]="tableInput.isLoadGraph" />
