@@ -2,7 +2,7 @@ import { browser, by, element } from 'protractor';
 
 export class AppPage {
 
-  readonly SAMPLE_DATA_WAIT = 3000;
+  readonly DATA_WAIT = 3000;
   readonly ANIM_WAIT = 500;
 
   navigateTo() {
@@ -16,7 +16,7 @@ export class AppPage {
   async getSampleData() {
     element(by.buttonText('Data')).click();
     element(by.buttonText('Sample Data')).click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT);
+    await browser.waitForAngular();
     const hasVisibleNodesAndEdges = await browser.executeScript('return cy.$("node:visible").length > 0 && cy.$("edge:visible").length > 0');
     return hasVisibleNodesAndEdges;
   }
@@ -49,7 +49,7 @@ export class AppPage {
     await this.addPropertyRule('death_year', '≤', '2020');
 
     element(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT * 1.5);
+    await browser.sleep(this.DATA_WAIT * 1.5);
     const isAllInRange = await browser.executeScript('return cy.$("[birth_year<1994],[death_year>2020]").length == 0 && cy.$("[birth_year>=1994],[death_year<=2020]").length > 0');
     return isAllInRange;
   }
@@ -65,7 +65,8 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
 
     element(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT * 1.5);
+    await browser.sleep(this.ANIM_WAIT);
+    await browser.waitForAngular();
     if (isEdge) {
       const isAllFromTheType = await browser.executeScript(`return cy.$('.${type}').length > 0`);
       return isAllFromTheType;
@@ -108,13 +109,13 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     await this.addPropertyRule('primary_name', 'contains', 'John');
     element(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT * 1.5);
+    await browser.waitForAngular();
     const canGetAllJohns = await browser.executeScript(`return cy.$("[.Person][primary_name *='John']").length === cy.$().length`);
 
     element(by.css('img[title="Edit"]')).click();
     await this.addPropertyRule('primary_name', 'contains', 'Tom');
     element(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT * 1.5);
+    await browser.waitForAngular();
     const canGetAllJohnsAndToms = await browser.executeScript(`return cy.$("[.Person][primary_name *='John'],[primary_name *='Tom']").length === cy.$().length`);
 
     return canGetAllJohns && canGetAllJohnsAndToms;
@@ -155,7 +156,7 @@ export class AppPage {
     await this.addPropertyRule('ACTOR', '>', '3');
 
     element(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT);
+    await browser.waitForAngular();
 
     const canGetAllJos = await browser.executeScript(`return cy.$("[.Person][primary_name *='Jo']").length === cy.$().length`);
     return canGetAllJos;
@@ -181,21 +182,21 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
 
     element(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT);
+    await browser.sleep(this.DATA_WAIT);
 
     const el = element(by.css('input[placeholder="Search..."]'));
     el.clear();
     el.sendKeys('Tom');
-    await browser.sleep(this.SAMPLE_DATA_WAIT);
+    await browser.sleep(this.DATA_WAIT);
 
     // order by 
     element(by.cssContainingText('a.table-header', 'birth year')).click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT * 1.5);
+    await browser.sleep(this.DATA_WAIT * 1.5);
 
     // merge selected to grahp
     element(by.css('input.cb-table-all')).click();
     element(by.css('img[title="Merge selected to graph"]')).click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT);
+    await browser.sleep(this.DATA_WAIT);
 
     // download as CSV
     element(by.css('img[title="Download selected objects"]')).click();
@@ -209,7 +210,7 @@ export class AppPage {
 
     // load next page
     element.all(by.css('a.page-link')).last().click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT);
+    await browser.sleep(this.DATA_WAIT);
     const cntElem2 = await browser.executeScript(`return cy.$().length`) as number;
     const hasAllToms = await browser.executeScript(`return cy.$("[primary_name *= 'Tom']").length > 0 && cy.$("[primary_name *= 'Tom']").length == cy.$().length`);
 
@@ -218,7 +219,7 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     // load next page
     element.all(by.css('a.page-link')).last().click();
-    await browser.sleep(this.SAMPLE_DATA_WAIT);
+    await browser.sleep(this.DATA_WAIT);
     const cntElem3 = await browser.executeScript(`return cy.$().length`) as number;
 
     return hasAllToms && (cntElem1 * 2) === cntElem2 && cntElem3 == cntElem1;
