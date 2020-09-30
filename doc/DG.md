@@ -2,11 +2,11 @@
 
 This guide details how a custom application can be built using Visu*all*. We assume the reader has already gone over [User Guide](UG.md), and in each of the following sections, we describe how to customize various parts of a Visu*all* based visual analysis tool.
 
-Many of the things from the name and logo of your application to the type and style of nodes and edges to default values of various settings are defined in a so-called [description file](../src/assets/app_description.json). The description file contains many sections as detailed throughout this guide. 
+Firstly, a developer who wants make customizations should only change the files under **/src/app/custom** folder. Many of the things from the name and logo of your application to the type and style of nodes and edges to default values of various settings are defined in a so-called [description file](../src/app/custom/config/app_description.json). The description file contains many sections as detailed throughout this guide. 
 
 Once this file is prepared, the [style generator](../src/style-generator.js) file modifies [index.html](../src/index.html) file, [styles.css](../src/styles.css) file, [properties.json](../src/assets/generated/properties.json) file and [stylesheet.json](../src/assets/generated/stylesheet.json) file, resulting in the desired customization, using the command:
 - First navigate to `src` folder
-- Then execute `node style-generator.js assets/app_description.json`
+- Then execute `node style-generator.js` (by default it will use [app_description.json](../src/app/custom/config/app_description.json))
 
 Note that some of the changes made in the description file will automatically be shown on the web page without executing the above command. However, it is not always the case. So it is recommended to always run the style generation command after changing the description file.
 
@@ -16,8 +16,8 @@ Here is the overall look of the sample application on movies and people taking p
     <img src="image/visuall-ss.png" title="Visuall and its various components"/>
 </p>
 
-
-## Application Information
+## Application Description File
+### Application Information
 
 The first section of the description file named "appInfo" contains miscellaneous information about the visual application being developed as follows:
 
@@ -30,22 +30,19 @@ The first section of the description file named "appInfo" contains miscellaneous
 
 Below is how this section appears for the sample application:
 ```
-  "appInfo": {
-    "name": "Visu<i>all</i> Sample App",
-    "html_header": "Visuall Sample App",
-    "icon": "assets/img/logo.png",
-    "version": "1.0.0 beta",
-    "company_name": "i-Vis at Bilkent",
-    "company_contact": "ivis@cs.bilkent.edu.tr"
-  }
+"appInfo": {
+  "name": "Visu<i>all</i> Sample App",
+  "html_header": "Visuall Sample App",
+  "icon": "assets/img/logo.png",
+  "version": "1.0.0 beta",
+  "company_name": "i-Vis at Bilkent",
+  "company_contact": "ivis@cs.bilkent.edu.tr"
+}
 ```
-## Data Model
-
-One of the essential definitions in this file is the structure of the data: the type and properties of *objects* and *relations* among these objects.
 
 ### Objects
 
-The section named "objects" contains the stucture of different kinds of objects in your graphs. In other words, each *object* corresponds to a *node* type in your graph. For instance, in the sample movie application, there are two classes of nodes: `Person` and `Title`. 
+The section named "objects" contains the stucture of different kinds of objects in your graphs. In other words, each *object* corresponds to a *node/vertex* type in your graph. For instance, in the sample movie application, there are two classes of nodes: `Person` and `Title`. 
 
 Each node has a set of associated *properties* and *style*. Each property has a name and data type. For example, `Person` class has the following properties: `name`, `born`, `start_t`, and `end_t`.  
 
@@ -57,30 +54,11 @@ Each *property* is one of the following data types: `string`, `int`, `float`, `d
     <img src="image/list-example.png" width="480"/>
 </p>
 
-Finally, `enum` is a special type to define a group of pre-defined values for this property. Each `enum` type should be defined as a tuple `enum,<type>`, where the second element of the tuple corresponds to the type of the values in that enumeration. For instance, `enum,string` means this property's values are *string*. The corresponding set of values to be actually used must be defined in the section named `enumMapping` inside the description file. These values are shown to the user with a *dropdown box*.
-
-For example, in the sample application, the genre of a movie is defined as an enumeration (i.e. `enum,string`) where the internal values as kept in the database and those values as shown in the application happen to be the same strings:
-```
-  "enumMapping": {
-    "Movie": {
-      "genre": {
-        "Comedy": "Comedy",
-        "Adventure": "Adventure",
-        "Thriller": "Thriller",
-        "Crime": "Crime",
-        "Action": "Action",
-        "Drama": "Drama"
-      }
-```
-Hence, this property is shown as a dropdown box in the application user interface:
-
-<p align="center">
-    <img src="image/enum-example.png" width="340"/>
-</p>
+Finally, `enum` is a special type to define a group of pre-defined values for this property. Each `enum` type should be defined as a tuple `enum,<type>`, where the second element of the tuple corresponds to the type of the values in that enumeration. For instance, `enum,string` means this property's values are *string*. The corresponding set of enumeration values should be defined in a separate  [enums.json](../src/app/custom/config/enums.json) file. You should put which property of which class should be enumeration inside `enumMapping` section in the description file. These values are shown to the user with a *dropdown box*.
 
 ### Relations
 
-This section contains the structure of different kinds of relations among the objects in your graph. Each *relation* corresponds to an *edge* type in your graph with specific types of `source` and `target` nodes. `isBidirectional` is used to specify if the edge is bi-directional (undirected) or uni-directional (directed). For instance, in the sample movie application, we define an edge type named `ACTED_IN` from `Person` objects to `Movie` objects as `source` and `target`, respectively, with `isBirectional` set to `false`.
+This section contains the structure of different kinds of relations among the objects in your graph. Each *relation* corresponds to an *edge/relation* type in your graph with specific types of `source` and `target` nodes. `isBidirectional` is used to specify if the edge is bi-directional (undirected) or uni-directional (directed). For instance, in the sample movie application, we define an edge type named `ACTED_IN` from `Person` objects to `Movie` objects as `source` and `target`, respectively, with `isBirectional` set to `false`.
 
 ### Styling graph objects
 
@@ -119,20 +97,38 @@ Here, the rating is a value in range [0,10], which is linearly mapped to [20px,6
 
 ### Enumeration mapping
 
-"enumMapping" section of the file is used to map enum values to actual values to be shown. For example, the status of a computer device in a computer network might be internally represented with integers 1 and 2, corresponding to "up" and "down". Here, the type of the property `status` should be defined as `enum,int`, and the corresponding values are provided in an enumeration mapping in this section as:
+"enumMapping" section of the file is used to map enum values to actual values to be shown. For example, in the sample application, the `title_type` of a `Title` is defined as an enumeration (i.e. `enum,string`) where the internal values as kept in the database but mapped values are shown in the user-interface. Below is `enumMapping` section of the description file.
 ```
-  "enumMapping": {
-    "Device": {
-      "status": {
-        1: "up",
-        2: "down"
-      }
-    ...
+"enumMapping": {
+  "Title": {
+    "is_adult": "is_adult",
+    "title_type": "title_type"
+  }
+}
 ```
+Below is the enumeration mapping defined in `enums.json` file
+```
+"title_type": {
+  "short": "Short movie",
+  "movie": "Movie",
+  "tvSeries": "TV series",
+  "tvEpisode": "TV episode",
+  "tvMiniSeries": "TV mini-series",
+  "videoGame": "Video game",
+  "tvMovie": "TV movie",
+  "video": "Video",
+  "tvSpecial": "TV special"
+}
+```
+Values of this mapping is shown as a dropdown box in the user-interface:
+
+<p align="center">
+    <img src="image/enum-example.png" width="340"/>
+</p>
 
 ### Timebar
 
-"timebarDataMapping" section of the model description file is used to map the lifetime of nodes and edges. Lifetime information is used in [timebar service](../src/app/timebar.service.ts) to filter graph objects by time and show useful, user-defined statistics during the specified period. Ideally, each *object* and each *relation* would have two datetime properties corresponding to their *begin* and *end* datetimes. These two fields should be provided under *begin_datetime* and *end_datetime*, respectively. In case begin or end datetime of a graph object is not mapped to a property of that object, Visu*all* assumes the default begin (as early as minus infinity) and end datetimes (as late as plus infinity) for the timebar.
+"timebarDataMapping" section of the app description file is used to map the lifetime of nodes and edges. Lifetime information is used in [timebar service](../src/app/timebar.service.ts) to filter graph objects by time and show useful, user-defined statistics during the specified period. Ideally, each *object* and each *relation* would have two datetime properties corresponding to their *begin* and *end* datetimes. These two fields should be provided under *begin_datetime* and *end_datetime*, respectively. In case begin or end datetime of a graph object is not mapped to a property of that object, Visu*all* assumes the default begin (as early as minus infinity) and end datetimes (as late as plus infinity) for the timebar.
 
 Minimum and maximum values for begin and datetimes are specified in the section on application default settings.
 
@@ -147,10 +143,6 @@ Minimum and maximum values for begin and datetimes are specified in the section 
 <p align="center">
     <img src="image/settings.png" width="407"/>
 </p>
-
-One particular setting specified in this section but not exposed to the user under the Settings tab are timebar related:
-- **timebar_min**: Minimum begin date of graph objects in [Unix time stamp in milliseconds](https://currentmillis.com/),
-- **timebar_max**: Maximum begin date of graph objects in [Unix time stamp in milliseconds](https://currentmillis.com/).
 
 The developer also defines their style preferences in this section. For instance, Visu*all* makes use of the following text styles exclusively:
 ```
@@ -243,16 +235,7 @@ To prevent conflicts, you should **not** modify [app.module.ts file](../src/app/
 
 
 ## Database connection
-To connect the database, visuall needs to read database connection information. Visual reads a file named **db-config.json**. The file should be added by the developer. Since the content of the file is environment dependent, it is written to `.gitignore` to be ignored. The file should be inside the folder **\assets**. An example file content is given below
-```
-{
-  "database": {
-    "url": "http://localhost:7474/db/data/transaction/commit",
-    "username": "neo4j",
-    "password": "123"
-  }
-}
-```
+To connect the database, visuall uses [environment variables](../src/environments/environment.ts) Foreach different environment you would like to use, you should add a new environment file. You can make your own files similar to [environment.ts](../src/environments/environment.ts) and [environment.heroku.ts](../src/environments/environment.heroku.ts)
 
 ### Using A Different Database 
 
