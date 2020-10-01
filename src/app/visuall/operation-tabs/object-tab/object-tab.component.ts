@@ -325,7 +325,7 @@ export class ObjectTabComponent implements OnInit {
   }
 
   getMappedProperty(className: string, propertyName: string, propertyValue: string): string {
-    const enumMap = this._g.appDescription.getValue().enumMapping;
+    const enumMap = this._g.getEnumMapping();
     let classes = Object.keys(enumMap);
     let c = classes.find(x => x == className);
     if (!c) {
