@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
-import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COLLAPSED_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY, CLUSTER_CLASS } from '../../constants';
-import * as $ from 'jquery';
+import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COLLAPSED_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY, CLUSTER_CLASS, extend } from '../../constants';
 import { TableViewInput, TableData, TableDataType, TableFiltering, property2TableData, filterTableDatas } from '../../../shared/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { CytoscapeService } from '../../cytoscape.service';
@@ -258,7 +257,7 @@ export class ObjectTabComponent implements OnInit {
       }
 
       if (firstElem === null) {
-        firstElem = $.extend(firstElem, data);
+        firstElem = extend(firstElem, data);
       }
 
       if (eleList.length === 1) {

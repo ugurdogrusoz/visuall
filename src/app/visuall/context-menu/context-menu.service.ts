@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import cytoscape from 'cytoscape';
 import * as contextMenus from 'cytoscape-context-menus';
-import * as $ from 'jquery';
 import { CytoscapeService } from '../cytoscape.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { ContextMenuItem } from './icontext-menu';
@@ -78,7 +77,7 @@ export class ContextMenuService {
   bindContextMenuExtension() {
 
     // register context menu extension
-    cytoscape.use(contextMenus, $);
+    cytoscape.use(contextMenus);
     this.menu = this._customizationService.menu.concat(this.menu);
     this._g.cy.contextMenus({ menuItems: this.menu, menuItemClasses: ['vall-ctx-menu-item'], contextMenuClasses: ['vall-ctx-menu'] });
   }

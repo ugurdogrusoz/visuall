@@ -6,7 +6,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaveAsPngModalComponent } from '../popups/save-as-png-modal/save-as-png-modal.component';
 import { AboutModalComponent } from '../popups/about-modal/about-modal.component';
 import { QuickHelpModalComponent } from '../popups/quick-help-modal/quick-help-modal.component';
-import * as $ from 'jquery';
 import { NavbarCustomizationService } from '../../custom/navbar-customization.service';
 import { NavbarDropdown, NavbarAction } from './inavbar';
 import { UserProfileService } from '../user-profile.service';
@@ -148,7 +147,7 @@ export class NavbarComponent implements OnInit {
 
   showAll() { this._cyService.showHideSelectedElements(false); }
 
-  search2Highlight() { $('#highlight-search-inp').focus(); }
+  search2Highlight() { document.getElementById('#highlight-search-inp').focus(); }
 
   highlightSelected() { this._cyService.highlightSelected(); }
 

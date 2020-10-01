@@ -27,11 +27,11 @@ export class CyExtService {
     // register navigator extension
     navigator(cytoscape);
     // register view utilities extension
-    viewUtilities(cytoscape, $);
+    viewUtilities(cytoscape);
     //register expand-collapse extension
     expandCollapse(cytoscape);
     //register layour utilities extension
-    layoutUtilities(cytoscape, $);
+    layoutUtilities(cytoscape);
     // use fcose layout algorithm
     cytoscape.use(fcose);
     // use cise layout algorithm
@@ -56,7 +56,9 @@ export class CyExtService {
       return;
     }
     const cyNaviClass = 'cytoscape-navigator-wrapper';
-    $('#cy').append(`<div class='${cyNaviClass}'></div>`);
+    const div = document.createElement('div');
+    div.className = cyNaviClass;
+    document.getElementById('cy').append(div);
 
     this.setNavigatorPosition();
     let defaults = {
@@ -93,7 +95,7 @@ export class CyExtService {
     // to render navigator, fire zoom event
     this._g.cy.zoom(this._g.cy.zoom() + 0.00001);
     // to prevent expandCollapse extension's blocking 
-    $('.' + cyNaviClass).css('z-index', 1000);
+    (document.getElementsByClassName(cyNaviClass)[0] as HTMLElement).style.zIndex = '1000';
   }
 
   unbindNavigatorExtension() {
