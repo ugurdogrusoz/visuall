@@ -35,6 +35,11 @@ describe('workspace-project App', () => {
     expect(page.queryByAndRule()).toEqual(true);
   });
 
+  it('Timebar metric as AND rule birth > 1994 && death < 2020', async () => {
+    page.navigateTo();
+    expect(page.timebarMetricAndRule()).toEqual(true);
+  });
+
   it('Query by Condition get All Persons', async () => {
     page.navigateTo();
     expect(page.queryByConditionRuleGetAll('Person', false)).toEqual(true);
