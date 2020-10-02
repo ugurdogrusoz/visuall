@@ -398,7 +398,7 @@ export class MapTabComponent implements OnInit {
     this.queryRule = null;
     this.tableInput = {
       columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize,
-      isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
+      isEmphasizeOnHover: true, isLoadGraph: false, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
     };
     this.isClassTypeLocked = false;
     this.selectedClass = this.classOptions[0].text;

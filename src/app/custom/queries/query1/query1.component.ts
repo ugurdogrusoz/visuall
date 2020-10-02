@@ -17,7 +17,7 @@ export class Query1Component implements OnInit {
   movieGenres: string[];
   tableInput: TableViewInput = {
     columns: ['Title'], results: [], isEmphasizeOnHover: true, tableTitle: 'Query Results', classNameOfObjects: 'Title',
-    resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true
+    resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: false, isMergeGraph: true, isNodeData: true
   };
   tableFilled = new Subject<boolean>();
 

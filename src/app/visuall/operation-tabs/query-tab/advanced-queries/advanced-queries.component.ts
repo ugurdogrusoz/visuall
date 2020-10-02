@@ -28,7 +28,7 @@ export class AdvancedQueriesComponent implements OnInit {
   addNodeBtnTxt = 'Select Nodes to Add';
   tableInput: TableViewInput = {
     columns: ['Title'], results: [], isEmphasizeOnHover: true, tableTitle: 'Query Results',
-    resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true
+    resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: false, isMergeGraph: true, isNodeData: true
   };
   tableFilter: TableFiltering = { orderBy: null, orderDirection: null, txt: '', skip: null };
   tableFilled = new Subject<boolean>();

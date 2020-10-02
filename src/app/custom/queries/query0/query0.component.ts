@@ -18,7 +18,7 @@ export class Query0Component implements OnInit {
 
   tableInput: TableViewInput = {
     columns: ['Actor', 'Count'], results: [], tableTitle: 'Query Results', isEmphasizeOnHover: true, classNameOfObjects: 'Person',
-    resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: true, isMergeGraph: true, isNodeData: true
+    resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: false, isMergeGraph: true, isNodeData: true
   };
 
   constructor(private _dbService: Neo4jDb, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
