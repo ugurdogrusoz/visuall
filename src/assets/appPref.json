@@ -18,19 +18,20 @@
     "tableColumnLimit": 3,
     "highlightStyles": [
         {
-            "wid": 4.5,
+            "wid": 4,
             "color": "#FCE903"
         },
         {
-            "wid": 4.5,
+            "wid": 4,
             "color": "#00ffff"
         },
         {
-            "wid": 4.5,
+            "wid": 4,
             "color": "#04f06a"
         }
     ],
     "currHighlightIdx": 0,
+    "selectionColor": "#d3d3d3",
     "groupingOption": 0,
     "mergedElemIndicator": 2,
     "nodeLabelWrap": 0,
