@@ -15,6 +15,7 @@ export class TimebarService {
   private _timebarExt: Timebar;
   private _playingPeriod: number;
   private _prevElems: any = null;
+  isShowFromHide = false;
   showHideFn: (isHide: boolean) => void;
 
   constructor(private _g: GlobalVariableService) { }
@@ -32,6 +33,11 @@ export class TimebarService {
     const isChanged = this.hasElemsChanged(this._prevElems, elems);
     this._prevElems = elems;
     if (!isChanged) {
+      return;
+    }
+    if (this.isShowFromHide) {
+      this.isShowFromHide = false;
+      this._g.cy.fit();
       return;
     }
     if (this.isRandomizedLayout) {
@@ -92,11 +98,7 @@ export class TimebarService {
       showOnlyElems: this.shownOnlyElems.bind(this),
       chartRendered: () => {
         const isEnabled = this._g.userPrefs.timebar.isEnabled.getValue() && this._g.cy.$().length > 0;
-        if (!isEnabled) {
-          this.showHideFn(true);
-        } else {
-          this.showHideFn(false);
-        }
+        this.showHideFn(!isEnabled);
       },
     };
     s['events'] = e;

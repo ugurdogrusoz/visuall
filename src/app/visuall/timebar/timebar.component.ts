@@ -139,6 +139,7 @@ export class TimebarComponent implements OnInit {
     } else if (this._g.userPrefs.timebar.isEnabled.getValue() && this.isHide) {
       this.isHide = false;
       this.s.showHideTimebar(true);
+      this.s.isShowFromHide = true;
     }
   }
 
