@@ -41,7 +41,6 @@
     "cytoscape-view-utilities": "github:iVis-at-Bilkent/cytoscape.js-view-utilities#unstable",
     "express": "^4.17.1",
     "flatpickr": "^4.6.6",
-    "geometric": "^2.2.3",
     "http": "0.0.1-security",
     "https": "^1.0.0",
     "jquery": "^3.5.1",

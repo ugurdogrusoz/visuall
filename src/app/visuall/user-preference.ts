@@ -27,7 +27,6 @@ export interface UserPref {
   compoundPadding: BehaviorSubject<string>;
   edgeCollapseLimit: BehaviorSubject<number>
   objectInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
-  selectionColor: BehaviorSubject<string>;
 
 
   timebar: {

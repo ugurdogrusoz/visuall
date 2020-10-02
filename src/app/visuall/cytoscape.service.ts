@@ -455,14 +455,12 @@ export class CytoscapeService {
       return;
     }
     this._g.highlightElems(selected);
-    this._g.cy.style().selector(':selected').style({ 'overlay-color': this._g.userPrefs.selectionColor.getValue() }).update();
   }
 
   staticHighlightNeighbors() {
     let selected = this._g.cy.$(':selected');
     let neighbors = selected.neighborhood();
     this._g.highlightElems(selected.union(neighbors));
-    this._g.cy.style().selector(':selected').style({ 'overlay-color': this._g.userPrefs.selectionColor.getValue() }).update();
   }
 
   removeHighlights() {
@@ -547,7 +545,7 @@ export class CytoscapeService {
     if (selectedEdges.length + selectedNodes.length < 1) {
       return;
     }
-    // according to cytoscape.js format
+    // according to cytoscape.js format 
     const o = { nodes: [], edges: [] };
     for (const e of selectedEdges) {
       o.edges.push(e.json());
@@ -736,7 +734,7 @@ export class CytoscapeService {
 
   hideCompoundNode(node, edgeIdDict) {
     let children = node.children(); // a node might have children
-    let collapsed = node.data('collapsedChildren'); // a node might a collapsed
+    let collapsed = node.data('collapsedChildren'); // a node might a collapsed 
     let collapsedEdgeIds = children.connectedEdges().filter('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
 
     if (collapsed) {
@@ -909,7 +907,7 @@ export class CytoscapeService {
       if (!isSelectionLocked) {
         return;
       }
-      // wait to prevent unselect clicked node, after tapend
+      // wait to prevent unselect clicked node, after tapend 
       setTimeout(() => {
         this._g.cy.autounselectify(false);
         isSelectionLocked = false;
@@ -940,7 +938,7 @@ export class CytoscapeService {
       if (!isSelectionLocked) {
         return;
       }
-      // wait to prevent unselect clicked node, after tapend
+      // wait to prevent unselect clicked node, after tapend 
       setTimeout(() => {
         this._g.cy.autounselectify(false);
         isSelectionLocked = false;
