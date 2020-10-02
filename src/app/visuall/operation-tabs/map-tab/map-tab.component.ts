@@ -33,7 +33,7 @@ export class MapTabComponent implements OnInit {
   editingPropertyRule: Rule;
   tableInput: TableViewInput = {
     columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: 0,
-    isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
+    isEmphasizeOnHover: true, isLoadGraph: false, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
   };
   tableFilled = new Subject<boolean>();
   isClassTypeLocked: boolean;
