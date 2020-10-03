@@ -44,6 +44,20 @@
       </div>
     </div>
     <div class="card border-0 m-1">
+      <div class="form">
+        <div class="form-check-label va-text">Selection color &nbsp;</div>
+          <label class="form-check-label">
+            <div class="leftObj">
+              <app-color-picker (onColorSelected)="onSelColorSelected($event)" [currColor]="selectionColor"></app-color-picker>
+            </div>
+            <label class="rightObj">
+              <input type="number" max="20" min="1" (change)="onSelWidSelected($event)" [(ngModel)]="selectionWidth"
+                class="form-control inp-3-char std-inp-hei-sec va-small-text">
+            </label>
+          </label>
+        </div>
+    </div>
+    <div class="card border-0 m-1">
       <div class="form-inline">
         <label class="form-check-label va-text">Highlight style</label>
         <div class="mx-1">

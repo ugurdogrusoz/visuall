@@ -25,8 +25,10 @@ export interface UserPref {
   highlightStyles: { wid: BehaviorSubject<number>, color: BehaviorSubject<string> }[];
   currHighlightIdx: BehaviorSubject<number>;
   compoundPadding: BehaviorSubject<string>;
-  edgeCollapseLimit: BehaviorSubject<number>
+  edgeCollapseLimit: BehaviorSubject<number>;
   objectInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
+  selectionColor: BehaviorSubject<string>;
+  selectionWidth: BehaviorSubject<number>;
 
 
   timebar: {

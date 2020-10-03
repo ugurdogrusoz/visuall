@@ -7,6 +7,7 @@ import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, getCyStyleFromColorAndWid }
 import flatpickr from 'flatpickr';
 import { ErrorModalComponent } from '../../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-settings-tab',
@@ -44,6 +45,8 @@ export class SettingsTabComponent implements OnInit {
   currHighlightStyles: string[] = [];
   highlightStyleIdx = 0;
   isStoreUserProfile = true;
+  selectionColor = "#6c757d";
+  selectionWidth = 3;
 
   constructor(private _g: GlobalVariableService, private _profile: UserProfileService, private _modalService: NgbModal) {
     this._profile.onLoadFromFile.subscribe(x => {
@@ -177,23 +180,35 @@ export class SettingsTabComponent implements OnInit {
 
   private setHighlightStyles() {
     if (!this._g.viewUtils) {
+      this._g.cy.style().selector(':selected').style({
+        'overlay-color': this.selectionColor,
+        'overlay-padding': this.selectionWidth }).update();
       return;
     }
     this.currHighlightStyles = [];
     let styles = this._g.viewUtils.getHighlightStyles();
     for (let i = 0; i < styles.length; i++) {
       this.currHighlightStyles.push('Style ' + (i + 1));
-      let c = styles[i].node['border-color'];
-      let w = styles[i].node['border-width'];
-      if (this._g.userPrefs.highlightStyles[i]) {
+      let c = styles[i].node['overlay-color'];
+      let w = styles[i].node['overlay-padding'];
+      if (this._g.userPrefs.highlightStyles[i].color && this._g.userPrefs.highlightStyles[i].wid) {
         this._g.userPrefs.highlightStyles[i].color.next(c);
         this._g.userPrefs.highlightStyles[i].wid.next(w);
       } else {
         this._g.userPrefs.highlightStyles[i] = { wid: new BehaviorSubject<number>(w), color: new BehaviorSubject<string>(c) };
+        this._g.cy.style().selector(':selected').style({
+          'overlay-color': this.selectionColor,
+          'overlay-padding': this.selectionWidth }).update();
       }
+      this._g.cy.style().selector(':selected').style({
+        'overlay-color': this.selectionColor,
+        'overlay-padding': this.selectionWidth }).update();
     }
     this._g.userPrefs.highlightStyles.splice(styles.length);
     this._profile.saveUserPrefs();
+    this._g.cy.style().selector(':selected').style({
+      'overlay-color': this.selectionColor,
+      'overlay-padding': this.selectionWidth}).update();
   }
 
   // set view utils extension highlight styles from memory (_g.userPrefs)
@@ -218,10 +233,27 @@ export class SettingsTabComponent implements OnInit {
     }
     obj.next(val);
     this._profile.saveUserPrefs();
+    this._g.cy.style().selector(':selected').style({
+      'overlay-color': this.selectionColor,
+      'overlay-padding': this.selectionWidth}).update();
   }
 
   onColorSelected(c: string) {
     this.highlightColor = c;
+  }
+
+  onSelColorSelected(c: string) {
+    this._g.userPrefs.selectionColor.next(c);
+    this.selectionColor = c;
+    this._g.cy.style().selector('core').style({ 'selection-box-color': c })
+    this._g.cy.style().selector(':selected').style({ 'overlay-color': c }).update();
+  }
+
+  onSelWidSelected( w ) {
+    let width = parseFloat(w.target.value);
+    this._g.userPrefs.selectionWidth.next(width);
+    this.selectionWidth = width;
+    this._g.cy.style().selector(':selected').style({ 'overlay-padding': width }).update();
   }
 
   // used to change border width or color. One of them should be defined. (exclusively)
@@ -229,7 +261,13 @@ export class SettingsTabComponent implements OnInit {
     this.bandPassHighlightWidth();
     let cyStyle = getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
     this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, cyStyle.nodeCss, cyStyle.edgeCss);
+    this._g.cy.style().selector(':selected').style({
+      'overlay-color': this.selectionColor,
+      'overlay-padding': this.selectionWidth}).update();
     this.setHighlightStyles();
+    this._g.cy.style().selector(':selected').style({'overlay-opacity' : 0.3,
+      'overlay-color' : this.selectionColor,
+      'overlay-padding': this.selectionWidth}).update();
   }
 
   deleteHighlightStyle() {
@@ -243,6 +281,9 @@ export class SettingsTabComponent implements OnInit {
       this.highlightStyleIdx = styleCnt;
     }
     this.highlightStyleSelected(this.highlightStyleIdx);
+    this._g.cy.style().selector(':selected').style({
+      'overlay-color': this.selectionColor,
+      'overlay-padding': this.selectionWidth }).update();
   }
 
   addHighlightStyle() {
@@ -252,15 +293,22 @@ export class SettingsTabComponent implements OnInit {
     this.setHighlightStyles();
     this.highlightStyleIdx = this.currHighlightStyles.length - 1;
     this.highlightStyleSelected(this.highlightStyleIdx);
+
+    this._g.cy.style().selector(':selected').style({'overlay-opacity' : 0.3,
+      'overlay-color' : this.selectionColor,
+      'overlay-padding': this.selectionWidth}).update();
   }
 
   highlightStyleSelected(i: number) {
     this.highlightStyleIdx = i;
     this._g.userPrefs.currHighlightIdx.next(i);
     let style = this._g.viewUtils.getHighlightStyles()[i];
-    this.highlightColor = style.node['border-color'];
-    this.highlightWidth = style.node['border-width'];
+    this.highlightColor = style.node['overlay-color'];
+    this.highlightWidth = style.node['overlay-padding'];
     this._profile.saveUserPrefs();
+    this._g.cy.style().selector(':selected').style({
+      'overlay-color': this.selectionColor,
+      'overlay-padding': this.selectionWidth }).update();
   }
 
   bandPassHighlightWidth() {

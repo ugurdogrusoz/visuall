@@ -435,6 +435,8 @@
       }
     ],
     "currHighlightIdx": 0,
+    "selectionColor": "#6c757d",
+    "selectionWidth": 3,
     "groupingOption": 0,
     "mergedElemIndicator": 2,
     "nodeLabelWrap": 0,
