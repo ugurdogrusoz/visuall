@@ -46,7 +46,7 @@ export class SettingsTabComponent implements OnInit {
   highlightStyleIdx = 0;
   isStoreUserProfile = true;
   selectionColor = "#6c757d";
-  selectionWidth = 3;
+  selectionWidth = 4.5;
 
   constructor(private _g: GlobalVariableService, private _profile: UserProfileService, private _modalService: NgbModal) {
     this._profile.onLoadFromFile.subscribe(x => {
