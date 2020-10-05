@@ -164,6 +164,10 @@ export class GlobalVariableService {
   }
 
   getLabels4Elems(elemIds: string[] | number[], isNode: boolean = true, objDatas: GraphElem[] = null): string {
+    return this.getLabels4ElemsAsArray(elemIds, isNode, objDatas).join(',');
+  }
+
+  getLabels4ElemsAsArray(elemIds: string[] | number[], isNode: boolean = true, objDatas: GraphElem[] = null): string[] {
     let cyIds: string[] = [];
     let idChar = 'n';
     if (!isNode) {
@@ -177,7 +181,7 @@ export class GlobalVariableService {
       }
     }
 
-    let labels = '';
+    const labels = [];
     let labelParent: any = this.appDescription.getValue().objects;
     if (!isNode) {
       labelParent = this.appDescription.getValue().relations;
@@ -192,23 +196,23 @@ export class GlobalVariableService {
 
       let s = labelParent[cName]['style']['label'] as string;
       if (s.indexOf('(') < 0) {
-        labels += s + ',';
+        labels.push(s);
       } else {
         let propName = s.slice(s.indexOf('(') + 1, s.indexOf(')'));
         if (!objDatas) {
-          labels += this.cy.$('#' + cyIds[i]).data(propName) + ',';
+          labels.push(this.cy.$('#' + cyIds[i]).data(propName));
         } else {
           const currData = objDatas[i].data;
           let l = currData[propName];
           if (!l) {
             l = currData[Object.keys(currData)[0]]
           }
-          labels += l + ',';
+          labels.push(l);
         }
       }
     }
 
-    return labels.slice(0, -1);
+    return labels;
   }
 
   listen4graphEvents() {

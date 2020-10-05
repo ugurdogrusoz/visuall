@@ -70,7 +70,7 @@ export class AdvancedQueriesComponent implements OnInit {
       return;
     }
     const dbIds = selectedNodes.map(x => x.id().slice(1));
-    const labels = this._g.getLabels4Elems(dbIds).split(',');
+    const labels = this._g.getLabels4ElemsAsArray(dbIds);
     const types = selectedNodes.map(x => x.classes()[0]);
     for (let i = 0; i < labels.length; i++) {
       if (this.selectedNodes.findIndex(x => x.dbId == dbIds[i]) < 0) {
@@ -241,7 +241,7 @@ export class AdvancedQueriesComponent implements OnInit {
         }
       }
 
-      const labels = this._g.getLabels4Elems(null, true, elems).split(',');
+      const labels = this._g.getLabels4ElemsAsArray(null, true, elems);
       this.selectedNodes = this.selectedNodes.concat(elems.map((x, i) => { return { dbId: x.data.id.substring(1), label: x.classes.split(' ')[0] + ':' + labels[i] } }));
     });
   }
