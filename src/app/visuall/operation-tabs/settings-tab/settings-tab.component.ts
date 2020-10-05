@@ -81,11 +81,13 @@ export class SettingsTabComponent implements OnInit {
         this.fillUIFromMemory();
       }
     });
-    this.setDates4DbQuery();
   }
 
   private setDates4DbQuery() {
+
     setTimeout(() => {
+      const maxDate = this._g.userPrefsFromFiles.dbQueryTimeRange.end.getValue();
+      const minDate = this._g.userPrefsFromFiles.dbQueryTimeRange.start.getValue();
       const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
       const opt1 = {
         defaultDate: new Date(d1), enableTime: true, enableSeconds: true, time_24hr: true,
@@ -101,8 +103,8 @@ export class SettingsTabComponent implements OnInit {
           this._g.userPrefs.dbQueryTimeRange.start.next(dateTime);
           this._profile.saveUserPrefs();
         },
-        minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
-        maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
+        minDate: minDate,
+        maxDate: maxDate,
       };
       const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
       const opt2 = {
@@ -119,8 +121,8 @@ export class SettingsTabComponent implements OnInit {
           this._g.userPrefs.dbQueryTimeRange.end.next(dateTime);
           this._profile.saveUserPrefs();
         },
-        minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
-        maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
+        minDate: minDate,
+        maxDate: maxDate,
       };
       flatpickr(this.dbQueryDate1.nativeElement, opt1);
       flatpickr(this.dbQueryDate2.nativeElement, opt2);
@@ -173,6 +175,7 @@ export class SettingsTabComponent implements OnInit {
 
     this.setHighlightStyles();
     this.highlightStyleSelected(this._g.userPrefs.currHighlightIdx.getValue());
+    this.setDates4DbQuery();
   }
 
   private setHighlightStyles() {

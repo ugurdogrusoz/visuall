@@ -20,6 +20,7 @@ export class GlobalVariableService {
   hiddenClasses: Set<string>;
   setLoadingStatus: (boolean) => void;
   userPrefs: UserPref = {} as UserPref;
+  userPrefsFromFiles: UserPref = {} as UserPref;
   shownElemsChanged = new BehaviorSubject<boolean>(true);
   operationTabChanged = new BehaviorSubject<number>(1);
   isSwitch2ObjTabOnSelect: boolean = true;
@@ -44,11 +45,13 @@ export class GlobalVariableService {
     // set default values dynamically
     this._http.get('./assets/appPref.json').subscribe(x => {
       this.setUserPrefs(x, this.userPrefs);
+      this.setUserPrefs(x, this.userPrefsFromFiles);
 
       // set user prefered values. These will be overriden if "Store User Profile" is checked
       this._http.get('/app/custom/config/app_description.json').subscribe(x => {
         this.appDescription.next(x);
         this.setUserPrefs(x['appPreferences'], this.userPrefs);
+        this.setUserPrefs(x['appPreferences'], this.userPrefsFromFiles);
         this.isUserPrefReady.next(true);
       }, (e) => { console.log('error: ', e); });
     }, (e) => { console.log('error: ', e); });
