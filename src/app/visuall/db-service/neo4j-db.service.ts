@@ -49,24 +49,39 @@ export class Neo4jDb implements DbService {
 
   getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, meta?: DbQueryMeta) {
     let isEdgeQuery = meta && meta.isEdgeQuery;
-    let idFilter = this.buildIdFilter(elemIds, false, isEdgeQuery);
+    const idFilter = this.buildIdFilter(elemIds, false, isEdgeQuery);
     let edgeCql = '';
     if (meta && meta.edgeType != undefined && typeof meta.edgeType == 'string' && meta.edgeType.length > 0) {
       edgeCql = `-[e:${meta.edgeType}`;
     } else if (meta && meta.edgeType != undefined && typeof meta.edgeType == 'object') {
-      edgeCql = `-[e:${meta.edgeType.join('|')}`;
+      if (meta.isMultiLength) {
+        for (let i = 0; i < meta.edgeType.length; i++) {
+          if (i != meta.edgeType.length - 1) {
+            edgeCql += `-[e${i}:${meta.edgeType[i]}]-()`;
+          } else {
+            edgeCql += `-[e${i}:${meta.edgeType[i]}`;
+          }
+        }
+      } else {
+        edgeCql = `-[e:${meta.edgeType.join('|')}`;
+      }
     } else {
       edgeCql = `-[e`;
     }
     let targetCql = '';
     if (meta && meta.targetType != undefined && meta.targetType.length > 0) {
-      edgeCql += '*' + meta.depth;
       targetCql = ':' + meta.targetType;
     }
     edgeCql += ']-';
 
     let f2 = this.dateFilterFromUserPref('n', true);
-    f2 += this.dateFilterFromUserPref('e', false);
+    if (meta && meta.isMultiLength) {
+      for (let i = 0; i < meta.edgeType.length; i++) {
+        f2 += this.dateFilterFromUserPref('e' + i, false);
+      }
+    } else {
+      f2 += this.dateFilterFromUserPref('e', false);
+    }
 
     this.runQuery(`MATCH p=(n)${edgeCql}(${targetCql}) WHERE ${idFilter} ${f2} RETURN p`, callback);
   }

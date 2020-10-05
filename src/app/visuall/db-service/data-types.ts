@@ -48,7 +48,7 @@ export interface HistoryMetaData {
 export interface DbQueryMeta {
   edgeType?: string | string[];
   targetType?: string;
-  depth?: number;
+  isMultiLength?: boolean;
   isEdgeQuery?: boolean;
 }
 
