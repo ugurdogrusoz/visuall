@@ -139,9 +139,13 @@ export class GlobalVariableService {
 
   highlightElems(elems) {
     this.viewUtils.highlight(elems, this.userPrefs.currHighlightIdx.getValue());
+    this.selectionUpdate();
+  }
+
+  selectionUpdate(){
     this.cy.style().selector(':selected').style({
-      'overlay-color': this.userPrefs.selectionColor,
-      'overlay-padding': this.userPrefs.selectionWidth }).update();
+      'overlay-color': this.userPrefs.selectionColor.getValue(),
+      'overlay-padding': this.userPrefs.selectionWidth.getValue() }).update();
   }
 
   add2GraphHistory(expo: string) {

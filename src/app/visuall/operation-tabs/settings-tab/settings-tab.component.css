@@ -1,10 +1,10 @@
 .rightObj {
   position: absolute;
-  bottom: 0.1em;
   float: right;
 }
 .leftObj {
   position: relative;
+  bottom: -0.25em;
   float: left;
 }
 

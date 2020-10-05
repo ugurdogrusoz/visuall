@@ -461,9 +461,6 @@ export class CytoscapeService {
     let selected = this._g.cy.$(':selected');
     let neighbors = selected.neighborhood();
     this._g.highlightElems(selected.union(neighbors));
-    this._g.cy.style().selector(':selected').style({
-       'overlay-color': this._g.userPrefs.selectionColor.getValue(),
-       'overlay-padding': this._g.userPrefs.selectionWidth.getValue() }).update();
   }
 
   removeHighlights() {

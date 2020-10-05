@@ -161,6 +161,8 @@ export class SettingsTabComponent implements OnInit {
     this.highlightStyleIdx = up.currHighlightIdx.getValue();
     this.highlightColor = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].color.getValue();
     this.highlightWidth = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].wid.getValue();
+    this.selectionColor = up.selectionColor.getValue();
+    this.selectionWidth = up.selectionWidth.getValue();
     this.compoundPadding = up.compoundPadding.getValue();
     this.isStoreUserProfile = up.isStoreUserProfile.getValue();
     this.isLimitDbQueries2range = up.isLimitDbQueries2range.getValue();
@@ -180,9 +182,7 @@ export class SettingsTabComponent implements OnInit {
 
   private setHighlightStyles() {
     if (!this._g.viewUtils) {
-      this._g.cy.style().selector(':selected').style({
-        'overlay-color': this.selectionColor,
-        'overlay-padding': this.selectionWidth }).update();
+      this._g.selectionUpdate();
       return;
     }
     this.currHighlightStyles = [];
@@ -196,19 +196,11 @@ export class SettingsTabComponent implements OnInit {
         this._g.userPrefs.highlightStyles[i].wid.next(w);
       } else {
         this._g.userPrefs.highlightStyles[i] = { wid: new BehaviorSubject<number>(w), color: new BehaviorSubject<string>(c) };
-        this._g.cy.style().selector(':selected').style({
-          'overlay-color': this.selectionColor,
-          'overlay-padding': this.selectionWidth }).update();
       }
-      this._g.cy.style().selector(':selected').style({
-        'overlay-color': this.selectionColor,
-        'overlay-padding': this.selectionWidth }).update();
     }
     this._g.userPrefs.highlightStyles.splice(styles.length);
     this._profile.saveUserPrefs();
-    this._g.cy.style().selector(':selected').style({
-      'overlay-color': this.selectionColor,
-      'overlay-padding': this.selectionWidth}).update();
+    this._g.selectionUpdate();
   }
 
   // set view utils extension highlight styles from memory (_g.userPrefs)
@@ -233,9 +225,7 @@ export class SettingsTabComponent implements OnInit {
     }
     obj.next(val);
     this._profile.saveUserPrefs();
-    this._g.cy.style().selector(':selected').style({
-      'overlay-color': this.selectionColor,
-      'overlay-padding': this.selectionWidth}).update();
+    this._g.selectionUpdate();
   }
 
   onColorSelected(c: string) {
@@ -245,8 +235,9 @@ export class SettingsTabComponent implements OnInit {
   onSelColorSelected(c: string) {
     this._g.userPrefs.selectionColor.next(c);
     this.selectionColor = c;
-    this._g.cy.style().selector('core').style({ 'selection-box-color': c })
-    this._g.cy.style().selector(':selected').style({ 'overlay-color': c }).update();
+    this._g.cy.style().selector('core').style({ 'selection-box-color': this.selectionColor })
+    this._g.cy.style().selector(':selected').style({ 'overlay-color': this.selectionColor }).update();
+    this._profile.saveUserPrefs()
   }
 
   onSelWidSelected( w ) {
@@ -254,6 +245,7 @@ export class SettingsTabComponent implements OnInit {
     this._g.userPrefs.selectionWidth.next(width);
     this.selectionWidth = width;
     this._g.cy.style().selector(':selected').style({ 'overlay-padding': width }).update();
+    this._profile.saveUserPrefs()
   }
 
   // used to change border width or color. One of them should be defined. (exclusively)
@@ -261,13 +253,8 @@ export class SettingsTabComponent implements OnInit {
     this.bandPassHighlightWidth();
     let cyStyle = getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
     this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, cyStyle.nodeCss, cyStyle.edgeCss);
-    this._g.cy.style().selector(':selected').style({
-      'overlay-color': this.selectionColor,
-      'overlay-padding': this.selectionWidth}).update();
     this.setHighlightStyles();
-    this._g.cy.style().selector(':selected').style({'overlay-opacity' : 0.3,
-      'overlay-color' : this.selectionColor,
-      'overlay-padding': this.selectionWidth}).update();
+    this._g.selectionUpdate();
   }
 
   deleteHighlightStyle() {
@@ -281,9 +268,6 @@ export class SettingsTabComponent implements OnInit {
       this.highlightStyleIdx = styleCnt;
     }
     this.highlightStyleSelected(this.highlightStyleIdx);
-    this._g.cy.style().selector(':selected').style({
-      'overlay-color': this.selectionColor,
-      'overlay-padding': this.selectionWidth }).update();
   }
 
   addHighlightStyle() {
@@ -293,10 +277,6 @@ export class SettingsTabComponent implements OnInit {
     this.setHighlightStyles();
     this.highlightStyleIdx = this.currHighlightStyles.length - 1;
     this.highlightStyleSelected(this.highlightStyleIdx);
-
-    this._g.cy.style().selector(':selected').style({'overlay-opacity' : 0.3,
-      'overlay-color' : this.selectionColor,
-      'overlay-padding': this.selectionWidth}).update();
   }
 
   highlightStyleSelected(i: number) {
@@ -306,9 +286,7 @@ export class SettingsTabComponent implements OnInit {
     this.highlightColor = style.node['overlay-color'];
     this.highlightWidth = style.node['overlay-padding'];
     this._profile.saveUserPrefs();
-    this._g.cy.style().selector(':selected').style({
-      'overlay-color': this.selectionColor,
-      'overlay-padding': this.selectionWidth }).update();
+    this._g.selectionUpdate();
   }
 
   bandPassHighlightWidth() {

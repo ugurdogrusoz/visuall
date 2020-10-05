@@ -218,8 +218,8 @@ export class CyExtService {
       }
 
       r.push({
-        node: { 'overlay-color': c, 'overlay-opacity' : 0.5, 'overlay-padding': w },
-        edge: { 'overlay-color': c, 'overlay-opacity' : 0.5, 'overlay-padding': w }
+        node: { 'overlay-color': c, 'overlay-opacity' : 0.2, 'overlay-padding': w },
+        edge: { 'overlay-color': c, 'overlay-opacity' : 0.2, 'overlay-padding': w }
       });
 
     }
