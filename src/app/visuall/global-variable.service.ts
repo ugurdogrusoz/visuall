@@ -105,6 +105,7 @@ export class GlobalVariableService {
     if (!this.layout.randomize) {
       this.layout.quality = 'proof'
     }
+    this.layout.tile = isRandomize;
   }
 
   applyClassFiltering() {
