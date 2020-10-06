@@ -181,7 +181,6 @@ export class SettingsTabComponent implements OnInit {
 
   private setHighlightStyles() {
     if (!this._g.viewUtils) {
-      this._g.updateSelectionCyStyle();
       return;
     }
     this.currHighlightStyles = [];
@@ -199,7 +198,6 @@ export class SettingsTabComponent implements OnInit {
     }
     this._g.userPrefs.highlightStyles.splice(styles.length);
     this._profile.saveUserPrefs();
-    this._g.updateSelectionCyStyle();
   }
 
   // set view utils extension highlight styles from memory (_g.userPrefs)
@@ -224,7 +222,6 @@ export class SettingsTabComponent implements OnInit {
     }
     obj.next(val);
     this._profile.saveUserPrefs();
-    this._g.updateSelectionCyStyle();
   }
 
   onColorSelected(c: string) {
@@ -276,6 +273,7 @@ export class SettingsTabComponent implements OnInit {
     this.setHighlightStyles();
     this.highlightStyleIdx = this.currHighlightStyles.length - 1;
     this.highlightStyleSelected(this.highlightStyleIdx);
+    this._g.updateSelectionCyStyle();
   }
 
   highlightStyleSelected(i: number) {
@@ -285,7 +283,6 @@ export class SettingsTabComponent implements OnInit {
     this.highlightColor = style.node['overlay-color'];
     this.highlightWidth = style.node['overlay-padding'];
     this._profile.saveUserPrefs();
-    this._g.updateSelectionCyStyle();
   }
 
   bandPassHighlightWidth() {

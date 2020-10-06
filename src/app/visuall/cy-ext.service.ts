@@ -139,6 +139,7 @@ export class CyExtService {
       colorCount: MAX_HIGHLIGHT_CNT
     };
     this._g.viewUtils = this._g.cy.viewUtilities(options);
+    this._g.updateSelectionCyStyle();
   }
 
   private bindPanZoomExtension() {

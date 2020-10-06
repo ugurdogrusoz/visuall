@@ -139,7 +139,6 @@ export class GlobalVariableService {
 
   highlightElems(elems) {
     this.viewUtils.highlight(elems, this.userPrefs.currHighlightIdx.getValue());
-    this.updateSelectionCyStyle();
   }
 
   updateSelectionCyStyle(){
