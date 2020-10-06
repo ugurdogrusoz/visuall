@@ -189,7 +189,7 @@ export class SettingsTabComponent implements OnInit {
       this.currHighlightStyles.push('Style ' + (i + 1));
       let c = styles[i].node['overlay-color'];
       let w = styles[i].node['overlay-padding'];
-      if (this._g.userPrefs.highlightStyles[i].color && this._g.userPrefs.highlightStyles[i].wid) {
+      if (this._g.userPrefs.highlightStyles[i]) {
         this._g.userPrefs.highlightStyles[i].color.next(c);
         this._g.userPrefs.highlightStyles[i].wid.next(w);
       } else {
