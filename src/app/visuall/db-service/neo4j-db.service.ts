@@ -130,7 +130,7 @@ export class Neo4jDb implements DbService {
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
     if (type == DbQueryType.count) {
       this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase},
-       ${pageSize}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
+       ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
     } else if (type == DbQueryType.table) {
       this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
       ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
@@ -160,7 +160,7 @@ export class Neo4jDb implements DbService {
 
     if (type == DbQueryType.count) {
       this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase},
-       ${pageSize}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
+       ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
     } else if (type == DbQueryType.table) {
       this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, ${pageSize}, ${currPage},
        '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
