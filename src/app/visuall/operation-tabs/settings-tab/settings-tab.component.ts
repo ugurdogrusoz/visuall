@@ -7,7 +7,6 @@ import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, getCyStyleFromColorAndWid }
 import flatpickr from 'flatpickr';
 import { ErrorModalComponent } from '../../popups/error-modal/error-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-settings-tab',
@@ -182,7 +181,7 @@ export class SettingsTabComponent implements OnInit {
 
   private setHighlightStyles() {
     if (!this._g.viewUtils) {
-      this._g.selectionUpdate();
+      this._g.updateSelectionCyStyle();
       return;
     }
     this.currHighlightStyles = [];
@@ -200,7 +199,7 @@ export class SettingsTabComponent implements OnInit {
     }
     this._g.userPrefs.highlightStyles.splice(styles.length);
     this._profile.saveUserPrefs();
-    this._g.selectionUpdate();
+    this._g.updateSelectionCyStyle();
   }
 
   // set view utils extension highlight styles from memory (_g.userPrefs)
@@ -225,7 +224,7 @@ export class SettingsTabComponent implements OnInit {
     }
     obj.next(val);
     this._profile.saveUserPrefs();
-    this._g.selectionUpdate();
+    this._g.updateSelectionCyStyle();
   }
 
   onColorSelected(c: string) {
@@ -254,7 +253,7 @@ export class SettingsTabComponent implements OnInit {
     let cyStyle = getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
     this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, cyStyle.nodeCss, cyStyle.edgeCss);
     this.setHighlightStyles();
-    this._g.selectionUpdate();
+    this._g.updateSelectionCyStyle();
   }
 
   deleteHighlightStyle() {
@@ -286,7 +285,7 @@ export class SettingsTabComponent implements OnInit {
     this.highlightColor = style.node['overlay-color'];
     this.highlightWidth = style.node['overlay-padding'];
     this._profile.saveUserPrefs();
-    this._g.selectionUpdate();
+    this._g.updateSelectionCyStyle();
   }
 
   bandPassHighlightWidth() {

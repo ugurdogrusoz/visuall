@@ -17,7 +17,7 @@
       "text-outline-width": "2px",
       "color": "#fff",
       "overlay-color": "#6c757d",
-      "overlay-padding": 4.5,
+      "overlay-padding": "6px",
       "z-index": "10",
       "text-max-width": "44px"
     }
@@ -26,7 +26,6 @@
     "selector": "node:selected",
     "style": {
       "overlay-color": "#6c757d",
-      "overlay-padding": 3,
       "overlay-opacity": 0.3,
       "background-color": "#999999"
     }
@@ -36,7 +35,6 @@
     "style": {
       "overlay-color": "#6c757d",
       "overlay-opacity": 0.3,
-      "overlay-padding": 3,
       "line-color": "#808080"
     }
   },
