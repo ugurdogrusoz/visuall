@@ -23,7 +23,7 @@ export class Neo4jDb implements DbService {
     let requestType = isGraphResponse ? 'graph' : 'row';
     this._g.setLoadingStatus(true);
     console.log(query);
-    this._g.statusMsg.next('Executing database query...')
+    this._g.statusMsg.next('Executing database query...');
     const requestBody = {
       'statements': [{
         'statement': query,
@@ -44,6 +44,9 @@ export class Neo4jDb implements DbService {
       } else {
         callback(this.extractTable(x));
       }
+    }, (err) => {
+      this._g.statusMsg.next('Database query execution raised error!');
+      console.error('database query execution error: ', err);
     })
   }
 

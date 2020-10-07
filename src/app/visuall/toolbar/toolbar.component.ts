@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CytoscapeService } from '../cytoscape.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaveAsPngModalComponent } from '../popups/save-as-png-modal/save-as-png-modal.component';
@@ -8,13 +8,14 @@ import { GlobalVariableService } from '../global-variable.service';
 import { getPropNamesFromObj } from '../constants';
 import { ToolbarCustomizationService } from '../../custom/toolbar-customization.service';
 import { ToolbarDiv, ToolbarAction } from './itoolbar';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.css']
 })
-export class ToolbarComponent implements OnInit, AfterViewInit {
+export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('file', { static: false }) file;
   private searchTxt: string;
   menu: ToolbarDiv[];
@@ -22,6 +23,8 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
   statusMsgQueue: string[] = [];
   MIN_MSG_DURATION = 500;
   msgQueueUpdater = null;
+  statusMsgSubs: Subscription;
+  msgStarted2show: number = 0;
 
   constructor(private _cyService: CytoscapeService, private modalService: NgbModal,
     private _g: GlobalVariableService, private _customizationService: ToolbarCustomizationService) {
@@ -56,12 +59,16 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
     ];
   }
 
+  ngOnDestroy(): void {
+    if (this.statusMsgSubs) {
+      this.statusMsgSubs.unsubscribe();
+    }
+  }
+
   ngOnInit() {
     this.mergeCustomMenu();
-    this._g.statusMsg.subscribe(x => {
-      if (this.statusMsgQueue[this.statusMsgQueue.length - 1] !== x) {
-        this.statusMsgQueue.push(x);
-      }
+    this.statusMsgSubs = this._g.statusMsg.subscribe(x => {
+      this.statusMsgQueue.push(x);
       if (this.msgQueueUpdater) {
         return;
       }
@@ -77,12 +84,16 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
       this.msgQueueUpdater = null;
       return;
     }
-    let candidateMsg = this.statusMsgQueue.shift();
-    // skip the same messages if there are new ones
-    while (candidateMsg == this.statusMsg && this.statusMsgQueue.length > 0) {
-      candidateMsg = this.statusMsgQueue.shift();
+    const currTime = new Date().getTime();
+    const timePassed = currTime - this.msgStarted2show;
+    if (timePassed >= this.MIN_MSG_DURATION) {
+      this.statusMsg = this.statusMsgQueue[0];
+      this.msgStarted2show = currTime;
+      this.statusMsgQueue.shift();
+    } else {
+      // enough time didn't passed yet. Check again when it is passed.
+      setTimeout(this.processMsgQueue.bind(this), this.MIN_MSG_DURATION - timePassed);
     }
-    this.statusMsg = candidateMsg;
   }
 
   ngAfterViewInit() {
