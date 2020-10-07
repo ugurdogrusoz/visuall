@@ -40,7 +40,10 @@ export class TableViewComponent implements OnInit, OnDestroy {
   @ViewChild('dynamicDiv', { static: false }) dynamicDiv;
   checkedIdx: any = {};
   emphasizeRowFn: Function;
-  userPrefSubs: Subscription;
+  higlightOnHoverSubs: Subscription;
+  tableFillSubs: Subscription;
+  clearFilterSubs: Subscription;
+  tableColumnLimitSubs: Subscription;
   hoveredElemId = '-';
 
   @Input() params: TableViewInput;
@@ -52,9 +55,9 @@ export class TableViewComponent implements OnInit, OnDestroy {
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
 
   ngOnInit() {
-    this.tableFilled.subscribe(this.onTableFilled.bind(this));
-    this.clearFilter.subscribe(this.onClearFilter.bind(this));
-    this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; if (this.params.columnLimit) { this.columnLimit = this.params.columnLimit; } });
+    this.tableFillSubs = this.tableFilled.subscribe(this.onTableFilled.bind(this));
+    this.clearFilterSubs = this.clearFilter.subscribe(this.onClearFilter.bind(this));
+    this.tableColumnLimitSubs = this._g.userPrefs.tableColumnLimit.subscribe(x => { this.columnLimit = x; if (this.params.columnLimit) { this.columnLimit = this.params.columnLimit; } });
     this.highlighterFn = this._cyService.highlightNeighbors();
     this.position.x = 0;
     this.position.y = 0;
@@ -62,11 +65,11 @@ export class TableViewComponent implements OnInit, OnDestroy {
   }
 
   private resetHoverEvents() {
-    this.ngOnDestroy();
+    this.unbindHiglightOnHovers();
     if (!this.params.isEmphasizeOnHover) {
       return;
     }
-    this.userPrefSubs = this._g.userPrefs.isHighlightOnHover.subscribe(x => {
+    this.higlightOnHoverSubs = this._g.userPrefs.isHighlightOnHover.subscribe(x => {
       if (x) {
         this.bindHoverListener();
       } else {
@@ -99,8 +102,21 @@ export class TableViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.userPrefSubs) {
-      this.userPrefSubs.unsubscribe();
+    this.unbindHiglightOnHovers();
+    if (this.tableColumnLimitSubs) {
+      this.tableColumnLimitSubs.unsubscribe();
+    }
+    if (this.clearFilterSubs) {
+      this.clearFilterSubs.unsubscribe();
+    }
+    if (this.tableFillSubs) {
+      this.tableFillSubs.unsubscribe();
+    }
+  }
+
+  unbindHiglightOnHovers() {
+    if (this.higlightOnHoverSubs) {
+      this.higlightOnHoverSubs.unsubscribe();
     }
     this.unbindHoverListener();
   }
