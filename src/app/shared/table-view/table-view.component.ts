@@ -142,6 +142,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
       this.isShowTable = false;
     }
     this.resetHoverEvents();
+    this.setColumnLimit();
   }
 
   private onClearFilter() {
@@ -199,10 +200,21 @@ export class TableViewComponent implements OnInit, OnDestroy {
     this.isDraggable = isDraggable;
     if (this.isDraggable) {
       this.position = { x: -130, y: 0 };
-      this.columnLimit = this.params.columns.length;
     } else {
       this.position = { x: 0, y: 0 };
-      this.columnLimit = this._g.userPrefs.tableColumnLimit.getValue();
+    }
+    this.setColumnLimit();
+  }
+
+  private setColumnLimit() {
+    if (this.isDraggable) {
+      this.columnLimit = this.params.columns.length;
+    } else {
+      if (this.params.columnLimit) {
+        this.columnLimit = this.params.columnLimit;
+      } else {
+        this.columnLimit = this._g.userPrefs.tableColumnLimit.getValue();
+      }
     }
   }
 
