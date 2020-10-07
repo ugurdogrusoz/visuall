@@ -10,10 +10,10 @@
   "objects": {
     "Person": {
       "properties": {
+        "primary_name": "string",
+        "primary_profession": "list",
         "birth_year": "int",
         "death_year": "int",
-        "primary_profession": "list",
-        "primary_name": "string",
         "start_t": "datetime",
         "end_t": "datetime"
       },
@@ -32,20 +32,20 @@
     },
     "Title": {
       "properties": {
-        "end_year": "int",
-        "start_year": "int",
-        "count_votes": "int",
-        "rating": "float",
+        "primary_title": "string",
         "genres": "list",
+        "runtime_minutes": "int",
+        "title_type": "enum,string",
+        "rating": "float",
+        "count_votes": "int",
+        "start_year": "int",
+        "end_year": "int",
         "is_adult": "enum,int",
         "original_title": "string",
-        "primary_title": "string",
-        "runtime_minutes": "int",
-        "shooting_end_date": "datetime",
         "shooting_start_date": "datetime",
-        "production_end_date": "datetime",
+        "shooting_end_date": "datetime",
         "production_start_date": "datetime",
-        "title_type": "enum,string"
+        "production_end_date": "datetime"
       },
       "style": {
         "label": "data(primary_title)",
@@ -67,8 +67,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "act_begin": "datetime",
         "act_end": "datetime"
       },
@@ -88,8 +88,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "act_begin": "datetime",
         "act_end": "datetime"
       },
@@ -109,8 +109,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -130,8 +130,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -151,8 +151,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -172,8 +172,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -193,8 +193,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -214,8 +214,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -235,8 +235,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -256,8 +256,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -277,8 +277,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },
@@ -317,8 +317,8 @@
       "target": "Title",
       "isBidirectional": false,
       "properties": {
-        "job": "string",
         "characters": "list",
+        "job": "string",
         "begin": "datetime",
         "end": "datetime"
       },

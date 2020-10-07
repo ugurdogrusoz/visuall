@@ -1,94 +1,94 @@
 {
   "nodes": {
     "Person": {
+      "primary_name": "string",
+      "primary_profession": "list",
       "birth_year": "int",
       "death_year": "int",
-      "primary_profession": "list",
-      "primary_name": "string",
       "start_t": "datetime",
       "end_t": "datetime"
     },
     "Title": {
-      "end_year": "int",
-      "start_year": "int",
-      "count_votes": "int",
-      "rating": "float",
+      "primary_title": "string",
       "genres": "list",
+      "runtime_minutes": "int",
+      "title_type": "enum,string",
+      "rating": "float",
+      "count_votes": "int",
+      "start_year": "int",
+      "end_year": "int",
       "is_adult": "enum,int",
       "original_title": "string",
-      "primary_title": "string",
-      "runtime_minutes": "int",
-      "shooting_end_date": "datetime",
       "shooting_start_date": "datetime",
-      "production_end_date": "datetime",
+      "shooting_end_date": "datetime",
       "production_start_date": "datetime",
-      "title_type": "enum,string"
+      "production_end_date": "datetime"
     }
   },
   "edges": {
     "ACTOR": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "act_begin": "datetime",
       "act_end": "datetime"
     },
     "ACTRESS": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "act_begin": "datetime",
       "act_end": "datetime"
     },
     "DIRECTOR": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     },
     "WRITER": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     },
     "PRODUCER": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     },
     "EDITOR": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     },
     "COMPOSER": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     },
     "CINEMATOGRAPHER": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     },
     "PRODUCTION_DESIGNER": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     },
     "ARCHIVE_FOOTAGE": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     },
     "ARCHIVE_SOUND": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     },
@@ -97,8 +97,8 @@
       "end": "datetime"
     },
     "SELF": {
-      "job": "string",
       "characters": "list",
+      "job": "string",
       "begin": "datetime",
       "end": "datetime"
     }
