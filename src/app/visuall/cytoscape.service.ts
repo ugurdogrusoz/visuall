@@ -323,7 +323,7 @@ export class CytoscapeService {
   }
 
   createCyEdge(edge, id) {
-    let properties = edge.properties;
+    let properties = edge.properties || {};
     properties.id = id;
     properties.source = 'n' + edge.startNode;
     properties.target = 'n' + edge.endNode;
