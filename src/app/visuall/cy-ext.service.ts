@@ -94,7 +94,7 @@ export class CyExtService {
     window.addEventListener('scroll', this._g.cyNaviPositionSetter);
     // to render navigator, fire zoom event
     this._g.cy.zoom(this._g.cy.zoom() + 0.00001);
-    // to prevent expandCollapse extension's blocking 
+    // to prevent expandCollapse extension's blocking
     (document.getElementsByClassName(cyNaviClass)[0] as HTMLElement).style.zIndex = '1000';
   }
 
@@ -139,6 +139,7 @@ export class CyExtService {
       colorCount: MAX_HIGHLIGHT_CNT
     };
     this._g.viewUtils = this._g.cy.viewUtilities(options);
+    this._g.updateSelectionCyStyle();
   }
 
   private bindPanZoomExtension() {
@@ -207,12 +208,19 @@ export class CyExtService {
 
     for (let i = 0; i < this._g.userPrefs.highlightStyles.length; i++) {
       let style = this._g.userPrefs.highlightStyles[i];
-      let w = style.wid.getValue();
-      let c = style.color.getValue();
+      let w,c;
+      try {
+        c = style.color.getValue();
+        w = style.wid.getValue();
+      }
+      catch(err)  {
+        c = "#6c757d"
+        w = 3;
+      }
 
       r.push({
-        node: { 'border-color': c, 'border-width': w },
-        edge: { 'line-color': c, 'target-arrow-color': c, 'width': 4.5 }
+        node: { 'overlay-color': c, 'overlay-opacity' : 0.2, 'overlay-padding': w },
+        edge: { 'overlay-color': c, 'overlay-opacity' : 0.2, 'overlay-padding': w }
       });
 
     }

@@ -145,6 +145,12 @@ export class GlobalVariableService {
     this.viewUtils.highlight(elems, this.userPrefs.currHighlightIdx.getValue());
   }
 
+  updateSelectionCyStyle(){
+    this.cy.style().selector(':selected').style({
+      'overlay-color': this.userPrefs.selectionColor.getValue(),
+      'overlay-padding': this.userPrefs.selectionWidth.getValue() }).update();
+  }
+
   add2GraphHistory(expo: string) {
     setTimeout(() => {
       if (this.graphHistory.length > this.userPrefs.queryHistoryLimit.getValue() - 1) {
@@ -225,10 +231,10 @@ export class GlobalVariableService {
   getFcoseOptions() {
     return {
       name: 'fcose',
-      // 'draft', 'default' or 'proof' 
-      // - 'draft' only applies spectral layout 
+      // 'draft', 'default' or 'proof'
+      // - 'draft' only applies spectral layout
       // - 'default' improves the quality with incremental layout (fast cooling rate)
-      // - 'proof' improves the quality with incremental layout (slow cooling rate) 
+      // - 'proof' improves the quality with incremental layout (slow cooling rate)
       quality: 'default',
       // use random node positions at beginning of layout
       // if this is set to false, then quality option must be 'proof'
@@ -283,7 +289,7 @@ export class GlobalVariableService {
       gravityCompound: 1.0,
       // Gravity range (constant)
       gravityRange: 3.8,
-      // Initial cooling factor for incremental layout  
+      // Initial cooling factor for incremental layout
       initialEnergyOnIncremental: 0.3,
 
       /* layout event callbacks */
@@ -361,18 +367,18 @@ export class GlobalVariableService {
       // -------- Mandatory parameters --------
       name: 'cise',
 
-      // ClusterInfo can be a 2D array contaning node id's or a function that returns cluster ids. 
-      // For the 2D array option, the index of the array indicates the cluster ID for all elements in 
+      // ClusterInfo can be a 2D array contaning node id's or a function that returns cluster ids.
+      // For the 2D array option, the index of the array indicates the cluster ID for all elements in
       // the collection at that index. Unclustered nodes must NOT be present in this array of clusters.
-      // 
-      // For the function, it would be given a Cytoscape node and it is expected to return a cluster id  
+      //
+      // For the function, it would be given a Cytoscape node and it is expected to return a cluster id
       // corresponding to that node. Returning negative numbers, null or undefined is fine for unclustered
-      // nodes.  
+      // nodes.
       // e.g
       // Array:                                     OR          function(node){
       //  [ ['n1','n2','n3'],                                       ...
       //    ['n5','n6']                                         }
-      //    ['n7', 'n8', 'n9', 'n10'] ]                         
+      //    ['n7', 'n8', 'n9', 'n10'] ]
       clusters: this.layout.clusters,
 
       // -------- Optional parameters --------
@@ -399,10 +405,10 @@ export class GlobalVariableService {
       padding: 30,
 
       // separation amount between nodes in a cluster
-      // note: increasing this amount will also increase the simulation time 
+      // note: increasing this amount will also increase the simulation time
       nodeSeparation: 2.5,
 
-      // Inter-cluster edge length factor 
+      // Inter-cluster edge length factor
       // (2.0 means inter-cluster edges should be twice as long as intra-cluster edges)
       idealInterClusterEdgeLengthCoefficient: 1.4,
 
@@ -506,4 +512,4 @@ export class GlobalVariableService {
     }
     return Object.keys(classDict).length > 1;
   }
-} 
+}

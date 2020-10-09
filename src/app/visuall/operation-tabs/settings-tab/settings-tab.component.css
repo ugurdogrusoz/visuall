@@ -1,3 +1,13 @@
+.rightObj {
+  position: absolute;
+  float: right;
+}
+.leftObj {
+  position: relative;
+  bottom: -0.25em;
+  float: left;
+}
+
 .inp-4-char {
   width: 6em;
 }

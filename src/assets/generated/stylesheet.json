@@ -16,6 +16,7 @@
       "text-outline-color": "#555",
       "text-outline-width": "2px",
       "color": "#fff",
+      "overlay-color": "#6c757d",
       "overlay-padding": "6px",
       "z-index": "10",
       "text-max-width": "44px"
