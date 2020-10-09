@@ -9,7 +9,7 @@ function main() {
 	}
 
 	const app_desc = JSON.parse(readFile(app_desc_file));
-	app_desc.appInfo.build_time = new Date().toLocaleString('tr-TR') + ' (Turkey)';
+	app_desc.appInfo.build_time = new Date().toLocaleString('tr-TR', { timeZone: 'Europe/Athens' }) + ' (Turkey)';
 	writeFile(app_desc_file, JSON.stringify(app_desc));
 }
 
