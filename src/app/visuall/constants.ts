@@ -351,8 +351,8 @@ export function arrayDiff(smallArr: string[], bigArr: string[]): string[] {
 
 export function getCyStyleFromColorAndWid(color: string, wid: number): { nodeCss: any, edgeCss: any } {
   return {
-    nodeCss: { 'overlay-color': color, 'overlay-padding': wid },
-    edgeCss: { 'overlay-color': color, 'overlay-padding': wid }
+    nodeCss: { 'overlay-color': color, 'overlay-opacity' : 0.2, 'overlay-padding': wid },
+    edgeCss: { 'overlay-color': color, 'overlay-opacity' : 0.2, 'overlay-padding': wid }
   };
 }
 
