@@ -5,14 +5,14 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "build": "ng build && node server.js",
+    "build": "ng build && node time-stamper.js",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "heroku-postbuild": "ng build --configuration=heroku",
+    "heroku-postbuild": "ng build --configuration=heroku && node time-stamper.js",
     "prod": "ng build --prod && node server.js",
     "serve-public": "ng serve --host 0.0.0.0",
-    "build-prod": "ng build --prod"
+    "build-prod": "ng build --prod && node time-stamper.js"
   },
   "private": true,
   "dependencies": {
