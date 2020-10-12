@@ -5,8 +5,6 @@ import { UserProfileService } from '../../user-profile.service';
 import { BehaviorSubject } from 'rxjs';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, getCyStyleFromColorAndWid } from '../../constants';
 import flatpickr from 'flatpickr';
-import { ErrorModalComponent } from '../../popups/error-modal/error-modal.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-settings-tab',
@@ -47,7 +45,7 @@ export class SettingsTabComponent implements OnInit {
   selectionColor = "#6c757d";
   selectionWidth = 4.5;
 
-  constructor(private _g: GlobalVariableService, private _profile: UserProfileService, private _modalService: NgbModal) {
+  constructor(private _g: GlobalVariableService, private _profile: UserProfileService) {
     this._profile.onLoadFromFile.subscribe(x => {
       if (!x) {
         return;
@@ -132,9 +130,7 @@ export class SettingsTabComponent implements OnInit {
   }
 
   private showDateTimeError(msg: string) {
-    const instance = this._modalService.open(ErrorModalComponent);
-    instance.componentInstance.msg = msg;
-    instance.componentInstance.title = 'Date Selection';
+    this._g.showErrorModal('Date Selection', msg);
   }
 
   private fillUIFromMemory() {

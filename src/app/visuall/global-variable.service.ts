@@ -5,6 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import appPref from '../../assets/appPref.json';
 import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS, CY_BATCH_END_DELAY } from './constants';
 import { GraphHistoryItem, GraphElem } from './db-service/data-types';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +40,7 @@ export class GlobalVariableService {
   dataModel = new BehaviorSubject<any>(null);
   enums = new BehaviorSubject<any>(null);
 
-  constructor(private _http: HttpClient) {
+  constructor(private _http: HttpClient, private _modalService: NgbModal) {
     this.hiddenClasses = new Set([]);
     // set user preferences staticly (necessary for rendering html initially)
     this.setUserPrefs(appPref, this.userPrefs);
@@ -145,10 +147,11 @@ export class GlobalVariableService {
     this.viewUtils.highlight(elems, this.userPrefs.currHighlightIdx.getValue());
   }
 
-  updateSelectionCyStyle(){
+  updateSelectionCyStyle() {
     this.cy.style().selector(':selected').style({
       'overlay-color': this.userPrefs.selectionColor.getValue(),
-      'overlay-padding': this.userPrefs.selectionWidth.getValue() }).update();
+      'overlay-padding': this.userPrefs.selectionWidth.getValue()
+    }).update();
   }
 
   add2GraphHistory(expo: string) {
@@ -347,6 +350,12 @@ export class GlobalVariableService {
     }
     this._isSetEnums = true;
     return mapping;
+  }
+
+  showErrorModal(title: string, msg: string) {
+    const instance = this._modalService.open(ErrorModalComponent);
+    instance.componentInstance.title = title;
+    instance.componentInstance.msg = msg;
   }
 
   private performLayoutFn(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = LAYOUT_ANIM_DUR) {

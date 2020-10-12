@@ -9,8 +9,6 @@ import { UserPrefHelper } from './user-pref-helper';
 import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
 import { LouvainClustering } from '../../lib/louvain-clustering/LouvainClustering';
-import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CyExtService } from './cy-ext.service';
 @Injectable({
   providedIn: 'root'
@@ -22,7 +20,7 @@ export class CytoscapeService {
   showStatsFn: Function;
   louvainClusterer: LouvainClustering;
   constructor(private _g: GlobalVariableService, private _timebarService: TimebarService, private _cyExtService: CyExtService,
-    private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService, private _modalService: NgbModal) {
+    private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService) {
     this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g, this._profile);
     this.louvainClusterer = new LouvainClustering();
   }
@@ -517,9 +515,7 @@ export class CytoscapeService {
   saveAsJson() {
     let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_NODE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
     if (hasAnyCollapsed) {
-      const instance = this._modalService.open(ErrorModalComponent);
-      instance.componentInstance.msg = 'Cannot save due to collapsed node(s) and/or edge(s)';
-      instance.componentInstance.title = 'Save';
+      this._g.showErrorModal('Save', 'Cannot save due to collapsed node(s) and/or edge(s)');
       return;
     }
     const json = this._g.cy.json();
@@ -534,9 +530,7 @@ export class CytoscapeService {
     const selected = this._g.cy.$(':selected');
     let hasAnyCollapsed = selected.nodes('.' + C.COLLAPSED_NODE_CLASS).length > 0 || selected.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
     if (hasAnyCollapsed) {
-      const instance = this._modalService.open(ErrorModalComponent);
-      instance.componentInstance.msg = 'Cannot save selected objects due to collapsed node(s) and/or edge(s)';
-      instance.componentInstance.title = 'Save Selected Objects';
+      this._g.showErrorModal('Save Selected Objects', 'Cannot save selected objects due to collapsed node(s) and/or edge(s)');
       return;
     }
 

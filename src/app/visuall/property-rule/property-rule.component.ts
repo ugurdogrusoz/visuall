@@ -3,8 +3,6 @@ import { TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENER
 import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/query-types';
 import { Subject } from 'rxjs';
-import { ErrorModalComponent } from '../popups/error-modal/error-modal.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPosition } from 'angular2-draggable';
 import { GlobalVariableService } from '../global-variable.service';
 
@@ -40,7 +38,7 @@ export class PropertyRuleComponent implements OnInit {
   txtAreaSize: { width: number, height: number } = { width: 250, height: 150 };
   position: IPosition = { x: 0, y: 0 };
 
-  constructor(private _modalService: NgbModal, private _g: GlobalVariableService) { }
+  constructor(private _g: GlobalVariableService) { }
 
   ngOnInit() {
     this.propertyChanged.subscribe(x => { this.updateView(x.properties, x.isGenericTypeSelected, x.selectedClass) });
@@ -164,9 +162,7 @@ export class PropertyRuleComponent implements OnInit {
     };
     const isOk = this.isStrictlyValid(rule);
     if (this.isStrict && !isOk) {
-      const instance = this._modalService.open(ErrorModalComponent);
-      instance.componentInstance.msg = 'Invalid Rule!';
-      instance.componentInstance.title = 'Error';
+      this._g.showErrorModal('Error', 'Invalid Rule!');
       return;
     }
     this.onRuleReady.emit(rule);
