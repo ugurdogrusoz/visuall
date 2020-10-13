@@ -21,6 +21,7 @@ export interface UserPref {
   dbQueryTimeRange: { start: BehaviorSubject<number>, end: BehaviorSubject<number> },
   dataPageSize: BehaviorSubject<number>;
   queryHistoryLimit: BehaviorSubject<number>;
+  dbTimeout: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;
   highlightStyles: { wid: BehaviorSubject<number>, color: BehaviorSubject<string> }[];
   currHighlightIdx: BehaviorSubject<number>;

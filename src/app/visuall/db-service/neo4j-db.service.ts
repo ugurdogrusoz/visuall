@@ -15,39 +15,52 @@ export class Neo4jDb implements DbService {
 
   constructor(private _http: HttpClient, private _g: GlobalVariableService) { }
 
-  runQuery(query: string, callback: (x: any) => any, isGraphResponse = true) {
+  runQuery(query: string, callback: (x: any) => any, isGraphResponse = true, isTimeboxed = true) {
     const conf = environment.dbConfig;
     const url = conf.url;
     const username = conf.username;
     const password = conf.password;
     let requestType = isGraphResponse ? 'graph' : 'row';
     this._g.setLoadingStatus(true);
-    console.log(query);
+    const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
+    let q = `CALL apoc.cypher.runTimeboxed("${query}", {}, ${timeout}) YIELD value RETURN value`;
+    if (!isTimeboxed) {
+      q = query;
+    }
+    console.log(q);
     this._g.statusMsg.next('Executing database query...');
     const requestBody = {
-      'statements': [{
-        'statement': query,
-        'parameters': null,
-        'resultDataContents': [requestType]
+      statements: [{
+        statement: q,
+        parameters: null,
+        resultDataContents: [requestType]
       }]
     };
+    let isTimeOut = true;
+    setTimeout(() => {
+      if (isTimeOut) {
+        this._g.showErrorModal('Timeout', 'Your query took too long! Consider adjusting timeout setting.');
+      }
+    }, timeout);
     this._http.post(url, requestBody, {
       headers: {
-        Accept: 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
         'Content-Type': 'application/json',
         'Authorization': 'Basic ' + btoa(username + ':' + password)
       }
     }).subscribe(x => {
+      isTimeOut = false;
       this._g.setLoadingStatus(false);
       if (isGraphResponse) {
         callback(this.extractGraph(x));
       } else {
-        callback(this.extractTable(x));
+        callback(this.extractTable(x, isTimeboxed));
       }
     }, (err) => {
+      isTimeOut = false;
       this._g.statusMsg.next('Database query execution raised error!');
       console.error('database query execution error: ', err);
-    })
+    });
   }
 
   getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, meta?: DbQueryMeta) {
@@ -131,12 +144,13 @@ export class Neo4jDb implements DbService {
       d2 = 0;
     }
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
+    const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
     if (type == DbQueryType.count) {
       this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase},
-       ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
+       ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, false, false);
     } else if (type == DbQueryType.table) {
       this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
-      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, false, false);
     }
   }
 
@@ -160,13 +174,14 @@ export class Neo4jDb implements DbService {
       d1 = 0;
       d2 = 0;
     }
+    const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
 
     if (type == DbQueryType.count) {
       this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase},
-       ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
+       ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, false, false);
     } else if (type == DbQueryType.table) {
       this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, ${pageSize}, ${currPage},
-       '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType})`, cb, false);
+       '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, false, false);
     }
   }
 
@@ -250,13 +265,37 @@ export class Neo4jDb implements DbService {
     return { 'nodes': nodes, 'edges': edges };
   }
 
-  private extractTable(response): TableResponse {
+  private extractTable(response, isTimeboxed = true): TableResponse {
     if (response.errors && response.errors.length > 0) {
       console.error('DB server returns erronous result', response.errors);
       this._g.setLoadingStatus(false);
       return;
     }
+    if (isTimeboxed) {
+      const obj = response.results[0].data;
+      if (obj[0] === undefined || obj[0] === null) {
+        return { columns: [], data: [[0]] };
+      }
+      const cols = Object.keys(obj[0].row[0]);
+      const data = obj.map(x => Object.values(x.row[0]));
+      // put id to first
+      const idxId = cols.indexOf('ID(x)');
+      if (idxId > -1) {
+        const tmp = cols[idxId];
+        cols[idxId] = cols[0];
+        cols[0] = tmp;
+
+        for (let i = 0; i < data.length; i++) {
+          const tmp2 = data[i][idxId];
+          data[i][idxId] = data[i][0];
+          data[i][0] = tmp2;
+        }
+      }
+      return { columns: cols, data: data };
+    }
     return { columns: response.results[0].columns, data: response.results[0].data.map(x => x.row) };
+
+
   }
 
   // ------------------------------------------------- methods for conversion to CQL -------------------------------------------------
@@ -321,7 +360,7 @@ export class Neo4jDb implements DbService {
         if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
           s += ` LOWER(REDUCE(s='', w IN x.${k} | s + w)) CONTAINS LOWER('${txt}') OR `;
         } else {
-          s += ` REDUCE(s = "", w IN x.${k} | s + w) CONTAINS '${txt}' OR `;
+          s += ` REDUCE(s = '', w IN x.${k} | s + w) CONTAINS '${txt}' OR `;
         }
       }
     }

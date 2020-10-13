@@ -25,6 +25,7 @@ export class SettingsTabComponent implements OnInit {
   isLimitDbQueries2range: boolean;
   dataPageSize: number;
   queryHistoryLimit: number;
+  dbTimeout: number;
   tableColumnLimit: number;
   edgeCollapseLimit: number;
   timebarGraphInclusionTypes: string[] = ['overlaps', 'contains', 'contained by'];
@@ -152,6 +153,7 @@ export class SettingsTabComponent implements OnInit {
     this.groupingOption = up.groupingOption.getValue();
     this.dataPageSize = up.dataPageSize.getValue();
     this.queryHistoryLimit = up.queryHistoryLimit.getValue();
+    this.dbTimeout = up.dbTimeout.getValue();
     this.tableColumnLimit = up.tableColumnLimit.getValue();
     this.edgeCollapseLimit = up.edgeCollapseLimit.getValue();
     this.currHighlightStyles = up.highlightStyles.map((_, i) => 'Style ' + (i + 1));

@@ -15,6 +15,7 @@
     },
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
+    "dbTimeout": 10,
     "tableColumnLimit": 3,
     "highlightStyles": [
         {

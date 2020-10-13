@@ -260,15 +260,15 @@ export class MapTabComponent implements OnInit {
 
   private getCountOfData(filter: TableFiltering = null) {
     if (filter != null) {
-      this._dbService.filterTable(this.queryRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
+      this._dbService.filterTable(this.queryRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0][0]; });
     } else {
-      this._dbService.getFilteringResult(this.queryRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0]; });
+      this._dbService.getFilteringResult(this.queryRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0][0]; });
     }
   }
 
   private fillTable(data) {
     this.tableInput.results = [];
-    if (!data.data[0] || !data.data[0][1]) {
+    if (data.data[0] === undefined || data.data[0][1] === undefined) {
       this.tableFilled.next(true);
       return;
     }
@@ -282,6 +282,9 @@ export class MapTabComponent implements OnInit {
     }
 
     for (let i = 0; i < data.data.length; i++) {
+      if (data.data[i] === null || data.data[i] === undefined || data.data[i][0] === undefined || data.data[i][0] === null) {
+        continue;
+      }
       // first column is ID
       let d: TableData[] = [{ val: data.data[i][0], type: TableDataType.string }];
       for (let [k, v] of Object.entries(data.data[i][1])) {

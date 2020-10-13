@@ -14,6 +14,7 @@ import { ErrorModalComponent } from './popups/error-modal/error-modal.component'
 export class GlobalVariableService {
   private HISTORY_SNAP_DELAY = 1500; // we should wait for layout to finish
   private _isSetEnums = false;
+  private _isErrorModalUp = false;
   cy: any;
   viewUtils: any;
   layoutUtils: any;
@@ -353,7 +354,15 @@ export class GlobalVariableService {
   }
 
   showErrorModal(title: string, msg: string) {
+    if (this._isErrorModalUp) {
+      return;
+    }
+    this._isErrorModalUp = true;
+    const fn = () => {
+      this._isErrorModalUp = false;
+    };
     const instance = this._modalService.open(ErrorModalComponent);
+    instance.result.then(fn, fn);
     instance.componentInstance.title = title;
     instance.componentInstance.msg = msg;
   }
