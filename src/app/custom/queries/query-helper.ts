@@ -1,13 +1,13 @@
 import { TableFiltering } from '../../shared/table-view/table-view-types';
 
-export function getQueryCondition4TxtFilter(filter: TableFiltering, cols: string[]): string {
+export function getQueryCondition4TxtFilter(filter: TableFiltering, cols: string[], isIgnoreCase: boolean): string {
   if (filter == null || filter.txt.length < 1) {
     return '';
   }
   let s = '';
 
   for (let i = 0; i < cols.length; i++) {
-    if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
+    if (isIgnoreCase) {
       s += ` LOWER(toString(${cols[i]})) CONTAINS LOWER('${filter.txt}') OR `;
     } else {
       s += ` toString(${cols[i]}) CONTAINS '${filter.txt}' OR `;

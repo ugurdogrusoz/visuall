@@ -37,8 +37,9 @@ export class Query0Component implements OnInit {
   }
 
   getCountOfData(filter?: TableFiltering) {
-    const cb = (x) => { this.tableInput.resultCnt = x.data[0] };
-    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    const cb = (x) => { this.tableInput.resultCnt = x.data[0][0] };
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree'], isIgnoreCase);
     const dateFilter = this.getDateRangeCQL();
 
     const cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
@@ -51,7 +52,8 @@ export class Query0Component implements OnInit {
 
   loadTable(skip: number, filter?: TableFiltering) {
     const cb = (x) => this.fillTable(x);
-    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree'], isIgnoreCase);
     const ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
     const orderExpr = getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
     const dateFilter = this.getDateRangeCQL();
@@ -70,7 +72,8 @@ export class Query0Component implements OnInit {
       return;
     }
     const cb = (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph);
-    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree']);
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree'], isIgnoreCase);
     const ui2Db = { 'Actor': 'n.primary_name', 'Count': 'degree' };
     const orderExpr = getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
     const dateFilter = this.getDateRangeCQL();
@@ -88,7 +91,7 @@ export class Query0Component implements OnInit {
     this.tableInput.results = [];
     for (let i = 0; i < data.data.length; i++) {
       const d = data.data[i];
-      this.tableInput.results.push([{ type: TableDataType.number, val: d[0] }, { type: TableDataType.string, val: d[1] }, { type: TableDataType.number, val: d[2] }]);
+      this.tableInput.results.push([{ type: TableDataType.number, val: d[1] }, { type: TableDataType.string, val: d[0] }, { type: TableDataType.number, val: d[2] }]);
     }
     this.tableFilled.next(true);
   }
@@ -103,7 +106,8 @@ export class Query0Component implements OnInit {
     let cb = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph); this._g.add2GraphHistory(s); };
 
     let idFilter = buildIdFilter(e.dbIds, true);
-    let txtCondition = getQueryCondition4TxtFilter(null, ['n.primary_name', 'degree']);
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    let txtCondition = getQueryCondition4TxtFilter(null, ['n.primary_name', 'degree'], isIgnoreCase);
     let ui2Db = { 'Actor': 'n.primary_name', 'Count': 'degree' };
     let orderExpr = getOrderByExpression4Query(null, 'degree', 'desc', ui2Db);
 

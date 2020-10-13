@@ -43,7 +43,8 @@ export class Query1Component implements OnInit {
 
   getCountOfData(filter?: TableFiltering) {
     const cb = (x) => { this.tableInput.resultCnt = x.data[0]; }
-    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_title']);
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_title'], isIgnoreCase);
     const dateFilter = this.getDateRangeCQL();
 
     const cql = ` MATCH (n:Title)<-[:ACTOR|ACTRESS]-(:Person)
@@ -54,7 +55,8 @@ export class Query1Component implements OnInit {
 
   loadTable(skip: number, filter?: TableFiltering) {
     const cb = (x) => this.fillTable(x);
-    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_title']);
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_title'], isIgnoreCase);
     const ui2Db = { 'Title': 'n.primary_title' };
     const orderExpr = getOrderByExpression4Query(filter, 'n.primary_title', 'desc', ui2Db);
     const dateFilter = this.getDateRangeCQL();
@@ -70,8 +72,9 @@ export class Query1Component implements OnInit {
     if (!this.tableInput.isLoadGraph) {
       return;
     }
-    const cb = (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph)
-    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_title']);
+    const cb = (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph);
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_title'], isIgnoreCase);
     const ui2Db = { 'Title': 'n.primary_title' };
     const orderExpr = getOrderByExpression4Query(filter, 'n.primary_title', 'desc', ui2Db);
     const dateFilter = this.getDateRangeCQL();
@@ -88,7 +91,7 @@ export class Query1Component implements OnInit {
     this.tableInput.results = [];
     for (let i = 0; i < data.data.length; i++) {
       const d = data.data[i];
-      this.tableInput.results.push([{ type: TableDataType.number, val: d[0] }, { type: TableDataType.string, val: d[1] }]);
+      this.tableInput.results.push([{ type: TableDataType.number, val: d[1] }, { type: TableDataType.string, val: d[0] }]);
     }
     this.tableFilled.next(true);
   }
