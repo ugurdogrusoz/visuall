@@ -48,6 +48,8 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     await this.addPropertyRule('death_year', '≤', '2020');
 
+    await this.click2graph();
+
     element(by.css('input[value="Execute"]')).click();
     await browser.sleep(this.DATA_WAIT * 1.5);
     const isAllInRange = await browser.executeScript('return cy.$("[birth_year<1994],[death_year>2020]").length == 0 && cy.$("[birth_year>=1994],[death_year<=2020]").length > 0');
@@ -66,7 +68,7 @@ export class AppPage {
 
     element(by.cssContainingText('b.timebar-metric-name', 'new')).click();
     await browser.sleep(this.ANIM_WAIT);
-    
+
     element(by.cssContainingText('option.tbme-class-opt', 'Person')).click();
     await browser.sleep(this.ANIM_WAIT);
 
@@ -82,7 +84,7 @@ export class AppPage {
     element(by.buttonText('Condition')).click();
     await browser.sleep(this.ANIM_WAIT);
     await this.addPropertyRule('death_year', '≤', '2020');
-    
+
     element(by.css('input[value="Add"]')).click();
 
     return true;
@@ -97,6 +99,8 @@ export class AppPage {
 
     element(by.css('img[title="Add/Update"]')).click();
     await browser.sleep(this.ANIM_WAIT);
+
+    await this.click2graph();
 
     element(by.css('input[value="Execute"]')).click();
     await browser.sleep(this.ANIM_WAIT);
@@ -142,6 +146,7 @@ export class AppPage {
     element(by.buttonText('Condition')).click();
     await browser.sleep(this.ANIM_WAIT);
     await this.addPropertyRule('primary_name', 'contains', 'John');
+    await this.click2graph();
     element(by.css('input[value="Execute"]')).click();
     await browser.waitForAngular();
     const canGetAllJohns = await browser.executeScript(`return cy.$("[.Person][primary_name *='John']").length === cy.$().length`);
@@ -189,6 +194,7 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     await this.addPropertyRule('ACTOR', '>', '3');
 
+    await this.click2graph();
     element(by.css('input[value="Execute"]')).click();
     await browser.waitForAngular();
 
@@ -209,10 +215,6 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     // add empty rule
     element(by.css('img[title="Add/Update"]')).click();
-    await browser.sleep(this.ANIM_WAIT);
-
-    // uncheck graph
-    element(by.css('input.cb-is-load-graph')).click();
     await browser.sleep(this.ANIM_WAIT);
 
     element(by.css('input[value="Execute"]')).click();
@@ -236,11 +238,8 @@ export class AppPage {
     element(by.css('img[title="Download selected objects"]')).click();
     await browser.sleep(this.ANIM_WAIT);
 
-    // check "Graph"
-    element(by.css('input.cb-is-load-graph')).click();
-    await browser.sleep(this.ANIM_WAIT);
-
     const cntElem1 = await browser.executeScript(`return cy.$().length`) as number;
+    await this.click2graph();
 
     // load next page
     element.all(by.css('a.page-link')).last().click();
@@ -270,10 +269,11 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     await this.addPropertyRule('ACTOR', '>', '3');
 
-    // check database
+    // uncheck database
     element(by.css('input.cb-is-on-db')).click();
     await browser.sleep(this.ANIM_WAIT);
 
+    await this.click2graph();
     element(by.css('input[value="Execute"]')).click();
     await browser.sleep(this.ANIM_WAIT);
 
@@ -309,6 +309,14 @@ export class AppPage {
 
   async setShowQueryResults(idx: number) {
     element.all(by.css('input[name="optradio1"]')).get(idx).click();
+    await browser.sleep(this.ANIM_WAIT);
+  }
+
+  /** clicks to "Graph" checkbox to load graph elements to cytoscape.js
+   */
+  async click2graph() {
+    // uncheck graph
+    element(by.css('input.cb-is-load-graph')).click();
     await browser.sleep(this.ANIM_WAIT);
   }
 }
