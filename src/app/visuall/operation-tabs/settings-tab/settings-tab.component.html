@@ -131,11 +131,10 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
-        <label class="form-check-label va-text">Database execution timeout</label>
+        <label class="form-check-label va-text">Database execution timeout (sec)</label>
         <div class="mx-1">
           <input type="number" max="100" min="1" (keydown.enter)="settingChanged(dbTimeout, 'dbTimeout')"
             [(ngModel)]="dbTimeout" class="form-control inp-3-char std-inp-hei va-small-text">
-          <span class="va-small-text">&nbsp; seconds</span>
         </div>
       </div>
     </div>

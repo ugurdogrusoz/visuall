@@ -42,6 +42,12 @@ export class Neo4jDb implements DbService {
         this._g.showErrorModal('Timeout', 'Your query took too long! Consider adjusting timeout setting.');
       }
     }, timeout);
+
+    const errFn = (err) => {
+      isTimeOut = false;
+      this._g.statusMsg.next('Database query execution raised error!');
+      console.error('database query execution error: ', err);
+    };
     this._http.post(url, requestBody, {
       headers: {
         'Accept': 'application/json; charset=UTF-8',
@@ -51,16 +57,16 @@ export class Neo4jDb implements DbService {
     }).subscribe(x => {
       isTimeOut = false;
       this._g.setLoadingStatus(false);
+      if (x['errors'] && x['errors'].length > 0) {
+        errFn(x['errors'][0]);
+        return;
+      }
       if (isGraphResponse) {
         callback(this.extractGraph(x));
       } else {
         callback(this.extractTable(x, isTimeboxed));
       }
-    }, (err) => {
-      isTimeOut = false;
-      this._g.statusMsg.next('Database query execution raised error!');
-      console.error('database query execution error: ', err);
-    });
+    }, errFn);
   }
 
   getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, meta?: DbQueryMeta) {

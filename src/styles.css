@@ -337,3 +337,7 @@ app-operation-tabs {
 .std-inp-hei-sec {
   height: 2.25em;
 }
+
+.modal-dialog {
+  width: fit-content;
+}
