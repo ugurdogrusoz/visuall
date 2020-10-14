@@ -254,7 +254,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
 
   cb4AllChanged(isChecked: boolean) {
     this.checkedIdx = {};
-    let elems = document.getElementsByClassName('row-cb');
+    let elems = this.dynamicDiv.nativeElement.querySelectorAll('.row-cb')
     let elemsArr: HTMLInputElement[] = [];
     for (let i = 0; i < elems.length; i++) {
       elemsArr.push(elems[i] as HTMLInputElement);
