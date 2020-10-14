@@ -280,7 +280,7 @@ export class Neo4jDb implements DbService {
     if (isTimeboxed) {
       const obj = response.results[0].data;
       if (obj[0] === undefined || obj[0] === null) {
-        return { columns: [], data: [[0]] };
+        return { columns: [], data: [] };
       }
       const cols = Object.keys(obj[0].row[0]);
       const data = obj.map(x => Object.values(x.row[0]));
