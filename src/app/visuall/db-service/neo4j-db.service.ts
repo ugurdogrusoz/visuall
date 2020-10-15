@@ -36,17 +36,25 @@ export class Neo4jDb implements DbService {
         resultDataContents: [requestType]
       }]
     };
-    let isTimeOut = true;
-    setTimeout(() => {
-      if (isTimeOut) {
-        this._g.showErrorModal('Timeout', 'Your query took too long! Consider adjusting timeout setting.');
-      }
-    }, timeout);
+    let isTimeout = true;
+    if (isTimeboxed) {
+      setTimeout(() => {
+        if (isTimeout) {
+          this._g.showErrorModal('Database Timeout', 'Your query took too long! <br> Consider adjusting timeout setting.');
+        }
+      }, timeout);
+    }
 
     const errFn = (err) => {
-      isTimeOut = false;
-      this._g.statusMsg.next('Database query execution raised error!');
-      console.error('database query execution error: ', err);
+      isTimeout = false;
+      // It means our user-defined stored procedure intentionally throws exception to signal timeout
+      if (err.message.includes('Timeout occurred! It takes longer than')) {
+        this._g.showErrorModal('Database Timeout', 'Your query took too long!  <br> Consider adjusting timeout setting.');
+      } else {
+        this._g.statusMsg.next('Database query execution raised error!');
+        console.error('database query execution error: ', err);
+      }
+
     };
     this._http.post(url, requestBody, {
       headers: {
@@ -55,7 +63,7 @@ export class Neo4jDb implements DbService {
         'Authorization': 'Basic ' + btoa(username + ':' + password)
       }
     }).subscribe(x => {
-      isTimeOut = false;
+      isTimeout = false;
       this._g.setLoadingStatus(false);
       if (x['errors'] && x['errors'].length > 0) {
         errFn(x['errors'][0]);
