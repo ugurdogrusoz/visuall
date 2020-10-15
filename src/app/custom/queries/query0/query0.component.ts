@@ -37,7 +37,13 @@ export class Query0Component implements OnInit {
   }
 
   getCountOfData(filter?: TableFiltering) {
-    const cb = (x) => { this.tableInput.resultCnt = x.data[0][0] };
+    const cb = (x) => {
+      if (!x['data'][0]) {
+        this.tableInput.resultCnt = 0;
+      } else {
+        this.tableInput.resultCnt = x['data'][0][0];
+      }
+    };
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
     const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree'], isIgnoreCase);
     const dateFilter = this.getDateRangeCQL();

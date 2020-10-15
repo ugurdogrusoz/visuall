@@ -265,7 +265,7 @@ export class MapTabComponent implements OnInit {
       } else {
         this.tableInput.resultCnt = x['data'][0][0];
       }
-    }
+    };
     if (filter != null) {
       this._dbService.filterTable(this.queryRule, filter, 0, -1, DbQueryType.count, setCntFn);
     } else {
