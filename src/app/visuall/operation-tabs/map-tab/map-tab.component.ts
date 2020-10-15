@@ -259,10 +259,17 @@ export class MapTabComponent implements OnInit {
   }
 
   private getCountOfData(filter: TableFiltering = null) {
+    const setCntFn = (x) => {
+      if (!x['data'][0]) {
+        this.tableInput.resultCnt = 0;
+      } else {
+        this.tableInput.resultCnt = x['data'][0][0];
+      }
+    }
     if (filter != null) {
-      this._dbService.filterTable(this.queryRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0][0]; });
+      this._dbService.filterTable(this.queryRule, filter, 0, -1, DbQueryType.count, setCntFn);
     } else {
-      this._dbService.getFilteringResult(this.queryRule, filter, 0, -1, DbQueryType.count, (x) => { this.tableInput.resultCnt = x['data'][0][0]; });
+      this._dbService.getFilteringResult(this.queryRule, filter, 0, -1, DbQueryType.count, setCntFn);
     }
   }
 
