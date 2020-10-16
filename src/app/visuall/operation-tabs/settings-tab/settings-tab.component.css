@@ -4,7 +4,8 @@
 }
 .leftObj {
   position: relative;
-  bottom: -0.25em;
+  bottom: -0.22em;
+  left: 5.25%;
   float: left;
 }
 

@@ -162,6 +162,7 @@ export class SettingsTabComponent implements OnInit {
     this.highlightWidth = up.highlightStyles[this._g.userPrefs.currHighlightIdx.getValue()].wid.getValue();
     this.selectionColor = up.selectionColor.getValue();
     this.selectionWidth = up.selectionWidth.getValue();
+    this._g.cy.style().selector('core').style({ 'selection-box-color': this.selectionColor });
     this.compoundPadding = up.compoundPadding.getValue();
     this.isStoreUserProfile = up.isStoreUserProfile.getValue();
     this.isLimitDbQueries2range = up.isLimitDbQueries2range.getValue();
@@ -232,17 +233,23 @@ export class SettingsTabComponent implements OnInit {
   onSelColorSelected(c: string) {
     this._g.userPrefs.selectionColor.next(c);
     this.selectionColor = c;
-    this._g.cy.style().selector('core').style({ 'selection-box-color': this.selectionColor })
+    this._g.cy.style().selector('core').style({ 'selection-box-color': this.selectionColor });
     this._g.cy.style().selector(':selected').style({ 'overlay-color': this.selectionColor }).update();
-    this._profile.saveUserPrefs()
+    this._profile.saveUserPrefs();
   }
 
   onSelWidSelected( w ) {
     let width = parseFloat(w.target.value);
-    this._g.userPrefs.selectionWidth.next(width);
-    this.selectionWidth = width;
-    this._g.cy.style().selector(':selected').style({ 'overlay-padding': width }).update();
-    this._profile.saveUserPrefs()
+    if(Number(width)){
+      this._g.userPrefs.selectionWidth.next(width);
+      this.selectionWidth = width;
+      this._g.cy.style().selector(':selected').style({ 'overlay-padding': width }).update();
+      this._profile.saveUserPrefs();
+    }
+    else{
+      this.selectionWidth = this._g.userPrefs.selectionWidth.getValue();
+      w.target.valueAsNumber = this.selectionWidth;
+    }
   }
 
   // used to change border width or color. One of them should be defined. (exclusively)
