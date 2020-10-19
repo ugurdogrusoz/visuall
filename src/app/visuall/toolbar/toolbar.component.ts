@@ -22,7 +22,6 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
   statusMsg = '';
   statusMsgQueue: string[] = [];
   MIN_MSG_DURATION = 500;
-  msgQueueUpdater = null;
   statusMsgSubs: Subscription;
   msgStarted2show: number = 0;
 
@@ -69,24 +68,18 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mergeCustomMenu();
     this.statusMsgSubs = this._g.statusMsg.subscribe(x => {
       this.statusMsgQueue.push(x);
-      if (this.msgQueueUpdater) {
-        return;
-      }
       this.processMsgQueue();
-      this.msgQueueUpdater = setInterval(this.processMsgQueue.bind(this), this.MIN_MSG_DURATION);
     });
   }
 
   private processMsgQueue() {
     if (this.statusMsgQueue.length < 1) {
-      clearInterval(this.msgQueueUpdater);
       this.statusMsg = '';
-      this.msgQueueUpdater = null;
       return;
     }
     const currTime = new Date().getTime();
     const timePassed = currTime - this.msgStarted2show;
-    if (timePassed >= this.MIN_MSG_DURATION) {
+    if (timePassed >= this.MIN_MSG_DURATION || this.statusMsg.length === 0) {
       this.statusMsg = this.statusMsgQueue[0];
       this.msgStarted2show = currTime;
       this.statusMsgQueue.shift();

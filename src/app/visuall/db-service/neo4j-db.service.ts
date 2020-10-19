@@ -49,6 +49,7 @@ export class Neo4jDb implements DbService {
       isTimeout = false;
       // It means our user-defined stored procedure intentionally throws exception to signal timeout
       if (err.message.includes('Timeout occurred! It takes longer than')) {
+        this._g.statusMsg.next('');
         this._g.showErrorModal('Database Timeout', 'Your query took too long!  <br> Consider adjusting timeout setting.');
       } else {
         this._g.statusMsg.next('Database query execution raised error!');
@@ -69,6 +70,7 @@ export class Neo4jDb implements DbService {
         errFn(x['errors'][0]);
         return;
       }
+      this._g.statusMsg.next('');
       if (isGraphResponse) {
         callback(this.extractGraph(x));
       } else {
