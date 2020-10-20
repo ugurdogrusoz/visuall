@@ -55,7 +55,7 @@ export class Neo4jDb implements DbService {
         this._g.statusMsg.next('Database query execution raised error!');
         console.error('database query execution error: ', err);
       }
-
+      this._g.setLoadingStatus(false);
     };
     this._http.post(url, requestBody, {
       headers: {
