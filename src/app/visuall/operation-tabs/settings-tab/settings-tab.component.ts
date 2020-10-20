@@ -241,12 +241,17 @@ export class SettingsTabComponent implements OnInit {
   onSelWidSelected( w ) {
     let width = parseFloat(w.target.value);
     if(Number(width)){
+      if(width<0)
+        width = 1;
+      else if(width>20)
+        width = 20;
       this._g.userPrefs.selectionWidth.next(width);
       this.selectionWidth = width;
       this._g.cy.style().selector(':selected').style({ 'overlay-padding': width }).update();
       this._profile.saveUserPrefs();
     }
     else{
+      this._g.userPrefs.selectionWidth.next(1);
       this.selectionWidth = this._g.userPrefs.selectionWidth.getValue();
       w.target.valueAsNumber = this.selectionWidth;
     }

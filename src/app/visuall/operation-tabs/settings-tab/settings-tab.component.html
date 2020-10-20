@@ -44,18 +44,14 @@
       </div>
     </div>
     <div class="card border-0 m-1">
-      <div class="form">
-        <div class="form-check-label va-text">Selection style &nbsp;</div>
-          <label class="form-check-label">
-            <div class="leftObj">
-              <input type="number" max="20" min="1" step="any" (change)="onSelWidSelected($event)" [(ngModel)]="selectionWidth"
-                class="form-control inp-3-char std-inp-hei-sec va-small-text mx-1" placeholder="width">
-            </div>
-            <label class="rightObj">
-              <app-color-picker (onColorSelected)="onSelColorSelected($event)" [currColor]="selectionColor"></app-color-picker>
-            </label>
-          </label>
+        <label class="form-check-label va-text">Selection style</label>
+        <div class="form-inline">
+        <div class="mx-1">
+          <input type="number" max="20" min="1" step="any" (change)="onSelWidSelected($event)" [(ngModel)]="selectionWidth"
+            class="form-control std-inp-hei va-small-text ml-1" style="width: 5.5em;" placeholder="width">
+          <app-color-picker (onColorSelected)="onSelColorSelected($event)" [currColor]="selectionColor" class="align-middle"></app-color-picker>
         </div>
+      </div>
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
@@ -68,7 +64,7 @@
             </option>
           </select>
           <input type="number" max="20" min="1" step="any" (change)="bandPassHighlightWidth()" [(ngModel)]="highlightWidth"
-            class="form-control inp-3-char std-inp-hei va-small-text" placeholder="width">
+            class="form-control std-inp-hei va-small-text" style="width: 5.5em;" placeholder="width">
           <app-color-picker (onColorSelected)="onColorSelected($event)" [currColor]="highlightColor"
             class="align-middle"></app-color-picker>
           <a href="#" title="Update this style" (click)="changeHighlightStyle()" class="m-1">
