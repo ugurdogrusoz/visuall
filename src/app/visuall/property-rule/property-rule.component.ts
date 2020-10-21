@@ -25,6 +25,7 @@ export class PropertyRuleComponent implements OnInit {
   operatorKeys: string[];
   selectedPropertyCategory: PropertyCategory;
   filterInp: string;
+  optInp: string;
   textAreaInp: string = '';
   finiteSetPropertyMap: any = null;
   selectedClass: string;
@@ -36,7 +37,7 @@ export class PropertyRuleComponent implements OnInit {
   @Output() onRuleReady = new EventEmitter<Rule>();
   @ViewChild('dateInp', { static: false }) dateInp: ElementRef;
   isShowTxtArea = false;
-  txtAreaSize: { width: number, height: number } = { width: 250, height: 150 };
+  txtAreaSize: { width: number, height: number } = { width: 300, height: 175 };
   position: IPosition = { x: 0, y: 0 };
   propChangeSubs: Subscription;
 
@@ -195,7 +196,15 @@ export class PropertyRuleComponent implements OnInit {
     if (typeof this.filterInp !== 'string') {
       this.filterInp = '' + this.filterInp;
     }
-    this.textAreaInp = this.filterInp.split(',').join('\n');
+    if (this.selectedPropertyCategory == PropertyCategory.finiteSet) {
+      if (this.textAreaInp && this.textAreaInp.length > 1) {
+        this.textAreaInp += '\n' + this.optInp;
+      } else {
+        this.textAreaInp = this.optInp;
+      }
+    } else {
+      this.textAreaInp = this.filterInp.split(',').join('\n');
+    }
   }
 
   txtAreaPopupOk() {

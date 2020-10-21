@@ -61,7 +61,8 @@ export const DATETIME_OPERATORS = {
 
 export const ENUM_OPERATORS = {
   '=': '=',
-  '\u2260': '<>'
+  '\u2260': '<>',
+  'one of': 'One of'
 };
 
 export const TEXT_OPERATORS = {
