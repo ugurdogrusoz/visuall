@@ -2,7 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef, 
 import { TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber, DATETIME_OPERATORS } from '../constants';
 import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/query-types';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { IPosition } from 'angular2-draggable';
 import { GlobalVariableService } from '../global-variable.service';
 
@@ -16,6 +16,7 @@ export class PropertyRuleComponent implements OnInit {
   private readonly NO_OPERATION = 'no_op';
   private operators: any;
   private readonly NOT_SELECTED = '───';
+  private readonly ONE_OF = 'one of';
 
   selectedProp: string;
   isGenericTypeSelected = true;
@@ -37,11 +38,18 @@ export class PropertyRuleComponent implements OnInit {
   isShowTxtArea = false;
   txtAreaSize: { width: number, height: number } = { width: 250, height: 150 };
   position: IPosition = { x: 0, y: 0 };
+  propChangeSubs: Subscription;
 
   constructor(private _g: GlobalVariableService) { }
 
   ngOnInit() {
-    this.propertyChanged.subscribe(x => { this.updateView(x.properties, x.isGenericTypeSelected, x.selectedClass) });
+    this.propChangeSubs = this.propertyChanged.subscribe(x => { this.updateView(x.properties, x.isGenericTypeSelected, x.selectedClass) });
+  }
+
+  ngOnDestroy() {
+    if (this.propChangeSubs) {
+      this.propChangeSubs.unsubscribe();
+    }
   }
 
   updateView(props: string[], isGeneric: boolean, cName: string) {
@@ -64,6 +72,9 @@ export class PropertyRuleComponent implements OnInit {
       }
     } else {
       this.changeSelectedProp();
+    }
+    if (this.selectedOperatorKey === this.ONE_OF) {
+      this.currInpType = 'text';
     }
   }
 
@@ -120,7 +131,11 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   @HostListener('document:keydown.enter', ['$event'])
-  onAddRuleClick() {
+  onAddRuleClick(event: KeyboardEvent) {
+    // do not enter rule with keyboard shortcut if we are showing text area for 'one of'
+    if (event && this.isShowTxtArea) {
+      return;
+    }
     const attribute = this.selectedProp;
     let value: any = this.filterInp;
     let rawValue: any = this.filterInp;
@@ -140,7 +155,7 @@ export class PropertyRuleComponent implements OnInit {
       value = parseFloat(value);
     }
 
-    if (this.selectedOperatorKey == 'one of') {
+    if (this.selectedOperatorKey === this.ONE_OF) {
       value = this.filterInp;
     }
 
@@ -169,7 +184,7 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   filterInpClicked() {
-    if (this.selectedOperatorKey != 'one of') {
+    if (this.selectedOperatorKey != this.ONE_OF) {
       return;
     }
     if (this.position.x == 0 && this.position.y == 0) {
@@ -177,6 +192,10 @@ export class PropertyRuleComponent implements OnInit {
     }
     this.isShowTxtArea = true;
     this.currInpType = 'text';
+    if (typeof this.filterInp !== 'string') {
+      this.filterInp = '' + this.filterInp;
+    }
+    this.textAreaInp = this.filterInp.split(',').join('\n');
   }
 
   txtAreaPopupOk() {
@@ -240,11 +259,9 @@ export class PropertyRuleComponent implements OnInit {
       return false;
     }
     const t = rule.propertyType;
-    if ((t == 'datetime' || t == 'float' || t == 'int') && !isNumber(inp) && this.selectedOperatorKey != 'one of') {
+    if ((t == 'datetime' || t == 'float' || t == 'int') && !isNumber(inp) && this.selectedOperatorKey != this.ONE_OF) {
       return false;
     }
     return true;
   }
-
-
 }
