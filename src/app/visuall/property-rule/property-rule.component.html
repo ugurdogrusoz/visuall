@@ -14,18 +14,18 @@
   </div>
 
   <div class="col-5 pr-1">
-    <div [hidden]="selectedPropertyCategory != 0">
-      <input [type]="currInpType" title="Value" [(ngModel)]="filterInp" [disabled]="isGenericTypeSelected || isShowTxtArea"
-        (click)="filterInpClicked()"
+    <div [hidden]="selectedPropertyCategory != 0 && selectedPropertyCategory == 2 && selectedOperatorKey != 'one of'">
+      <input [type]="currInpType" title="Value" [(ngModel)]="filterInp"
+        [disabled]="isGenericTypeSelected || isShowTxtArea" (click)="filterInpClicked()"
         class="tight-select std-inp-hei form-control filter-form filter-input va-small-text" placeholder="Filter...">
     </div>
     <div [hidden]="selectedPropertyCategory != 1">
       <input type="text" #dateInp [disabled]="isGenericTypeSelected"
         class="tight-select std-inp-hei filter-form form-control va-small-text">
     </div>
-    <div [hidden]="selectedPropertyCategory != 2">
+    <div [hidden]="selectedPropertyCategory != 2 || selectedOperatorKey == 'one of'">
       <select class="custom-select tight-select std-inp-hei filter-form va-small-text" [(ngModel)]="optInp"
-        (change)="filterInpClicked()">
+        (change)="optSelected()">
         <option *ngFor="let p of finiteSetPropertyMap" [value]="p.key">{{p.value}}</option>
       </select>
     </div>
@@ -36,7 +36,7 @@
   </div>
 </div>
 <div class="draggable-content" ngResizable ngDraggable [handle]="DragHandle" [position]="position" [rzHandles]="'all'"
-  *ngIf="isShowTxtArea" [rzMinWidth]="300" [rzMinHeight]="175" (endOffset)="onMoveEnd($event)"
+  *ngIf="isShowTxtArea" [rzMinWidth]="350" [rzMinHeight]="250" (endOffset)="onMoveEnd($event)"
   (rzStop)="onResizeStop($event)" [style.width]="txtAreaSize.width + 'px'" [style.height]="txtAreaSize.height + 'px'">
   <div class="d-flex flex-column h-100">
     <div #DragHandle style="cursor: move;" class="modal-header">
@@ -48,7 +48,14 @@
       </div>
     </div>
     <div class="flex-grow-1 h-100 m-1">
-      <textarea class="va-text form-control" rows="3" cols="40" [(ngModel)]="textAreaInp"></textarea>
+      <textarea *ngIf="selectedPropertyCategory != 2" class="va-text form-control" rows="3" cols="40"
+        [(ngModel)]="textAreaInp">
+      </textarea>
+      <select #multiSelect *ngIf="selectedPropertyCategory == 2" multiple [size]="finiteSetPropertyMap.length"
+        class="custom-select tight-select std-inp-hei filter-form va-small-text" (change)="filterInpClicked()">
+        <option *ngFor="let p of finiteSetPropertyMap" [value]="p.key" [(selected)]="option2selected[p.key]">{{p.value}}
+        </option>
+      </select>
     </div>
     <div class="align-self-center">
       <button type="button" class="m-1 btn btn-primary va-text" (click)="txtAreaPopupOk()">OK</button>

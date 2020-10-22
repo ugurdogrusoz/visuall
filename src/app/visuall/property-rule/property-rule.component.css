@@ -6,13 +6,13 @@ img {
 
 .draggable-content {
   z-index: 1001 !important;
-  cursor: move;
   position: absolute;
   background: rgba(255, 255, 255, 0.90);
   white-space: pre-wrap;
   border: 2px solid #555555;
   border-radius: 5px;
   overflow: hidden;
+  height: auto;
 }
 
 textarea {
@@ -21,6 +21,15 @@ textarea {
   resize: none !important;
 }
 
-input, select {
+input,
+select {
   display: inline;
+}
+
+.modal-header {
+  cursor: move;
+}
+
+select[multiple] {
+  max-height: 200px;
 }

@@ -36,10 +36,12 @@ export class PropertyRuleComponent implements OnInit {
   @Input() refreshView: Subject<boolean>;
   @Output() onRuleReady = new EventEmitter<Rule>();
   @ViewChild('dateInp', { static: false }) dateInp: ElementRef;
+  @ViewChild('multiSelect', { static: false }) multiSelect: ElementRef;
   isShowTxtArea = false;
-  txtAreaSize: { width: number, height: number } = { width: 300, height: 175 };
+  txtAreaSize: { width: number, height: number } = { width: 350, height: 250 };
   position: IPosition = { x: 0, y: 0 };
   propChangeSubs: Subscription;
+  option2selected = {};
 
   constructor(private _g: GlobalVariableService) { }
 
@@ -166,6 +168,20 @@ export class PropertyRuleComponent implements OnInit {
       if (o) {
         mapped = o.value;
       }
+      if (this.selectedOperatorKey === this.ONE_OF) {
+        mapped = '';
+        const arr = this.filterInp.split(',');
+        for (const el of arr) {
+          const o = this.finiteSetPropertyMap.find(x => x.key == el);
+          if (o) {
+            mapped += o.value + ',';
+          }
+        }
+        const strSize = mapped.length;
+        if (strSize > 0 && mapped[strSize - 1] === ',') {
+          mapped = mapped.substr(0, strSize);
+        }
+      }
     }
     const rule: Rule = {
       propertyOperand: attribute,
@@ -185,7 +201,7 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   filterInpClicked() {
-    if (this.selectedOperatorKey != this.ONE_OF) {
+    if (this.selectedOperatorKey != this.ONE_OF || this.isShowTxtArea) {
       return;
     }
     if (this.position.x == 0 && this.position.y == 0) {
@@ -197,18 +213,27 @@ export class PropertyRuleComponent implements OnInit {
       this.filterInp = '' + this.filterInp;
     }
     if (this.selectedPropertyCategory == PropertyCategory.finiteSet) {
-      if (this.textAreaInp && this.textAreaInp.length > 1) {
-        this.textAreaInp += '\n' + this.optInp;
-      } else {
-        this.textAreaInp = this.optInp;
+      const arr = this.filterInp.split(',');
+      for (const o of this.finiteSetPropertyMap) {
+        this.option2selected[o.key] = arr.includes(o.key);
       }
     } else {
-      this.textAreaInp = this.filterInp.split(',').join('\n');
+      this.textAreaInp = this.filterInp;
     }
   }
 
+  optSelected() {
+    this.filterInp = this.optInp;
+  }
+
   txtAreaPopupOk() {
-    this.filterInp = this.textAreaInp.trim().split('\n').join(',');
+    if (this.selectedOperatorKey == this.ONE_OF && this.selectedPropertyCategory == PropertyCategory.finiteSet) {
+      const selectedOptions = [...this.multiSelect.nativeElement.querySelectorAll('option')].filter(x => x.selected).map(x => x.value);
+      console.log('selected options: ', selectedOptions);
+      this.filterInp = selectedOptions.join(',');
+    } else {
+      this.filterInp = this.textAreaInp.trim().split('\n').join(',');
+    }
     this.isShowTxtArea = false;
   }
 
