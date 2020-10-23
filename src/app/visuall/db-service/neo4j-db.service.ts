@@ -417,17 +417,18 @@ export class Neo4jDb implements DbService {
       if (!rule.operator || !rule.inputOperand || rule.inputOperand.length < 1) {
         return `( size((x)-[:${rule.propertyOperand}]-()) > 0 )`;
       }
-      let i = this.transformInp(rule, rule.inputOperand);
-      return `( size((x)-[:${rule.propertyOperand}]-()) ${rule.operator} ${i} )`;
+      const i = this.transformInp(rule, rule.inputOperand);
+      const op = rule.operator != 'One of' ? rule.operator : 'IN';
+      return `( size((x)-[:${rule.propertyOperand}]-()) ${op} ${i} )`;
     } else {
       if (rule.propertyType == 'string' && this._g.userPrefs.isIgnoreCaseInText.getValue()) {
         inputOp = inputOp.toLowerCase();
         inputOp = this.transformInp(rule, inputOp);
-        let op = rule.operator != 'One of' ? rule.operator : 'IN';
+        const op = rule.operator != 'One of' ? rule.operator : 'IN';
         return `(LOWER(x.${rule.propertyOperand}) ${op} ${inputOp})`;
       }
       inputOp = this.transformInp(rule, inputOp);
-      let op = rule.operator != 'One of' ? rule.operator : 'IN';
+      const op = rule.operator != 'One of' ? rule.operator : 'IN';
       return `(x.${rule.propertyOperand} ${op} ${inputOp})`;
     }
   }
