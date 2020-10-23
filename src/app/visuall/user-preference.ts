@@ -19,6 +19,7 @@ export interface UserPref {
   nodeLabelWrap: BehaviorSubject<TextWrapTypes>;
   isLimitDbQueries2range: BehaviorSubject<boolean>;
   dbQueryTimeRange: { start: BehaviorSubject<number>, end: BehaviorSubject<number> },
+  savedLists: SavedLists;
   dataPageSize: BehaviorSubject<number>;
   queryHistoryLimit: BehaviorSubject<number>;
   dbTimeout: BehaviorSubject<number>;
@@ -73,4 +74,10 @@ export interface UserProfile {
   queryRules: QueryRule[];
   timebarMetrics: TimebarMetric[];
   userPref: any;
+}
+
+export interface SavedLists {
+  numberLists: { name: BehaviorSubject<string>, values: BehaviorSubject<string>[] }[]
+  stringLists: { name: BehaviorSubject<string>, values: BehaviorSubject<string>[] }[];
+  enumLists: { name: BehaviorSubject<string>, values: BehaviorSubject<string>[] }[];
 }

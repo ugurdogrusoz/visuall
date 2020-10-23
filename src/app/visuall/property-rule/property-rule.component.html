@@ -40,7 +40,7 @@
   (rzStop)="onResizeStop($event)" [style.width]="txtAreaSize.width + 'px'" [style.height]="txtAreaSize.height + 'px'">
   <div class="d-flex flex-column h-100">
     <div #DragHandle style="cursor: move;" class="modal-header">
-      <div class="modal-title va-heading1 text-center">One of</div>
+      <div class="modal-title va-heading1 text-center"><span *ngIf="selectedProp">{{selectedProp}} - </span>One of</div>
       <div>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="txtAreaPopupCancel()">
           <span aria-hidden="true">&times;</span>
@@ -57,9 +57,21 @@
         </option>
       </select>
     </div>
+    <div class="d-flex align-items-center justify-content-center">
+      <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name" [(ngModel)]="currListName"
+        class="tight-select filter-form form-control std-inp-hei m-1 va-small-text">
+      <select title="Saved lists" class="custom-select tight-select std-inp-hei filter-form va-small-text"
+        (change)="changeSelectedSavedList($event.target.value)">
+        <option disabled selected value> -- select a predefined list -- </option>
+        <option *ngFor="let p of fittingSavedLists" [value]="p">{{p}} </option>
+      </select>
+      <span class="m-1">
+        <img src="assets/img/tick.svg" title="Add/Update List" (click)="saveCurrList()">
+      </span>
+    </div>
     <div class="align-self-center">
-      <button type="button" class="m-1 btn btn-primary va-text" (click)="txtAreaPopupOk()">OK</button>
-      <button type="button" class="m-1 btn btn-secondary va-text" (click)="txtAreaPopupCancel()">Cancel</button>
+      <button type="button" class="m-1 btn btn-sm btn-primary va-text" (click)="txtAreaPopupOk()">OK</button>
+      <button type="button" class="m-1 btn btn-sm btn-secondary va-text" (click)="txtAreaPopupCancel()">Cancel</button>
     </div>
   </div>
 </div>

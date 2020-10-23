@@ -2,9 +2,10 @@ import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef, 
 import { TEXT_OPERATORS, NUMBER_OPERATORS, LIST_OPERATORS, ENUM_OPERATORS, GENERIC_TYPE, isNumber, DATETIME_OPERATORS } from '../constants';
 import flatpickr from 'flatpickr';
 import { PropertyCategory, Rule, RuleSync } from '../operation-tabs/map-tab/query-types';
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { IPosition } from 'angular2-draggable';
 import { GlobalVariableService } from '../global-variable.service';
+import { UserProfileService } from '../user-profile.service';
 
 @Component({
   selector: 'app-property-rule',
@@ -42,8 +43,10 @@ export class PropertyRuleComponent implements OnInit {
   position: IPosition = { x: 0, y: 0 };
   propChangeSubs: Subscription;
   option2selected = {};
+  currListName = 'New List';
+  fittingSavedLists: string[] = [];
 
-  constructor(private _g: GlobalVariableService) { }
+  constructor(private _g: GlobalVariableService, private _profile: UserProfileService) { }
 
   ngOnInit() {
     this.propChangeSubs = this.propertyChanged.subscribe(x => { this.updateView(x.properties, x.isGenericTypeSelected, x.selectedClass) });
@@ -133,6 +136,20 @@ export class PropertyRuleComponent implements OnInit {
     }
   }
 
+  isNumberProperty(): boolean {
+    const model = this._g.dataModel.getValue();
+    let attrType = undefined;
+    if (model.nodes[this.selectedClass]) {
+      attrType = model.nodes[this.selectedClass][this.selectedProp];
+    } else if (model.edges[this.selectedClass]) {
+      attrType = model.edges[this.selectedClass][this.selectedProp];
+    }
+    if (model.edges[this.selectedProp]) {
+      attrType = 'edge';
+    }
+    return attrType == 'float' || attrType == 'int' || attrType == 'edge';
+  }
+
   @HostListener('document:keydown.enter', ['$event'])
   onAddRuleClick(event: KeyboardEvent) {
     // do not enter rule with keyboard shortcut if we are showing text area for 'one of'
@@ -179,7 +196,7 @@ export class PropertyRuleComponent implements OnInit {
         }
         const strSize = mapped.length;
         if (strSize > 0 && mapped[strSize - 1] === ',') {
-          mapped = mapped.substr(0, strSize);
+          mapped = mapped.substr(0, strSize - 1);
         }
       }
     }
@@ -208,6 +225,8 @@ export class PropertyRuleComponent implements OnInit {
       this.position = { x: -130, y: 0 };
     }
     this.isShowTxtArea = true;
+    this.currListName = 'New list';
+    this.fillFittingSavedLists();
     this.currInpType = 'text';
     if (typeof this.filterInp !== 'string') {
       this.filterInp = '' + this.filterInp;
@@ -218,7 +237,7 @@ export class PropertyRuleComponent implements OnInit {
         this.option2selected[o.key] = arr.includes(o.key);
       }
     } else {
-      this.textAreaInp = this.filterInp;
+      this.textAreaInp = this.filterInp.split(',').join('\n');
     }
   }
 
@@ -229,7 +248,6 @@ export class PropertyRuleComponent implements OnInit {
   txtAreaPopupOk() {
     if (this.selectedOperatorKey == this.ONE_OF && this.selectedPropertyCategory == PropertyCategory.finiteSet) {
       const selectedOptions = [...this.multiSelect.nativeElement.querySelectorAll('option')].filter(x => x.selected).map(x => x.value);
-      console.log('selected options: ', selectedOptions);
       this.filterInp = selectedOptions.join(',');
     } else {
       this.filterInp = this.textAreaInp.trim().split('\n').join(',');
@@ -248,6 +266,68 @@ export class PropertyRuleComponent implements OnInit {
 
   onResizeStop(e) {
     this.txtAreaSize = e.size;
+  }
+
+  saveCurrList() {
+    let selectedOptions = this.textAreaInp.split('\n').map(x => new BehaviorSubject<string>(x));
+    if (this.selectedPropertyCategory == PropertyCategory.finiteSet) {
+      selectedOptions = [...this.multiSelect.nativeElement.querySelectorAll('option')].filter(x => x.selected).map(x => new BehaviorSubject<string>(x.value));
+    }
+    const isNum = this.isNumberProperty();
+    // the button to fire this function will only be visible when operator is 'one of'
+    let theLists: { name: BehaviorSubject<string>, values: BehaviorSubject<string>[] }[] = null;
+    if (this.selectedPropertyCategory == PropertyCategory.finiteSet) {
+      theLists = this._g.userPrefs.savedLists.enumLists;
+    } else if (isNum) {
+      theLists = this._g.userPrefs.savedLists.numberLists;
+    } else {
+      theLists = this._g.userPrefs.savedLists.stringLists;
+    }
+    const idx = theLists.findIndex(x => x.name.getValue() == this.currListName);
+    if (idx > -1) {
+      theLists[idx].values = selectedOptions;
+    } else {
+      theLists.push({ name: new BehaviorSubject<string>(this.currListName), values: selectedOptions });
+    }
+
+    this._profile.saveUserPrefs();
+    this.fillFittingSavedLists();
+  }
+
+  changeSelectedSavedList(ev: string) {
+    this.currListName = ev;
+    let savedList: BehaviorSubject<string>[] = [];
+    const isNum = this.isNumberProperty();
+    if (this.selectedPropertyCategory == PropertyCategory.finiteSet) {
+      savedList = this._g.userPrefs.savedLists.enumLists.find(x => x.name.getValue() === ev).values;
+    } else if (isNum) {
+      savedList = this._g.userPrefs.savedLists.numberLists.find(x => x.name.getValue() === ev).values;
+    } else {
+      savedList = this._g.userPrefs.savedLists.stringLists.find(x => x.name.getValue() === ev).values;
+    }
+    if (this.selectedPropertyCategory == PropertyCategory.finiteSet) {
+      for (const i in this.option2selected) {
+        this.option2selected[i] = false;
+      }
+      for (const i of savedList) {
+        this.option2selected[i.getValue()] = true;
+      }
+    } else {
+      this.textAreaInp = savedList.map(x => x.getValue()).join('\n');
+    }
+  }
+
+  private fillFittingSavedLists() {
+    this.fittingSavedLists.length = 0;
+    const l = this._g.userPrefs.savedLists;
+    const isNum = this.isNumberProperty();
+    if (this.selectedPropertyCategory === PropertyCategory.finiteSet) {
+      this.fittingSavedLists = l.enumLists.map(x => x.name.getValue());
+    } else if (isNum) {
+      this.fittingSavedLists = l.numberLists.map(x => x.name.getValue());
+    } else {
+      this.fittingSavedLists = l.stringLists.map(x => x.name.getValue());
+    }
   }
 
   private addOperators(op) {

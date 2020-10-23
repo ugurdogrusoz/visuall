@@ -417,6 +417,11 @@
       "start": -5364669352000,
       "end": 4102434000000
     },
+    "savedLists": {
+      "numberLists": [],
+      "stringLists": [],
+      "enumLists": []
+    },
     "dataPageSize": 15,
     "queryHistoryLimit": 10,
     "dbTimeout": 10,
