@@ -1,5 +1,4 @@
-body,
-html {
+body, html {
   height: 100%;
 }
 
@@ -340,4 +339,5 @@ app-operation-tabs {
 
 .modal-dialog {
   width: fit-content;
+  min-width: 380px;
 }
