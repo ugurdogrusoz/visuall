@@ -14,7 +14,7 @@
   </div>
 
   <div class="col-5 pr-1">
-    <div [hidden]="selectedPropertyCategory != 0 && selectedPropertyCategory == 2 && selectedOperatorKey != 'one of'">
+    <div [hidden]="selectedPropertyCategory != 0 && selectedOperatorKey != 'one of'">
       <input [type]="currInpType" title="Value" [(ngModel)]="filterInp"
         [disabled]="isGenericTypeSelected || isShowTxtArea" (click)="filterInpClicked()"
         class="tight-select std-inp-hei form-control filter-form filter-input va-small-text" placeholder="Filter...">
@@ -58,8 +58,8 @@
       </select>
     </div>
     <div class="d-flex align-items-center justify-content-center">
-      <select title="Saved lists" class="m-1 custom-select tight-select std-inp-hei filter-form va-small-text" [(ngModel)]="currSelectedList"
-        (change)="changeSelectedSavedList($event.target.value)">
+      <select title="Saved lists" class="m-1 custom-select tight-select std-inp-hei filter-form va-small-text"
+        [(ngModel)]="currSelectedList" (change)="changeSelectedSavedList($event.target.value)">
         <option disabled selected value>Choose a predefined list</option>
         <option *ngFor="let p of fittingSavedLists" [value]="p">{{p}} </option>
       </select>

@@ -88,6 +88,7 @@ export class PropertyRuleComponent implements OnInit {
   changeSelectedProp(filterInp = '', unixDateValue = null) {
     const model = this._g.dataModel.getValue();
     this.textAreaInp = '';
+    this.selectedOperatorKey = null;
     this.filterInp = filterInp;
     let attrType = undefined;
     if (model.nodes[this.selectedClass]) {
