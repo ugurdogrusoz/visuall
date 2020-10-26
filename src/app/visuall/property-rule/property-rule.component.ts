@@ -45,6 +45,7 @@ export class PropertyRuleComponent implements OnInit {
   option2selected = {};
   currListName = 'New List';
   fittingSavedLists: string[] = [];
+  currSelectedList: string;
 
   constructor(private _g: GlobalVariableService, private _profile: UserProfileService) { }
 
@@ -289,7 +290,27 @@ export class PropertyRuleComponent implements OnInit {
     } else {
       theLists.push({ name: new BehaviorSubject<string>(this.currListName), values: selectedOptions });
     }
+    this.currSelectedList = this.currListName;
+    this._profile.saveUserPrefs();
+    this.fillFittingSavedLists();
+  }
 
+  deleteList() {
+    const isNum = this.isNumberProperty();
+    // the button to fire this function will only be visible when operator is 'one of'
+    let theLists: { name: BehaviorSubject<string>, values: BehaviorSubject<string>[] }[] = null;
+    if (this.selectedPropertyCategory == PropertyCategory.finiteSet) {
+      theLists = this._g.userPrefs.savedLists.enumLists;
+    } else if (isNum) {
+      theLists = this._g.userPrefs.savedLists.numberLists;
+    } else {
+      theLists = this._g.userPrefs.savedLists.stringLists;
+    }
+    const idx = theLists.findIndex(x => x.name.getValue() == this.currSelectedList);
+    if (idx > -1) {
+      theLists.splice(idx, 1);
+    }
+    this.currListName = '';
     this._profile.saveUserPrefs();
     this.fillFittingSavedLists();
   }

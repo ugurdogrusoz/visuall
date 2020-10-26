@@ -1,7 +1,7 @@
 <div>
   <div class="d-flex flex-wrap align-items-center justify-content-center m-1">
     <select class="custom-select std-inp-hei tight-select filter-form va-small-text" [(ngModel)]="selectedPropFn">
-      <option value="">Please choose a property</option>
+      <option value="">Choose a property</option>
       <option *ngFor="let prop of theoreticProps" [value]="prop.fn">{{prop.text}}
       </option>
     </select>

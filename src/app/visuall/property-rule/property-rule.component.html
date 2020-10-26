@@ -58,15 +58,18 @@
       </select>
     </div>
     <div class="d-flex align-items-center justify-content-center">
-      <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name" [(ngModel)]="currListName"
-        class="tight-select filter-form form-control std-inp-hei m-1 va-small-text">
-      <select title="Saved lists" class="custom-select tight-select std-inp-hei filter-form va-small-text"
+      <select title="Saved lists" class="m-1 custom-select tight-select std-inp-hei filter-form va-small-text" [(ngModel)]="currSelectedList"
         (change)="changeSelectedSavedList($event.target.value)">
-        <option disabled selected value> -- select a predefined list -- </option>
+        <option disabled selected value>Choose a predefined list</option>
         <option *ngFor="let p of fittingSavedLists" [value]="p">{{p}} </option>
       </select>
+      <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name" [(ngModel)]="currListName"
+        class="tight-select filter-form form-control std-inp-hei m-1 va-small-text">
       <span class="m-1">
-        <img src="assets/img/tick.svg" title="Add/Update List" (click)="saveCurrList()">
+        <img src="assets/img/tick.svg" title="Add/Update list" (click)="saveCurrList()">
+      </span>
+      <span class="m-1" *ngIf="currListName != 'New list'">
+        <img src="assets/img/toolbar/delete-simple.svg" title="Delete list" (click)="deleteList()">
       </span>
     </div>
     <div class="align-self-center">

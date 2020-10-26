@@ -20,7 +20,7 @@
           <div class="d-flex align-items-center justify-content-center">
             <select class="custom-select std-inp-hei tight-select filter-form va-small-text query-select"
               [(ngModel)]="selectedQuery" (change)="changeQuery($event)">
-              <option ng-hide="model" value="">Please choose a query</option>
+              <option value="">Choose a query</option>
               <option *ngFor="let p of queries" [value]="p.text">{{p.text}}</option>
             </select>
           </div>

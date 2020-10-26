@@ -2,9 +2,9 @@
 <div>
   <div class="va-text">
     <div class="d-flex align-items-center justify-content-center">
-      <select class="custom-select std-inp-hei tight-select filter-form va-small-text query-select" [(ngModel)]="selectedQuery"
-        (change)="changeAdvancedQuery($event)">
-        <option ng-hide="model" value="">Please choose a query</option>
+      <select class="custom-select std-inp-hei tight-select filter-form va-small-text query-select"
+        [(ngModel)]="selectedQuery" (change)="changeAdvancedQuery($event)">
+        <option value="">Choose a query</option>
         <option *ngFor="let p of queries" [value]="p">{{p}}</option>
       </select>
     </div>
@@ -48,7 +48,8 @@
         <div class="form-inline justify-content-center">
           <label class="form-check-label va-text">Length limit</label>
           <div class="mx-1">
-            <input type="number" max="10" min="1" [(ngModel)]="lengthLimit" class="form-control inp-3-char std-inp-hei va-small-text">
+            <input type="number" max="10" min="1" [(ngModel)]="lengthLimit"
+              class="form-control inp-3-char std-inp-hei va-small-text">
           </div>
           <input class="form-check-input" type="checkbox" [(ngModel)]="isDirected">
           <label class="form-check-label va-text">Directed</label>
