@@ -228,6 +228,7 @@ export class PropertyRuleComponent implements OnInit {
     }
     this.isShowTxtArea = true;
     this.currListName = 'New list';
+    this.currSelectedList = null;
     this.fillFittingSavedLists();
     this.currInpType = 'text';
     if (typeof this.filterInp !== 'string') {
