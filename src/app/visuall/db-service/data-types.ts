@@ -12,12 +12,22 @@ export interface DbService {
 }
 
 export interface GraphResponse {
-  nodes: CyElem[];
-  edges: CyElem[];
+  nodes: CyNode[];
+  edges: CyEdge[];
 }
 
-export interface CyElem {
+export interface CyNode {
   id: string;
+  labels: string[];
+  properties?: any;
+}
+
+export interface CyEdge {
+  id: string;
+  properties?: any;
+  startNode: string | number;
+  endNode: string | number;
+  type: string;
 }
 
 export interface TableResponse {

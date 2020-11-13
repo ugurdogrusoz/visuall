@@ -4,7 +4,7 @@ import * as C from './constants';
 import { GlobalVariableService } from './global-variable.service';
 import { TimebarService } from './timebar.service';
 import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
-import { GraphResponse, GraphElem } from './db-service/data-types';
+import { GraphResponse, GraphElem, CyEdge, CyNode } from './db-service/data-types';
 import { UserPrefHelper } from './user-pref-helper';
 import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './user-preference';
 import { UserProfileService } from './user-profile.service';
@@ -175,7 +175,17 @@ export class CytoscapeService {
     const wasEmpty = this._g.cy.elements().length < 2;
 
     this._g.cy.add(cyNodes);
-    this._g.cy.add(cyEdges);
+    const filteredCyEdges = []
+    for (let i = 0; i < cyEdges.length; i++) {
+      const sId = cyEdges[i].data.source;
+      const eId = cyEdges[i].data.target;
+      if ((this._g.cy.$id(sId).length < 1 && !nodes.find(x => x.id == sId)) || (this._g.cy.$id(eId).length < 1 && !nodes.find(x => x.id == eId))) {
+        continue;
+      }
+      filteredCyEdges.push(cyEdges[i]);
+    }
+    this._g.cy.add(filteredCyEdges);
+
     let compoundEdgeIds = Object.values(collapsedEdgeIds) as string[];
     if (this._g.userPrefs.isCollapseMultiEdgesOnLoad.getValue()) {
       this.collapseMultiEdges();
@@ -312,7 +322,7 @@ export class CytoscapeService {
     }
   }
 
-  createCyNode(node, id) {
+  createCyNode(node: CyNode, id) {
     const classes = node.labels.join(' ');
     let properties = node.properties;
     properties.id = id
@@ -320,7 +330,7 @@ export class CytoscapeService {
     return { data: properties, classes: classes };
   }
 
-  createCyEdge(edge, id) {
+  createCyEdge(edge: CyEdge, id) {
     let properties = edge.properties || {};
     properties.id = id;
     properties.source = 'n' + edge.startNode;
@@ -593,7 +603,7 @@ export class CytoscapeService {
 
   addParentNode(idSuffix: string | number, parent = undefined) {
     const id = 'c' + idSuffix;
-    const parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name } }, id);
+    const parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name }, id: '' }, id);
     this._g.cy.add(parentNode);
     this._g.cy.$('#' + id).move({ parent: parent });
   }
