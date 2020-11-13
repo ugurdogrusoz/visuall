@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
 })
 export class Neo4jDb implements DbService {
 
-  constructor(private _http: HttpClient, private _g: GlobalVariableService) { }
+  constructor(protected _http: HttpClient, protected _g: GlobalVariableService) { }
 
   runQuery(query: string, callback: (x: any) => any, isGraphResponse = true, isTimeboxed = true) {
     const conf = environment.dbConfig;
