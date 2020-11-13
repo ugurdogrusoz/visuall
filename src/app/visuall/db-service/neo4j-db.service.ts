@@ -231,7 +231,11 @@ export class Neo4jDb implements DbService {
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
     const mapping = this._g.appDescription.getValue().timebarDataMapping;
 
-    s = ' AND ('
+    if (!mapping || Object.keys(mapping).length < 1) {
+      return '';
+    }
+
+    s = ' AND (';
     for (const k of keys) {
       if (!mapping[k]) {
         continue;
