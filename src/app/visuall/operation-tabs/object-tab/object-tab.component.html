@@ -5,12 +5,14 @@
     </div>
 
     <div id="prop-tab" class="collapse show text-center m-1">
-      <div *ngFor="let item of selectedItemProps">
-        <div class="row small m-1">
-          <div class="col-4 text-right px-1"><b class="va-text">{{item.key}}</b></div>
-          <div class="col-8 text-left px-1 va-text">{{item.val}}</div>
-        </div>
-      </div>
+      <table class="table table-responsive table-borderless table-sm">
+        <tbody>
+          <tr *ngFor="let item of selectedItemProps" class="small">
+            <td class="text-right"><b class="va-text">{{item.key}}</b></td>
+            <td class="va-text text-left">{{item.val}}</td>
+          </tr>
+        </tbody>
+      </table>
 
       <app-table-view *ngIf="isShowObjTable" [params]="multiObjTableInp" [tableFilled]="multiObjTableFilled"
         [clearFilter]="clearMultiObjTableFilter" (onFilteringChanged)="filterMultiObjTable($event)">
