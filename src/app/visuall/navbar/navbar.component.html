@@ -15,7 +15,7 @@
       <input #file type="file" (change)="fileSelected()" accept="text/*, .json, .vall" style="display: none;" />
 
       <li class="nav-item" *ngFor="let item of menu; let i = index">
-        <div class="dropdown">
+        <div class="dropdown btn-group">
           <button class="btn btn-light dropdown-toggle va-heading1" type="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {{item.dropdown}}
