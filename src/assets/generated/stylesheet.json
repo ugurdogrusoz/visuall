@@ -95,7 +95,7 @@
       "font-size": "7px",
       "shape": "ellipse",
       "background-fit": "contain",
-      "background-image": "assets/img/person.svg",
+      "background-image": "app/custom/assets/person.svg",
       "width": "32px",
       "height": "32px"
     }
@@ -108,7 +108,7 @@
       "text-valign": "bottom",
       "text-margin-y": "-10px",
       "font-size": "7px",
-      "background-image": "assets/img/movie-roll.svg",
+      "background-image": "app/custom/assets/movie-roll.svg",
       "shape": "ellipse",
       "background-fit": "contain",
       "width": "mapData(rating, 0, 10, 16px, 30px)",
