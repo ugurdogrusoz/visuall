@@ -25,6 +25,10 @@ export class CustomizationModule {
   // static operationTabs: { component: any, text: string }[] = [{ component: AsdComponent, text: 'Dummy' }];
   // static operationTabs: { component: any, text: string }[] = [{ component: AsdComponent, text: 'Dummy' }, { component: Dummy2Component, text: 'Dummy2' }];
   static operationTabs: { component: any, text: string }[] = [];
+  static objSubTabs: { component: any, text: string }[] = [];
+  static mapSubTabs: { component: any, text: string }[] = [];
+  static databaseSubTabs: { component: any, text: string }[] = [];
+  static settingsSubTabs: { component: any, text: string }[] = [];
   static queries: { component: any, text: string }[] = [{ component: Query0Component, text: 'Get actors by title counts' }, { component: Query1Component, text: 'Get titles by genre' }];
   static db: DbService;
   static defaultTimebarMetrics: TimebarMetric[];

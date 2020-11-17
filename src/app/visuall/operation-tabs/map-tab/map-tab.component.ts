@@ -11,6 +11,7 @@ import { DbQueryType, GraphResponse, HistoryMetaData } from '../../db-service/da
 import { GroupTabComponent } from './group-tab/group-tab.component';
 import { MergedElemIndicatorTypes } from '../../user-preference.js';
 import { UserProfileService } from '../../user-profile.service';
+import { CustomizationModule } from 'src/app/custom/customization.module';
 
 @Component({
   selector: 'app-map-tab',
@@ -45,6 +46,7 @@ export class MapTabComponent implements OnInit {
   changeBtnTxt = 'Update';
   currRuleName = 'New rule';
   isShowPropertyRule = true;
+  customSubTabs: { component: any, text: string }[] = CustomizationModule.mapSubTabs;
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService,
     private _timebarService: TimebarService, private _profile: UserProfileService) {

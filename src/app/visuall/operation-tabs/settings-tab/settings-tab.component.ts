@@ -5,6 +5,7 @@ import { UserProfileService } from '../../user-profile.service';
 import { BehaviorSubject } from 'rxjs';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, getCyStyleFromColorAndWid } from '../../constants';
 import flatpickr from 'flatpickr';
+import { CustomizationModule } from 'src/app/custom/customization.module';
 
 @Component({
   selector: 'app-settings-tab',
@@ -45,6 +46,7 @@ export class SettingsTabComponent implements OnInit {
   isStoreUserProfile = true;
   selectionColor = "#6c757d";
   selectionWidth = 4.5;
+  customSubTabs: { component: any, text: string }[] = CustomizationModule.settingsSubTabs;
 
   constructor(private _g: GlobalVariableService, private _profile: UserProfileService) {
     this._profile.onLoadFromFile.subscribe(x => {

@@ -10,6 +10,7 @@ export class QueryTabComponent implements OnInit {
   queries: { component: any, text: string }[];
   selectedQuery: string;
   selectedIdx: number;
+  customSubTabs: { component: any, text: string }[] = CustomizationModule.databaseSubTabs;
 
   constructor() {
     this.queries = CustomizationModule.queries;

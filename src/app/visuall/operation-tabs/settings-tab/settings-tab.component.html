@@ -44,12 +44,14 @@
       </div>
     </div>
     <div class="card border-0 m-1">
-        <label class="form-check-label va-text">Selection style</label>
-        <div class="form-inline">
+      <label class="form-check-label va-text">Selection style</label>
+      <div class="form-inline">
         <div class="mx-1">
-          <input type="number" max="20" min="1" step="any" (change)="onSelWidSelected($event)" [(ngModel)]="selectionWidth"
-            class="form-control std-inp-hei va-small-text ml-1" style="width: 5.5em;" placeholder="width">
-          <app-color-picker (onColorSelected)="onSelColorSelected($event)" [currColor]="selectionColor" class="align-middle"></app-color-picker>
+          <input type="number" max="20" min="1" step="any" (change)="onSelWidSelected($event)"
+            [(ngModel)]="selectionWidth" class="form-control std-inp-hei va-small-text ml-1" style="width: 5.5em;"
+            placeholder="width">
+          <app-color-picker (onColorSelected)="onSelColorSelected($event)" [currColor]="selectionColor"
+            class="align-middle"></app-color-picker>
         </div>
       </div>
     </div>
@@ -63,8 +65,9 @@
               {{t}}
             </option>
           </select>
-          <input type="number" max="20" min="1" step="any" (change)="bandPassHighlightWidth()" [(ngModel)]="highlightWidth"
-            class="form-control std-inp-hei va-small-text" style="width: 5.5em;" placeholder="width">
+          <input type="number" max="20" min="1" step="any" (change)="bandPassHighlightWidth()"
+            [(ngModel)]="highlightWidth" class="form-control std-inp-hei va-small-text" style="width: 5.5em;"
+            placeholder="width">
           <app-color-picker (onColorSelected)="onColorSelected($event)" [currColor]="highlightColor"
             class="align-middle"></app-color-picker>
           <a href="#" title="Update this style" (click)="changeHighlightStyle()" class="m-1">
@@ -230,3 +233,5 @@
 
   </div>
 </div>
+
+<app-panel-container [panels]="customSubTabs" [containerId]="'settings-custom-sub-tab'"> </app-panel-container>

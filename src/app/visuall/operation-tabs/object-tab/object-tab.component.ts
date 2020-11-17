@@ -4,6 +4,7 @@ import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribut
 import { TableViewInput, TableData, TableDataType, TableFiltering, property2TableData, filterTableDatas } from '../../../shared/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { CytoscapeService } from '../../cytoscape.service';
+import { CustomizationModule } from '../../../custom/customization.module';
 
 @Component({
   selector: 'app-object-tab',
@@ -21,6 +22,7 @@ export class ObjectTabComponent implements OnInit {
   clearMultiObjTableFilter = new Subject<boolean>();
   isShowStatsTable: boolean = false;
   isShowObjTable = false;
+  customSubTabs: { component: any, text: string }[] = CustomizationModule.objSubTabs;
 
   tableInput: TableViewInput = {
     columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, tableTitle: 'Statistics',

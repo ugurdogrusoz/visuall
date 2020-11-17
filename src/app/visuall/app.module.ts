@@ -34,6 +34,7 @@ import { RuleTreeComponent } from './rule-tree/rule-tree.component';
 import { RuleDropdownComponent } from './rule-dropdown/rule-dropdown.component';
 import { SharedModule } from '../shared/shared.module';
 import { CustomizationModule } from '../custom/customization.module';
+import { PanelContainerComponent } from './panel-container/panel-container.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { CustomizationModule } from '../custom/customization.module';
     AdvancedQueriesComponent,
     RuleTreeComponent,
     RuleDropdownComponent,
+    PanelContainerComponent,
   ],
   imports: [
     BrowserModule,
