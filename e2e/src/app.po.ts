@@ -1,4 +1,4 @@
-import { browser, by, element } from 'protractor';
+import { browser, by, element, Locator } from 'protractor';
 
 export class AppPage {
 
@@ -50,7 +50,7 @@ export class AppPage {
 
     await this.click2graph();
 
-    element(by.css('input[value="Execute"]')).click();
+    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.sleep(this.DATA_WAIT * 1.5);
     const isAllInRange = await browser.executeScript('return cy.$("[birth_year<1994],[death_year>2020]").length == 0 && cy.$("[birth_year>=1994],[death_year<=2020]").length > 0');
     return isAllInRange;
@@ -92,17 +92,15 @@ export class AppPage {
 
   async queryByConditionRuleGetAll(type: string, isEdge: boolean) {
     await this.beginQueryByRule();
-
     element(by.buttonText('Condition')).click();
     await browser.sleep(this.ANIM_WAIT);
     await this.selectClass4QueryRule(type);
-
     element(by.css('img[title="Add/Update"]')).click();
     await browser.sleep(this.ANIM_WAIT);
 
     await this.click2graph();
 
-    element(by.css('input[value="Execute"]')).click();
+    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.sleep(this.ANIM_WAIT);
     await browser.waitForAngular();
     if (isEdge) {
@@ -147,13 +145,13 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     await this.addPropertyRule('primary_name', 'contains', 'John');
     await this.click2graph();
-    element(by.css('input[value="Execute"]')).click();
+    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.waitForAngular();
     const canGetAllJohns = await browser.executeScript(`return cy.$("[.Person][primary_name *='John']").length === cy.$().length`);
 
     element(by.css('img[title="Edit"]')).click();
     await this.addPropertyRule('primary_name', 'contains', 'Tom');
-    element(by.css('input[value="Execute"]')).click();
+    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.waitForAngular();
     const canGetAllJohnsAndToms = await browser.executeScript(`return cy.$("[.Person][primary_name *='John'],[primary_name *='Tom']").length === cy.$().length`);
 
@@ -195,7 +193,7 @@ export class AppPage {
     await this.addPropertyRule('ACTOR', '>', '3');
 
     await this.click2graph();
-    element(by.css('input[value="Execute"]')).click();
+    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.waitForAngular();
 
     const canGetAllJos = await browser.executeScript(`return cy.$("[.Person][primary_name *='Jo']").length === cy.$().length`);
@@ -203,9 +201,9 @@ export class AppPage {
   }
 
   async selectClass4QueryRule(type: string) {
-    element.all(by.tagName('select')).get(0).click();
+    this.getFirstDisplayed(by.tagName('select')).click();
     await browser.sleep(this.ANIM_WAIT);
-    element(by.cssContainingText('option', type)).click();
+    this.getFirstDisplayed(by.cssContainingText('option', type)).click();
     await browser.sleep(this.ANIM_WAIT);
   }
 
@@ -217,7 +215,7 @@ export class AppPage {
     element(by.css('img[title="Add/Update"]')).click();
     await browser.sleep(this.ANIM_WAIT);
 
-    element(by.css('input[value="Execute"]')).click();
+    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.sleep(this.DATA_WAIT);
 
     const el = element(by.css('input[placeholder="Search..."]'));
@@ -274,7 +272,7 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
 
     await this.click2graph();
-    element(by.css('input[value="Execute"]')).click();
+    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.sleep(this.ANIM_WAIT);
 
     const cntFiltered = await browser.executeScript(`return cy.$(':selected').filter(x => x.connectedEdges('.ACTOR').length > 3).length;`);
@@ -318,5 +316,9 @@ export class AppPage {
     // uncheck graph
     element(by.css('input.cb-is-load-graph')).click();
     await browser.sleep(this.ANIM_WAIT);
+  }
+
+  getFirstDisplayed(locator: Locator) {
+    return element.all(locator).filter(x => x.isDisplayed()).first();
   }
 }
