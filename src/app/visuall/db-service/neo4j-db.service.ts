@@ -73,7 +73,7 @@ export class Neo4jDb implements DbService {
       this._g.statusMsg.next('');
       if (responseType == DbResponseType.graph) {
         callback(this.extractGraph(x));
-      } else if (responseType == DbResponseType.table) {
+      } else if (responseType == DbResponseType.table || responseType == DbResponseType.count) {
         callback(this.extractTable(x, isTimeboxed));
       } else if (responseType == DbResponseType.generic) {
         callback(this.extractGenericData(x, isTimeboxed));
