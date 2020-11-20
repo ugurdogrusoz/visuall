@@ -486,9 +486,9 @@ export class Neo4jDb implements DbService {
         return `${orderExp} RETURN collect(ID(x))${r} as edgeIds, collect(type(x))${r} as edgeTypes, collect(x)${r} as edges, 
         collect(ID(startNode(x)))${r} as srcNodeIds, collect(labels(startNode(x)))${r} as srcNodeTypes, collect(startNode(x))${r} as srcNodes,
         collect(ID(endNode(x)))${r} as tgtNodeIds, collect(labels(endNode(x)))${r} as tgtNodeTypes, collect(endNode(x))${r} as tgtNodes,
-        length(collect(x)) as count`;
+        size(collect(x)) as count`;
       }
-      return `${orderExp} RETURN collect(ID(x))${r} as nodeIds, collect(labels(x))${r} as nodeTypes, collect(x)${r} as nodes, length(collect(x)) as count`;
+      return `${orderExp} RETURN collect(ID(x))${r} as nodeIds, collect(labels(x))${r} as nodeTypes, collect(x)${r} as nodes, size(collect(x)) as count`;
     } else if (type == DbResponseType.count) {
       return `RETURN COUNT(x)`;
     }
