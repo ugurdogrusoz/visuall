@@ -32,29 +32,8 @@ export class Query0Component implements OnInit {
 
   prepareQuery() {
     const skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
-    this.getCountOfData();
     this.loadTable(skip);
     this.loadGraph(skip);
-  }
-
-  getCountOfData(filter?: TableFiltering) {
-    const cb = (x) => {
-      if (!x['data'][0]) {
-        this.tableInput.resultCnt = 0;
-      } else {
-        this.tableInput.resultCnt = x['data'][0][0];
-      }
-    };
-    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
-    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_name', 'degree'], isIgnoreCase);
-    const dateFilter = this.getDateRangeCQL();
-
-    const cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
-    WHERE ${dateFilter} 
-    WITH n, SIZE(COLLECT(r)) as degree
-    WHERE degree >= ${this.movieCnt} ${txtCondition}
-    RETURN DISTINCT COUNT(*)`;
-    this._dbService.runQuery(cql, cb, DbResponseType.table);
   }
 
   loadTable(skip: number, filter?: TableFiltering) {
@@ -64,13 +43,13 @@ export class Query0Component implements OnInit {
     const ui2Db = { 'Actor': 'Actor', 'Count': 'Count' };
     const orderExpr = getOrderByExpression4Query(filter, 'degree', 'desc', ui2Db);
     const dateFilter = this.getDateRangeCQL();
-
+    const r = `[${skip}..${skip + this.tableInput.pageSize}]`;
     const cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
     WHERE ${dateFilter}
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${this.movieCnt} ${txtCondition}
-    RETURN DISTINCT ID(n) as id, n.primary_name as Actor, degree as Count 
-    ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
+    WITH n, degree ORDER BY ${orderExpr}
+    RETURN collect(ID(n))${r} as id, collect(n.primary_name)${r} as Actor, collect(degree)${r} as Count, size(collect(ID(n))) as totalDataCount`;
     this._dbService.runQuery(cql, cb, DbResponseType.table);
   }
 
@@ -95,11 +74,13 @@ export class Query0Component implements OnInit {
   }
 
   fillTable(data) {
+    const rawData = data.data[0];
     this.tableInput.results = [];
-    for (let i = 0; i < data.data.length; i++) {
-      const d = data.data[i];
-      this.tableInput.results.push([{ type: TableDataType.number, val: d[1] }, { type: TableDataType.string, val: d[0] }, { type: TableDataType.number, val: d[2] }]);
+    for (let i = 0; i < rawData[0].length; i++) {
+      this.tableInput.results.push([{ type: TableDataType.number, val: rawData[1][i] }, { type: TableDataType.string, val: rawData[0][i] },
+      { type: TableDataType.number, val: rawData[2][i] }]);
     }
+    this.tableInput.resultCnt = rawData[3];
     this.tableFilled.next(true);
   }
 
@@ -130,7 +111,6 @@ export class Query0Component implements OnInit {
 
   filterTable(filter: TableFiltering) {
     this.tableInput.currPage = 1;
-    this.getCountOfData(filter);
     const skip = filter.skip ? filter.skip : 0;
     this.loadTable(skip, filter);
     if (this.tableInput.isLoadGraph) {

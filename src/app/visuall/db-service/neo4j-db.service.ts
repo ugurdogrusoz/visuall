@@ -311,8 +311,6 @@ export class Neo4jDb implements DbService {
       return { columns: cols, data: data };
     }
     return { columns: response.results[0].columns, data: response.results[0].data.map(x => x.row) };
-
-
   }
 
   private extractGenericData(response, isTimeboxed = true): DbResponse {

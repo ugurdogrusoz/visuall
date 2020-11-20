@@ -37,27 +37,8 @@ export class Query1Component implements OnInit {
 
   prepareQuery() {
     const skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
-    this.getCountOfData();
     this.loadTable(skip);
     this.loadGraph(skip);
-  }
-
-  getCountOfData(filter?: TableFiltering) {
-    const cb = (x) => {
-      if (!x['data'][0]) {
-        this.tableInput.resultCnt = 0;
-      } else {
-        this.tableInput.resultCnt = x['data'][0][0];
-      }
-    };
-    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
-    const txtCondition = getQueryCondition4TxtFilter(filter, ['n.primary_title'], isIgnoreCase);
-    const dateFilter = this.getDateRangeCQL();
-
-    const cql = ` MATCH (n:Title)<-[:ACTOR|ACTRESS]-(:Person)
-    WHERE '${this.selectedGenre}' IN n.genres AND ${dateFilter} ${txtCondition} 
-    RETURN COUNT(DISTINCT n)`;
-    this._dbService.runQuery(cql, cb, DbResponseType.table);
   }
 
   loadTable(skip: number, filter?: TableFiltering) {
@@ -67,11 +48,12 @@ export class Query1Component implements OnInit {
     const ui2Db = { 'Title': 'n.primary_title' };
     const orderExpr = getOrderByExpression4Query(filter, 'n.primary_title', 'desc', ui2Db);
     const dateFilter = this.getDateRangeCQL();
+    const r = `[${skip}..${skip + this.tableInput.pageSize}]`;
 
     const cql = ` MATCH (n:Title)<-[r:ACTOR|ACTRESS]-(:Person)
     WHERE '${this.selectedGenre}' IN n.genres AND ${dateFilter} ${txtCondition} 
-    RETURN DISTINCT ID(n) as id, n.primary_title
-    ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
+    WITH DISTINCT n ORDER BY ${orderExpr}
+    RETURN collect(ID(n))${r} as id, collect(n.primary_title)${r} as title, size(collect(ID(n))) as totalDataCount`;
     this._dbService.runQuery(cql, cb, DbResponseType.table);
   }
 
@@ -88,18 +70,19 @@ export class Query1Component implements OnInit {
 
     const cql = `MATCH (n:Title)<-[r:ACTOR|ACTRESS]-(:Person)
     WHERE '${this.selectedGenre}' IN n.genres AND ${dateFilter} ${txtCondition}
-    WITH n, COLLECT(r) as edges
-    RETURN  DISTINCT n, edges
+    WITH DISTINCT n, COLLECT(r) as edges
+    RETURN  n, edges
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
     this._dbService.runQuery(cql, cb);
   }
 
   fillTable(data) {
+    const rawData = data.data[0];
     this.tableInput.results = [];
-    for (let i = 0; i < data.data.length; i++) {
-      const d = data.data[i];
-      this.tableInput.results.push([{ type: TableDataType.number, val: d[1] }, { type: TableDataType.string, val: d[0] }]);
+    for (let i = 0; i < rawData[0].length; i++) {
+      this.tableInput.results.push([{ type: TableDataType.number, val: rawData[0][i] }, { type: TableDataType.string, val: rawData[1][i] }]);
     }
+    this.tableInput.resultCnt = rawData[2];
     this.tableFilled.next(true);
   }
 
@@ -129,7 +112,6 @@ export class Query1Component implements OnInit {
 
   filterTable(filter: TableFiltering) {
     this.tableInput.currPage = 1;
-    this.getCountOfData(filter);
     let skip = filter.skip ? filter.skip : 0;
     this.loadTable(skip, filter);
     if (this.tableInput.isLoadGraph) {
