@@ -158,13 +158,8 @@ export class Neo4jDb implements DbService {
     }
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
-    if (type == DbResponseType.count) {
-      this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase},
-       ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, type, false);
-    } else if (type == DbResponseType.table) {
-      this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
+    this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
       ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, type, false);
-    }
   }
 
   getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbResponseType, filter: TableFiltering, cb: (x) => void) {

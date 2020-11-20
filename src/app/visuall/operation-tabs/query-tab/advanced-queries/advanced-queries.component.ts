@@ -113,17 +113,14 @@ export class AdvancedQueriesComponent implements OnInit {
         this.highlightTargetRegulators(x);
       };
     }
-    const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0][0]; }
     const types = this.ignoredTypes.map(x => `'${x}'`);
     if (this.selectedIdx == 0) {
-      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbResponseType.count, this.tableFilter, setDataCntFn);
       this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbResponseType.table, this.tableFilter, prepareDataFn);
     } else if (this.selectedIdx == 1) {
       let dir: Neo4jEdgeDirection = this.targetOrRegulator;
       if (!this.isDirected) {
         dir = Neo4jEdgeDirection.BOTH;
       }
-      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.count, this.tableFilter, setDataCntFn);
       this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.table, this.tableFilter, prepareDataFn);
     }
   }
@@ -137,10 +134,11 @@ export class AdvancedQueriesComponent implements OnInit {
     const idxNodes = data.columns.indexOf('nodes');
     const idxNodeId = data.columns.indexOf('nodeId');
     const idxNodeClass = data.columns.indexOf('nodeClass');
+    const idxTotalCnt = data.columns.indexOf('totalNodeCount');
     const nodes = data.data[0][idxNodes];
     const nodeClass = data.data[0][idxNodeClass];
     const nodeId = data.data[0][idxNodeId];
-
+    this.tableInput.resultCnt = data.data[0][idxTotalCnt];
 
     this.tableInput.results = [];
     this.tableInput.columns = [];
