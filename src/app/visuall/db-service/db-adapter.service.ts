@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DbService, GraphResponse, TableResponse, DbQueryType, HistoryMetaData, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
+import { DbService, GraphResponse, TableResponse, HistoryMetaData, DbQueryMeta, Neo4jEdgeDirection, DbResponse, DbResponseType } from './data-types';
 import { ClassBasedRules, rule2str2 } from '../operation-tabs/map-tab/query-types';
 import { TableFiltering } from '../../shared/table-view/table-view-types';
 import { GlobalVariableService } from '../global-variable.service';
@@ -55,31 +55,23 @@ export class DbAdapterService {
     this._db.getSampleData(fn);
   }
 
-  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    if (type == DbQueryType.std) {
-      let s = 'Get ' + rule2str2(rules);
-      let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
-      this._db.getFilteringResult(rules, filter, skip, limit, type, fn);
-    } else {
-      this._db.getFilteringResult(rules, filter, skip, limit, type, callback);
-    }
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbResponseType, callback: (x: DbResponse) => any) {
+    let s = 'Get ' + rule2str2(rules);
+    let fn = (x) => { callback(x); this._g.add2GraphHistory(s); };
+    this._db.getFilteringResult(rules, filter, skip, limit, type, fn);
   }
 
-  filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    this._db.filterTable(rules, filter, skip, limit, type, callback);
-  }
-
-  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbResponseType, filter: TableFiltering, cb: (x) => void) {
     let fn = cb;
-    if (type == DbQueryType.table) {
+    if (type == DbResponseType.table) {
       fn = (x) => { cb(x); this._g.add2GraphHistory(`Graph of interest`); };
     }
     this._db.getGraphOfInterest(dbIds, ignoredTypes, lengthLimit, isDirected, type, filter, fn);
   }
 
-  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbResponseType, filter: TableFiltering, cb: (x) => void) {
     let fn = cb;
-    if (type == DbQueryType.table) {
+    if (type == DbResponseType.table) {
       fn = (x) => { cb(x); this._g.add2GraphHistory(`Common target/regulator`); };
     }
     this._db.getCommonStream(dbIds, ignoredTypes, lengthLimit, dir, type, filter, fn);

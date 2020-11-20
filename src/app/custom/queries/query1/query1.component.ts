@@ -5,6 +5,7 @@ import { GlobalVariableService } from '../../../visuall/global-variable.service'
 import { TableViewInput, TableDataType, TableFiltering, TableRowMeta } from '../../../shared/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { buildIdFilter, getOrderByExpression4Query, getQueryCondition4TxtFilter } from '../query-helper';
+import { DbResponseType } from 'src/app/visuall/db-service/data-types';
 
 @Component({
   selector: 'app-query1',
@@ -28,7 +29,7 @@ export class Query1Component implements OnInit {
   ngOnInit() {
     this.selectedGenre = 'Action';
     setTimeout(() => {
-      this._dbService.runQuery('MATCH (m:Title) UNWIND m.genres as g return distinct g', (x) => this.fillGenres(x), false);
+      this._dbService.runQuery('MATCH (m:Title) UNWIND m.genres as g return distinct g', (x) => this.fillGenres(x), DbResponseType.table);
     }, 0);
     this.tableInput.results = [];
     this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
@@ -56,7 +57,7 @@ export class Query1Component implements OnInit {
     const cql = ` MATCH (n:Title)<-[:ACTOR|ACTRESS]-(:Person)
     WHERE '${this.selectedGenre}' IN n.genres AND ${dateFilter} ${txtCondition} 
     RETURN COUNT(DISTINCT n)`;
-    this._dbService.runQuery(cql, cb, false);
+    this._dbService.runQuery(cql, cb, DbResponseType.table);
   }
 
   loadTable(skip: number, filter?: TableFiltering) {
@@ -71,7 +72,7 @@ export class Query1Component implements OnInit {
     WHERE '${this.selectedGenre}' IN n.genres AND ${dateFilter} ${txtCondition} 
     RETURN DISTINCT ID(n) as id, n.primary_title
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
-    this._dbService.runQuery(cql, cb, false);
+    this._dbService.runQuery(cql, cb, DbResponseType.table);
   }
 
   loadGraph(skip: number, filter?: TableFiltering) {

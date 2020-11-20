@@ -5,6 +5,7 @@ import { GlobalVariableService } from '../../../visuall/global-variable.service'
 import { TableViewInput, TableDataType, TableFiltering, TableRowMeta } from '../../../shared/table-view/table-view-types';
 import { Subject } from 'rxjs';
 import { buildIdFilter, getOrderByExpression4Query, getQueryCondition4TxtFilter } from '../query-helper';
+import { DbResponseType } from 'src/app/visuall/db-service/data-types';
 
 
 @Component({
@@ -53,7 +54,7 @@ export class Query0Component implements OnInit {
     WITH n, SIZE(COLLECT(r)) as degree
     WHERE degree >= ${this.movieCnt} ${txtCondition}
     RETURN DISTINCT COUNT(*)`;
-    this._dbService.runQuery(cql, cb, false);
+    this._dbService.runQuery(cql, cb, DbResponseType.table);
   }
 
   loadTable(skip: number, filter?: TableFiltering) {
@@ -70,7 +71,7 @@ export class Query0Component implements OnInit {
     WHERE degree >= ${this.movieCnt} ${txtCondition}
     RETURN DISTINCT ID(n) as id, n.primary_name as Actor, degree as Count 
     ORDER BY ${orderExpr} SKIP ${skip} LIMIT ${this.tableInput.pageSize}`;
-    this._dbService.runQuery(cql, cb, false);
+    this._dbService.runQuery(cql, cb, DbResponseType.table);
   }
 
   loadGraph(skip: number, filter?: TableFiltering) {

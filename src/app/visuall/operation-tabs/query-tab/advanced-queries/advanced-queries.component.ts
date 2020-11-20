@@ -4,7 +4,7 @@ import { DbAdapterService } from '../../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { TableViewInput, property2TableData, TableData, TableDataType, TableFiltering, TableRowMeta } from '../../../../shared/table-view/table-view-types';
 import { Subject } from 'rxjs';
-import { DbQueryType, Neo4jEdgeDirection, GraphElem, HistoryMetaData, ElemAsQueryParam } from '../../../db-service/data-types';
+import { Neo4jEdgeDirection, GraphElem, HistoryMetaData, ElemAsQueryParam, DbResponseType } from '../../../db-service/data-types';
 import { getCyStyleFromColorAndWid, readTxtFile, isJson } from '../../../constants';
 
 @Component({
@@ -116,15 +116,15 @@ export class AdvancedQueriesComponent implements OnInit {
     const setDataCntFn = (x) => { this.tableInput.resultCnt = x.data[0][0]; }
     const types = this.ignoredTypes.map(x => `'${x}'`);
     if (this.selectedIdx == 0) {
-      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbQueryType.count, this.tableFilter, setDataCntFn);
-      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbQueryType.table, this.tableFilter, prepareDataFn);
+      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbResponseType.count, this.tableFilter, setDataCntFn);
+      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbResponseType.table, this.tableFilter, prepareDataFn);
     } else if (this.selectedIdx == 1) {
       let dir: Neo4jEdgeDirection = this.targetOrRegulator;
       if (!this.isDirected) {
         dir = Neo4jEdgeDirection.BOTH;
       }
-      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbQueryType.count, this.tableFilter, setDataCntFn);
-      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbQueryType.table, this.tableFilter, prepareDataFn);
+      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.count, this.tableFilter, setDataCntFn);
+      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.table, this.tableFilter, prepareDataFn);
     }
   }
 

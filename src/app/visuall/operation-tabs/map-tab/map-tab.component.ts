@@ -7,7 +7,7 @@ import { TimebarService } from '../../timebar.service';
 import { ClassOption, Rule, RuleSync, QueryRule, ClassBasedRules, RuleNode, getBoolExpressionFromMetric, deepCopyRuleNode } from './query-types';
 import { Subject } from 'rxjs';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from '../../../shared/table-view/table-view-types';
-import { DbQueryType, GraphResponse, HistoryMetaData } from '../../db-service/data-types';
+import { DbResponse, DbResponseType, GraphResponse, HistoryMetaData } from '../../db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
 import { MergedElemIndicatorTypes } from '../../user-preference.js';
 import { UserProfileService } from '../../user-profile.service';
@@ -242,37 +242,15 @@ export class MapTabComponent implements OnInit {
     const limit = this.tableInput.pageSize;
     const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
 
-    this.getCountOfData();
-    this.loadGraph(skip, limit, isMerge, cb, cbParams, null);
-    this.loadTable(skip, limit);
-  }
-
-  private loadGraph(skip: number, limit: number, isMerge: boolean, cb: (s: number, end: number) => void, cbParams: any[], filter: TableFiltering) {
-    if (!this.tableInput.isLoadGraph) {
-      return;
-    }
-    this._dbService.getFilteringResult(this.queryRule, filter, skip, limit, DbQueryType.std,
-      (x) => { this._cyService.loadElementsFromDatabase(x as GraphResponse, isMerge); cb.apply(this, cbParams); });
-
-  }
-
-  private loadTable(skip: number, limit: number, filter: TableFiltering = null) {
-    this._dbService.getFilteringResult(this.queryRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
-  }
-
-  private getCountOfData(filter: TableFiltering = null) {
-    const setCntFn = (x) => {
-      if (!x['data'][0]) {
-        this.tableInput.resultCnt = 0;
-      } else {
-        this.tableInput.resultCnt = x['data'][0][0];
+    const cb2 = (x: DbResponse) => {
+      this.fillTable(x.tableData);
+      if (this.tableInput.isLoadGraph) {
+        this._cyService.loadElementsFromDatabase(x.graphData as GraphResponse, isMerge);
       }
+      cb.apply(this, cbParams);
+      this.tableInput.resultCnt = x.count;
     };
-    if (filter != null) {
-      this._dbService.filterTable(this.queryRule, filter, 0, -1, DbQueryType.count, setCntFn);
-    } else {
-      this._dbService.getFilteringResult(this.queryRule, filter, 0, -1, DbQueryType.count, setCntFn);
-    }
+    this._dbService.getFilteringResult(this.queryRule, null, skip, limit, DbResponseType.table, cb2);
   }
 
   private fillTable(data) {
@@ -427,10 +405,16 @@ export class MapTabComponent implements OnInit {
   filterTable(filter: TableFiltering) {
     this.tableInput.currPage = 1;
     const limit = this.tableInput.pageSize;
-    this.getCountOfData(filter);
     let skip = filter.skip ? filter.skip : 0;
-    this._dbService.filterTable(this.queryRule, filter, skip, limit, DbQueryType.table, (x) => { this.fillTable(x) });
-    this.loadGraph(skip, limit, this.tableInput.isMergeGraph, this.maintainChartRange.bind(this), this._timebarService.getChartRange(), filter);
+    const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
+    const cb2 = (x: DbResponse) => {
+      this.fillTable(x.tableData);
+      if (this.tableInput.isLoadGraph) {
+        this._cyService.loadElementsFromDatabase(x.graphData as GraphResponse, isMerge);
+      }
+      this.tableInput.resultCnt = x.count;
+    };
+    this._dbService.getFilteringResult(this.queryRule, filter, skip, limit, DbResponseType.table, cb2);
   }
 
   editRule(i: number) {

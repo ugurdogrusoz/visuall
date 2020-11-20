@@ -5,10 +5,9 @@ export interface DbService {
   getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, queryMeta?: DbQueryMeta);
   getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta);
   getSampleData(callback: (x: GraphResponse) => any);
-  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
-  filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any);
-  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, filter: TableFiltering, cb: (x) => void);
-  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, filter: TableFiltering, cb: (x) => void);
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbResponseType, callback: (x: GraphResponse | TableResponse) => any);
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbResponseType, filter: TableFiltering, cb: (x) => void);
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbResponseType, filter: TableFiltering, cb: (x) => void);
 }
 
 export interface GraphResponse {
@@ -33,10 +32,6 @@ export interface CyEdge {
 export interface TableResponse {
   columns: string[];
   data: any[][];
-}
-
-export enum DbQueryType {
-  std = 0, table = 1, count = 2
 }
 
 export enum Neo4jEdgeDirection {
@@ -70,4 +65,14 @@ export interface GraphElem {
 export interface ElemAsQueryParam {
   dbId: string;
   label: string;
+}
+
+export interface DbResponse {
+  tableData: TableResponse;
+  graphData: GraphResponse;
+  count: number
+}
+
+export enum DbResponseType {
+  graph = 0, table = 1, generic = 2, count = 3
 }

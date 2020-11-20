@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GlobalVariableService } from '../global-variable.service';
-import { GraphResponse, TableResponse, DbService, DbQueryType, DbQueryMeta, Neo4jEdgeDirection } from './data-types';
+import { GraphResponse, TableResponse, DbService, DbQueryMeta, Neo4jEdgeDirection, DbResponse, DbResponseType } from './data-types';
 import { Rule, ClassBasedRules, RuleNode } from '../operation-tabs/map-tab/query-types';
 import { GENERIC_TYPE, LONG_MAX, LONG_MIN } from '../constants';
 import { TableFiltering } from '../../shared/table-view/table-view-types';
@@ -15,12 +15,12 @@ export class Neo4jDb implements DbService {
 
   constructor(protected _http: HttpClient, protected _g: GlobalVariableService) { }
 
-  runQuery(query: string, callback: (x: any) => any, isGraphResponse = true, isTimeboxed = true) {
+  runQuery(query: string, callback: (x: any) => any, responseType: DbResponseType = 0, isTimeboxed = true) {
     const conf = environment.dbConfig;
     const url = conf.url;
     const username = conf.username;
     const password = conf.password;
-    let requestType = isGraphResponse ? 'graph' : 'row';
+    const requestType = responseType == DbResponseType.graph ? 'graph' : 'row';
     this._g.setLoadingStatus(true);
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
     let q = `CALL apoc.cypher.runTimeboxed("${query}", {}, ${timeout}) YIELD value RETURN value`;
@@ -71,10 +71,12 @@ export class Neo4jDb implements DbService {
         return;
       }
       this._g.statusMsg.next('');
-      if (isGraphResponse) {
+      if (responseType == DbResponseType.graph) {
         callback(this.extractGraph(x));
-      } else {
+      } else if (responseType == DbResponseType.table) {
         callback(this.extractTable(x, isTimeboxed));
+      } else if (responseType == DbResponseType.generic) {
+        callback(this.extractGenericData(x, isTimeboxed));
       }
     }, errFn);
   }
@@ -120,7 +122,7 @@ export class Neo4jDb implements DbService {
 
   getElems(ids: string[] | number[], callback: (x: GraphResponse) => any, meta: DbQueryMeta) {
     const isEdgeQuery = meta && meta.isEdgeQuery;
-    let idFilter = this.buildIdFilter(ids, false, isEdgeQuery);
+    const idFilter = this.buildIdFilter(ids, false, isEdgeQuery);
     let edgepart = isEdgeQuery ? '-[e]-(n2)' : '';
     let returnPart = isEdgeQuery ? 'n,e,n2' : 'n';
     this.runQuery(`MATCH (n)${edgepart} WHERE ${idFilter} RETURN ${returnPart}`, callback);
@@ -130,17 +132,12 @@ export class Neo4jDb implements DbService {
     this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 100`, callback);
   }
 
-  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
+  getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbResponseType, callback: (x: GraphResponse | TableResponse) => any) {
     const cql = this.rule2cql2(rules, skip, limit, type, filter);
-    this.runQuery(cql, callback, type == DbQueryType.std);
+    this.runQuery(cql, callback, DbResponseType.generic);
   }
 
-  filterTable(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbQueryType, callback: (x: GraphResponse | TableResponse) => any) {
-    const cql = this.rule2cql2(rules, skip, limit, type, filter);
-    this.runQuery(cql, callback, type == DbQueryType.std);
-  }
-
-  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbResponseType, filter: TableFiltering, cb: (x) => void) {
     const t = filter.txt ?? '';
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
     const pageSize = this._g.userPrefs.dataPageSize.getValue();
@@ -161,16 +158,16 @@ export class Neo4jDb implements DbService {
     }
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
-    if (type == DbQueryType.count) {
+    if (type == DbResponseType.count) {
       this.runQuery(`CALL graphOfInterestCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected}, '${t}', ${isIgnoreCase},
-       ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, false, false);
-    } else if (type == DbQueryType.table) {
+       ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, type, false);
+    } else if (type == DbResponseType.table) {
       this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
-      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, false, false);
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, type, false);
     }
   }
 
-  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbQueryType, filter: TableFiltering, cb: (x) => void) {
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbResponseType, filter: TableFiltering, cb: (x) => void) {
     const t = filter.txt ?? '';
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
     const pageSize = this._g.userPrefs.dataPageSize.getValue();
@@ -192,12 +189,12 @@ export class Neo4jDb implements DbService {
     }
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
 
-    if (type == DbQueryType.count) {
+    if (type == DbResponseType.count) {
       this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase},
-       ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, false, false);
-    } else if (type == DbQueryType.table) {
+       ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, type, false);
+    } else if (type == DbResponseType.table) {
       this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, ${pageSize}, ${currPage},
-       '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, false, false);
+       '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, type, false);
     }
   }
 
@@ -318,11 +315,38 @@ export class Neo4jDb implements DbService {
 
   }
 
+  private extractGenericData(response, isTimeboxed = true): DbResponse {
+    if (response.errors && response.errors.length > 0) {
+      console.error('DB server returns erronous result', response.errors);
+      this._g.setLoadingStatus(false);
+      return;
+    }
+    if (isTimeboxed) {
+      const obj = response.results[0].data[0].row[0];
+      const r: DbResponse = { tableData: { columns: ['ID(x)', 'x'], data: [] }, graphData: { nodes: [], edges: [] }, count: obj.count };
+      // response is a node response
+      if (obj.nodeIds) {
+        r.tableData.data = obj.nodeIds.map((x, i) => [x, obj.nodes[i]]);
+        r.graphData.nodes = obj.nodeIds.map((x, i) => { return { properties: obj.nodes[i], labels: obj.nodeTypes[i], id: x }; });
+      } else {
+        r.tableData.data = obj.edgeIds.map((x, i) => [x, obj.edges[i]]);
+        r.graphData.nodes = r.graphData.nodes.concat(obj.srcNodeIds.map((x, i) => { return { properties: obj.srcNodes[i], labels: obj.srcNodeTypes[i], id: x }; }));
+        r.graphData.nodes = r.graphData.nodes.concat(obj.tgtNodeIds.map((x, i) => { return { properties: obj.tgtNodes[i], labels: obj.tgtNodeTypes[i], id: x }; }));
+        r.graphData.edges = obj.edgeIds.map((x, i) => { return { properties: obj.edges[i], type: obj.edgeTypes[i], id: x, startNode: obj.srcNodeIds[i], endNode: obj.tgtNodeIds[i] }; });
+      }
+
+      return r;
+    }
+    // return { columns: response.results[0].columns, data: response.results[0].data.map(x => x.row) };
+    return null;
+
+  }
+
   // ------------------------------------------------- methods for conversion to CQL -------------------------------------------------
-  private rule2cql2(rules: ClassBasedRules, skip: number, limit: number, type: DbQueryType, filter: TableFiltering = null) {
+  private rule2cql2(rules: ClassBasedRules, skip: number, limit: number, type: DbResponseType, filter: TableFiltering = null) {
     let query = '';
     query += this.getCql4Rules2(rules, filter);
-    query += this.generateFinalQueryBlock(filter, skip, limit, type);
+    query += this.generateFinalQueryBlock(filter, skip, limit, type, rules.isEdge);
     return query;
   }
 
@@ -451,24 +475,27 @@ export class Neo4jDb implements DbService {
     }
   }
 
-  private generateFinalQueryBlock(filter: TableFiltering, skip: number, limit: number, type: DbQueryType) {
-    if (type == DbQueryType.table) {
+  private generateFinalQueryBlock(filter: TableFiltering, skip: number, limit: number, type: DbResponseType, isEdge: boolean) {
+    const r = `[${skip}..${skip + limit}]`;
+    if (type == DbResponseType.table) {
+      let orderExp = '';
       if (filter != null && filter.orderDirection.length > 0) {
-        return `RETURN ID(x), x ORDER BY x.${filter.orderBy} ${filter.orderDirection} SKIP ${skip} LIMIT ${limit}`;
+        orderExp = `WITH x ORDER BY x.${filter.orderBy} ${filter.orderDirection}`;
       }
-      return `RETURN ID(x), x  SKIP ${skip} LIMIT ${limit}`;
-    } else if (type == DbQueryType.std) {
-      if (filter != null && filter.orderDirection.length > 0) {
-        return `RETURN x ORDER BY x.${filter.orderBy} ${filter.orderDirection} SKIP ${skip} LIMIT ${limit}`;
+      if (isEdge) {
+        return `${orderExp} RETURN collect(ID(x))${r} as edgeIds, collect(type(x))${r} as edgeTypes, collect(x)${r} as edges, 
+        collect(ID(startNode(x)))${r} as srcNodeIds, collect(labels(startNode(x)))${r} as srcNodeTypes, collect(startNode(x))${r} as srcNodes,
+        collect(ID(endNode(x)))${r} as tgtNodeIds, collect(labels(endNode(x)))${r} as tgtNodeTypes, collect(endNode(x))${r} as tgtNodes,
+        length(collect(x)) as count`;
       }
-      return `RETURN x SKIP ${skip} LIMIT ${limit}`;
-    } else if (type == DbQueryType.count) {
+      return `${orderExp} RETURN collect(ID(x))${r} as nodeIds, collect(labels(x))${r} as nodeTypes, collect(x)${r} as nodes, length(collect(x)) as count`;
+    } else if (type == DbResponseType.count) {
       return `RETURN COUNT(x)`;
     }
     return '';
   }
 
-  private buildIdFilter(ids: string[] | number[], hasEnd = false, isEdgeQuery = false): string {
+  private buildIdFilter(ids: string[] | number[], hasAnd = false, isEdgeQuery = false): string {
     if (ids === undefined) {
       return '';
     }
@@ -488,7 +515,7 @@ export class Neo4jDb implements DbService {
       cql = cql.slice(0, -4);
 
       cql += ')';
-      if (hasEnd) {
+      if (hasAnd) {
         cql += ' AND ';
       }
     }
