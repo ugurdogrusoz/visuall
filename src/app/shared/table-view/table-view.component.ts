@@ -94,11 +94,9 @@ export class TableViewComponent implements OnInit, OnDestroy {
     if (!this.emphasizeRowFn) {
       return;
     }
-    if (this.params.isNodeData) {
-      this._g.cy.off('mouseover mouseout', 'node', this.emphasizeRowFn);
-    } else {
-      this._g.cy.off('mouseover mouseout', 'edge', this.emphasizeRowFn);
-    }
+    // previous table might be edge or node table
+    this._g.cy.off('mouseover mouseout', 'edge', this.emphasizeRowFn);
+    this._g.cy.off('mouseover mouseout', 'node', this.emphasizeRowFn);
   }
 
   ngOnDestroy() {
