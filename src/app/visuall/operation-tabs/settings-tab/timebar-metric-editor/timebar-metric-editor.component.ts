@@ -81,6 +81,7 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   initRules(s: 'AND' | 'OR' | 'C') {
+    this.editingPropertyRule = null;
     const p = this._g.dataModel.getValue();
     const isEdge = p.edges[this.selectedClass] != undefined;
     if (!this.currMetricName) {

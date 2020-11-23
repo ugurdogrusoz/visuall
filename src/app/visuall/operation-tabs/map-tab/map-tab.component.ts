@@ -151,6 +151,7 @@ export class MapTabComponent implements OnInit {
   }
 
   initRules(s: 'AND' | 'OR' | 'C') {
+    this.editingPropertyRule = null;
     const properties = this._g.dataModel.getValue();
     const isEdge = properties.edges[this.selectedClass] != undefined;
     if (s == 'AND' || s == 'OR') {
