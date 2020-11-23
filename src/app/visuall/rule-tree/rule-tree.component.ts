@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { RuleNode, Rule } from '../operation-tabs/map-tab/query-types';
-import { Subject } from 'rxjs';
+import { RuleNode } from '../operation-tabs/map-tab/query-types';
+import { Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-rule-tree',
@@ -17,12 +17,19 @@ export class RuleTreeComponent implements OnInit {
   @Output() onOperatorAdded = new EventEmitter<RuleNode>();
   currNode: RuleNode;
   isShowChildren = true;
+  editedRuleNodeSubs: Subscription;
 
   ngOnInit(): void {
     if (this.editedRuleNode) {
-      this.editedRuleNode.subscribe(x => {
+      this.editedRuleNodeSubs = this.editedRuleNode.subscribe(x => {
         x.isEditing = false;
       });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.editedRuleNodeSubs) {
+      this.editedRuleNodeSubs.unsubscribe();
     }
   }
 
@@ -92,6 +99,9 @@ export class RuleTreeComponent implements OnInit {
   }
 
   clearAllEditings(r: RuleNode) {
+    if (r === undefined || r === null) {
+      return;
+    }
     r.isEditing = false;
     for (const child of r.children) {
       this.clearAllEditings(child);

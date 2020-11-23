@@ -345,8 +345,19 @@ export class TimebarMetricEditorComponent implements OnInit {
   private clearEditingOnRules() {
     for (let m of this.currMetrics) {
       m.isEditing = false;
+      this.clearAllEditings(m.rules);
     }
     this.editingIdx = -1;
+  }
+
+  clearAllEditings(r: RuleNode) {
+    if (r === undefined || r === null) {
+      return;
+    }
+    r.isEditing = false;
+    for (const child of r.children) {
+      this.clearAllEditings(child);
+    }
   }
 
   private getEdgeTypesRelated(): string[] {

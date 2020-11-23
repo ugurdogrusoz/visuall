@@ -442,6 +442,17 @@ export class MapTabComponent implements OnInit {
   resetEditingRules() {
     for (let i = 0; i < this.currRules.length; i++) {
       this.currRules[i].isEditing = false;
+      this.clearAllEditings(this.currRules[i].rules.rules);
+    }
+  }
+
+  clearAllEditings(r: RuleNode) {
+    if (r === undefined || r === null) {
+      return;
+    }
+    r.isEditing = false;
+    for (const child of r.children) {
+      this.clearAllEditings(child);
     }
   }
 
