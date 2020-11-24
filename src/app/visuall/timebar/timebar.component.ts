@@ -33,12 +33,8 @@ export class TimebarComponent implements OnInit {
     this.playImg = '../assets/img/play-button.svg';
     this.pauseImg = '../assets/img/pause-symbol.svg';
     this.currPlayIcon = this.playImg;
-    this.s.onStatsChanged(this.setStatsRangeStr.bind(this));
-    this.s.onGraphChanged(this.setGraphRangeStr.bind(this));
-    const r = this.s.getGraphRangeRatio();
-    this.cssLeftDate1 = (1 - r) / 2 * 100;
-    this.cssLeftDate2 = (1 + r) / 2 * 100;
     this.s.setShowHideFn(this.showHide.bind(this));
+    this.s.setRangeListenerSetterFn(this.setRangeListeners.bind(this));
     this._g.cy.on('add remove', debounce(this.hideIfEmpty, HIDE_EMPTY_TIMEBAR_DELAY).bind(this));
   }
 
@@ -141,6 +137,15 @@ export class TimebarComponent implements OnInit {
       this.s.showHideTimebar(true);
       this.s.isShowFromHide = true;
     }
+  }
+
+  setRangeListeners() {
+    console.log(' prepare range listeners ');
+    const r = this.s.getGraphRangeRatio();
+    this.cssLeftDate1 = (1 - r) / 2 * 100;
+    this.cssLeftDate2 = (1 + r) / 2 * 100;
+    this.s.onStatsChanged(this.setStatsRangeStr.bind(this));
+    this.s.onGraphChanged(this.setGraphRangeStr.bind(this));
   }
 
 }

@@ -17,8 +17,159 @@ export class TimebarService {
   private _prevElems: any = null;
   isShowFromHide = false;
   showHideFn: (isHide: boolean) => void;
+  rangeListenerSetterFn: () => void;
 
   constructor(private _g: GlobalVariableService) { }
+  
+  setShowHideFn(fn: (isHide: boolean) => void) {
+    this.showHideFn = fn;
+  }
+
+  setRangeListenerSetterFn(fn) {
+    this.rangeListenerSetterFn = fn;
+  }
+
+  coverVisibleRange() {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.coverVisibleRange();
+  }
+
+  coverAllTimes() {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.coverAllTimes();
+  }
+
+  changeZoom(isIncrease: boolean) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.changeZoom(isIncrease);
+  }
+
+  moveCursor(isLeft: boolean) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.moveCursor(isLeft);
+  }
+
+  setChartRange(s: number, e: number) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.setGraphRange(s, e);
+  }
+
+  getChartRange(): number[] {
+    if (!this._timebarExt) {
+      return;
+    }
+    return this._timebarExt.getGraphRange();
+  }
+
+  // ----------------------------------------- start of timebar settings  -----------------------------------------
+  showHideTimebar(isActive: boolean) {
+    // call init only once
+    if (isActive && this._g.cy.$(':visible').length > 0 && !this._timebarExt) {
+      this.init();
+    }
+    if (this._timebarExt) {
+      this._timebarExt.setSetting('isEnabled', isActive);
+      if (isActive) {
+        this.rangeListenerSetterFn();
+      }
+    }
+  }
+
+  setisHideDisconnectedNodes(val: boolean) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.setSetting('isHideDisconnectedNodesOnAnim', val);
+  }
+
+  changePeriod(v: number) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._playingPeriod = v;
+    this._timebarExt.setSetting('playingPeriod', v);
+  }
+
+  changeStep(v: number) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.setSetting('playingStep', v);
+  }
+
+  changeZoomStep(v: number) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.setSetting('zoomingStep', v);
+  }
+
+  changeGraphInclusionType(i: number) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.setSetting('graphInclusionType', i);
+  }
+
+  changeStatsInclusionType(i: number) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.setSetting('statsInclusionType', i);
+  }
+
+  setIsMaintainGraphRange(v: boolean) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.setSetting('isMaintainGraphRange', v);
+  }
+  // ----------------------------------------- end of timebar settings  -----------------------------------------
+
+  onStatsChanged(f) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.setEventListener('statsRangeChanged', f);
+  }
+
+  onGraphChanged(f) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.setEventListener('graphRangeChanged', f);
+  }
+
+  playTiming(callback: (isShowPlay: boolean) => void) {
+    if (!this._timebarExt) {
+      return;
+    }
+    this._timebarExt.playTiming(callback);
+  }
+
+  getCurrTimeUnit(): number {
+    if (!this._timebarExt) {
+      return;
+    }
+    return this._timebarExt.getCurrTimeUnit();
+  }
+
+  getGraphRangeRatio(): number {
+    if (!this._timebarExt) {
+      return;
+    }
+    return this._timebarExt.getGraphRangeRatio();
+  }
 
   // this function should show only the provided elements, then should make layout
   private shownOnlyElems(elems) {
@@ -84,10 +235,6 @@ export class TimebarService {
     return false;
   }
 
-  setShowHideFn(fn: (isHide: boolean) => void) {
-    this.showHideFn = fn;
-  }
-
   private init() {
     const m = AppDescription.timebarDataMapping; // mapping for timebar
     const s = AppDescription.appPreferences.timebar; // settings for timebar
@@ -106,146 +253,4 @@ export class TimebarService {
     this._timebarExt = this._g.cy.timebar(m, htmlElems, s);
     this.shownMetrics.subscribe(x => { this._timebarExt.setStats(x) });
   }
-
-  coverVisibleRange() {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.coverVisibleRange();
-  }
-
-  coverAllTimes() {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.coverAllTimes();
-  }
-
-  changeZoom(isIncrease: boolean) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.changeZoom(isIncrease);
-  }
-
-  moveCursor(isLeft: boolean) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.moveCursor(isLeft);
-  }
-
-  setChartRange(s: number, e: number) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.setGraphRange(s, e);
-  }
-
-  getChartRange(): number[] {
-    if (!this._timebarExt) {
-      return;
-    }
-    return this._timebarExt.getGraphRange();
-  }
-
-  // ----------------------------------------- start of timebar settings  -----------------------------------------
-  showHideTimebar(isActive: boolean) {
-    // call init only once
-    if (isActive && this._g.cy.$(':visible').length > 0 && !this._timebarExt) {
-      this.init();
-    }
-    if (this._timebarExt) {
-      this._timebarExt.setSetting('isEnabled', isActive);
-    }
-  }
-
-  setisHideDisconnectedNodes(val: boolean) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.setSetting('isHideDisconnectedNodesOnAnim', val);
-  }
-
-  changePeriod(v: number) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._playingPeriod = v;
-    this._timebarExt.setSetting('playingPeriod', v);
-  }
-
-  changeStep(v: number) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.setSetting('playingStep', v);
-  }
-
-  changeZoomStep(v: number) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.setSetting('zoomingStep', v);
-  }
-
-  changeGraphInclusionType(i: number) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.setSetting('graphInclusionType', i);
-  }
-
-  changeStatsInclusionType(i: number) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.setSetting('statsInclusionType', i);
-  }
-
-  setIsMaintainGraphRange(v: boolean) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.setSetting('isMaintainGraphRange', v);
-  }
-  // ----------------------------------------- end of timebar settings  -----------------------------------------
-
-
-  onStatsChanged(f) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.setEventListener('statsRangeChanged', f);
-  }
-
-  onGraphChanged(f) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.setEventListener('graphRangeChanged', f);
-  }
-
-  playTiming(callback: (isShowPlay: boolean) => void) {
-    if (!this._timebarExt) {
-      return;
-    }
-    this._timebarExt.playTiming(callback);
-  }
-
-  getCurrTimeUnit(): number {
-    if (!this._timebarExt) {
-      return;
-    }
-    return this._timebarExt.getCurrTimeUnit();
-  }
-
-  getGraphRangeRatio(): number {
-    if (!this._timebarExt) {
-      return;
-    }
-    return this._timebarExt.getGraphRangeRatio();
-  }
 }
-
-
