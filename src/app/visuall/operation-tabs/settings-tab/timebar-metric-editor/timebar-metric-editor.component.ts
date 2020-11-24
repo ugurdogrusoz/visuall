@@ -281,7 +281,6 @@ export class TimebarMetricEditorComponent implements OnInit {
   private setFnsForMetrics() {
     for (let m of this.currMetrics) {
       let fnStr = getBoolExpressionFromMetric(m);
-      console.log(' bool expr for fn: ', fnStr);
       const isS = this.isSumRule(m.rules.r);
       if (isS) {
         const r = m.rules.r;
