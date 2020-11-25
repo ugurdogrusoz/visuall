@@ -5,6 +5,7 @@ import { TimebarMetric } from './operation-tabs/map-tab/query-types';
 import { Timebar } from '../../lib/timebar/Timebar';
 import { BehaviorSubject } from 'rxjs';
 import { MergedElemIndicatorTypes } from './user-preference';
+import { COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS } from './constants';
 
 @Injectable({
   providedIn: 'root'
@@ -19,16 +20,10 @@ export class TimebarService {
   isShowFromHide = false;
   showHideFn: (isHide: boolean) => void;
   rangeListenerSetterFn: () => void;
+  hideCompoundsFn: (elems) => void;
+  showCollapsedFn: (collapsedNodes, collapsedEdges) => void;
 
   constructor(private _g: GlobalVariableService) { }
-
-  setShowHideFn(fn: (isHide: boolean) => void) {
-    this.showHideFn = fn;
-  }
-
-  setRangeListenerSetterFn(fn) {
-    this.rangeListenerSetterFn = fn;
-  }
 
   coverVisibleRange() {
     if (!this._timebarExt) {
@@ -172,7 +167,7 @@ export class TimebarService {
     return this._timebarExt.getGraphRangeRatio();
   }
 
-  // this function should show only the provided elements, then should make layout
+  // this function should show only the provided elements, hide the remaining, then should make layout
   private shownOnlyElems(elems) {
     const alreadyVisibleNodes = this._g.cy.nodes(':visible');
     if (alreadyVisibleNodes.length > 0) {
@@ -183,7 +178,11 @@ export class TimebarService {
     const elems2show = elems.difference(alreadyVisible);
     const elems2hide = alreadyVisible.difference(elems);
     this._g.viewUtils.show(elems);
-    this._g.viewUtils.hide(this._g.cy.elements().difference(elems));
+    this.showCollapsedFn(elems.filter('.' + COLLAPSED_NODE_CLASS), elems.filter('.' + COLLAPSED_EDGE_CLASS));
+    const remaining4Hide = this._g.cy.elements().difference(elems);
+    // hide only non-compound nodes and edges
+    this._g.viewUtils.hide(remaining4Hide);
+    this.hideCompoundsFn(remaining4Hide);
     // `select` function of cytoscape should be called on visible elements
     this.handleHighlight(elems2show, elems2hide);
 
@@ -214,7 +213,7 @@ export class TimebarService {
     this._g.shownElemsChanged.next(true);
   }
 
-  // only `elems` will be shown. Highlight elements to be shown new, 
+  // only `elems` will be shown. Highlight elements to be shown "new" (previously hidden),
   // unhighlight elemenets to be hidden 
   private handleHighlight(elems2show, elems2hide) {
     const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();

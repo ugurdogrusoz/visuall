@@ -23,6 +23,8 @@ export class CytoscapeService {
     private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService) {
     this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g, this._profile);
     this.louvainClusterer = new LouvainClustering();
+    this._timebarService.hideCompoundsFn = this.hideCompounds.bind(this);
+    this._timebarService.showCollapsedFn = this.showCollapsed.bind(this);
   }
 
   initCy(containerElem) {
@@ -499,7 +501,6 @@ export class CytoscapeService {
     }
   }
 
-
   showHideTimebar(isChecked: boolean) {
     this._g.cy.resize();
     this._timebarService.showHideTimebar(isChecked);
@@ -667,7 +668,7 @@ export class CytoscapeService {
       this._g.viewUtils.show(this._g.cy.$());
       this._g.applyClassFiltering();
       this._timebarService.coverVisibleRange();
-      this.showAllCollapsed();
+      this.showCollapsed(null, null);
       const currVisible = this._g.cy.$(':visible');
       if (!currVisible.same(prevVisible)) {
         if (prevVisible.length > 0) {
@@ -688,13 +689,16 @@ export class CytoscapeService {
     }
   }
 
-  showAllCollapsed() {
-    const collapsedNodes = this._g.cy.$('.' + C.COLLAPSED_NODE_CLASS);
+  showCollapsed(collapsedNodes, collapsedEdges) {
+    if (!collapsedNodes) {
+      collapsedNodes = this._g.cy.$('.' + C.COLLAPSED_NODE_CLASS);
+    }
     for (let i = 0; i < collapsedNodes.length; i++) {
       this.showCollapsed4Node(collapsedNodes[i]);
     }
-
-    const collapsedEdges = this._g.cy.$('.' + C.COLLAPSED_EDGE_CLASS);
+    if (!collapsedEdges) {
+      collapsedEdges = this._g.cy.$('.' + C.COLLAPSED_EDGE_CLASS);
+    }
     for (let i = 0; i < collapsedEdges.length; i++) {
       this.showCollapsed4Edge(collapsedEdges[i]);
     }

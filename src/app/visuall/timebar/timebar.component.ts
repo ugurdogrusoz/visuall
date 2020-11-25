@@ -33,8 +33,8 @@ export class TimebarComponent implements OnInit {
     this.playImg = '../assets/img/play-button.svg';
     this.pauseImg = '../assets/img/pause-symbol.svg';
     this.currPlayIcon = this.playImg;
-    this.s.setShowHideFn(this.showHide.bind(this));
-    this.s.setRangeListenerSetterFn(this.setRangeListeners.bind(this));
+    this.s.showHideFn = this.showHide.bind(this);
+    this.s.rangeListenerSetterFn = this.setRangeListeners.bind(this);
     this._g.cy.on('add remove', debounce(this.hideIfEmpty, HIDE_EMPTY_TIMEBAR_DELAY).bind(this));
   }
 
