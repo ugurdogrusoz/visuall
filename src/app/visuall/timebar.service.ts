@@ -4,6 +4,7 @@ import AppDescription from '../custom/config/app_description.json';
 import { TimebarMetric } from './operation-tabs/map-tab/query-types';
 import { Timebar } from '../../lib/timebar/Timebar';
 import { BehaviorSubject } from 'rxjs';
+import { MergedElemIndicatorTypes } from './user-preference';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class TimebarService {
   rangeListenerSetterFn: () => void;
 
   constructor(private _g: GlobalVariableService) { }
-  
+
   setShowHideFn(fn: (isHide: boolean) => void) {
     this.showHideFn = fn;
   }
@@ -173,13 +174,18 @@ export class TimebarService {
 
   // this function should show only the provided elements, then should make layout
   private shownOnlyElems(elems) {
-    const alreadyVisible = this._g.cy.nodes(':visible');
-    if (alreadyVisible.length > 0) {
-      const shownNodes = elems.nodes().difference(alreadyVisible);
-      this._g.layoutUtils.placeNewNodes(shownNodes);
+    const alreadyVisibleNodes = this._g.cy.nodes(':visible');
+    if (alreadyVisibleNodes.length > 0) {
+      const nodes2Show = elems.nodes().difference(alreadyVisibleNodes);
+      this._g.layoutUtils.placeNewNodes(nodes2Show);
     }
+    const alreadyVisible = this._g.cy.$(':visible');
+    const elems2show = elems.difference(alreadyVisible);
+    const elems2hide = alreadyVisible.difference(elems);
     this._g.viewUtils.show(elems);
     this._g.viewUtils.hide(this._g.cy.elements().difference(elems));
+    // `select` function of cytoscape should be called on visible elements
+    this.handleHighlight(elems2show, elems2hide);
 
     const isChanged = this.hasElemsChanged(this._prevElems, elems);
     this._prevElems = elems;
@@ -206,6 +212,34 @@ export class TimebarService {
       }
     }
     this._g.shownElemsChanged.next(true);
+  }
+
+  // only `elems` will be shown. Highlight elements to be shown new, 
+  // unhighlight elemenets to be hidden 
+  private handleHighlight(elems2show, elems2hide) {
+    const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();
+    if (newElemIndicator == MergedElemIndicatorTypes.none) {
+      return;
+    }
+    const isHighlightOnlyLatest = this._g.userPrefs.isOnlyHighlight4LatestQuery.getValue();
+
+    if (isHighlightOnlyLatest) {
+      if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
+        this._g.viewUtils.removeHighlights();
+        this._g.highlightElems(elems2show);
+      } else if (newElemIndicator == MergedElemIndicatorTypes.selection) {
+        this._g.cy.$().unselect();
+        elems2show.select();
+      }
+    } else {
+      if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
+        this._g.viewUtils.removeHighlights(elems2hide);
+        this._g.highlightElems(elems2show);
+      } else if (newElemIndicator == MergedElemIndicatorTypes.selection) {
+        elems2hide.unselect();
+        elems2show.select();
+      }
+    }
   }
 
   private hasElemsChanged(prev: any, curr: any) {

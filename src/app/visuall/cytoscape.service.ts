@@ -299,6 +299,9 @@ export class CytoscapeService {
     }
     // remove all existing hightlights before hightlighting new elements
     const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();
+    if (newElemIndicator == MergedElemIndicatorTypes.none) {
+      return;
+    }
 
     if (this._g.userPrefs.isOnlyHighlight4LatestQuery.getValue()) {
       if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
