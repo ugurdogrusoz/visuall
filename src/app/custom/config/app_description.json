@@ -456,6 +456,7 @@
       "playingPeriod": 1350,
       "zoomingStep": 50,
       "statsInclusionType": 0,
+      "graphRangeRatio": 0.33,
       "isHideDisconnectedNodesOnAnim": false,
       "isMaintainGraphRange": false
     }
