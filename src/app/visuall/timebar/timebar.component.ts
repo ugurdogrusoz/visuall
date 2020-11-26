@@ -75,9 +75,7 @@ export class TimebarComponent implements OnInit {
       domElem.nativeElement._flatpickr.setDate(date);
     } else {
       instance = flatpickr(domElem.nativeElement, {
-        defaultDate: new Date(date), enableTime: true, enableSeconds: true, time_24hr: true, formatDate: this.formatDate.bind(this),
-        minDate: this._g.userPrefs.dbQueryTimeRange.start.getValue(),
-        maxDate: this._g.userPrefs.dbQueryTimeRange.end.getValue(),
+        defaultDate: new Date(date), enableTime: true, enableSeconds: true, time_24hr: true, formatDate: this.formatDate.bind(this)
       });
       instance.setDate(date);
       if (isStart) {

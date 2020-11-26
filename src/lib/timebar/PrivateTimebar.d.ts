@@ -1,4 +1,4 @@
-import { TimebarItem, Stat, Settings, Events, ChartElements } from "./data-type";
+import { TimebarItem, Stat, Settings, ChartElements } from "./data-type";
 import { GoogleChartClient } from "./GoogleChartClient";
 import { Timebar } from "./Timebar";
 export declare class PrivateTimebar {
@@ -19,11 +19,10 @@ export declare class PrivateTimebar {
     selectedTimeUnit: string;
     beginPropertyName: string;
     endPropertyName: string;
-    defaultBeginDate: number;
-    defaultEndDate: number;
     setStatsRangeStrFn: () => void;
     setGraphRangeStrFn: () => void;
-    GRAPH_RANGE_RATIO: number;
+    readonly GRAPH_RANGE_RATIO_MIN = 0.2;
+    readonly GRAPH_RANGE_RATIO_MAX = 0.8;
     ignoreEndNodesForEdgeInclusion: boolean;
     cy: any;
     dataMapping: any;
@@ -42,10 +41,11 @@ export declare class PrivateTimebar {
      * @param  {Stat[]} stats - calculations, color and text. Leave empty to use defaults
      * @constructor
      */
-    constructor(cy: any, dataMapping: any, htmlElem: ChartElements, settings: Settings, events: Events, stats: Stat[], api: Timebar);
+    constructor(cy: any, dataMapping: any, htmlElem: ChartElements, settings: Settings, api: Timebar);
     cyElemListChanged(): void;
     drawEmptyData(): void;
     getStatsForRange(start: number, end: number): number[];
+    count4Collapsed(item: TimebarItem, stat: Stat, cnts: number[], cntIdx: number, timeFilterFn: (x: any) => boolean, hasCollapsed: (x: TimebarItem) => any): void;
     getTimeRange(cyElem: any): any[];
     getTimeFilteredGraphElems(start: number, end: number): any;
     putStatDataForRange(s: number, e: number, data4arr: number, arr: any[]): void;
@@ -112,4 +112,16 @@ export declare class PrivateTimebar {
      * @param  {number} v
      */
     setGlobalRangeMax(v: number): void;
+    /** set ratio of graph range to stats range
+     * @param  {number} v
+     */
+    setGraphRangeRatio(v: number): void;
+    /** set default begin date time
+     * @param  {number} v
+     */
+    setDefaultBeginDate(v: number): void;
+    /** set default end date time
+     * @param  {number} v
+     */
+    setDefaultEndDate(v: number): void;
 }

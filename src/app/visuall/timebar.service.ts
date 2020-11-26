@@ -287,5 +287,12 @@ export class TimebarService {
     const htmlElems = { chartElemId: 'chart_div', controllerElemId: 'filter_div' };
     this._timebarExt = this._g.cy.timebar(m, htmlElems, s);
     this.shownMetrics.subscribe(x => { this._timebarExt.setStats(x) });
+    this._g.userPrefs.dbQueryTimeRange.start.subscribe(x => {
+      this._timebarExt.setSetting('defaultBeginDate', x)
+    });
+
+    this._g.userPrefs.dbQueryTimeRange.end.subscribe(x => {
+      this._timebarExt.setSetting('defaultEndDate', x)
+    });
   }
 }
