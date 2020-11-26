@@ -282,6 +282,8 @@ export class TimebarService {
       },
     };
     s['events'] = e;
+    s['defaultBeginDate'] = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+    s['defaultEndDate'] = this._g.userPrefs.dbQueryTimeRange.end.getValue();
     const htmlElems = { chartElemId: 'chart_div', controllerElemId: 'filter_div' };
     this._timebarExt = this._g.cy.timebar(m, htmlElems, s);
     this.shownMetrics.subscribe(x => { this._timebarExt.setStats(x) });
