@@ -131,7 +131,7 @@ export class CyExtService {
       highlightStyles: this.getHighlightStyles(),
       setVisibilityOnHide: false, // whether to set visibility on hide/show
       setDisplayOnHide: true, // whether to set display on hide/show
-      zoomAnimationDuration: 1500, //default duration for zoom animation speed
+      zoomAnimationDuration: 500, //default duration for zoom animation speed
       neighbor: function (node) { // return desired neighbors of tapheld node
         return false;
       },
