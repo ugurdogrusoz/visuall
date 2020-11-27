@@ -37,8 +37,8 @@ export class CustomizationModule {
 
     const andCond: Rule = { ruleOperator: 'AND' };
     const genreCond: Rule = { propertyOperand: 'genres', propertyType: 'list', rawInput: 'Comedy', inputOperand: 'Comedy', ruleOperator: null, operator: 'In' };
-    const lowRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '5', inputOperand: '5', ruleOperator: null, operator: '<=' };
-    const higRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '8', inputOperand: '8', ruleOperator: null, operator: '>=' };
+    const lowRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '5.5', inputOperand: '5.5', ruleOperator: null, operator: '<=' };
+    const higRateCond: Rule = { propertyOperand: 'rating', propertyType: 'float', rawInput: '7.5', inputOperand: '7.5', ruleOperator: null, operator: '>=' };
 
     const root1: RuleNode = { r: andCond, parent: null, children: [] };
     const root2: RuleNode = { r: andCond, parent: null, children: [] };
