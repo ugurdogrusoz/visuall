@@ -13,6 +13,7 @@ export const OBJ_INFO_UPDATE_DELAY = 200;
 export const META_EDGE_CLASS = 'cy-expand-collapse-meta-edge';
 export const COLLAPSED_EDGE_CLASS = 'cy-expand-collapse-collapsed-edge';
 export const COLLAPSED_NODE_CLASS = 'cy-expand-collapse-collapsed-node';
+export const EXPAND_COLLAPSE_FAST_OPT = { layoutBy: null, fisheye: false, animate: false };
 
 export const CY_NAVI_POSITION_WAIT_DUR = 500;
 export const MAX_HIGHTLIGHT_WIDTH = 20;
@@ -28,7 +29,7 @@ export const CSS_FONT_NAME = 'Arial';
 export const CLUSTER_CLASS = 'Cluster';
 export const LAYOUT_ANIM_DUR = 500;
 
-export const LONG_MAX =  '9000000036854776000'
+export const LONG_MAX = '9000000036854776000'
 export const LONG_MIN = '-9000000036854776000';
 
 export const GENERIC_TYPE = {
@@ -352,8 +353,8 @@ export function arrayDiff(smallArr: string[], bigArr: string[]): string[] {
 
 export function getCyStyleFromColorAndWid(color: string, wid: number): { nodeCss: any, edgeCss: any } {
   return {
-    nodeCss: { 'overlay-color': color, 'overlay-opacity' : 0.2, 'overlay-padding': wid },
-    edgeCss: { 'overlay-color': color, 'overlay-opacity' : 0.2, 'overlay-padding': wid }
+    nodeCss: { 'overlay-color': color, 'overlay-opacity': 0.2, 'overlay-padding': wid },
+    edgeCss: { 'overlay-color': color, 'overlay-opacity': 0.2, 'overlay-padding': wid }
   };
 }
 

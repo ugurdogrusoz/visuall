@@ -147,13 +147,13 @@ export class AppPage {
     await this.click2graph();
     this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.waitForAngular();
-    const canGetAllJohns = await browser.executeScript(`return cy.$("[.Person][primary_name *='John']").length === cy.$().length`);
+    const canGetAllJohns = await browser.executeScript(`return cy.$(".Person").filter("[primary_name *='John']").length  === cy.$().length`);
 
     element(by.css('img[title="Edit"]')).click();
     await this.addPropertyRule('primary_name', 'contains', 'Tom');
     this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.waitForAngular();
-    const canGetAllJohnsAndToms = await browser.executeScript(`return cy.$("[.Person][primary_name *='John'],[primary_name *='Tom']").length === cy.$().length`);
+    const canGetAllJohnsAndToms = await browser.executeScript(`return cy.$(".Person").filter("[primary_name *='John'],[primary_name *='Tom']").length === cy.$().length`);
 
     return canGetAllJohns && canGetAllJohnsAndToms;
   }
@@ -271,7 +271,6 @@ export class AppPage {
     element(by.css('input.cb-is-on-db')).click();
     await browser.sleep(this.ANIM_WAIT);
 
-    await this.click2graph();
     this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.sleep(this.ANIM_WAIT);
 

@@ -60,7 +60,6 @@ export class GroupCustomizationService {
         }
       }
       this._g.layout.clusters = Object.values(clusters);
-      this._g.isUseCiseLayout = true;
     }
   }
 }

@@ -12,6 +12,7 @@ import { UserProfileService } from '../user-profile.service';
 import { readTxtFile, CLUSTER_CLASS } from '../constants';
 import { SaveProfileModalComponent } from '../popups/save-profile-modal/save-profile-modal.component';
 import { URLLoadService } from '../load-from-url.service';
+import { GroupingOptionTypes } from '../user-preference';
 
 @Component({
   selector: 'app-navbar',
@@ -139,7 +140,14 @@ export class NavbarComponent implements OnInit {
 
   removeGroup4Selected() { this._cyService.removeGroup4Selected(); }
 
-  removeAllGroups() { this._cyService.removeGroup4Selected(this._g.cy.nodes('.' + CLUSTER_CLASS)); }
+  removeAllGroups() {
+    if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
+      this._cyService.removeGroup4Selected(this._g.cy.nodes('.' + CLUSTER_CLASS));
+    } else {
+      this._cyService.removeGroup4Selected(this._g.cy.nodes());
+    }
+
+  }
 
   hideSelected() { this._cyService.showHideSelectedElements(true); }
 

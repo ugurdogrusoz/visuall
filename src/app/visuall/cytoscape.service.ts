@@ -623,32 +623,79 @@ export class CytoscapeService {
         return;
       }
     }
-    const id = new Date().getTime();
-    this.addParentNode(id, parent);
-    for (let i = 0; i < elems.length; i++) {
-      elems[i].move({ parent: 'c' + id });
+    if (this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound) {
+      const id = new Date().getTime();
+      this.addParentNode(id, parent);
+      for (let i = 0; i < elems.length; i++) {
+        elems[i].move({ parent: 'c' + id });
+      }
+    } else {
+      const currCluster: string[] = elems.map(x => x.id());
+      if (!this._g.layout.clusters || this._g.layout.clusters.length < 1) {
+        this._g.layout.clusters = [currCluster];
+      } else {
+        this.removeElementsFromCurrentClusters(elems);
+        this._g.layout.clusters.push(currCluster);
+      }
+      this.removeEmptyClusters();
     }
+
     this._g.performLayout(false);
   }
 
-  removeGroup4Selected(elems = undefined) {
+  removeElementsFromCurrentClusters(elems) {
+    const currCluster: string[] = elems.map(x => x.id());
+    // remove elements from current clusters
+    for (const cluster of this._g.layout.clusters) {
+      for (const item of currCluster) {
+        const idx = cluster.indexOf(item);
+        if (idx > -1) {
+          cluster.splice(idx, 1);
+        }
+      }
+    }
+  }
+
+  removeEmptyClusters() {
+    const nonEmptyClusters = [];
+    for (const cluster of this._g.layout.clusters) {
+      if (cluster.length > 0) {
+        nonEmptyClusters.push(cluster);
+      }
+    }
+    this._g.layout.clusters = nonEmptyClusters;
+  }
+
+  removeGroup4Selected(elems = undefined, isRunLayout = true) {
+    const isCompoundGrouping = this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound;
     if (!elems) {
-      elems = this._g.cy.nodes(':selected').filter('.' + C.CLUSTER_CLASS);
+      elems = this._g.cy.nodes(':selected');
+      if (isCompoundGrouping) {
+        elems = elems.filter('.' + C.CLUSTER_CLASS);
+      }
     }
     if (elems.length < 1) {
       return;
     }
-    for (let i = 0; i < elems.length; i++) {
-      // expand if collapsed
-      if (elems[i].hasClass(C.COLLAPSED_NODE_CLASS)) {
-        this._g.expandCollapseApi.expand(elems[i], { layoutBy: null, fisheye: false, animate: false });
+    if (isCompoundGrouping) {
+      for (let i = 0; i < elems.length; i++) {
+        // expand if collapsed
+        if (elems[i].hasClass(C.COLLAPSED_NODE_CLASS)) {
+          this._g.expandCollapseApi.expand(elems[i], C.EXPAND_COLLAPSE_FAST_OPT);
+        }
+        const grandParent = elems[i].parent().id() ?? null;
+        const children = elems[i].children();
+        children.move({ parent: grandParent });
+        this._g.cy.remove(elems[i]);
       }
-      const grandParent = elems[i].parent().id() ?? null;
-      const children = elems[i].children();
-      children.move({ parent: grandParent });
-      this._g.cy.remove(elems[i]);
+    } else {
+      this.removeElementsFromCurrentClusters(elems);
+      this.removeEmptyClusters();
     }
-    this._g.performLayout(false);
+
+    if (isRunLayout) {
+      this._g.performLayout(false);
+    }
   }
 
   showHideSelectedElements(isHide: boolean) {
@@ -751,7 +798,7 @@ export class CytoscapeService {
     if (collapsed) {
       children = children.union(collapsed);
       collapsedEdgeIds = collapsed.edges('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
-      this._g.expandCollapseApi.expand(node, { layoutBy: null, fisheye: false, animate: false });
+      this._g.expandCollapseApi.expand(node, C.EXPAND_COLLAPSE_FAST_OPT);
     }
     for (const i of collapsedEdgeIds) {
       edgeIdDict[i] = true;
@@ -807,7 +854,6 @@ export class CytoscapeService {
         arr.push(a);
       }
       this._g.layout.clusters = arr;
-      this._g.isUseCiseLayout = true;
     }
   }
 
@@ -834,8 +880,7 @@ export class CytoscapeService {
       for (let i in clustering) {
         arr[clustering[i]].push(i);
       }
-      this._g.layout.clusters = (node) => { return clustering[node.id()]; };
-      this._g.isUseCiseLayout = true;
+      this._g.layout.clusters = arr;
     }
   }
 
@@ -885,7 +930,6 @@ export class CytoscapeService {
       console.log(' clusters for directors: ', clusters);
       console.log(' Object.values(clusters): ', Object.values(clusters));
       this._g.layout.clusters = Object.values(clusters);
-      this._g.isUseCiseLayout = true;
     }
 
   }
@@ -961,5 +1005,20 @@ export class CytoscapeService {
     this.removePopperFn = fn;
   }
 
-
+  changeGroupingOption(x: GroupingOptionTypes) {
+    if (x === GroupingOptionTypes.clusterId && this._g.cy.$('.' + C.CLUSTER_CLASS).length > 0) {
+      // expand all collapsed without animation (sync)
+      this._g.expandCollapseApi.expandAll(C.EXPAND_COLLAPSE_FAST_OPT);
+      const compounNodes = this._g.cy.$('.' + C.CLUSTER_CLASS);
+      const clusters: string[][] = [];
+      for (let i = 0; i < compounNodes.length; i++) {
+        const cluster = compounNodes[i].children().not('.' + C.CLUSTER_CLASS).map(x => x.id());
+        clusters.push(cluster);
+      }
+      this.removeGroup4Selected(this._g.cy.nodes('.' + C.CLUSTER_CLASS), false);
+      this._g.layout.clusters = clusters;
+    } else if (x === GroupingOptionTypes.compound) {
+      this._g.layout.clusters = null;
+    }
+  }
 }

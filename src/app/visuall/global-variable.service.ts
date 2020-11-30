@@ -3,7 +3,7 @@ import { UserPref, GroupingOptionTypes } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import appPref from '../../assets/appPref.json';
-import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS, CY_BATCH_END_DELAY } from './constants';
+import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS, CY_BATCH_END_DELAY, EXPAND_COLLAPSE_FAST_OPT } from './constants';
 import { GraphHistoryItem, GraphElem } from './db-service/data-types';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
@@ -18,7 +18,7 @@ export class GlobalVariableService {
   cy: any;
   viewUtils: any;
   layoutUtils: any;
-  layout: any;
+  layout: { clusters: string[][], randomize: boolean, quality: string, tile: boolean, animationDuration: number };
   expandCollapseApi: any;
   hiddenClasses: Set<string>;
   setLoadingStatus: (boolean) => void;
@@ -34,7 +34,6 @@ export class GlobalVariableService {
   isLoadFromExpandCollapse: boolean = false;
   isUserPrefReady = new BehaviorSubject<boolean>(false);
   statusMsg = new BehaviorSubject<string>('');
-  isUseCiseLayout = false;
   performLayout: Function;
   cyNaviPositionSetter: any;
   appDescription = new BehaviorSubject<any>(null);
@@ -94,9 +93,8 @@ export class GlobalVariableService {
       this.statusMsg.next('Performing layout...');
     }
     this.setLoadingStatus(true);
-    if (this.isUseCiseLayout) {
+    if (this.layout.clusters && this.layout.clusters.length > 0) {
       elems4layout.layout(this.getCiseOptions()).run();
-      this.isUseCiseLayout = false;
     } else {
       elems4layout.layout(this.layout).run();
     }
@@ -299,7 +297,8 @@ export class GlobalVariableService {
 
       /* layout event callbacks */
       ready: () => { }, // on layoutready
-      stop: () => { } // on layoutstop
+      stop: () => { }, // on layoutstop
+      clusters: null // cise argument
     };
   }
 
@@ -322,7 +321,7 @@ export class GlobalVariableService {
     for (let i = 0; i < metaNodes.length; i++) {
       const collapsedChildren = metaNodes[i].data('collapsedChildren');
       if (collapsedChildren.filter(':visible').length < 1) {
-        this.expandCollapseApi.expand(metaNodes[i], { layoutBy: null, fisheye: false, animate: false });
+        this.expandCollapseApi.expand(metaNodes[i], EXPAND_COLLAPSE_FAST_OPT);
       }
     }
 
