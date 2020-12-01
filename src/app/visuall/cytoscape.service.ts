@@ -644,6 +644,9 @@ export class CytoscapeService {
   }
 
   removeElementsFromCurrentClusters(elems) {
+    if (!this._g.layout.clusters) {
+      return;
+    }
     const currCluster: string[] = elems.map(x => x.id());
     // remove elements from current clusters
     for (const cluster of this._g.layout.clusters) {
@@ -657,6 +660,9 @@ export class CytoscapeService {
   }
 
   removeEmptyClusters() {
+    if (!this._g.layout.clusters) {
+      return;
+    }
     const nonEmptyClusters = [];
     for (const cluster of this._g.layout.clusters) {
       if (cluster.length > 0) {
@@ -666,8 +672,10 @@ export class CytoscapeService {
     this._g.layout.clusters = nonEmptyClusters;
   }
 
-  removeGroup4Selected(elems = undefined, isRunLayout = true) {
-    const isCompoundGrouping = this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound;
+  removeGroup4Selected(elems = undefined, isRunLayout = true, isCompoundGrouping = null) {
+    if (isCompoundGrouping === null) {
+      isCompoundGrouping = this._g.userPrefs.groupingOption.getValue() == GroupingOptionTypes.compound;
+    }
     if (!elems) {
       elems = this._g.cy.nodes(':selected');
       if (isCompoundGrouping) {
@@ -1015,8 +1023,9 @@ export class CytoscapeService {
         const cluster = compounNodes[i].children().not('.' + C.CLUSTER_CLASS).map(x => x.id());
         clusters.push(cluster);
       }
-      this.removeGroup4Selected(this._g.cy.nodes('.' + C.CLUSTER_CLASS), false);
       this._g.layout.clusters = clusters;
+      // delete the compound nodes
+      this.removeGroup4Selected(this._g.cy.nodes('.' + C.CLUSTER_CLASS), true, true);
     } else if (x === GroupingOptionTypes.compound) {
       this._g.layout.clusters = null;
     }
