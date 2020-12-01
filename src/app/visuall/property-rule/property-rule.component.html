@@ -63,7 +63,7 @@
         <option disabled selected value>Choose a predefined list</option>
         <option *ngFor="let p of fittingSavedLists" [value]="p">{{p}} </option>
       </select>
-      <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name" [(ngModel)]="currListName"
+      <input autoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name" [(ngModel)]="currListName"
         class="tight-select filter-form form-control std-inp-hei m-1 va-small-text">
       <span class="m-1">
         <img src="assets/img/tick.svg" title="Add/Update list" (click)="saveCurrList()">

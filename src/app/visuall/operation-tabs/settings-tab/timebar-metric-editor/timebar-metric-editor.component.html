@@ -24,7 +24,7 @@
   <div [ngClass]="{'collapse': isHideEditing}">
     <!-- name and type input -->
     <div class="form-inline m-1 justify-content-center">
-      <input AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
+      <input autoSizeInput [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
         [(ngModel)]="currMetricName" class="std-inp-hei form-control name-inp my-1 va-small-text">
 
       <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="currMetricColor"></app-color-picker>

@@ -1,6 +1,6 @@
 <div class="d-flex flex-wrap justify-content-end m-1" *ngIf="isShowTable">
 
-  <input [disabled]="isLoading" AutoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
+  <input [disabled]="isLoading" autoSizeInput [includeBorders]="true" [extraWidth]="3" type="text"
     class="form-control va-small-text" placeholder="Search..." [(ngModel)]="filterTxt"
     (ngModelChange)="filterTxtChanged()">
 
