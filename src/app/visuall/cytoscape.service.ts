@@ -605,11 +605,12 @@ export class CytoscapeService {
     this.runLayoutIfNoTimebar();
   }
 
-  addParentNode(idSuffix: string | number, parent = undefined) {
+  addParentNode(idSuffix: string | number, parent = undefined): string {
     const id = 'c' + idSuffix;
     const parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name }, id: '' }, id);
     this._g.cy.add(parentNode);
     this._g.cy.$('#' + id).move({ parent: parent });
+    return id;
   }
 
   addGroup4Selected() {
@@ -1027,7 +1028,19 @@ export class CytoscapeService {
       // delete the compound nodes
       this.removeGroup4Selected(this._g.cy.nodes('.' + C.CLUSTER_CLASS), true, true);
     } else if (x === GroupingOptionTypes.compound) {
+      // Clusters are always non-nested. If cise support nested clusters, below logic should be recursive
+      if (!this._g.layout || !this._g.layout.clusters) {
+        this._g.layout.clusters = null;
+        return;
+      }
+      for (const cluster of this._g.layout.clusters) {
+        const parentId = this.addParentNode(new Date().getTime());
+        for (const nodeId of cluster) {
+          this._g.cy.nodes('#' + nodeId).move({ parent: parentId });
+        }
+      }
       this._g.layout.clusters = null;
+      this._g.performLayout(false);
     }
   }
 }
