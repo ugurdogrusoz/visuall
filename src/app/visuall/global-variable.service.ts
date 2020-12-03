@@ -398,6 +398,7 @@ export class GlobalVariableService {
       //    ['n5','n6']                                         }
       //    ['n7', 'n8', 'n9', 'n10'] ]
       clusters: this.layout.clusters,
+      randomize: this.layout.randomize,
 
       // -------- Optional parameters --------
       // Whether to animate the layout
