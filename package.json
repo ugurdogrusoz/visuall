@@ -30,6 +30,7 @@
     "axios": "^0.21.0",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.3",
+    "compression": "^1.7.4",
     "cytoscape": "^3.17.0",
     "cytoscape-cise": "github:iVis-at-Bilkent/cytoscape.js-cise#develop",
     "cytoscape-context-menus": "github:iVis-at-Bilkent/cytoscape.js-context-menus#unstable",
