@@ -180,10 +180,12 @@ export class NavbarComponent implements OnInit {
   expandAllNodes() { this._cyService.expandAllCompounds(); }
 
   getSampleData() {
+    this._g.layout.clusters = null;
     this._dbService.getSampleData(x => { this._cyService.loadElementsFromDatabase(x, false) });
   }
 
   clearData() {
+    this._g.layout.clusters = null;
     this._g.cy.remove(this._g.cy.$());
   }
 
