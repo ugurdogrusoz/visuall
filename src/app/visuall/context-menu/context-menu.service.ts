@@ -56,7 +56,7 @@ export class ContextMenuService {
       {
         id: 'expandEdge',
         content: 'Expand',
-        selector: 'edge.' + COLLAPSED_EDGE_CLASS,
+        selector: 'edge.' + COLLAPSED_EDGE_CLASS + '[^originalEnds]', // don't expand meta edges
         onClickFunction: this.expandEdge.bind(this)
       },
       {
