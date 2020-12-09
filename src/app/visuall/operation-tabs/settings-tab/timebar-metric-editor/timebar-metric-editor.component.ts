@@ -285,7 +285,7 @@ export class TimebarMetricEditorComponent implements OnInit {
       if (isS) {
         const r = m.rules.r;
         if (r.propertyType == 'edge') {
-          const collapsedEdges4Node = `x.connectedEdges('.${COLLAPSED_EDGE_CLASS}').map(x => x.data('collapsedEdges')).reduce((x, y) => {return x.union(y)}, cy.collection())`;
+          const collapsedEdges4Node = `x.connectedEdges('.${COLLAPSED_EDGE_CLASS}').map(x => x.data('collapsedEdges').filter('.${r.propertyOperand}')).reduce((x, y) => {return x.union(y)}, cy.collection())`;
           fnStr += `return x.connectedEdges('.${r.propertyOperand}').union(${collapsedEdges4Node}).length;`
         } else {
           fnStr += `return x.data('${r.propertyOperand}');`

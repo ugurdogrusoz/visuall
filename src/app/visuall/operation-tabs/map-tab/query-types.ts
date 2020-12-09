@@ -158,7 +158,7 @@ function getBoolExpressionFromRuleNode(node: RuleNode) {
 }
 
 function getJsExpressionForMetricRule(r: Rule) {
-  const collapsedEdges4Node = `x.connectedEdges('.${COLLAPSED_EDGE_CLASS}').map(x => x.data('collapsedEdges')).reduce((x, y) => {return x.union(y)}, cy.collection())`;
+  const collapsedEdges4Node = `x.connectedEdges('.${COLLAPSED_EDGE_CLASS}').map(x => x.data('collapsedEdges').filter('.${r.propertyOperand}')).reduce((x, y) => {return x.union(y)}, cy.collection())`;
   if (r.operator == 'One of') {
     let s = r.inputOperand;
     s = s.replace(/'/g, '');
