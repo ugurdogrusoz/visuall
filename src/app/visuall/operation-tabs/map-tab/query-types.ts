@@ -174,25 +174,43 @@ function getJsExpressionForMetricRule(r: Rule) {
   if (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'datetime' || r.propertyType == 'edge') {
     let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
     if (r.propertyType == 'datetime') {
-      return `x.data('${r.propertyOperand}') ${op} ${r.rawInput}`;
+      if (op && r.rawInput) {
+        return `x.data('${r.propertyOperand}') ${op} ${r.rawInput}`;
+      }
+      return `x.data('${r.propertyOperand}')`;
     }
     if (r.propertyType == 'edge') {
-      return `x.connectedEdges('.${r.propertyOperand}').union(${collapsedEdges4Node}).length ${op} ${r.inputOperand}`;
+      if (op && r.inputOperand) {
+        return `x.connectedEdges('.${r.propertyOperand}').union(${collapsedEdges4Node}).length ${op} ${r.inputOperand}`;
+      }
+      return `x.connectedEdges('.${r.propertyOperand}').union(${collapsedEdges4Node}).length`;
     }
-    return `x.data('${r.propertyOperand}') ${op} ${r.inputOperand}`;
+    if (op && r.inputOperand) {
+      return `x.data('${r.propertyOperand}') ${op} ${r.inputOperand}`;
+    }
+    return `x.data('${r.propertyOperand}')`;
   }
   if (r.propertyType == 'string') {
     if (r.operator === '=') {
       return `x.data('${r.propertyOperand}') === '${r.inputOperand}'`;
     }
     let op = NEO4J_2_JS_STR_OPERATORS[r.operator];
-    return `x.data('${r.propertyOperand}').${op}('${r.inputOperand}')`;
+    if (op && r.inputOperand) {
+      return `x.data('${r.propertyOperand}').${op}('${r.inputOperand}')`;
+    }
+    return `x.data('${r.propertyOperand}')`;
   }
   if (r.propertyType == 'list') {
-    return `x.data('${r.propertyOperand}').includes('${r.inputOperand}')`;
+    if (r.inputOperand) {
+      return `x.data('${r.propertyOperand}').includes('${r.inputOperand}')`;
+    }
+    return `x.data('${r.propertyOperand}')`;
   }
   if (r.propertyType.startsWith('enum')) {
     let op = NEO4J_2_JS_NUMBER_OPERATORS[r.operator];
+    if (!op || !r.inputOperand) {
+      return `x.data('${r.propertyOperand}')`;
+    }
     if (r.propertyType.endsWith('string')) {
       return `x.data('${r.propertyOperand}') ${op} '${r.inputOperand}'`;
     } else {
