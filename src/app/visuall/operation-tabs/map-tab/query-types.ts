@@ -1,4 +1,4 @@
-import { GENERIC_TYPE, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS } from '../../constants';
+import { COLLAPSED_EDGE_CLASS, GENERIC_TYPE, NEO4J_2_JS_NUMBER_OPERATORS, NEO4J_2_JS_STR_OPERATORS } from '../../constants';
 
 export interface QueryRule {
   name: string;
@@ -158,6 +158,7 @@ function getBoolExpressionFromRuleNode(node: RuleNode) {
 }
 
 function getJsExpressionForMetricRule(r: Rule) {
+  const collapsedEdges4Node = `x.connectedEdges('.${COLLAPSED_EDGE_CLASS}').map(x => x.data('collapsedEdges')).reduce((x, y) => {return x.union(y)}, cy.collection())`;
   if (r.operator == 'One of') {
     let s = r.inputOperand;
     s = s.replace(/'/g, '');
@@ -166,7 +167,7 @@ function getJsExpressionForMetricRule(r: Rule) {
       s = arr.join(',')
     }
     if (r.propertyType == 'edge') {
-      return `[${s}].includes(x.connectedEdges('.${r.propertyOperand}').length)`;
+      return `[${s}].includes(x.connectedEdges('.${r.propertyOperand}').union(${collapsedEdges4Node}).length)`;
     }
     return `[${s}].includes(x.data('${r.propertyOperand}'))`;
   }
@@ -176,7 +177,7 @@ function getJsExpressionForMetricRule(r: Rule) {
       return `x.data('${r.propertyOperand}') ${op} ${r.rawInput}`;
     }
     if (r.propertyType == 'edge') {
-      return `x.connectedEdges('.${r.propertyOperand}').length ${op} ${r.inputOperand}`;
+      return `x.connectedEdges('.${r.propertyOperand}').union(${collapsedEdges4Node}).length ${op} ${r.inputOperand}`;
     }
     return `x.data('${r.propertyOperand}') ${op} ${r.inputOperand}`;
   }
