@@ -32,7 +32,7 @@
   </div>
 
   <div class="col-1 text-center">
-    <img src="assets/img/tick.svg" title="Add/Update" (click)="onAddRuleClick()">
+    <img src="assets/img/tick.svg" title="Add/Update" (click)="onAddRuleClick($event)">
   </div>
 </div>
 <div class="draggable-content" ngResizable ngDraggable [handle]="DragHandle" [position]="position" [rzHandles]="'all'"
