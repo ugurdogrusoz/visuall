@@ -270,20 +270,21 @@ export class TimebarService {
 
   private init() {
     const m = AppDescription.timebarDataMapping; // mapping for timebar
-    const s = AppDescription.appPreferences.timebar; // settings for timebar
+    const s = this.getUserPrefs(); // settings for timebar
     const e = { // events (functions to be called in extension)
       maintainFiltering: (elems) => {
         return this._g.filterByClass(elems);
       },
       showOnlyElems: this.shownOnlyElems.bind(this),
       chartRendered: () => {
-        const isEnabled = this._g.userPrefs.timebar.isEnabled.getValue() && this._g.cy.$().length > 0;
+        const isEnabled = s.isEnabled && this._g.cy.$().length > 0;
         this.showHideFn(!isEnabled);
       },
     };
     s['events'] = e;
     s['defaultBeginDate'] = this._g.userPrefs.dbQueryTimeRange.start.getValue();
     s['defaultEndDate'] = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+    s['graphRangeRatio'] = AppDescription.appPreferences.timebar.graphRangeRatio;
     const htmlElems = { chartElemId: 'chart_div', controllerElemId: 'filter_div' };
     this._timebarExt = this._g.cy.timebar(m, htmlElems, s);
     this.shownMetrics.subscribe(x => { this._timebarExt.setStats(x) });
@@ -294,5 +295,14 @@ export class TimebarService {
     this._g.userPrefs.dbQueryTimeRange.end.subscribe(x => {
       this._timebarExt.setSetting('defaultEndDate', x)
     });
+  }
+
+  private getUserPrefs(): any {
+    const prefs = this._g.userPrefs.timebar;
+    const r = {};
+    for (const key of Object.keys(prefs)) {
+      r[key] = prefs[key].getValue()
+    }
+    return r;
   }
 }
