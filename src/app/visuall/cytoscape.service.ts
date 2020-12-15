@@ -273,6 +273,7 @@ export class CytoscapeService {
     if (!edges2expand) {
       edges2expand = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS);
     }
+    edges2expand = edges2expand.not('.' + C.META_EDGE_CLASS);
     this._g.expandCollapseApi.expandEdges(edges2expand);
     this._g.isLoadFromExpandCollapse = true;
   }
