@@ -1,0 +1,436 @@
+{
+  "nodes": [{
+    "data": {
+      "end_datetime": 0,
+      "begin_datetime": 0,
+      "name": "",
+      "id": "c1608190090743",
+      "position-before-collapse": {
+        "x": -79.76280433014765,
+        "y": 235.61936849832352
+      },
+      "size-before-collapse": {
+        "w": 272.5291262134831,
+        "h": 252.5355866295894
+      },
+      "collapsedChildren": [{
+        "data": {
+          "characters": ["Clara"],
+          "act_end": -86400000,
+          "act_begin": -24451200000,
+          "job": "",
+          "id": "e1633451",
+          "source": "c1608190096723",
+          "target": "n1045238",
+          "originalEnds": {
+            "source": {
+              "data": {
+                "primary_profession": ["actress", "soundtrack", "producer"],
+                "nconst": "nm0000003",
+                "primary_name": "Brigitte Bardot",
+                "start_t": -1136073600000,
+                "birth_year": 1934,
+                "id": "n2",
+                "parent": "c1608190108029"
+              },
+              "position": {
+                "x": -77.23892034787258,
+                "y": 235.4936990708254
+              },
+              "group": "nodes",
+              "removed": true,
+              "selected": false,
+              "selectable": true,
+              "locked": false,
+              "grabbable": true,
+              "pannable": false,
+              "classes": "Person wrap_label"
+            },
+            "target": {
+              "data": {
+                "runtime_minutes": 86,
+                "production_end_date": -86400000,
+                "original_title": "Les femmes",
+                "start_year": 1969,
+                "rating": 5.5,
+                "count_votes": 322,
+                "primary_title": "Les femmes",
+                "shooting_end_date": -86400000,
+                "title_type": "movie",
+                "is_adult": 0,
+                "production_start_date": -24451200000,
+                "genres": ["Comedy"],
+                "shooting_start_date": -24451200000,
+                "tconst": "tt0064324",
+                "id": "n1045238",
+                "parent": "c1608190090743"
+              },
+              "position": {
+                "x": -179.6851344271854,
+                "y": 246.16293614152684
+              },
+              "group": "nodes",
+              "removed": true,
+              "selected": false,
+              "selectable": true,
+              "locked": false,
+              "grabbable": true,
+              "pannable": false,
+              "classes": "Title wrap_label"
+            }
+          }
+        },
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "group": "edges",
+        "removed": true,
+        "selected": false,
+        "selectable": true,
+        "locked": false,
+        "grabbable": true,
+        "pannable": true,
+        "classes": "ACTRESS cy-expand-collapse-meta-edge"
+      }, {
+        "data": {
+          "runtime_minutes": 86,
+          "production_end_date": -86400000,
+          "original_title": "Les femmes",
+          "start_year": 1969,
+          "rating": 5.5,
+          "count_votes": 322,
+          "primary_title": "Les femmes",
+          "shooting_end_date": -86400000,
+          "title_type": "movie",
+          "is_adult": 0,
+          "production_start_date": -24451200000,
+          "genres": ["Comedy"],
+          "shooting_start_date": -24451200000,
+          "tconst": "tt0064324",
+          "id": "n1045238",
+          "parent": "c1608190090743"
+        },
+        "position": {
+          "x": -179.6851344271854,
+          "y": 246.16293614152684
+        },
+        "group": "nodes",
+        "removed": true,
+        "selected": false,
+        "selectable": true,
+        "locked": false,
+        "grabbable": true,
+        "pannable": false,
+        "classes": "Title wrap_label"
+      }, {
+        "data": {
+          "end_datetime": 0,
+          "begin_datetime": 0,
+          "name": "",
+          "id": "c1608190096723",
+          "parent": "c1608190090743",
+          "position-before-collapse": {
+            "x": -33.26677278463154,
+            "y": 235.61936849832352
+          },
+          "size-before-collapse": {
+            "w": 151.8525971030433,
+            "h": 224.85112061018185
+          },
+          "collapsedChildren": [{
+            "data": {
+              "characters": ["Irina Lazaar"],
+              "act_end": -31622400000,
+              "act_begin": -63158400000,
+              "job": "",
+              "id": "e1633338",
+              "source": "c1608190108029",
+              "target": "n1045152",
+              "originalEnds": {
+                "source": {
+                  "data": {
+                    "primary_profession": ["actress", "soundtrack", "producer"],
+                    "nconst": "nm0000003",
+                    "primary_name": "Brigitte Bardot",
+                    "start_t": -1136073600000,
+                    "birth_year": 1934,
+                    "id": "n2",
+                    "parent": "c1608190108029"
+                  },
+                  "position": {
+                    "x": -77.23892034787258,
+                    "y": 235.4936990708254
+                  },
+                  "group": "nodes",
+                  "removed": true,
+                  "selected": false,
+                  "selectable": true,
+                  "locked": false,
+                  "grabbable": true,
+                  "pannable": false,
+                  "classes": "Person wrap_label"
+                },
+                "target": {
+                  "data": {
+                    "runtime_minutes": 113,
+                    "production_end_date": -31622400000,
+                    "original_title": "Shalako",
+                    "start_year": 1968,
+                    "rating": 5.6,
+                    "count_votes": 2583,
+                    "primary_title": "Shalako",
+                    "shooting_end_date": -31622400000,
+                    "title_type": "movie",
+                    "is_adult": 0,
+                    "production_start_date": -63158400000,
+                    "genres": ["Western"],
+                    "shooting_start_date": -63158400000,
+                    "tconst": "tt0063592",
+                    "id": "n1045152",
+                    "parent": "c1608190096723"
+                  },
+                  "position": {
+                    "x": -55.857673599948924,
+                    "y": 327.7679925714579
+                  },
+                  "group": "nodes",
+                  "removed": true,
+                  "selected": false,
+                  "selectable": true,
+                  "locked": false,
+                  "grabbable": true,
+                  "pannable": false,
+                  "classes": "Title wrap_label"
+                }
+              }
+            },
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "group": "edges",
+            "removed": true,
+            "selected": false,
+            "selectable": true,
+            "locked": false,
+            "grabbable": true,
+            "pannable": true,
+            "classes": "ACTRESS cy-expand-collapse-meta-edge"
+          }, {
+            "data": {
+              "runtime_minutes": 113,
+              "production_end_date": -31622400000,
+              "original_title": "Shalako",
+              "start_year": 1968,
+              "rating": 5.6,
+              "count_votes": 2583,
+              "primary_title": "Shalako",
+              "shooting_end_date": -31622400000,
+              "title_type": "movie",
+              "is_adult": 0,
+              "production_start_date": -63158400000,
+              "genres": ["Western"],
+              "shooting_start_date": -63158400000,
+              "tconst": "tt0063592",
+              "id": "n1045152",
+              "parent": "c1608190096723"
+            },
+            "position": {
+              "x": -55.857673599948924,
+              "y": 327.7679925714579
+            },
+            "group": "nodes",
+            "removed": true,
+            "selected": false,
+            "selectable": true,
+            "locked": false,
+            "grabbable": true,
+            "pannable": false,
+            "classes": "Title wrap_label"
+          }, {
+            "data": {
+              "end_datetime": 0,
+              "begin_datetime": 0,
+              "name": "",
+              "id": "c1608190108029",
+              "parent": "c1608190096723",
+              "position-before-collapse": {
+                "x": -33.26677278463154,
+                "y": 199.82082912616931
+              },
+              "size-before-collapse": {
+                "w": 135.1387246391303,
+                "h": 136.54016940196044
+              },
+              "collapsedChildren": [{
+                "data": {
+                  "characters": ["Self"],
+                  "end": -44409600000,
+                  "job": "",
+                  "begin": -94694400000,
+                  "id": "e1433263",
+                  "source": "n2",
+                  "target": "n1076797"
+                },
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "group": "edges",
+                "removed": true,
+                "selected": false,
+                "selectable": true,
+                "locked": false,
+                "grabbable": true,
+                "pannable": true,
+                "classes": "SELF"
+              }, {
+                "data": {
+                  "characters": ["Agnès"],
+                  "act_end": 31449600000,
+                  "act_begin": 22723200000,
+                  "job": "",
+                  "id": "e1633839",
+                  "source": "n2",
+                  "target": "n1045573"
+                },
+                "position": {
+                  "x": 0,
+                  "y": 0
+                },
+                "group": "edges",
+                "removed": true,
+                "selected": false,
+                "selectable": true,
+                "locked": false,
+                "grabbable": true,
+                "pannable": true,
+                "classes": "ACTRESS"
+              }, {
+                "data": {
+                  "primary_profession": ["actress", "soundtrack", "producer"],
+                  "nconst": "nm0000003",
+                  "primary_name": "Brigitte Bardot",
+                  "start_t": -1136073600000,
+                  "birth_year": 1934,
+                  "id": "n2",
+                  "parent": "c1608190108029"
+                },
+                "position": {
+                  "x": -77.23892034787258,
+                  "y": 235.4936990708254
+                },
+                "group": "nodes",
+                "removed": true,
+                "selected": false,
+                "selectable": true,
+                "locked": false,
+                "grabbable": true,
+                "pannable": false,
+                "classes": "Person wrap_label"
+              }, {
+                "data": {
+                  "runtime_minutes": 91,
+                  "production_end_date": 31449600000,
+                  "original_title": "Les novices",
+                  "start_year": 1970,
+                  "rating": 5.1,
+                  "count_votes": 197,
+                  "primary_title": "Les novices",
+                  "shooting_end_date": 31449600000,
+                  "title_type": "movie",
+                  "is_adult": 0,
+                  "production_start_date": 22723200000,
+                  "genres": ["Comedy", "Drama"],
+                  "shooting_start_date": 22723200000,
+                  "tconst": "tt0066164",
+                  "id": "n1045573",
+                  "parent": "c1608190108029"
+                },
+                "position": {
+                  "x": -67.6436403795411,
+                  "y": 150.71795918151318
+                },
+                "group": "nodes",
+                "removed": true,
+                "selected": false,
+                "selectable": true,
+                "locked": false,
+                "grabbable": true,
+                "pannable": false,
+                "classes": "Title wrap_label"
+              }, {
+                "data": {
+                  "production_start_date": -94694400000,
+                  "runtime_minutes": 180,
+                  "production_end_date": -44409600000,
+                  "original_title": "Faces of Paris",
+                  "genres": ["Family"],
+                  "shooting_start_date": -94694400000,
+                  "tconst": "tt4981286",
+                  "start_year": 1968,
+                  "primary_title": "Faces of Paris",
+                  "shooting_end_date": -42163200000,
+                  "title_type": "tvMiniSeries",
+                  "is_adult": 0,
+                  "id": "n1076797",
+                  "parent": "c1608190108029"
+                },
+                "position": {
+                  "x": 9.205374778609492,
+                  "y": 209.9589600462147
+                },
+                "group": "nodes",
+                "removed": true,
+                "selected": false,
+                "selectable": true,
+                "locked": false,
+                "grabbable": true,
+                "pannable": false,
+                "classes": "Title wrap_label"
+              }]
+            },
+            "position": {
+              "x": -33.26677278463154,
+              "y": 199.82082912616931
+            },
+            "group": "nodes",
+            "removed": true,
+            "selected": false,
+            "selectable": true,
+            "locked": false,
+            "grabbable": true,
+            "pannable": false,
+            "classes": "Cluster cy-expand-collapse-collapsed-node"
+          }]
+        },
+        "position": {
+          "x": -33.26677278463154,
+          "y": 235.61936849832352
+        },
+        "group": "nodes",
+        "removed": true,
+        "selected": false,
+        "selectable": true,
+        "locked": false,
+        "grabbable": true,
+        "pannable": false,
+        "classes": "Cluster cy-expand-collapse-collapsed-node"
+      }]
+    },
+    "position": {
+      "x": -79.76280433014765,
+      "y": 235.61936849832352
+    },
+    "group": "nodes",
+    "removed": false,
+    "selected": false,
+    "selectable": true,
+    "locked": false,
+    "grabbable": true,
+    "pannable": false,
+    "classes": "Cluster cy-expand-collapse-collapsed-node"
+  }],
+  "edges": []
+}

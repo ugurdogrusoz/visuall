@@ -35,7 +35,7 @@ export class URLLoadService {
         this.data = new File([await data], 'Graph', { type: 'text', lastModified: Date.now() });
 
         //data is taken as json and given to cytoscape's loadFile method as it is in navbar load
-        this._cyService.loadFile(this.data);
+        this._cyService.loadFile2(this.data);
       },
         (err: HttpErrorResponse) => {
           console.log(err.message);

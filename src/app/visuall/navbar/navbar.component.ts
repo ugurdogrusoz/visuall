@@ -107,7 +107,7 @@ export class NavbarComponent implements OnInit {
 
   fileSelected() {
     if (this.isLoadFile4Graph) {
-      this._cyService.loadFile(this.file.nativeElement.files[0]);
+      this._cyService.loadFile2(this.file.nativeElement.files[0]);
     } else {
       readTxtFile(this.file.nativeElement.files[0], (s) => {
         this._profile.setUserProfile(s);
@@ -128,7 +128,7 @@ export class NavbarComponent implements OnInit {
     this.openFileInput();
   }
 
-  saveAsJson() { this._cyService.saveAsJson(); }
+  saveAsJson() { this._cyService.saveAsJson2(); }
 
   saveSelectedAsJson() { this._cyService.saveSelectedAsJson(); }
 

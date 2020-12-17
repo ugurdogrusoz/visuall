@@ -109,7 +109,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  fileSelected() { this._cyService.loadFile(this.file.nativeElement.files[0]); }
+  fileSelected() { this._cyService.loadFile2(this.file.nativeElement.files[0]); }
 
   triggerAct(act: ToolbarAction) {
     if (act.isStd) {
@@ -124,7 +124,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.file.nativeElement.click();
   }
 
-  saveAsJson() { this._cyService.saveAsJson(); }
+  saveAsJson() { this._cyService.saveAsJson2(); }
 
   saveAsPng() { this.modalService.open(SaveAsPngModalComponent); }
 
