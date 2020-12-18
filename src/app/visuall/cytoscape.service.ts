@@ -602,13 +602,16 @@ export class CytoscapeService {
     this.str2file(JSON.stringify(o), 'visuall.txt');
   }
 
+  // loads collapsed nodes as normal, collapses later.
+  // Adds all the collapsed edges first then deletes them
+  // Sets source and targets after nodes exist in the memory
   loadFile2(file: File) {
     C.readTxtFile(file, (txt) => {
       const fileJSON = JSON.parse(txt);
       // original endpoints won't exist in cy. So keep a reference.
       const nodePositions = {};
       const allNodes = this._g.cy.collection(); // some elements are stored in cy, some are deleted 
-      const collapsedElems = this._g.cy.collection(); // some are deleted 
+      const nodes2collapse = this._g.cy.collection(); // some are deleted 
       const node2parent = {};
       for (const n of fileJSON.nodes) {
         nodePositions[n.data.id] = { x: n.position.x, y: n.position.y };
@@ -618,19 +621,22 @@ export class CytoscapeService {
         const node = this._g.cy.add(n);
         allNodes.merge(node);
         if (node.data('collapsedChildren')) {
-          node.data('collapsedChildren', this.json2cyCollection(node.data('collapsedChildren'), allNodes, collapsedElems, node2parent));
+          this.json2cyCollection(node.data('collapsedChildren'), allNodes, nodes2collapse, node2parent);
+          nodes2collapse.merge(node);
+          this.clearCollapseMetaData(node);
         }
       }
       for (const e of fileJSON.edges) {
-        if (e.data.collapsedEdges) {
-          e.data.collapsedEdges = this.json2cyCollection(e.data.collapsedEdges, allNodes, collapsedElems, node2parent);
+        const edge = this._g.cy.add(e);
+        if (edge.data('collapsedEdges')) {
+          edge.data('collapsedEdges', this.json2cyCollection(e.data.collapsedEdges, allNodes, nodes2collapse, node2parent));
+          this._g.cy.remove(edge.data('collapsedEdges')); // delete collapsed edges from cy
         }
-        if (e.data.originalEnds) {
+        if (edge.data('originalEnds')) {
           const srcId = e.data.originalEnds.source.data.id;
           const tgtId = e.data.originalEnds.target.data.id;
           e.data.originalEnds = { source: allNodes.filter('#' + srcId), target: allNodes.filter('#' + tgtId) };
         }
-        this._g.cy.add(e);
       }
       // set parents
       for (let node in node2parent) {
@@ -639,19 +645,18 @@ export class CytoscapeService {
           elem.move({ parent: node2parent[node] });
         }
       }
-      // remove all the collapsed edges and children at the end since they shouldn't exist in cy
-      this._g.cy.remove(collapsedElems);
+      // collapse the collapsed nodes
+      this._g.expandCollapseApi.collapse(nodes2collapse, C.EXPAND_COLLAPSE_FAST_OPT);
 
-      // removing elements might corrupt the position
+      // positions might be changed in collapse extension
       for (const n of fileJSON.nodes) {
         this._g.cy.$id(n.data.id).position(nodePositions[n.data.id]);
       }
-
       this._g.cy.fit();
     });
   }
 
-  json2cyCollection(jsonArr, allNodes, collapsedElems, node2parent) {
+  json2cyCollection(jsonArr, allNodes, nodes2collapse, node2parent) {
     // process edges last since they depend on nodes
     jsonArr.sort((a) => {
       if (a.group === 'edges') {
@@ -673,7 +678,7 @@ export class CytoscapeService {
       if (e.isNode()) {
         allNodes.merge(e);
       }
-      collapsedElems.merge(e);
+
       if (d.originalEnds) {
         // all nodes should be in the memory (in cy or not)
         let src = allNodes.$id(d.originalEnds.source.data.id);
@@ -687,14 +692,28 @@ export class CytoscapeService {
         e.data('originalEnds', { source: src, target: tgt });
       }
       if (d.collapsedChildren) {
-        e.data('collapsedChildren', this.json2cyCollection(d.collapsedChildren, allNodes, collapsedElems, node2parent));
+        nodes2collapse.merge(e);
+        this.json2cyCollection(d.collapsedChildren, allNodes, nodes2collapse, node2parent);
+        this.clearCollapseMetaData(e);
       } else if (d.collapsedEdges) {
-        e.data('collapsedEdges', this.json2cyCollection(d.collapsedEdges, allNodes, collapsedElems, node2parent));
+        e.data('collapsedEdges', this.json2cyCollection(d.collapsedEdges, allNodes, nodes2collapse, node2parent));
+        // delete collapsed edges from cy
+        this._g.cy.remove(e.data('collapsedEdges'));
       }
       e.position(pos); // adding new elements to a compound might change its position
       coll.merge(e);
     }
     return coll;
+  }
+
+  clearCollapseMetaData(e) {
+    e.data('collapsedChildren', null);
+    e.removeClass('cy-expand-collapse-collapsed-node');
+    e.data('position-before-collapse', null);
+    e.data('size-before-collapse', null);
+    e.data('expandcollapseRenderedStartX', null);
+    e.data('expandcollapseRenderedStartY', null);
+    e.data('expandcollapseRenderedCueSize', null);
   }
 
   cyCollection2Json(elems: { cy: any, collapsedEdges: any, collapsedChildren: any, originalEnds: any }[]) {
