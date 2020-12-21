@@ -650,7 +650,9 @@ export class CytoscapeService {
 
       // positions might be changed in collapse extension
       for (const n of fileJSON.nodes) {
-        this._g.cy.$id(n.data.id).position(nodePositions[n.data.id]);
+        if (n.classes.trim() !== 'Cluster') {
+          this._g.cy.$id(n.data.id).position(nodePositions[n.data.id]);
+        }
       }
       this._g.cy.fit();
     });
