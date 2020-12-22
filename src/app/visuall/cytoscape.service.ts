@@ -510,9 +510,7 @@ export class CytoscapeService {
 
   loadFile(file: File) {
     C.readTxtFile(file, (txt) => {
-      const fileJSON = JSON.parse(txt);
-      this._g.cy.json({ elements: fileJSON });
-      this._g.cy.fit();
+      this._g.expandCollapseApi.loadJson(txt);
     });
   }
 
@@ -528,42 +526,11 @@ export class CytoscapeService {
   }
 
   saveAsJson() {
-    let hasAnyCollapsed = this._g.cy.nodes('.' + C.COLLAPSED_NODE_CLASS).length > 0 || this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
-    if (hasAnyCollapsed) {
-      this._g.showErrorModal('Save', 'Cannot save due to collapsed node(s) and/or edge(s)');
-      return;
-    }
-    const json = this._g.cy.json();
-    const elements = json.elements;
-    if (!elements.nodes) {
-      return;
-    }
-    this.str2file(JSON.stringify(elements, undefined, 4), 'visuall.txt');
+    this._g.expandCollapseApi.saveJson(this._g.cy.$(), 'visuall.json');
   }
 
   saveSelectedAsJson() {
-    const selected = this._g.cy.$(':selected');
-    let hasAnyCollapsed = selected.nodes('.' + C.COLLAPSED_NODE_CLASS).length > 0 || selected.edges('.' + C.COLLAPSED_EDGE_CLASS).length > 0;
-    if (hasAnyCollapsed) {
-      this._g.showErrorModal('Save Selected Objects', 'Cannot save selected objects due to collapsed node(s) and/or edge(s)');
-      return;
-    }
-
-    const selectedNodes = selected.nodes();
-    const selectedEdges = selected.edges();
-    if (selectedEdges.length + selectedNodes.length < 1) {
-      return;
-    }
-    // according to cytoscape.js format
-    const o = { nodes: [], edges: [] };
-    for (const e of selectedEdges) {
-      o.edges.push(e.json());
-    }
-    for (const n of selectedNodes) {
-      o.nodes.push(n.json());
-    }
-
-    this.str2file(JSON.stringify(o), 'visuall.txt');
+    this._g.expandCollapseApi.saveJson(this._g.cy.$(':selected'), 'visuall.json');
   }
 
   saveAsCSV(objs: GraphElem[]) {
