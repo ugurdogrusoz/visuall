@@ -1,8 +1,8 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndicatorTypes, BoolSetting, GroupingOptionTypes } from '../../user-preference';
 import { UserProfileService } from '../../user-profile.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, getCyStyleFromColorAndWid } from '../../constants';
 import flatpickr from 'flatpickr';
 import { CustomizationModule } from 'src/app/custom/customization.module';
@@ -12,7 +12,7 @@ import { CustomizationModule } from 'src/app/custom/customization.module';
   templateUrl: './settings-tab.component.html',
   styleUrls: ['./settings-tab.component.css']
 })
-export class SettingsTabComponent implements OnInit {
+export class SettingsTabComponent implements OnInit, OnDestroy {
   generalBoolSettings: BoolSetting[];
   timebarBoolSettings: BoolSetting[];
   highlightWidth: number;
@@ -47,9 +47,11 @@ export class SettingsTabComponent implements OnInit {
   selectionColor = "#6c757d";
   selectionWidth = 4.5;
   customSubTabs: { component: any, text: string }[] = CustomizationModule.settingsSubTabs;
+  loadFromFileSubs: Subscription;
+  tabChangeSubs: Subscription;
 
   constructor(private _g: GlobalVariableService, private _profile: UserProfileService) {
-    this._profile.onLoadFromFile.subscribe(x => {
+    this.loadFromFileSubs = this._profile.onLoadFromFile.subscribe(x => {
       if (!x) {
         return;
       }
@@ -79,11 +81,20 @@ export class SettingsTabComponent implements OnInit {
 
     this.isInit = true;
 
-    this._g.operationTabChanged.subscribe(x => {
+    this.tabChangeSubs = this._g.operationTabChanged.subscribe(x => {
       if (x == 3) { // check if my tab is opened
         this.fillUIFromMemory();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.loadFromFileSubs) {
+      this.loadFromFileSubs.unsubscribe();
+    }
+    if (this.tabChangeSubs) {
+      this.tabChangeSubs.unsubscribe();
+    }
   }
 
   private setDates4DbQuery() {
@@ -240,19 +251,19 @@ export class SettingsTabComponent implements OnInit {
     this._profile.saveUserPrefs();
   }
 
-  onSelWidSelected( w ) {
+  onSelWidSelected(w) {
     let width = parseFloat(w.target.value);
-    if(Number(width)){
-      if(width<0)
+    if (Number(width)) {
+      if (width < 0)
         width = 1;
-      else if(width>20)
+      else if (width > 20)
         width = 20;
       this._g.userPrefs.selectionWidth.next(width);
       this.selectionWidth = width;
       this._g.cy.style().selector(':selected').style({ 'overlay-padding': width }).update();
       this._profile.saveUserPrefs();
     }
-    else{
+    else {
       this._g.userPrefs.selectionWidth.next(1);
       this.selectionWidth = this._g.userPrefs.selectionWidth.getValue();
       w.target.valueAsNumber = this.selectionWidth;

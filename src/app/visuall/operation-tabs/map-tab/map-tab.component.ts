@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { GENERIC_TYPE, COLLAPSED_EDGE_CLASS, CLUSTER_CLASS } from '../../constants';
 import { DbAdapterService } from '../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../cytoscape.service';
 import { GlobalVariableService } from '../../global-variable.service';
 import { TimebarService } from '../../timebar.service';
 import { ClassOption, Rule, RuleSync, QueryRule, ClassBasedRules, RuleNode, getBoolExpressionFromMetric, deepCopyRuleNode } from './query-types';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from '../../../shared/table-view/table-view-types';
 import { DbResponse, DbResponseType, GraphResponse, HistoryMetaData } from '../../db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
@@ -18,7 +18,7 @@ import { CustomizationModule } from 'src/app/custom/customization.module';
   templateUrl: './map-tab.component.html',
   styleUrls: ['./map-tab.component.css']
 })
-export class MapTabComponent implements OnInit {
+export class MapTabComponent implements OnInit, OnDestroy {
 
   classOptions: ClassOption[];
   selectedClassProps: string[];
@@ -47,6 +47,10 @@ export class MapTabComponent implements OnInit {
   currRuleName = 'New rule';
   isShowPropertyRule = true;
   customSubTabs: { component: any, text: string }[] = CustomizationModule.mapSubTabs;
+  loadFromFileSubs: Subscription;
+  dataPageSizeSubs: Subscription;
+  appDescSubs: Subscription;
+  dataModelSubs: Subscription;
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService,
     private _timebarService: TimebarService, private _profile: UserProfileService) {
@@ -56,7 +60,7 @@ export class MapTabComponent implements OnInit {
     this.selectedClassProps = [];
     this.isDateProp = false;
     this.currDatetimes = [new Date()];
-    this._profile.onLoadFromFile.subscribe(x => {
+    this.loadFromFileSubs = this._profile.onLoadFromFile.subscribe(x => {
       if (!x) {
         return;
       }
@@ -65,13 +69,13 @@ export class MapTabComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
+    this.dataPageSizeSubs = this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; });
 
-    this._g.appDescription.subscribe(x => {
+    this.appDescSubs = this._g.appDescription.subscribe(x => {
       if (x === null) {
         return;
       }
-      this._g.dataModel.subscribe(x2 => {
+      this.dataModelSubs = this._g.dataModel.subscribe(x2 => {
         if (x2 === null) {
           return;
         }
@@ -96,6 +100,21 @@ export class MapTabComponent implements OnInit {
         }
       });
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.loadFromFileSubs) {
+      this.loadFromFileSubs.unsubscribe();
+    }
+    if (this.dataPageSizeSubs) {
+      this.dataPageSizeSubs.unsubscribe();
+    }
+    if (this.appDescSubs) {
+      this.appDescSubs.unsubscribe();
+    }
+    if (this.dataModelSubs) {
+      this.dataModelSubs.unsubscribe();
+    }
   }
 
   private setCurrRulesFromLocalStorage() {

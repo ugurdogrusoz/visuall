@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric, RuleNode, deepCopyTimebarMetric } from '../../map-tab/query-types';
 import { COLLAPSED_EDGE_CLASS, GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { UserProfileService } from '../../../user-profile.service';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { GlobalVariableService } from '../../../global-variable.service';
 import { CustomizationModule } from '../../../../custom/customization.module';
 
@@ -12,7 +12,7 @@ import { CustomizationModule } from '../../../../custom/customization.module';
   templateUrl: './timebar-metric-editor.component.html',
   styleUrls: ['./timebar-metric-editor.component.css']
 })
-export class TimebarMetricEditorComponent implements OnInit {
+export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
 
   private editingIdx = -1;
   classOptions: ClassOption[];
@@ -33,6 +33,10 @@ export class TimebarMetricEditorComponent implements OnInit {
   currRuleNode: RuleNode;
   isShowPropertyRule = true;
   editedRuleNode: Subject<RuleNode> = new Subject<RuleNode>();
+  loadFromFileSubs: Subscription;
+  dataPageSizeSubs: Subscription;
+  appDescSubs: Subscription;
+  dataModelSubs: Subscription;
 
   constructor(private _g: GlobalVariableService, private _timeBarService: TimebarService, private _profile: UserProfileService) {
     this.classOptions = [];
@@ -45,7 +49,7 @@ export class TimebarMetricEditorComponent implements OnInit {
     this.setFnsForMetrics();
     this._timeBarService.shownMetrics.next(this.currMetrics);
 
-    this._profile.onLoadFromFile.subscribe(x => {
+    this.loadFromFileSubs = this._profile.onLoadFromFile.subscribe(x => {
       if (!x) {
         return;
       }
@@ -54,9 +58,9 @@ export class TimebarMetricEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._g.appDescription.subscribe(x => {
+    this.appDescSubs = this._g.appDescription.subscribe(x => {
       if (x) {
-        this._g.dataModel.subscribe(x2 => {
+        this.dataModelSubs = this._g.dataModel.subscribe(x2 => {
           if (x2) {
             this.classOptions.push({ text: GENERIC_TYPE.ANY_CLASS, isDisabled: false });
             this.classOptions.push({ text: GENERIC_TYPE.NODES_CLASS, isDisabled: false });
@@ -77,7 +81,18 @@ export class TimebarMetricEditorComponent implements OnInit {
         }, (e) => { console.log('error: ', e); });
       }
     }, (e) => { console.log('error: ', e); });
+  }
 
+  ngOnDestroy(): void {
+    if (this.loadFromFileSubs) {
+      this.loadFromFileSubs.unsubscribe();
+    }
+    if (this.appDescSubs) {
+      this.appDescSubs.unsubscribe();
+    }
+    if (this.dataModelSubs) {
+      this.dataModelSubs.unsubscribe();
+    }
   }
 
   initRules(s: 'AND' | 'OR' | 'C') {

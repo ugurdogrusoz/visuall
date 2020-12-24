@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../global-variable.service';
 import { getPropNamesFromObj, DATE_PROP_END, DATE_PROP_START, findTypeOfAttribute, debounce, COLLAPSED_EDGE_CLASS, OBJ_INFO_UPDATE_DELAY, CLUSTER_CLASS, extend } from '../../constants';
 import { TableViewInput, TableData, TableDataType, TableFiltering, property2TableData, filterTableDatas } from '../../../shared/table-view/table-view-types';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { CytoscapeService } from '../../cytoscape.service';
 import { CustomizationModule } from '../../../custom/customization.module';
 
@@ -11,7 +11,7 @@ import { CustomizationModule } from '../../../custom/customization.module';
   templateUrl: './object-tab.component.html',
   styleUrls: ['./object-tab.component.css']
 })
-export class ObjectTabComponent implements OnInit {
+export class ObjectTabComponent implements OnInit, OnDestroy {
 
   nodeClasses: Set<string>;
   edgeClasses: Set<string>;
@@ -34,17 +34,20 @@ export class ObjectTabComponent implements OnInit {
   };
   private NODE_TYPE = '_NODE_';
   private EDGE_TYPE = '_EDGE_';
+  shownElemsSubs: Subscription;
+  appDescSubs: Subscription;
+  dataModelSubs: Subscription;
 
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) {
     this.selectedItemProps = [];
   }
 
   ngOnInit() {
-    this._g.appDescription.subscribe(x => {
+    this.appDescSubs = this._g.appDescription.subscribe(x => {
       if (x === null) {
         return;
       }
-      this._g.dataModel.subscribe(x2 => {
+      this.dataModelSubs = this._g.dataModel.subscribe(x2 => {
         if (x2 === null) {
           return;
         }
@@ -59,13 +62,25 @@ export class ObjectTabComponent implements OnInit {
           this.edgeClasses.add(key);
         }
 
-        this._g.shownElemsChanged.subscribe(() => { this.showStats() });
+        this.shownElemsSubs = this._g.shownElemsChanged.subscribe(() => { this.showStats() });
         this.showObjectProps();
         this.showStats();
         this._cyService.showObjPropsFn = debounce(this.showObjectProps, OBJ_INFO_UPDATE_DELAY).bind(this);
         this._cyService.showStatsFn = debounce(this.showStats, OBJ_INFO_UPDATE_DELAY).bind(this);
       });
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.appDescSubs) {
+      this.appDescSubs.unsubscribe();
+    }
+    if (this.dataModelSubs) {
+      this.dataModelSubs.unsubscribe();
+    }
+    if (this.shownElemsSubs) {
+      this.shownElemsSubs.unsubscribe();
+    }
   }
 
   showObjectProps() {

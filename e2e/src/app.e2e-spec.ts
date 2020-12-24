@@ -41,8 +41,8 @@ describe('Visuall', () => {
   });
 
   it('Query by Condition get All Persons', async () => {
-    page.navigateTo();
-    expect(page.queryByConditionRuleGetAll('Person', false)).toEqual(true);
+    await page.navigateTo();
+    expect(await page.queryByConditionRuleGetAll('Person', false)).toEqual(true);
   });
 
   it('Query by Condition get All COMPOSER', async () => {

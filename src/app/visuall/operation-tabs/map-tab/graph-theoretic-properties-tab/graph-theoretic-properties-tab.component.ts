@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../../global-variable.service';
 import { formatNumber } from '@angular/common';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { ColorPickerComponent } from '../../../color-picker/color-picker.component';
 import { debounce2, debounce, COLLAPSED_EDGE_CLASS } from '../../../constants';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-graph-theoretic-properties-tab',
   templateUrl: './graph-theoretic-properties-tab.component.html',
   styleUrls: ['./graph-theoretic-properties-tab.component.css']
 })
-export class GraphTheoreticPropertiesTabComponent implements OnInit {
+export class GraphTheoreticPropertiesTabComponent implements OnInit, OnDestroy {
 
   theoreticProps: { text: string, fn: string, arg: any }[] = [
     { text: 'Degree Centrality', fn: 'degreeCentrality', arg: '' },
@@ -38,6 +39,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
   readonly NODE_SIZE = 40;
   maxPropValue = 0;
   currNodeSize = this.NODE_SIZE;
+  appDescSubs: Subscription;
 
   constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService) { }
 
@@ -49,6 +51,12 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit {
         this.currNodeSize = x.appPreferences.avgNodeSize;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.appDescSubs) {
+      this.appDescSubs.unsubscribe();
+    }
   }
 
   runProperty() {

@@ -23,7 +23,7 @@ export class AppPage {
 
   async filterByNodeType() {
     const hasVisibleNodesAndEdges = await this.getSampleData();
-    element.all(by.css('a.filter-node-class')).first().click();
+    await element.all(by.css('a.filter-node-class')).first().click();
     const hasVisiblePerson = await browser.executeScript('return cy.$("node:visible").filter(".Person").length > 0');
     return hasVisibleNodesAndEdges && !hasVisiblePerson;
   }
@@ -100,7 +100,7 @@ export class AppPage {
 
     await this.click2graph();
 
-    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
+    await this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
     await browser.sleep(this.ANIM_WAIT);
     await browser.waitForAngular();
     if (isEdge) {

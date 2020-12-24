@@ -287,7 +287,7 @@ export class TimebarService {
     s['graphRangeRatio'] = AppDescription.appPreferences.timebar.graphRangeRatio;
     const htmlElems = { chartElemId: 'chart_div', controllerElemId: 'filter_div' };
     this._timebarExt = this._g.cy.timebar(m, htmlElems, s);
-    this.shownMetrics.subscribe(x => { this._timebarExt.setStats(x) });
+    this.shownMetrics.subscribe(x => { console.log('subs to shownMetrics'); this._timebarExt.setStats(x); });
     this._g.userPrefs.dbQueryTimeRange.start.subscribe(x => {
       this._timebarExt.setSetting('defaultBeginDate', x)
     });

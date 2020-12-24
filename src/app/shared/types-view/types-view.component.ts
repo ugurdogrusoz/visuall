@@ -1,12 +1,12 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
 import { GlobalVariableService } from '../../visuall/global-variable.service';
-
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-types-view',
   templateUrl: './types-view.component.html',
   styleUrls: ['./types-view.component.css']
 })
-export class TypesViewComponent implements OnInit {
+export class TypesViewComponent implements OnInit, OnDestroy {
 
   nodeClasses: Set<string>;
   showNodeClass = {};
@@ -14,6 +14,7 @@ export class TypesViewComponent implements OnInit {
   showEdgeClass = {};
   @Output() onFilterByType = new EventEmitter<{ className: string, willBeShowed: boolean }>();
   @Input() classList: string[];
+  dataModelSubs: Subscription;
 
   constructor(private _g: GlobalVariableService) {
     this.nodeClasses = new Set([]);
@@ -21,7 +22,7 @@ export class TypesViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._g.dataModel.subscribe(x => {
+    this.dataModelSubs = this._g.dataModel.subscribe(x => {
       if (x) {
         for (const key in x.nodes) {
           if (!this.classList || this.classList.includes(key)) {
@@ -50,6 +51,12 @@ export class TypesViewComponent implements OnInit {
       willBeShowed = this.showEdgeClass[className];
     }
     this.onFilterByType.next({ className: className, willBeShowed: willBeShowed });
+  }
+
+  ngOnDestroy(): void {
+    if (this.dataModelSubs) {
+      this.dataModelSubs.unsubscribe();
+    }
   }
 
 }

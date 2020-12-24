@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DbAdapterService } from '../db-service/db-adapter.service';
 import { GlobalVariableService } from '../global-variable.service';
 import { CytoscapeService } from '../cytoscape.service';
@@ -13,13 +13,14 @@ import { readTxtFile, CLUSTER_CLASS } from '../constants';
 import { SaveProfileModalComponent } from '../popups/save-profile-modal/save-profile-modal.component';
 import { URLLoadService } from '../load-from-url.service';
 import { GroupingOptionTypes } from '../user-preference';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   @ViewChild('file', { static: false }) file;
 
   menu: NavbarDropdown[];
@@ -27,6 +28,7 @@ export class NavbarComponent implements OnInit {
   toolName: string;
   toolLogo: string;
   isLoadFile4Graph: boolean = false;
+  appDescSubs: Subscription;
 
   constructor(private _dbService: DbAdapterService, private _cyService: CytoscapeService, private _modalService: NgbModal,
     private _g: GlobalVariableService, private _customizationService: NavbarCustomizationService, private _profile: UserProfileService,
@@ -80,7 +82,7 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._g.appDescription.subscribe(x => {
+    this.appDescSubs = this._g.appDescription.subscribe(x => {
       if (x != null) {
         this.toolName = x.appInfo.name;
         this.toolLogo = x.appInfo.icon;
@@ -88,6 +90,12 @@ export class NavbarComponent implements OnInit {
     })
     this.mergeCustomMenu();
     this._urlload.init();
+  }
+
+  ngOnDestroy(): void {
+    if (this.appDescSubs) {
+      this.appDescSubs.unsubscribe();
+    }
   }
 
   mergeCustomMenu() {

@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { GlobalVariableService } from '../../../global-variable.service';
 import { DbAdapterService } from '../../../db-service/db-adapter.service';
 import { CytoscapeService } from '../../../cytoscape.service';
 import { TableViewInput, property2TableData, TableData, TableDataType, TableFiltering, TableRowMeta } from '../../../../shared/table-view/table-view-types';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Neo4jEdgeDirection, GraphElem, HistoryMetaData, ElemAsQueryParam, DbResponseType } from '../../../db-service/data-types';
 import { getCyStyleFromColorAndWid, readTxtFile, isJson } from '../../../constants';
 
@@ -12,7 +12,7 @@ import { getCyStyleFromColorAndWid, readTxtFile, isJson } from '../../../constan
   templateUrl: './advanced-queries.component.html',
   styleUrls: ['./advanced-queries.component.css']
 })
-export class AdvancedQueriesComponent implements OnInit {
+export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   @ViewChild('file', { static: false }) file;
   queries: string[];
   selectedQuery: string;
@@ -32,6 +32,8 @@ export class AdvancedQueriesComponent implements OnInit {
   };
   tableFilter: TableFiltering = { orderBy: null, orderDirection: null, txt: '', skip: null };
   tableFilled = new Subject<boolean>();
+  dataPageSizeSubs: Subscription;
+  dataModelSubs: Subscription;
 
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _cyService: CytoscapeService) {
     this.queries = ['Get graph of interest', 'Get common targets/regulators'];
@@ -39,7 +41,7 @@ export class AdvancedQueriesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._g.dataModel.subscribe(x => {
+    this.dataModelSubs = this._g.dataModel.subscribe(x => {
       if (x) {
         for (const n in x.nodes) {
           this.nodeEdgeClasses.push(n);
@@ -50,7 +52,16 @@ export class AdvancedQueriesComponent implements OnInit {
       }
     });
     this.selectedQuery = '';
-    this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; this.tableInput.currPage = 1; this.tableFilter.skip = 0; });
+    this.dataPageSizeSubs = this._g.userPrefs.dataPageSize.subscribe(x => { this.tableInput.pageSize = x; this.tableInput.currPage = 1; this.tableFilter.skip = 0; });
+  }
+
+  ngOnDestroy(): void {
+    if (this.dataModelSubs) {
+      this.dataModelSubs.unsubscribe();
+    }
+    if (this.dataPageSizeSubs) {
+      this.dataPageSizeSubs.unsubscribe();
+    }
   }
 
   changeAdvancedQuery(event) {
