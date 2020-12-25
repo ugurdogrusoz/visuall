@@ -20,11 +20,8 @@ export class ColorPickerComponent implements OnInit {
   open(ev: MouseEvent, content) {
     ev.preventDefault();
     // style="width: 232px; height: 363px;"
-    this._modalService.open(content, { windowClass: 'picker-window' }).result.then((result) => {
-      this.onColorSelected.emit(this.currColor);
-    }, (reason) => {
-      this.onColorSelected.emit(this.currColor);
-    });
+    const fn = () => { this.onColorSelected.emit(this.currColor); };
+    this._modalService.open(content, { windowClass: 'picker-window', animation: true }).result.then(fn, fn);
     this.setPicker();
   }
 
