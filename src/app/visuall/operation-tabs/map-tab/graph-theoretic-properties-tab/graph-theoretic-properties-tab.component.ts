@@ -2,8 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GlobalVariableService } from '../../../global-variable.service';
 import { formatNumber } from '@angular/common';
 import { CytoscapeService } from '../../../cytoscape.service';
-import { ColorPickerComponent } from '../../../color-picker/color-picker.component';
-import { debounce2, debounce, COLLAPSED_EDGE_CLASS } from '../../../constants';
+import { debounce2, debounce, COLLAPSED_EDGE_CLASS, mapColor } from '../../../constants';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -406,7 +405,7 @@ export class GraphTheoreticPropertiesTabComponent implements OnInit, OnDestroy {
 
   setBadgeColorsAndCoords() {
     for (let i = 0; i < this.poppedData.length; i++) {
-      let c = ColorPickerComponent.mapColor(this.badgeColor, this.maxPropValue, this.poppedData[i].elem.data('__graphTheoreticProp'));
+      let c = mapColor(this.badgeColor, this.maxPropValue, this.poppedData[i].elem.data('__graphTheoreticProp'));
       for (let j = 0; j < this.poppedData[i].popper.children.length; j++) {
         (this.poppedData[i].popper.children[j] as HTMLSpanElement).style.background = c;
       }

@@ -366,3 +366,26 @@ export function isJson(str: string) {
   }
   return true;
 }
+
+export function mapColor(colorEnd: string, valueEnd: number, val: number) {
+  if (colorEnd[0] == '#') {
+    colorEnd = colorEnd.slice(1, colorEnd.length);
+  }
+  let r = parseInt(colorEnd.slice(0, 2), 16);
+  let g = parseInt(colorEnd.slice(2, 4), 16);
+  let b = parseInt(colorEnd.slice(4, 6), 16);
+
+  let rVal = Math.round(r + (255 - r) * (1 - val / valueEnd)).toString(16);
+  let gVal = Math.round(g + (255 - g) * (1 - val / valueEnd)).toString(16);
+  let bVal = Math.round(b + (255 - b) * (1 - val / valueEnd)).toString(16);
+  if (rVal.length < 2) {
+    rVal = '0' + rVal;
+  }
+  if (gVal.length < 2) {
+    gVal = '0' + gVal;
+  }
+  if (bVal.length < 2) {
+    bVal = '0' + bVal;
+  }
+  return '#' + rVal + gVal + bVal
+}
