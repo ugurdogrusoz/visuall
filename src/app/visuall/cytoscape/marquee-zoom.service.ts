@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { GlobalVariableService } from '../global-variable.service';
-import { ApplicationRef } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,7 @@ export class MarqueeZoomService {
   private onKeyDownFn = null;
   private changeClassFn: (arg0: boolean) => void;
 
-  constructor(private _g: GlobalVariableService, private cdr: ApplicationRef) {
+  constructor(private _g: GlobalVariableService) {
     this.onKeyDownFn = this.onKeyDown.bind(this);
     this.onKeyUpFn = this.onKeyUp.bind(this);
   }
