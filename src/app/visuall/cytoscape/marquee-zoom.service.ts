@@ -18,9 +18,9 @@ export class MarqueeZoomService {
   }
 
   init() {
-    // if shift or ctrl key is down, emanle MarqueeZoom
+    // if ('ctrl' + 'shift') or ('cmd' + 'shift') are down, enable MarqueeZoom
     document.addEventListener('keydown', this.onKeyDownFn);
-    // if shift or ctrl key is up, disable MarqueeZoom
+    // if 'ctrl' or 'shift' or 'cmd' is up, disable MarqueeZoom
     document.addEventListener('keyup', this.onKeyUpFn);
   }
 
@@ -29,15 +29,15 @@ export class MarqueeZoomService {
       return;
     }
 
-    // ctrl + shift pressed
-    if (event.shiftKey && (event.ctrlKey || event.keyCode == 91 || event.keyCode == 93 || event.keyCode == 224)) {
+    // ('ctrl' + 'shift') or ('cmd' + 'shift') combinations is pressed
+    if (event.shiftKey && (event.ctrlKey || event.metaKey)) {
       this.changeCursor(true);
       this.areCtrlShiftKeysDown = true;
     }
   }
 
   private onKeyUp(ev: KeyboardEvent) {
-    if (ev.shiftKey || ev.ctrlKey || ev.keyCode == 91 || ev.keyCode == 93 || ev.keyCode == 224) {
+    if (ev.shiftKey || ev.ctrlKey || ev.metaKey) {
       this.changeCursor(false);
       this.areCtrlShiftKeysDown = false;
     }
