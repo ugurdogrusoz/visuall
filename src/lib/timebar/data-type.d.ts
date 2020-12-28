@@ -28,8 +28,12 @@ export interface Settings {
     zoomingStep: number;
     isHideDisconnectedNodesOnAnim: boolean;
     isMaintainGraphRange: boolean;
+    isIgnoreElemChanges: boolean;
     globalRangeMin: number;
     globalRangeMax: number;
+    graphRangeRatio: number;
+    defaultBeginDate: number;
+    defaultEndDate: number;
     events: Events;
     stats: Stat[];
 }

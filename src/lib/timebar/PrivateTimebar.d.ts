@@ -23,6 +23,7 @@ export declare class PrivateTimebar {
     setGraphRangeStrFn: () => void;
     readonly GRAPH_RANGE_RATIO_MIN = 0.2;
     readonly GRAPH_RANGE_RATIO_MAX = 0.8;
+    readonly ELEM_CHANGE_DEBOUNCE = 200;
     ignoreEndNodesForEdgeInclusion: boolean;
     cy: any;
     dataMapping: any;
@@ -80,6 +81,10 @@ export declare class PrivateTimebar {
      * @param  {boolean} val
      */
     setIsHideDisconnectedNodesOnAnim(val: boolean): void;
+    /** whether to call `cyElemListChanged` on element added or removed
+     * @param  {boolean} val
+     */
+    setIsIgnoreElemChanges(val: boolean): void;
     /** when a new data is added, whether change current graph range
      * @param  {boolean} v
      */

@@ -169,6 +169,7 @@ export class TimebarService {
 
   // this function should show only the provided elements, hide the remaining, then should make layout
   private shownOnlyElems(elems) {
+    this._timebarExt.setSetting('isIgnoreElemChanges', true);
     const alreadyVisibleNodes = this._g.cy.nodes(':visible');
     if (alreadyVisibleNodes.length > 0) {
       const nodes2Show = elems.nodes().difference(alreadyVisibleNodes);
@@ -187,6 +188,7 @@ export class TimebarService {
     this.handleHighlight(elems2show, elems2hide);
 
     const isChanged = this.hasElemsChanged(this._prevElems, elems);
+    this._timebarExt.setSetting('isIgnoreElemChanges', false);
     this._prevElems = elems;
     if (!isChanged) {
       return;
