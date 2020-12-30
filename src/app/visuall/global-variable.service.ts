@@ -150,7 +150,14 @@ export class GlobalVariableService {
     this.cy.style().selector(':selected').style({
       'overlay-color': this.userPrefs.selectionColor.getValue(),
       'overlay-padding': this.userPrefs.selectionWidth.getValue()
-    }).update();
+    })
+      .selector('.' + COLLAPSED_EDGE_CLASS + ':selected')
+      .style({
+        'overlay-padding': (e) => {
+          let n = e.data('collapsedEdges').length;
+          return (4.5 + Math.log2(n)) + 'px';
+        },
+      }).update();
   }
 
   add2GraphHistory(expo: string) {
