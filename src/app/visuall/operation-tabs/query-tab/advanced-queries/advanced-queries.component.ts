@@ -180,6 +180,13 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
       this.tableInput.classNames.push(nodeClass[i]);
       this.tableInput.results.push(row);
     }
+
+    const maxColCnt = Math.max(...this.tableInput.results.map(x => x.length));
+    for (let i = 0; i < this.tableInput.results.length; i++) {
+      for (let j = this.tableInput.results[i].length; j < maxColCnt; j++) {
+        this.tableInput.results[i].push({ val: '', type: TableDataType.string });
+      }
+    }
     this.tableFilled.next(true);
   }
 
