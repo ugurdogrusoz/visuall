@@ -193,6 +193,31 @@ export class Neo4jDb implements DbService {
     }
   }
 
+  getNeighborhood(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, filter: TableFiltering, cb: (x) => void) {
+    const t = filter.txt ?? '';
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const currPage = filter.skip ? Math.floor(filter.skip / pageSize) + 1 : 1;
+    const orderBy = filter.orderBy ? `'${filter.orderBy}'` : null;
+    let orderDir = 0;
+    if (filter.orderDirection == 'desc') {
+      orderDir = 1;
+    } else if (filter.orderDirection == '') {
+      orderDir = 2;
+    }
+    const timeMap = this.getTimebarMapping4Java();
+    let d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+    let d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+    if (!this._g.userPrefs.isLimitDbQueries2range.getValue()) {
+      d1 = 0;
+      d2 = 0;
+    }
+    const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
+    const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
+    this.runQuery(`CALL neighborhood([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, DbResponseType.table, false);
+  }
+
   private getTimebarMapping4Java(): string {
     // {Person:["start_t", "end_t"]}
     const mapping = this._g.appDescription.getValue().timebarDataMapping;

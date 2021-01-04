@@ -36,7 +36,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   dataModelSubs: Subscription;
 
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _cyService: CytoscapeService) {
-    this.queries = ['Get graph of interest', 'Get common targets/regulators'];
+    this.queries = ['Get graph of interest', 'Get common targets/regulators', 'Get neighborhood'];
     this.selectedIdx = -1;
   }
 
@@ -133,6 +133,9 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
         dir = Neo4jEdgeDirection.BOTH;
       }
       this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.table, this.tableFilter, prepareDataFn);
+    } else if (this.selectedIdx == 2) {
+      console.log('get neighborhood: ');
+      this._dbService.getNeighborhood(dbIds, types, this.lengthLimit, this.isDirected, this.tableFilter, prepareDataFn);
     }
   }
 

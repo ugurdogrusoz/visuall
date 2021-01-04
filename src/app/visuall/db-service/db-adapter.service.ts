@@ -76,4 +76,9 @@ export class DbAdapterService {
     }
     this._db.getCommonStream(dbIds, ignoredTypes, lengthLimit, dir, type, filter, fn);
   }
+
+  getNeighborhood(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, filter: TableFiltering, cb: (x) => void) {
+    let fn = (x) => { cb(x); this._g.add2GraphHistory(`Common target/regulator`); };
+    this._db.getNeighborhood(dbIds, ignoredTypes, lengthLimit, isDirected, filter, fn);
+  }
 }
