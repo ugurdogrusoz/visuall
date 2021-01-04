@@ -151,11 +151,10 @@ export class GlobalVariableService {
       'overlay-color': this.userPrefs.selectionColor.getValue(),
       'overlay-padding': this.userPrefs.selectionWidth.getValue()
     })
-      .selector('.' + COLLAPSED_EDGE_CLASS + ':selected')
+      .selector('edge:selected')
       .style({
         'overlay-padding': (e) => {
-          let n = e.data('collapsedEdges').length;
-          return (4.5 + Math.log2(n)) + 'px';
+          return (this.userPrefs.selectionWidth.getValue() + e.width()) / 2 + 'px';
         },
       }).update();
   }

@@ -260,7 +260,13 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
         width = 20;
       this._g.userPrefs.selectionWidth.next(width);
       this.selectionWidth = width;
-      this._g.cy.style().selector(':selected').style({ 'overlay-padding': width }).update();
+      this._g.cy.style().selector(':selected').style({ 'overlay-padding': width })
+        .selector('edge:selected')
+        .style({
+          'overlay-padding': (e) => {
+            return (width + e.width()) / 2 + 'px';
+          },
+        }).update();
       this._profile.saveUserPrefs();
     }
     else {
