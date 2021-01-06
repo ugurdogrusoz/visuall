@@ -1,12 +1,32 @@
 <input #file type="file" (change)="fileSelected()" accept="text/*, .json" style="display: none;" />
 <div class="row no-gutters my-1" id="toolbar-container">
   <ng-container *ngFor="let m of menu">
-    <div class="col-xs-auto border rounded">
+    <div class="col-xs-auto border rounded mid">
       <ng-container *ngFor="let i of m.items">
         <div class="toolbar-element-container">
           <img *ngIf="i.isRegular" [src]="i.imgSrc" class="toolbar-element" [title]="i.title" (click)="triggerAct(i)">
           <input *ngIf="!i.isRegular" class="toolbar-element va-text form-control filter-form filter-input"
             id="highlight-search-inp" type="text" [(ngModel)]="searchTxt" (keydown.enter)="highlightSearch()">
+        </div>
+      </ng-container>
+    </div>
+    <div>&nbsp;&nbsp;</div>
+  </ng-container>
+  <ng-container>
+    <div class="col-xs-auto border rounded mid">
+      <ng-container>
+        <div class="toolbar-element-container">
+          <div class="mid">
+            <input type="checkbox" [(ngModel)]="isLimitDbQueries2range" (change)="changeIsLimitDbQueryRange()"
+              title="Limit database queries to time range">
+            <input type="text" #dbQueryDate1 [disabled]="!isLimitDbQueries2range"
+              title="Limit database queries to time range"
+              class="inp-10-ch p-1 tight-select filter-form form-control va-text">
+            <span>-</span>
+            <input type="text" #dbQueryDate2 [disabled]="!isLimitDbQueries2range"
+              title="Limit database queries to time range"
+              class="inp-10-ch p-1 tight-select filter-form form-control va-text">
+          </div>
         </div>
       </ng-container>
     </div>

@@ -23,7 +23,6 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
   compoundPadding: string;
   @ViewChild('dbQueryDate1', { static: false }) dbQueryDate1: ElementRef;
   @ViewChild('dbQueryDate2', { static: false }) dbQueryDate2: ElementRef;
-  isLimitDbQueries2range: boolean;
   dataPageSize: number;
   queryHistoryLimit: number;
   dbTimeout: number;
@@ -97,56 +96,6 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setDates4DbQuery() {
-
-    setTimeout(() => {
-      const maxDate = this._g.userPrefsFromFiles.dbQueryTimeRange.end.getValue();
-      const minDate = this._g.userPrefsFromFiles.dbQueryTimeRange.start.getValue();
-      const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
-      const opt1 = {
-        defaultDate: new Date(d1), enableTime: true, enableSeconds: true, time_24hr: true,
-        onChange: (x, _, instance) => {
-          const dateTime = x[0].getTime();
-          const startDate = this._g.userPrefs.dbQueryTimeRange.start.getValue();
-          const endDate = this._g.userPrefs.dbQueryTimeRange.end.getValue();
-          if (dateTime >= endDate) {
-            instance.setDate(startDate);
-            this.showDateTimeError('Start datetime should be earlier than end datetime');
-            return;
-          }
-          this._g.userPrefs.dbQueryTimeRange.start.next(dateTime);
-          this._profile.saveUserPrefs();
-        },
-        minDate: minDate,
-        maxDate: maxDate,
-      };
-      const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
-      const opt2 = {
-        defaultDate: new Date(d2), enableTime: true, enableSeconds: true, time_24hr: true,
-        onChange: (x, _, instance) => {
-          const dateTime = x[0].getTime();
-          const startDate = this._g.userPrefs.dbQueryTimeRange.start.getValue();
-          const endDate = this._g.userPrefs.dbQueryTimeRange.end.getValue();
-          if (dateTime <= startDate) {
-            instance.setDate(endDate);
-            this.showDateTimeError('End datetime should be later than start datetime');
-            return;
-          }
-          this._g.userPrefs.dbQueryTimeRange.end.next(dateTime);
-          this._profile.saveUserPrefs();
-        },
-        minDate: minDate,
-        maxDate: maxDate,
-      };
-      flatpickr(this.dbQueryDate1.nativeElement, opt1);
-      flatpickr(this.dbQueryDate2.nativeElement, opt2);
-    }, 0);
-  }
-
-  private showDateTimeError(msg: string) {
-    this._g.showErrorModal('Date Selection', msg);
-  }
-
   private fillUIFromMemory() {
     // reference variables for shorter text
     const up = this._g.userPrefs;
@@ -178,7 +127,6 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
     this._g.cy.style().selector('core').style({ 'selection-box-color': this.selectionColor });
     this.compoundPadding = up.compoundPadding.getValue();
     this.isStoreUserProfile = up.isStoreUserProfile.getValue();
-    this.isLimitDbQueries2range = up.isLimitDbQueries2range.getValue();
     this.graphInclusionType = up.objectInclusionType.getValue();
 
     this.timebarBoolSettings[0].isEnable = up_t.isEnabled.getValue();
@@ -191,7 +139,6 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
 
     this.setHighlightStyles();
     this.highlightStyleSelected(this._g.userPrefs.currHighlightIdx.getValue());
-    this.setDates4DbQuery();
   }
 
   private setHighlightStyles() {

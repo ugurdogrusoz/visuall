@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ElementRef } from '@angular/core';
 import { CytoscapeService } from '../cytoscape.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaveAsPngModalComponent } from '../popups/save-as-png-modal/save-as-png-modal.component';
@@ -9,6 +9,8 @@ import { getPropNamesFromObj } from '../constants';
 import { ToolbarCustomizationService } from '../../custom/toolbar-customization.service';
 import { ToolbarDiv, ToolbarAction } from './itoolbar';
 import { Subscription } from 'rxjs';
+import { UserProfileService } from '../user-profile.service';
+import flatpickr from 'flatpickr';
 
 @Component({
   selector: 'app-toolbar',
@@ -23,10 +25,14 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
   statusMsgQueue: string[] = [];
   MIN_MSG_DURATION = 500;
   statusMsgSubs: Subscription;
+  userPrefSubs: Subscription;
   msgStarted2show: number = 0;
+  isLimitDbQueries2range: boolean;
+  @ViewChild('dbQueryDate1', { static: false }) dbQueryDate1: ElementRef;
+  @ViewChild('dbQueryDate2', { static: false }) dbQueryDate2: ElementRef;
 
   constructor(private _cyService: CytoscapeService, private modalService: NgbModal,
-    private _g: GlobalVariableService, private _customizationService: ToolbarCustomizationService) {
+    private _g: GlobalVariableService, private _customizationService: ToolbarCustomizationService, private _profile: UserProfileService) {
     this.menu = [
       {
         div: 0, items: [{ imgSrc: 'assets/img/toolbar/load.svg', title: 'Load', fn: 'load', isStd: true, isRegular: true },
@@ -62,6 +68,9 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.statusMsgSubs) {
       this.statusMsgSubs.unsubscribe();
     }
+    if (this.userPrefSubs) {
+      this.userPrefSubs.unsubscribe();
+    }
   }
 
   ngOnInit() {
@@ -69,6 +78,12 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.statusMsgSubs = this._g.statusMsg.subscribe(x => {
       this.statusMsgQueue.push(x);
       this.processMsgQueue();
+    });
+    this.userPrefSubs = this._g.isUserPrefReady.subscribe(x => {
+      if (!x) {
+        return;
+      }
+      this.setDates4DbQuery();
     });
   }
 
@@ -211,4 +226,59 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
     const v = this._g.showHideGraphHistory.getValue();
     this._g.showHideGraphHistory.next(!v);
   }
+
+  changeIsLimitDbQueryRange() {
+    this._g.userPrefs.isLimitDbQueries2range.next(this.isLimitDbQueries2range);
+    this._profile.saveUserPrefs();
+  }
+
+  private setDates4DbQuery() {
+
+    const maxDate = this._g.userPrefsFromFiles.dbQueryTimeRange.end.getValue();
+    const minDate = this._g.userPrefsFromFiles.dbQueryTimeRange.start.getValue();
+    const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+    const opt1 = {
+      defaultDate: new Date(d1), enableTime: true, enableSeconds: true, time_24hr: true,
+      onChange: (x, _, instance) => {
+        const dateTime = x[0].getTime();
+        const startDate = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+        const endDate = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+        if (dateTime >= endDate) {
+          instance.setDate(startDate);
+          this.showDateTimeError('Start datetime should be earlier than end datetime');
+          return;
+        }
+        this._g.userPrefs.dbQueryTimeRange.start.next(dateTime);
+        this._profile.saveUserPrefs();
+      },
+      minDate: minDate,
+      maxDate: maxDate,
+    };
+    const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+    const opt2 = {
+      defaultDate: new Date(d2), enableTime: true, enableSeconds: true, time_24hr: true,
+      onChange: (x, _, instance) => {
+        const dateTime = x[0].getTime();
+        const startDate = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+        const endDate = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+        if (dateTime <= startDate) {
+          instance.setDate(endDate);
+          this.showDateTimeError('End datetime should be later than start datetime');
+          return;
+        }
+        this._g.userPrefs.dbQueryTimeRange.end.next(dateTime);
+        this._profile.saveUserPrefs();
+      },
+      minDate: minDate,
+      maxDate: maxDate,
+    };
+    flatpickr(this.dbQueryDate1.nativeElement, opt1);
+    flatpickr(this.dbQueryDate2.nativeElement, opt2);
+    this.isLimitDbQueries2range = this._g.userPrefs.isLimitDbQueries2range.getValue();
+  }
+
+  private showDateTimeError(msg: string) {
+    this._g.showErrorModal('Date Selection', msg);
+  }
+
 }
