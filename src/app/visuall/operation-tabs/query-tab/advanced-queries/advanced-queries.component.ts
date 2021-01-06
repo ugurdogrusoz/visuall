@@ -27,7 +27,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   clickedNodeIdx = -1;
   addNodeBtnTxt = 'Select Nodes to Add';
   tableInput: TableViewInput = {
-    columns: ['Title'], results: [], isEmphasizeOnHover: true, tableTitle: 'Query Results',
+    columns: ['Title'], results: [], isEmphasizeOnHover: true, tableTitle: 'Query Results', isShowExportAsCSV: true,
     resultCnt: 0, currPage: 1, pageSize: 0, isLoadGraph: false, isMergeGraph: true, isNodeData: true
   };
   tableFilter: TableFiltering = { orderBy: null, orderDirection: null, txt: '', skip: null };

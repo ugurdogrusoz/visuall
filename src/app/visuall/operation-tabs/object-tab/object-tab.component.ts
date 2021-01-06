@@ -26,11 +26,11 @@ export class ObjectTabComponent implements OnInit, OnDestroy {
 
   tableInput: TableViewInput = {
     columns: ['Type', 'Count', 'Selected', 'Hidden'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, tableTitle: 'Statistics',
-    isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
+    isShowExportAsCSV: true, isLoadGraph: true, columnLimit: 5, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
   multiObjTableInp: TableViewInput = {
     columns: ['Type'], isHide0: true, results: [], resultCnt: 0, currPage: 1, pageSize: 20, isReplace_inHeaders: true, tableTitle: 'Properties',
-    isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
+    isShowExportAsCSV: true, isEmphasizeOnHover: true, isLoadGraph: true, isMergeGraph: false, isNodeData: false, isUseCySelector4Highlight: true, isHideLoadGraph: true
   };
   private NODE_TYPE = '_NODE_';
   private EDGE_TYPE = '_EDGE_';
@@ -160,7 +160,7 @@ export class ObjectTabComponent implements OnInit, OnDestroy {
     }
     this.multiObjTableInp.columns = ['Type'].concat(Object.keys(definedProperties));
     this.multiObjTableInp.results = [];
-
+    this.multiObjTableInp.classNames = [];
     let elemTypeCnt = {};
     const enumMapping = this._g.getEnumMapping();
     for (let i = 0; i < elems.length; i++) {
@@ -175,6 +175,7 @@ export class ObjectTabComponent implements OnInit, OnDestroy {
         row.push(property2TableData(properties, enumMapping, j, elems[i].data(j) ?? '', className, !isNode));
       }
       this.multiObjTableInp.results.push(row);
+      this.multiObjTableInp.classNames.push(className);
     }
     for (let k in elemTypeCnt) {
       this.selectedClasses += k + '(' + elemTypeCnt[k] + ') ';
@@ -396,6 +397,7 @@ export class ObjectTabComponent implements OnInit, OnDestroy {
   private setStatStrFromObj(stat, classSet: Set<string>) {
 
     this.tableInput.results = [];
+    this.tableInput.classNames = [];
     for (let c of classSet) {
       if (stat[c] === undefined) {
         continue;
@@ -428,6 +430,7 @@ export class ObjectTabComponent implements OnInit, OnDestroy {
         row.push({ val: 0, type: TableDataType.number });
       }
       this.tableInput.results.push(row);
+      this.tableInput.classNames.push(row[1].val);
     }
     this.tableInput.pageSize = this._g.userPrefs.dataPageSize.getValue();
 

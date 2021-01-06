@@ -17,6 +17,7 @@ export interface TableViewInput {
   pageSize: number;
   resultCnt: number;
   isNodeData: boolean;
+  isShowExportAsCSV: boolean;
   columnLimit?: number;
   isHide0?: boolean;
   isUseCySelector4Highlight?: boolean;

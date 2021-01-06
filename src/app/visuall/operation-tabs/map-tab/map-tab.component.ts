@@ -33,7 +33,7 @@ export class MapTabComponent implements OnInit, OnDestroy {
   currProperties: Subject<RuleSync> = new Subject<RuleSync>();
   editingPropertyRule: Rule;
   tableInput: TableViewInput = {
-    columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: 0,
+    columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: 0, isShowExportAsCSV: true,
     isEmphasizeOnHover: true, isLoadGraph: false, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
   };
   tableFilled = new Subject<boolean>();
@@ -407,7 +407,7 @@ export class MapTabComponent implements OnInit, OnDestroy {
   resetRule() {
     this.queryRule = null;
     this.tableInput = {
-      columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize,
+      columns: [], tableTitle: 'Query Results', results: [], resultCnt: 0, currPage: 1, pageSize: this.tableInput.pageSize, isShowExportAsCSV: true,
       isEmphasizeOnHover: true, isLoadGraph: false, isMergeGraph: true, isNodeData: true, isReplace_inHeaders: true
     };
     this.isClassTypeLocked = false;
