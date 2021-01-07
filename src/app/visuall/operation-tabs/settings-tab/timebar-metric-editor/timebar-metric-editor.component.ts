@@ -78,9 +78,13 @@ export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
             }
             this.clearInput();
           }
-        }, (e) => { console.log('error: ', e); });
+        }, this.errFn.bind(this));
       }
-    }, (e) => { console.log('error: ', e); });
+    }, this.errFn.bind(this));
+  }
+
+  private errFn(e) {
+    this._g.showErrorModal('Timebar Statistic', e);
   }
 
   ngOnDestroy(): void {

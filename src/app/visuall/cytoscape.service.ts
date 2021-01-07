@@ -138,7 +138,7 @@ export class CytoscapeService {
 
   loadElementsFromDatabase(data: GraphResponse, isIncremental: boolean) {
     if (!data || !data.nodes || !data.edges) {
-      console.error('Empty response from database!');
+      this._g.showErrorModal('Graph is empty', 'Empty response from database!')
       return;
     }
     const nodes = data.nodes;
@@ -510,7 +510,11 @@ export class CytoscapeService {
 
   loadFile(file: File) {
     C.readTxtFile(file, (txt) => {
-      this._g.expandCollapseApi.loadJson(txt);
+      try {
+        this._g.expandCollapseApi.loadJson(txt);
+      } catch (e) {
+        this._g.showErrorModal('Load JSON', 'Can NOT process JSON string')
+      }
     });
   }
 
@@ -904,8 +908,6 @@ export class CytoscapeService {
           clusters[v[0]].push(k);
         }
       }
-      console.log(' clusters for directors: ', clusters);
-      console.log(' Object.values(clusters): ', Object.values(clusters));
       this._g.layout.clusters = Object.values(clusters);
     }
 

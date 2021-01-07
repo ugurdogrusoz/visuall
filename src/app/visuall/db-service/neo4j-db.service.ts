@@ -53,7 +53,7 @@ export class Neo4jDb implements DbService {
         this._g.showErrorModal('Database Timeout', 'Your query took too long!  <br> Consider adjusting timeout setting.');
       } else {
         this._g.statusMsg.next('Database query execution raised error!');
-        console.error('database query execution error: ', err);
+        this._g.showErrorModal('database query execution error', err);
       }
       this._g.setLoadingStatus(false);
     };
@@ -280,7 +280,7 @@ export class Neo4jDb implements DbService {
 
     const results = response.results[0];
     if (!results) {
-      console.error('Invalid query!', response.errors[0]);
+      this._g.showErrorModal('Invalid query!', response.errors[0]);
       return;
     }
 
@@ -304,7 +304,7 @@ export class Neo4jDb implements DbService {
 
   private extractTable(response, isTimeboxed = true): TableResponse {
     if (response.errors && response.errors.length > 0) {
-      console.error('DB server returns erronous result', response.errors);
+      this._g.showErrorModal('Database returns erronous result', response.errors);
       this._g.setLoadingStatus(false);
       return;
     }
@@ -335,7 +335,7 @@ export class Neo4jDb implements DbService {
 
   private extractGenericData(response, isTimeboxed = true): DbResponse {
     if (response.errors && response.errors.length > 0) {
-      console.error('DB server returns erronous result', response.errors);
+      this._g.showErrorModal('Database returns erronous result', response.errors);
       this._g.setLoadingStatus(false);
       return;
     }

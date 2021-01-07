@@ -47,8 +47,12 @@ app.get('/urlquery/*', function (req, res) {
         data.push(chunk);
       });
       response.on('end', function () {
-        let result = JSON.parse(data.join(''))
-        res.send(result);
+        try {
+          const result = JSON.parse(data.join(''))
+          res.send(result);
+        } catch (e) {
+          res.send('{}');
+        }
 
       });
     });

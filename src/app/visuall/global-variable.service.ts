@@ -55,8 +55,8 @@ export class GlobalVariableService {
         this.setUserPrefs(x['appPreferences'], this.userPrefs);
         this.setUserPrefs(x['appPreferences'], this.userPrefsFromFiles);
         this.isUserPrefReady.next(true);
-      }, (e) => { console.log('error: ', e); });
-    }, (e) => { console.log('error: ', e); });
+      }, this.showErr.bind(this));
+    }, this.showErr.bind(this));
 
     let isGraphEmpty = () => { return this.cy.elements().not(':hidden, :transparent').length > 0 };
     this.performLayout = debounce(this.performLayoutFn, LAYOUT_ANIM_DUR, true, isGraphEmpty);
@@ -65,15 +65,19 @@ export class GlobalVariableService {
     this._http.get('./assets/generated/stylesheet.json').subscribe(x => {
       this.cy.style(x);
       this.addOtherStyles();
-    }, (e) => { console.log('error: ', e); });
+    }, this.showErr.bind(this));
 
     this._http.get('./assets/generated/properties.json').subscribe(x => {
       this.dataModel.next(x);
-    }, (e) => { console.log('error: ', e); });
+    }, this.showErr.bind(this));
 
     this._http.get('/app/custom/config/enums.json').subscribe(x => {
       this.enums.next(x);
-    }, (e) => { console.log('error: ', e); });
+    }, this.showErr.bind(this));
+  }
+
+  private showErr(e) {
+    this.showErrorModal('Internet Error', e);
   }
 
   transfer2UserPrefs(u: any) {

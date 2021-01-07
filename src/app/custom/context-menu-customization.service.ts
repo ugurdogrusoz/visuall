@@ -121,12 +121,13 @@ export class ContextMenuCustomizationService {
           axios.get(url).then(() => {
             e.style({ 'background-image': url });
           }).catch((e) => {
-            console.log(' img url is falsy', e);
+            const msg = 'Image url is falsy: ' + e;
+            this._g.showErrorModal('Image URL', msg)
           });
         }
       })
       .catch((err) => {
-        console.log(err);
+        this._g.showErrorModal('Background image', err);
       });
   }
 }

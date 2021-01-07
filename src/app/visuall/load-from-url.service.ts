@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CytoscapeService } from './cytoscape.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpErrorResponse } from '@angular/common/http';
+import { GlobalVariableService } from './global-variable.service';
 
 @Injectable({ providedIn: 'root' })
 
@@ -13,7 +14,7 @@ export class URLLoadService {
   fileRead: boolean = false;
 
   constructor(private route: ActivatedRoute, private http: HttpClient,
-    private _cyService: CytoscapeService) { }
+    private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
 
   init() {
 
@@ -38,7 +39,7 @@ export class URLLoadService {
         this._cyService.loadFile(this.data);
       },
         (err: HttpErrorResponse) => {
-          console.log(err.message);
+          this._g.showErrorModal(err.name, err.message)
         }
       );
     }

@@ -134,7 +134,6 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
       }
       this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.table, this.tableFilter, prepareDataFn);
     } else if (this.selectedIdx == 2) {
-      console.log('get neighborhood: ');
       this._dbService.getNeighborhood(dbIds, types, this.lengthLimit, this.isDirected, this.tableFilter, prepareDataFn);
     }
   }

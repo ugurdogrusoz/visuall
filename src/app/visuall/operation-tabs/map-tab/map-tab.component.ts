@@ -236,7 +236,6 @@ export class MapTabComponent implements OnInit, OnDestroy {
 
   runQueryOnClient(cb: (s: number, end: number) => void, cbParams: any[]) {
     let fnStr2 = getBoolExpressionFromMetric(this.queryRule) + ' return true; return false;';
-    console.log('function str 2: ', fnStr2);
 
     let filteredClassElems = this._g.cy.filter(new Function('x', fnStr2));
     filteredClassElems.merge(filteredClassElems.connectedNodes());
@@ -255,7 +254,7 @@ export class MapTabComponent implements OnInit, OnDestroy {
 
   runQueryOnDatabase(cb: (s: number, end: number) => void, cbParams: any[]) {
     if (!this.queryRule || Object.keys(this.queryRule).length === 0) {
-      console.log('there is no query rule');
+      this._g.showErrorModal('Query', 'There is no query!');
       return;
     }
     const skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
