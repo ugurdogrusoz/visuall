@@ -310,6 +310,9 @@ export class TableViewComponent implements OnInit, OnDestroy {
         data[this.params.columns[i - 1]] = r[i].val;
       }
       data['id'] = prefix + r[0].val;
+      if (this.params.isUseCySelector4Highlight) {
+        data['id'] = r[0].val.substr(1);
+      }
       objs.push({ classes: cName, data: data });
     }
     this._cyService.saveAsCSV(objs);
