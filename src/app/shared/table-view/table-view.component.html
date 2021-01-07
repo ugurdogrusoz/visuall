@@ -14,8 +14,9 @@
       src="../assets/img/downloading-file.svg">
   </button>
 
-  <button *ngIf="!params.isHideLoadGraph && !params.isLoadGraph" [disabled]="isLoading || !params.results || params.results.length < 1"
-    class="btn btn-sm" (click)="loadGraph4Checked()">
+  <button *ngIf="!params.isHideLoadGraph && !params.isLoadGraph"
+    [disabled]="isLoading || !params.results || params.results.length < 1" class="btn btn-sm"
+    (click)="loadGraph4Checked()">
     <img class="img-icon" title="Merge selected to graph" src="../assets/img/play-button.svg">
   </button>
 
@@ -58,7 +59,8 @@
             <span>...</span>
           </th>
           <th scope="col" [hidden]="params.isLoadGraph">
-            <input type="checkbox" class="m-1 cb-table-all" (change)="cb4AllChanged($event.target.checked)" />
+            <input type="checkbox" class="m-1 cb-table-all" [(ngModel)]="isCheckbox4AllChecked"
+              (change)="cb4AllChanged($event.target.checked)" />
           </th>
         </tr>
       </thead>

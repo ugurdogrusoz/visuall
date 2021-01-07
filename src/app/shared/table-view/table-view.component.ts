@@ -45,6 +45,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
   clearFilterSubs: Subscription;
   tableColumnLimitSubs: Subscription;
   hoveredElemId = '-';
+  isCheckbox4AllChecked = false;
 
   @Input() params: TableViewInput;
   @Input() tableFilled = new Subject<boolean>();
@@ -185,6 +186,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
   }
 
   pageChanged(newPage: number) {
+    this.isCheckbox4AllChecked = false;
     let o = this.params.columns[this.sortingIdx];
     let skip = (newPage - 1) * this.params.pageSize;
     this.onFilteringChanged.emit({ txt: this.filterTxt, orderBy: o, orderDirection: this.sortDirection, skip: skip });
