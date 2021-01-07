@@ -18,14 +18,15 @@
         <div class="toolbar-element-container">
           <div class="mid">
             <input type="checkbox" [(ngModel)]="isLimitDbQueries2range" (change)="changeIsLimitDbQueryRange()"
-              title="Limit database queries to time range">
+              title="Limit Database Queries To Time Range">
             <input type="text" #dbQueryDate1 [disabled]="!isLimitDbQueries2range"
-              title="Limit database queries to time range"
-              class="inp-10-ch p-1 tight-select filter-form form-control va-text">
+              title="Limit Database Queries To Time Range"
+              class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
             <span>-</span>
             <input type="text" #dbQueryDate2 [disabled]="!isLimitDbQueries2range"
-              title="Limit database queries to time range"
-              class="inp-10-ch p-1 tight-select filter-form form-control va-text">
+              title="Limit Database Queries To Time Range"
+              class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
+            &nbsp;&nbsp;
           </div>
         </div>
       </ng-container>

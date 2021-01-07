@@ -27,3 +27,7 @@ input:disabled {
   justify-content: center;
   align-items: center;
 }
+
+.tight-select {
+  line-height: normal;
+}
