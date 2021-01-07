@@ -199,7 +199,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     // add a new higlight style
     if (this._g.userPrefs.highlightStyles.length < 2) {
       const cyStyle = getCyStyleFromColorAndWid('#0b9bcd', 4.5);
-      this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
+      this._g.viewUtils.addHighlightStyle(cyStyle.node, cyStyle.edge);
     }
     const currHighlightIdx = this._g.userPrefs.currHighlightIdx.getValue();
     if (currHighlightIdx == 0) {
@@ -220,7 +220,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     // add a new higlight style
     if (this._g.userPrefs.highlightStyles.length < 3) {
       const cyStyle = getCyStyleFromColorAndWid('#04f06a', 4.5);
-      this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
+      this._g.viewUtils.addHighlightStyle(cyStyle.node, cyStyle.edge);
     }
     this._g.viewUtils.highlight(cyNodes, 2);
   }

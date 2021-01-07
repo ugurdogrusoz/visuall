@@ -351,10 +351,12 @@ export function arrayDiff(smallArr: string[], bigArr: string[]): string[] {
   return diff;
 }
 
-export function getCyStyleFromColorAndWid(color: string, wid: number): { nodeCss: any, edgeCss: any } {
+export function getCyStyleFromColorAndWid(color: string, wid: number): { node: any, edge: any } {
   return {
-    nodeCss: { 'overlay-color': color, 'overlay-opacity': 0.2, 'overlay-padding': wid },
-    edgeCss: { 'overlay-color': color, 'overlay-opacity': 0.2, 'overlay-padding': wid }
+    node: { 'overlay-color': color, 'overlay-opacity': 0.2, 'overlay-padding': wid },
+    edge: { 'overlay-color': color, 'overlay-opacity': 0.2, 'overlay-padding': (e) => {
+      return (wid + e.width()) / 2 + 'px';
+    } }
   };
 }
 

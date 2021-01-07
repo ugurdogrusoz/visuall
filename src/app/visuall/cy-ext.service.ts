@@ -9,7 +9,7 @@ import cytoscape from 'cytoscape';
 import timebar from '../../lib/timebar/cytoscape-timebar';
 import * as $ from 'jquery';
 import { GlobalVariableService } from './global-variable.service';
-import { MAX_HIGHLIGHT_CNT, expandCollapseCuePosition, EXPAND_COLLAPSE_CUE_SIZE } from './constants';
+import { MAX_HIGHLIGHT_CNT, expandCollapseCuePosition, EXPAND_COLLAPSE_CUE_SIZE, getCyStyleFromColorAndWid } from './constants';
 import panzoom from 'cytoscape-panzoom';
 
 // service for cytoscape.js extensions
@@ -220,10 +220,7 @@ export class CyExtService {
         w = 3;
       }
 
-      r.push({
-        node: { 'overlay-color': c, 'overlay-opacity': 0.2, 'overlay-padding': w },
-        edge: { 'overlay-color': c, 'overlay-opacity': 0.2, 'overlay-padding': w }
-      });
+      r.push(getCyStyleFromColorAndWid(c, w));
 
     }
     return r;

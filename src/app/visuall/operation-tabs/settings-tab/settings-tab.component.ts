@@ -168,11 +168,11 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
     let vuStyles = this._g.viewUtils.getHighlightStyles();
     for (let i = 0; i < vuStyles.length; i++) {
       let cyStyle = getCyStyleFromColorAndWid(styles[i].color.getValue(), styles[i].wid.getValue());
-      this._g.viewUtils.changeHighlightStyle(i, cyStyle.nodeCss, cyStyle.edgeCss);
+      this._g.viewUtils.changeHighlightStyle(i, cyStyle.node, cyStyle.edge);
     }
     for (let i = vuStyles.length; i < styles.length; i++) {
       let cyStyle = getCyStyleFromColorAndWid(styles[i].color.getValue(), this.highlightWidth);
-      this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
+      this._g.viewUtils.addHighlightStyle(cyStyle.node, cyStyle.edge);
     }
   }
 
@@ -227,7 +227,7 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
   changeHighlightStyle() {
     this.bandPassHighlightWidth();
     let cyStyle = getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
-    this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, cyStyle.nodeCss, cyStyle.edgeCss);
+    this._g.viewUtils.changeHighlightStyle(this.highlightStyleIdx, cyStyle.node, cyStyle.edge);
     this.setHighlightStyles();
     this._g.updateSelectionCyStyle();
   }
@@ -248,7 +248,7 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
   addHighlightStyle() {
     this.bandPassHighlightWidth();
     let cyStyle = getCyStyleFromColorAndWid(this.highlightColor, this.highlightWidth);
-    this._g.viewUtils.addHighlightStyle(cyStyle.nodeCss, cyStyle.edgeCss);
+    this._g.viewUtils.addHighlightStyle(cyStyle.node, cyStyle.edge);
     this.setHighlightStyles();
     this.highlightStyleIdx = this.currHighlightStyles.length - 1;
     this.highlightStyleSelected(this.highlightStyleIdx);
