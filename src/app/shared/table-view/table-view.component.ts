@@ -135,6 +135,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
   private onTableFilled() {
     this.isLoading = false;
     this.checkedIdx = {};
+    this.isCheckbox4AllChecked = false;
     if (this.params.results && this.params.results.length > 0) {
       this.isShowTable = true;
     } else if (this.filterTxt.length == 0) {
