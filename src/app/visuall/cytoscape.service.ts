@@ -419,10 +419,6 @@ export class CytoscapeService {
   }
 
   highlightNeighbors() {
-    let timerId;
-    let currOpacity = 1;
-    let nextOpacity = 1;
-
     return function (event: { target: any, type: string, cySelector?: string }) {
       let elements2remain = null;
       if (event.cySelector != undefined) {
@@ -435,24 +431,9 @@ export class CytoscapeService {
       }
 
       if (event.type === C.EV_MOUSE_ON) {
-        timerId = setTimeout(function () {
-          currOpacity = nextOpacity;
-          nextOpacity = C.HIGHLIGHT_OPACITY;
-          // eliminate unnecassary animation, it causes blinking
-          if (currOpacity != nextOpacity) {
-            // blur if there are any remaining
-            if (elements2remain.length > 0) {
-              this.setOtherElementsOpacity(elements2remain, C.HIGHLIGHT_OPACITY);
-            }
-          }
-        }.bind(this), C.HIGHLIGHT_WAIT_DUR);
+        elements2remain.addClass('emphasize');
       } else {
-        clearTimeout(timerId);
-        currOpacity = nextOpacity;
-        nextOpacity = 1;
-        if (currOpacity != nextOpacity) {
-          this.setOtherElementsOpacity(elements2remain, 1);
-        }
+        elements2remain.removeClass('emphasize');
       }
     }.bind(this);
   }

@@ -1,6 +1,6 @@
 {
     "isAutoIncrementalLayoutOnChange": true,
-    "isHighlightOnHover": false,
+    "isHighlightOnHover": true,
     "isShowOverviewWindow": false,
     "isShowEdgeLabels": true,
     "isIgnoreCaseInText": false,

@@ -1,4 +1,4 @@
-export const HIGHLIGHT_OPACITY = 0.15;
+export const HIGHLIGHT_OPACITY = 0.2;
 // it is more reasonable to make HIGHLIGHT_ANIM_DUR * 2 < HIGHLIGHT_WAIT_DUR
 export const HIGHLIGHT_ANIM_DUR = 400;
 export const HIGHLIGHT_WAIT_DUR = 1500;
@@ -353,8 +353,8 @@ export function arrayDiff(smallArr: string[], bigArr: string[]): string[] {
 
 export function getCyStyleFromColorAndWid(color: string, wid: number): { node: any, edge: any } {
   return {
-    node: { 'overlay-color': color, 'overlay-opacity': 0.2, 'overlay-padding': wid },
-    edge: { 'overlay-color': color, 'overlay-opacity': 0.2, 'overlay-padding': (e) => {
+    node: { 'overlay-color': color, 'overlay-opacity': HIGHLIGHT_OPACITY, 'overlay-padding': wid },
+    edge: { 'overlay-color': color, 'overlay-opacity': HIGHLIGHT_OPACITY, 'overlay-padding': (e) => {
       return (wid + e.width()) / 2 + 'px';
     } }
   };

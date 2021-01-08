@@ -3,7 +3,7 @@ import { UserPref, GroupingOptionTypes } from './user-preference';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import appPref from '../../assets/appPref.json';
-import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS, CY_BATCH_END_DELAY, EXPAND_COLLAPSE_FAST_OPT } from './constants';
+import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLAPSED_NODE_CLASS, CLUSTER_CLASS, CY_BATCH_END_DELAY, EXPAND_COLLAPSE_FAST_OPT, HIGHLIGHT_OPACITY } from './constants';
 import { GraphHistoryItem, GraphElem } from './db-service/data-types';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
@@ -509,8 +509,22 @@ export class GlobalVariableService {
         'line-color': this.setColor4CompoundEdge.bind(this),
         'target-arrow-color': this.setColor4CompoundEdge.bind(this),
         'target-arrow-shape': this.setTargetArrowShape.bind(this),
-      })
-      .update();
+      }).update();
+
+    const color = '#da14ff';
+    const wid = this.userPrefs.highlightStyles[0].wid.getValue();
+
+    this.cy.style().selector('node.emphasize')
+      .style({
+        'overlay-color': color, 'overlay-opacity': HIGHLIGHT_OPACITY + 0.1, 'overlay-padding': wid
+      }).update();
+
+    this.cy.style().selector('edge.emphasize')
+      .style({
+        'overlay-color': color, 'overlay-opacity': HIGHLIGHT_OPACITY + 0.1, 'overlay-padding': (e) => {
+          return (wid + e.width()) / 2 + 'px';
+        }
+      }).update();
 
     setTimeout(() => { this.cy.endBatch(); }, CY_BATCH_END_DELAY);
   }
