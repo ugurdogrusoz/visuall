@@ -138,7 +138,7 @@ export class CytoscapeService {
 
   loadElementsFromDatabase(data: GraphResponse, isIncremental: boolean) {
     if (!data || !data.nodes || !data.edges) {
-      this._g.showErrorModal('Graph is empty', 'Empty response from database!')
+      this._g.showErrorModal('Empty Graph', 'Empty response from database!')
       return;
     }
     const nodes = data.nodes;
@@ -513,7 +513,7 @@ export class CytoscapeService {
       try {
         this._g.expandCollapseApi.loadJson(txt);
       } catch (e) {
-        this._g.showErrorModal('Load JSON', 'Can NOT process JSON string')
+        this._g.showErrorModal('Load', 'Cannot process provided JSON file!')
       }
     });
   }

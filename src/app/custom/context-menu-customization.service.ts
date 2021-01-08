@@ -121,13 +121,12 @@ export class ContextMenuCustomizationService {
           axios.get(url).then(() => {
             e.style({ 'background-image': url });
           }).catch((e) => {
-            const msg = 'Image url is falsy: ' + e;
-            this._g.showErrorModal('Image URL', msg)
+            this._g.showErrorModal('Use Title Poster', 'Poster(s) does not exist!')
           });
         }
       })
       .catch((err) => {
-        this._g.showErrorModal('Background image', err);
+        this._g.showErrorModal('Background Image', err);
       });
   }
 }

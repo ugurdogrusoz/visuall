@@ -52,7 +52,7 @@ export class TimebarComponent implements OnInit {
 
   private setStatsRangeStr(d1: number, d2: number) {
     if (!d1 || !d2) {
-      this._g.showErrorModal('Timebar', 'rangeMaxDate or rangeMinDate is falsy!');
+      this._g.showErrorModal('Timebar', 'range bounds are incorrect!');
       return;
     }
     this.statsRange1Str = this.date2str(d1);
@@ -61,7 +61,7 @@ export class TimebarComponent implements OnInit {
 
   private setGraphRangeStr(d1: number, d2: number) {
     if (!d1 || !d2) {
-      this._g.showErrorModal('Timebar', 'rangeMaxDate or rangeMinDate is falsy!');
+      this._g.showErrorModal('Timebar', 'range bounds are incorrect!');
       return;
     }
     this.setFlatPickrInstance(this.dateInp1, d1, true);
