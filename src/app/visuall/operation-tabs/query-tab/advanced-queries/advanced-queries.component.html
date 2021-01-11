@@ -14,7 +14,7 @@
 <div *ngIf="selectedIdx==0 || selectedIdx==1 || selectedIdx==2">
   <div class="panel">
     <div class="panel">
-      <div class="form-inline va-text m-2 justify-content-center" *ngIf="selectedIdx==1">
+      <div class="form-inline va-text m-2 justify-content-center" *ngIf="selectedIdx==2">
         <span>Get common &nbsp;</span>
         <input [disabled]="!isDirected" type="radio" class="form-check-input" name="optradio1"
           (click)="targetOrRegulator = 0" value="0" [checked]="targetOrRegulator === 0"><span>target(s) &nbsp;</span>

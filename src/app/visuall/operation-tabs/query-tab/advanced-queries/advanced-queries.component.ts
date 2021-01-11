@@ -36,7 +36,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   dataModelSubs: Subscription;
 
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _cyService: CytoscapeService) {
-    this.queries = ['Get graph of interest', 'Get common targets/regulators', 'Get neighborhood'];
+    this.queries = ['Get neighborhood', 'Get graph of interest', 'Get common targets/regulators'];
     this.selectedIdx = -1;
   }
 
@@ -125,15 +125,15 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
       };
     }
     const types = this.ignoredTypes.map(x => `'${x}'`);
-    if (this.selectedIdx == 0) {
+    if (this.selectedIdx == 1) {
       this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbResponseType.table, this.tableFilter, prepareDataFn);
-    } else if (this.selectedIdx == 1) {
+    } else if (this.selectedIdx == 2) {
       let dir: Neo4jEdgeDirection = this.targetOrRegulator;
       if (!this.isDirected) {
         dir = Neo4jEdgeDirection.BOTH;
       }
       this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.table, this.tableFilter, prepareDataFn);
-    } else if (this.selectedIdx == 2) {
+    } else if (this.selectedIdx == 0) {
       this._dbService.getNeighborhood(dbIds, types, this.lengthLimit, this.isDirected, this.tableFilter, prepareDataFn);
     }
   }
