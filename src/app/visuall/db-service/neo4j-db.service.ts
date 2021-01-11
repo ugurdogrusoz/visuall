@@ -137,7 +137,7 @@ export class Neo4jDb implements DbService {
     this.runQuery(cql, callback, DbResponseType.generic);
   }
 
-  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbResponseType, filter: TableFiltering, cb: (x) => void) {
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbResponseType, filter: TableFiltering, idFilter: (string | number)[], cb: (x) => void) {
     const t = filter.txt ?? '';
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
     const pageSize = this._g.userPrefs.dataPageSize.getValue();
@@ -158,11 +158,15 @@ export class Neo4jDb implements DbService {
     }
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
+    let idf = 'null';
+    if (idFilter) {
+      idf = `[${idFilter.join()}]`;
+    }
     this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
-      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, type, false);
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout}, ${idf})`, cb, type, false);
   }
 
-  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbResponseType, filter: TableFiltering, cb: (x) => void) {
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbResponseType, filter: TableFiltering, idFilter: (string | number)[], cb: (x) => void) {
     const t = filter.txt ?? '';
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
     const pageSize = this._g.userPrefs.dataPageSize.getValue();
@@ -183,17 +187,20 @@ export class Neo4jDb implements DbService {
       d2 = 0;
     }
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
-
+    let idf = 'null';
+    if (idFilter) {
+      idf = `[${idFilter.join()}]`;
+    }
     if (type == DbResponseType.count) {
       this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase},
-       ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, type, false);
+       ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout}, ${idf})`, cb, type, false);
     } else if (type == DbResponseType.table) {
       this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, ${pageSize}, ${currPage},
-       '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, type, false);
+       '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout}, ${idf})`, cb, type, false);
     }
   }
 
-  getNeighborhood(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, filter: TableFiltering, cb: (x) => void) {
+  getNeighborhood(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, filter: TableFiltering, idFilter: (string | number)[], cb: (x) => void) {
     const t = filter.txt ?? '';
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
     const pageSize = this._g.userPrefs.dataPageSize.getValue();
@@ -211,11 +218,15 @@ export class Neo4jDb implements DbService {
     if (!this._g.userPrefs.isLimitDbQueries2range.getValue()) {
       d1 = 0;
       d2 = 0;
+    }
+    let idf = 'null';
+    if (idFilter) {
+      idf = `[${idFilter.join()}]`;
     }
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
     this.runQuery(`CALL neighborhood([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
-      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout})`, cb, DbResponseType.table, false);
+      ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout}, ${idf})`, cb, DbResponseType.table, false);
   }
 
   private getTimebarMapping4Java(): string {

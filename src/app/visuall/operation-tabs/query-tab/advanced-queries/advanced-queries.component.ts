@@ -106,8 +106,8 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     this.clickedNodeIdx = -1;
   }
 
-  runQuery(isFromFilter: boolean) {
-    if (!isFromFilter) {
+  runQuery(isFromFilter: boolean, idFilter: (string | number)[]) {
+    if (!isFromFilter && !idFilter) {
       this.tableFilter.skip = 0;
       this.tableInput.currPage = 1;
     }
@@ -124,17 +124,24 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
         this.highlightTargetRegulators(x);
       };
     }
+    if (idFilter) {
+      prepareDataFn = (x) => {
+        this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(x), this.tableInput.isMergeGraph);
+        this.highlightSeedNodes();
+        this.highlightTargetRegulators(x);
+      };
+    }
     const types = this.ignoredTypes.map(x => `'${x}'`);
     if (this.selectedIdx == 1) {
-      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbResponseType.table, this.tableFilter, prepareDataFn);
+      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbResponseType.table, this.tableFilter, idFilter, prepareDataFn);
     } else if (this.selectedIdx == 2) {
       let dir: Neo4jEdgeDirection = this.targetOrRegulator;
       if (!this.isDirected) {
         dir = Neo4jEdgeDirection.BOTH;
       }
-      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.table, this.tableFilter, prepareDataFn);
+      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.table, this.tableFilter, idFilter, prepareDataFn);
     } else if (this.selectedIdx == 0) {
-      this._dbService.getNeighborhood(dbIds, types, this.lengthLimit, this.isDirected, this.tableFilter, prepareDataFn);
+      this._dbService.getNeighborhood(dbIds, types, this.lengthLimit, this.isDirected, this.tableFilter, idFilter, prepareDataFn);
     }
   }
 
@@ -287,14 +294,12 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   }
 
   getDataForQueryResult(e: TableRowMeta) {
-    let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
-    let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: true, labels: e.tableIdx.join(',') }
-    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: false }, historyMeta);
+    this.runQuery(false, e.dbIds);
   }
 
   filterTable(filter: TableFiltering) {
     this.tableFilter = filter;
-    this.runQuery(true);
+    this.runQuery(true, null);
   }
 
   prepareElems4Cy(data) {

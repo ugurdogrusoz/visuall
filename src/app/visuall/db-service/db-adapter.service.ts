@@ -61,24 +61,24 @@ export class DbAdapterService {
     this._db.getFilteringResult(rules, filter, skip, limit, type, fn);
   }
 
-  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbResponseType, filter: TableFiltering, cb: (x) => void) {
+  getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbResponseType, filter: TableFiltering, idFilter: (string | number)[], cb: (x) => void) {
     let fn = cb;
     if (type == DbResponseType.table) {
       fn = (x) => { cb(x); this._g.add2GraphHistory(`Graph of interest`); };
     }
-    this._db.getGraphOfInterest(dbIds, ignoredTypes, lengthLimit, isDirected, type, filter, fn);
+    this._db.getGraphOfInterest(dbIds, ignoredTypes, lengthLimit, isDirected, type, filter, idFilter, fn);
   }
 
-  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbResponseType, filter: TableFiltering, cb: (x) => void) {
+  getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbResponseType, filter: TableFiltering, idFilter: (string | number)[], cb: (x) => void) {
     let fn = cb;
     if (type == DbResponseType.table) {
       fn = (x) => { cb(x); this._g.add2GraphHistory(`Common target/regulator`); };
     }
-    this._db.getCommonStream(dbIds, ignoredTypes, lengthLimit, dir, type, filter, fn);
+    this._db.getCommonStream(dbIds, ignoredTypes, lengthLimit, dir, type, filter, idFilter, fn);
   }
 
-  getNeighborhood(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, filter: TableFiltering, cb: (x) => void) {
+  getNeighborhood(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, filter: TableFiltering, idFilter: (string | number)[], cb: (x) => void) {
     let fn = (x) => { cb(x); this._g.add2GraphHistory(`Common target/regulator`); };
-    this._db.getNeighborhood(dbIds, ignoredTypes, lengthLimit, isDirected, filter, fn);
+    this._db.getNeighborhood(dbIds, ignoredTypes, lengthLimit, isDirected, filter, idFilter, fn);
   }
 }
