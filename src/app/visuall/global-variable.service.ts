@@ -161,6 +161,8 @@ export class GlobalVariableService {
           return (this.userPrefs.selectionWidth.getValue() + e.width()) / 2 + 'px';
         },
       }).update();
+    
+    this.addStyle4Emphasize();
   }
 
   add2GraphHistory(expo: string) {
@@ -496,7 +498,6 @@ export class GlobalVariableService {
   // some styles uses functions, so they can't be added using JSON
   private addOtherStyles() {
     this.cy.startBatch();
-
     this.cy.style().selector('edge.' + COLLAPSED_EDGE_CLASS)
       .style({
         'label': (e) => {
@@ -511,22 +512,25 @@ export class GlobalVariableService {
         'target-arrow-shape': this.setTargetArrowShape.bind(this),
       }).update();
 
+    setTimeout(() => { this.cy.endBatch(); }, CY_BATCH_END_DELAY);
+  }
+
+  private addStyle4Emphasize() {
     const color = '#da14ff';
     const wid = this.userPrefs.highlightStyles[0].wid.getValue();
+    const OPACITY_DIFF = 0.05;
 
     this.cy.style().selector('node.emphasize')
       .style({
-        'overlay-color': color, 'overlay-opacity': HIGHLIGHT_OPACITY + 0.1, 'overlay-padding': wid
+        'overlay-color': color, 'overlay-opacity': HIGHLIGHT_OPACITY + OPACITY_DIFF, 'overlay-padding': wid
       }).update();
 
     this.cy.style().selector('edge.emphasize')
       .style({
-        'overlay-color': color, 'overlay-opacity': HIGHLIGHT_OPACITY + 0.1, 'overlay-padding': (e) => {
+        'overlay-color': color, 'overlay-opacity': HIGHLIGHT_OPACITY + OPACITY_DIFF, 'overlay-padding': (e) => {
           return (wid + e.width()) / 2 + 'px';
         }
       }).update();
-
-    setTimeout(() => { this.cy.endBatch(); }, CY_BATCH_END_DELAY);
   }
 
   private setColor4CompoundEdge(e) {
