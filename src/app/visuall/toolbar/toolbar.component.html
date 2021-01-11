@@ -12,27 +12,17 @@
     </div>
     <div>&nbsp;&nbsp;</div>
   </ng-container>
-  <ng-container>
-    <div class="col-xs-auto border rounded mid">
-      <ng-container>
-        <div class="toolbar-element-container">
-          <div class="mid">
-            <input type="checkbox" [(ngModel)]="isLimitDbQueries2range" (change)="changeIsLimitDbQueryRange()"
-              title="Limit Database Queries To Time Range">
-            <input type="text" #dbQueryDate1 [disabled]="!isLimitDbQueries2range"
-              title="Limit Database Queries To Time Range"
-              class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
-            <span>-</span>
-            <input type="text" #dbQueryDate2 [disabled]="!isLimitDbQueries2range"
-              title="Limit Database Queries To Time Range"
-              class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
-            &nbsp;&nbsp;
-          </div>
-        </div>
-      </ng-container>
-    </div>
-    <div>&nbsp;&nbsp;</div>
-  </ng-container>
+  <div class="col-xs-auto border rounded mid">
+    <input type="checkbox" [(ngModel)]="isLimitDbQueries2range" (change)="changeIsLimitDbQueryRange()"
+      title="Limit Database Queries To Time Range">
+    <input type="text" #dbQueryDate1 [disabled]="!isLimitDbQueries2range" title="Limit Database Queries To Time Range"
+      class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
+    <span class="dash" [ngClass]="{'color-disabled': !isLimitDbQueries2range}">-</span>
+    <input type="text" #dbQueryDate2 [disabled]="!isLimitDbQueries2range" title="Limit Database Queries To Time Range"
+      class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
+    &nbsp;&nbsp;
+  </div>
+  <div>&nbsp;&nbsp;</div>
   <div class="va-small-text ml-auto my-auto">
     {{statusMsg}}
   </div>

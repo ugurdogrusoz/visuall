@@ -13,13 +13,17 @@ input[type=checkbox] {
   margin-right: 0.3rem;
 }
 
+.color-disabled {
+  color: #ABABAB;
+}
+
 input:disabled {
   cursor: not-allowed;
   color: #ABABAB;
 }
 
 .inp-10-ch {
-  width: 10em;
+  width: 10.5em;
 }
 
 .mid {
@@ -30,4 +34,8 @@ input:disabled {
 
 .tight-select {
   line-height: normal;
+}
+
+.dash {
+  padding: 0 2px;
 }
