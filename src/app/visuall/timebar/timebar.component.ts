@@ -75,7 +75,7 @@ export class TimebarComponent implements OnInit {
       domElem.nativeElement._flatpickr.setDate(date);
     } else {
       instance = flatpickr(domElem.nativeElement, {
-        defaultDate: new Date(date), enableTime: true, enableSeconds: true, time_24hr: true, formatDate: this.formatDate.bind(this)
+        defaultDate: new Date(date), enableTime: true, enableSeconds: true, time_24hr: true
       });
       instance.setDate(date);
       if (isStart) {
@@ -84,10 +84,6 @@ export class TimebarComponent implements OnInit {
         instance.config.onChange.push((selectedDates) => { this.s.setChartRange(null, selectedDates[0].getTime()); });
       }
     }
-  }
-
-  formatDate(date: Date, format: string, locale: Locale): string {
-    return this.date2str(date);
   }
 
   date2str(d: number | Date): string {
