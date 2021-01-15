@@ -2,7 +2,6 @@ import { browser, by, element, Locator } from 'protractor';
 
 export class AppPage {
 
-  readonly DATA_WAIT = 3000;
   readonly ANIM_WAIT = 500;
 
   navigateTo() {
@@ -13,10 +12,10 @@ export class AppPage {
     return element(by.css('app-root h1')).getText() as Promise<string>;
   }
 
-  async getSampleData() {
+  getSampleData() {
     element(by.buttonText('Data')).click();
     element(by.buttonText('Sample Data')).click();
-    const hasVisibleNodesAndEdges = await browser.executeScript('return cy.$("node:visible").length > 0 && cy.$("edge:visible").length > 0');
+    const hasVisibleNodesAndEdges = browser.executeScript('return cy.$("node:visible").length > 0 && cy.$("edge:visible").length > 0');
     return hasVisibleNodesAndEdges;
   }
 
@@ -290,6 +289,14 @@ export class AppPage {
     await this.openQueryByRuleSubTab();
     element(by.css('img[title="Delete query rule"]')).click();
     return true;
+  }
+
+  async showObjProps() {
+    const hasVisibleNodesAndEdges = await this.getSampleData();
+    await browser.executeScript(`cy.nodes()[0].select();`);
+    const hasDiv = element(by.id('prop-tab')).isPresent();
+    expect(element(by.id('prop-tab')).getAttribute('class')).toContain('collapse show text-center m-1');
+    return hasVisibleNodesAndEdges && hasDiv;
   }
 
   async openTab(s: string) {

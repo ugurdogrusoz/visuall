@@ -79,6 +79,11 @@ describe('Visuall', () => {
     expect(page.testAddRemoveRules2QueryByRule()).toEqual(true);
   });
 
+  it('Can show object properties by selecting', async () => {
+    page.navigateTo();
+    expect(page.showObjProps()).toEqual(true);
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);
