@@ -209,14 +209,13 @@ export class AppPage {
 
   async testTableOfQueryByRuleRule() {
     await this.beginQueryByRule();
-    element(by.buttonText('Condition')).click();
+    await element(by.buttonText('Condition')).click();
     await browser.sleep(this.ANIM_WAIT);
     // add empty rule
     element(by.css('img[title="Add/Update"]')).click();
     await browser.sleep(this.ANIM_WAIT);
 
-    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.DATA_WAIT);
+    await this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
 
     const el = element(by.css('input[placeholder="Search..."]'));
     el.clear();
