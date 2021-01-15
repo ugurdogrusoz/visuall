@@ -16,7 +16,6 @@ export class AppPage {
   async getSampleData() {
     element(by.buttonText('Data')).click();
     element(by.buttonText('Sample Data')).click();
-    await browser.waitForAngular();
     const hasVisibleNodesAndEdges = await browser.executeScript('return cy.$("node:visible").length > 0 && cy.$("edge:visible").length > 0');
     return hasVisibleNodesAndEdges;
   }
@@ -51,7 +50,7 @@ export class AppPage {
     await this.click2graph();
 
     this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.DATA_WAIT * 1.5);
+    await browser.waitForAngular();
     const isAllInRange = await browser.executeScript('return cy.$("[birth_year<1994],[death_year>2020]").length == 0 && cy.$("[birth_year>=1994],[death_year<=2020]").length > 0');
     return isAllInRange;
   }
@@ -92,17 +91,15 @@ export class AppPage {
 
   async queryByConditionRuleGetAll(type: string, isEdge: boolean) {
     await this.beginQueryByRule();
-    element(by.buttonText('Condition')).click();
-    await browser.sleep(this.ANIM_WAIT);
+    await element(by.buttonText('Condition')).click();
     await this.selectClass4QueryRule(type);
-    element(by.css('img[title="Add/Update"]')).click();
-    await browser.sleep(this.ANIM_WAIT);
+    await element(by.css('img[title="Add/Update"]')).click();
 
     await this.click2graph();
 
     await this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.ANIM_WAIT);
     await browser.waitForAngular();
+
     if (isEdge) {
       const isAllFromTheType = await browser.executeScript(`return cy.$('.${type}').length > 0`);
       return isAllFromTheType;
@@ -112,15 +109,15 @@ export class AppPage {
   }
 
   async addPropertyRule(prop: string, op: string, inp: string) {
-    element(by.cssContainingText('option.prop-opt', prop)).click();
+    await element(by.cssContainingText('option.prop-opt', prop)).click();
     await browser.sleep(this.ANIM_WAIT);
-    element(by.cssContainingText('option.prop-op-key', op)).click();
+    await element(by.cssContainingText('option.prop-op-key', op)).click();
     await browser.sleep(this.ANIM_WAIT);
-    element(by.css('input[placeholder="Filter..."]')).clear();
+    await element(by.css('input[placeholder="Filter..."]')).clear();
     await browser.sleep(this.ANIM_WAIT);
-    element(by.css('input[placeholder="Filter..."]')).sendKeys(inp);
+    await element(by.css('input[placeholder="Filter..."]')).sendKeys(inp);
     await browser.sleep(this.ANIM_WAIT);
-    element(by.css('img[title="Add/Update"]')).click();
+    await element(by.css('img[title="Add/Update"]')).click();
     await browser.sleep(this.ANIM_WAIT);
   }
 
@@ -146,13 +143,13 @@ export class AppPage {
     await this.addPropertyRule('primary_name', 'contains', 'John');
     await this.click2graph();
     this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await browser.waitForAngular();
+
     const canGetAllJohns = await browser.executeScript(`return cy.$(".Person").filter("[primary_name *='John']").length  === cy.$().length`);
 
     element(by.css('img[title="Edit"]')).click();
     await this.addPropertyRule('primary_name', 'contains', 'Tom');
     this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await browser.waitForAngular();
+
     const canGetAllJohnsAndToms = await browser.executeScript(`return cy.$(".Person").filter("[primary_name *='John'],[primary_name *='Tom']").length === cy.$().length`);
 
     return canGetAllJohns && canGetAllJohnsAndToms;
@@ -194,7 +191,7 @@ export class AppPage {
 
     await this.click2graph();
     this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await browser.waitForAngular();
+
 
     const canGetAllJos = await browser.executeScript(`return cy.$("[.Person][primary_name *='Jo']").length === cy.$().length`);
     return canGetAllJos;
@@ -220,16 +217,16 @@ export class AppPage {
     const el = element(by.css('input[placeholder="Search..."]'));
     el.clear();
     el.sendKeys('Tom');
-    await browser.sleep(this.DATA_WAIT);
+    await browser.waitForAngular();
 
     // order by 
     element(by.cssContainingText('a.table-header', 'birth year')).click();
-    await browser.sleep(this.DATA_WAIT * 1.5);
+    await browser.waitForAngular();
 
     // merge selected to grahp
     element(by.css('input.cb-table-all')).click();
     element(by.css('img[title="Merge selected to graph"]')).click();
-    await browser.sleep(this.DATA_WAIT);
+    await browser.waitForAngular();
 
     // download as CSV
     element(by.css('img[title="Download selected objects"]')).click();
@@ -240,7 +237,7 @@ export class AppPage {
 
     // load next page
     element.all(by.css('a.page-link')).last().click();
-    await browser.sleep(this.DATA_WAIT);
+    await browser.waitForAngular();
     const cntElem2 = await browser.executeScript(`return cy.$().length`) as number;
     const hasAllToms = await browser.executeScript(`return cy.$("[primary_name *= 'Tom']").length > 0 && cy.$("[primary_name *= 'Tom']").length == cy.$().length`);
 
@@ -249,7 +246,7 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     // load next page
     element.all(by.css('a.page-link')).last().click();
-    await browser.sleep(this.DATA_WAIT);
+    await browser.waitForAngular();
     const cntElem3 = await browser.executeScript(`return cy.$().length`) as number;
 
     return hasAllToms && (cntElem1 * 2) === cntElem2 && cntElem3 == cntElem1;
@@ -263,15 +260,12 @@ export class AppPage {
 
     await this.beginQueryByRule();
     element(by.buttonText('Condition')).click();
-    await browser.sleep(this.ANIM_WAIT);
     await this.addPropertyRule('ACTOR', '>', '3');
 
     // uncheck database
     element(by.css('input.cb-is-on-db')).click();
-    await browser.sleep(this.ANIM_WAIT);
 
     this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await browser.sleep(this.ANIM_WAIT);
 
     const cntFiltered = await browser.executeScript(`return cy.$(':selected').filter(x => x.connectedEdges('.ACTOR').length > 3).length;`);
     const cntSelected = await browser.executeScript(`return cy.$(':selected').length;`);
