@@ -12,11 +12,11 @@ export class AppPage {
     return element(by.css('app-root h1')).getText() as Promise<string>;
   }
 
-  getSampleData() {
-    element(by.buttonText('Data')).click();
-    element(by.buttonText('Sample Data')).click();
-    const hasVisibleNodesAndEdges = browser.executeScript('return cy.$("node:visible").length > 0 && cy.$("edge:visible").length > 0');
-    return hasVisibleNodesAndEdges;
+  async getSampleData() {
+    await element(by.buttonText('Data')).click();
+    await element(by.buttonText('Sample Data')).click();
+    await browser.waitForAngular();
+    return browser.executeScript('return cy.$("node:visible").length > 0 && cy.$("edge:visible").length > 0');
   }
 
   async filterByNodeType() {
