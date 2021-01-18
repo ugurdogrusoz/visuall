@@ -84,6 +84,21 @@ describe('Visuall', () => {
     expect(page.showObjProps()).toEqual(true);
   });
 
+  it('Can save as JSON', async () => {
+    page.navigateTo();
+    expect(page.saveAsJson()).toEqual(true);
+  });
+
+  it('Can group with Louvain using compounds', async () => {
+    page.navigateTo();
+    expect(page.groupNodes()).toEqual(true);
+  });
+
+  it('Can calculate degree centrality and set widths', async () => {
+    page.navigateTo();
+    expect(page.resizeBasedOnDegreeCentrality()).toEqual(true);
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);

@@ -125,13 +125,13 @@ export class AppPage {
   }
 
   async beginQueryByRule() {
-    await this.openQueryByRuleSubTab();
+    await this.openSubTab('Query by Rule');
     element(by.css('img[alt="Add Rule"]')).click();
     await browser.sleep(this.ANIM_WAIT);
   }
 
-  async openQueryByRuleSubTab() {
-    element(by.cssContainingText('b.va-heading2', 'Query by Rule')).click();
+  async openSubTab(subTab: string) {
+    element(by.cssContainingText('b.va-heading2', subTab)).click();
     await browser.sleep(this.ANIM_WAIT);
   }
 
@@ -286,7 +286,7 @@ export class AppPage {
     // reload the page, the new rule should be also reloaded
     await this.navigateTo();
 
-    await this.openQueryByRuleSubTab();
+    await this.openSubTab('Query by Rule');
     element(by.css('img[title="Delete query rule"]')).click();
     return true;
   }
@@ -297,6 +297,33 @@ export class AppPage {
     const hasDiv = element(by.id('prop-tab')).isPresent();
     expect(element(by.id('prop-tab')).getAttribute('class')).toContain('collapse show text-center m-1');
     return hasVisibleNodesAndEdges && hasDiv;
+  }
+
+  async saveAsJson() {
+    const hasVisibleNodesAndEdges = await this.getSampleData();
+    await element(by.buttonText('File')).click();
+    await element(by.buttonText('Save')).click();
+    return hasVisibleNodesAndEdges;
+  }
+
+  async groupNodes() {
+    const hasVisibleNodesAndEdges = await this.getSampleData();
+    await this.openSubTab('Group Nodes');
+    this.getFirstDisplayed(by.cssContainingText('label', 'By the Louvain modularity algorithm')).click();
+    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
+    const hasCompounds = await browser.executeScript(`return cy.$(':parent').length > 0;`);
+    return hasVisibleNodesAndEdges && hasCompounds;
+  }
+
+  async resizeBasedOnDegreeCentrality() {
+    const hasVisibleNodesAndEdges = await this.getSampleData();
+    await this.openSubTab('Calculate Theoretic Property');
+    this.getFirstDisplayed(by.cssContainingText('option', 'Degree Centrality')).click();
+    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
+    await browser.sleep(this.ANIM_WAIT);
+    const hasFredWid60 = await browser.executeScript(`return cy.$id('n0').width() == 60;`);
+    const hasIngridWid60 = await browser.executeScript(`return cy.$id('n4').width() > 45;`);
+    return hasVisibleNodesAndEdges && hasFredWid60 && hasIngridWid60;
   }
 
   async openTab(s: string) {
