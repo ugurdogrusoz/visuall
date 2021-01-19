@@ -129,7 +129,16 @@ export class Neo4jDb implements DbService {
   }
 
   getSampleData(callback: (x: GraphResponse) => any) {
-    this.runQuery(`MATCH (n)-[e]-() RETURN n,e limit 100`, callback);
+    const f1 = this.dateFilterFromUserPref('n', true);
+    const f2 = this.dateFilterFromUserPref('e', false);
+    let f = '';
+    if (f1.length > 0) {
+      f += ' WHERE ' + f1.substr(5);
+    }
+    if (f2.length > 0) {
+      f += f2;
+    }
+    this.runQuery(`MATCH (n)-[e]-() ${f} RETURN n,e limit 100`, callback);
   }
 
   getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbResponseType, callback: (x: GraphResponse | TableResponse) => any) {
