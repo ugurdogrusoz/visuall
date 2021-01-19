@@ -83,7 +83,12 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!x) {
         return;
       }
-      this.setDates4DbQuery();
+      // user preferences from local storage should be setted
+      // Better way might be to use a shared behaviour subject just like `isUserPrefReady`. Its name might be isUserPrefFromLocalStorageReady
+      setTimeout(() => {
+        this.setDates4DbQuery();
+      }, 1);
+
     });
   }
 
