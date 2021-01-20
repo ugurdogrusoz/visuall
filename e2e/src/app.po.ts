@@ -15,8 +15,19 @@ export class AppPage {
   async getSampleData() {
     await element(by.buttonText('Data')).click();
     await element(by.buttonText('Sample Data')).click();
-    await browser.waitForAngular();
+    await this.wait4Spinner();
     return browser.executeScript('return cy.$("node:visible").length > 0 && cy.$("edge:visible").length > 0');
+  }
+
+  async wait4Spinner() {
+    await browser.wait(element(by.css('loading-div')).isPresent());
+    await browser.sleep(100);
+  }
+
+  async wait4Angular() {
+    browser.waitForAngularEnabled(true);
+    await browser.waitForAngular();
+    browser.waitForAngularEnabled(false);
   }
 
   async filterByNodeType() {
@@ -49,7 +60,7 @@ export class AppPage {
     await this.click2graph();
 
     this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await browser.waitForAngular();
+    this.wait4Angular();
     const isAllInRange = await browser.executeScript('return cy.$("[birth_year<1994],[death_year>2020]").length == 0 && cy.$("[birth_year>=1994],[death_year<=2020]").length > 0');
     return isAllInRange;
   }
@@ -97,7 +108,7 @@ export class AppPage {
     await this.click2graph();
 
     await this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await browser.waitForAngular();
+    await this.wait4Angular();
 
     if (isEdge) {
       const isAllFromTheType = await browser.executeScript(`return cy.$('.${type}').length > 0`);
@@ -212,20 +223,20 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
 
     await this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-
+    await this.wait4Angular();
     const el = element(by.css('input[placeholder="Search..."]'));
     el.clear();
     el.sendKeys('Tom');
-    await browser.waitForAngular();
+    await this.wait4Angular();
 
     // order by 
     element(by.cssContainingText('a.table-header', 'birth year')).click();
-    await browser.waitForAngular();
+    await this.wait4Angular();
 
     // merge selected to grahp
     element(by.css('input.cb-table-all')).click();
     element(by.css('img[title="Merge selected to graph"]')).click();
-    await browser.waitForAngular();
+    await this.wait4Angular();
 
     // download as CSV
     element(by.css('img[title="Download selected objects"]')).click();
@@ -236,7 +247,7 @@ export class AppPage {
 
     // load next page
     element.all(by.css('a.page-link')).last().click();
-    await browser.waitForAngular();
+    await this.wait4Angular();
     const cntElem2 = await browser.executeScript(`return cy.$().length`) as number;
     const hasAllToms = await browser.executeScript(`return cy.$("[primary_name *= 'Tom']").length > 0 && cy.$("[primary_name *= 'Tom']").length == cy.$().length`);
 
@@ -245,7 +256,7 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     // load next page
     element.all(by.css('a.page-link')).last().click();
-    await browser.waitForAngular();
+    await this.wait4Angular();
     const cntElem3 = await browser.executeScript(`return cy.$().length`) as number;
 
     return hasAllToms && (cntElem1 * 2) === cntElem2 && cntElem3 == cntElem1;
@@ -294,6 +305,7 @@ export class AppPage {
   async showObjProps() {
     const hasVisibleNodesAndEdges = await this.getSampleData();
     await browser.executeScript(`cy.nodes()[0].select();`);
+    await browser.sleep(this.ANIM_WAIT);
     const hasDiv = element(by.id('prop-tab')).isPresent();
     expect(element(by.id('prop-tab')).getAttribute('class')).toContain('collapse show text-center m-1');
     return hasVisibleNodesAndEdges && hasDiv;

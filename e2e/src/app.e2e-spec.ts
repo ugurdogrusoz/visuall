@@ -6,6 +6,7 @@ describe('Visuall', () => {
 
   beforeEach(() => {
     page = new AppPage();
+    browser.waitForAngularEnabled(false);
   });
 
   it('should have at least 7 buttons on navbar', async () => {
