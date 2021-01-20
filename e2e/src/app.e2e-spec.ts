@@ -99,6 +99,11 @@ describe('Visuall', () => {
     expect(page.resizeBasedOnDegreeCentrality()).toEqual(true);
   });
 
+  it('Should maintain settings when "Store user profile" is checked (true by default)', async () => {
+    page.navigateTo();
+    expect(page.maintainSettings()).toEqual(true);
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);
