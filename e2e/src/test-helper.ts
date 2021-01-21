@@ -22,3 +22,26 @@ export async function getSampleData() {
   await wait4Spinner();
   return browser.executeScript('return cy.$("node:visible").length > 0 && cy.$("edge:visible").length > 0');
 }
+
+export async function openTab(s: string) {
+  element(by.cssContainingText('a.nav-link', s)).click();
+  await browser.sleep(ANIM_WAIT);
+}
+
+export async function addPropertyRule(prop: string, op: string, inp: string) {
+  await element(by.cssContainingText('option.prop-opt', prop)).click();
+  await browser.sleep(ANIM_WAIT);
+  await element(by.cssContainingText('option.prop-op-key', op)).click();
+  await browser.sleep(ANIM_WAIT);
+  await element(by.css('input[placeholder="Filter..."]')).clear();
+  await browser.sleep(ANIM_WAIT);
+  await element(by.css('input[placeholder="Filter..."]')).sendKeys(inp);
+  await browser.sleep(ANIM_WAIT);
+  await element(by.css('img[title="Add/Update"]')).click();
+  await browser.sleep(ANIM_WAIT);
+}
+
+export async function openSubTab(subTab: string) {
+  element(by.cssContainingText('b.va-heading2', subTab)).click();
+  await browser.sleep(ANIM_WAIT);
+}

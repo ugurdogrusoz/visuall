@@ -1,24 +1,19 @@
-import { AppPage } from './app.po';
+import { GroupNodesPage } from './groupNodes.po';
 import { browser, logging } from 'protractor';
 import { navigateTo } from './test-helper';
 
-describe('Visuall', () => {
-  let page: AppPage;
+describe('Group Nodes', () => {
+  let page: GroupNodesPage;
 
   beforeEach(() => {
-    page = new AppPage();
+    page = new GroupNodesPage();
     // waiting for angular causes too long waits. (3-5 seconds after page loaded). Even if angular doesn't detect any changes it waits.
     browser.waitForAngularEnabled(false);
   });
 
-  it('Can show object properties by selecting', async () => {
+  it('Can group with Louvain using compounds', async () => {
     navigateTo();
-    expect(page.showObjProps()).toEqual(true);
-  });
-
-  it('Should maintain settings when "Store user profile" is checked (true by default)', async () => {
-    navigateTo();
-    expect(page.maintainSettings()).toEqual(true);
+    expect(page.groupNodes()).toEqual(true);
   });
 
   afterEach(async () => {

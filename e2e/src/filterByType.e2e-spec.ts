@@ -1,24 +1,24 @@
-import { AppPage } from './app.po';
+import { FilterByTypePage } from './filterByType.po';
 import { browser, logging } from 'protractor';
 import { navigateTo } from './test-helper';
 
-describe('Visuall', () => {
-  let page: AppPage;
+describe('Filter By Node/Edge Type', () => {
+  let page: FilterByTypePage;
 
   beforeEach(() => {
-    page = new AppPage();
+    page = new FilterByTypePage();
     // waiting for angular causes too long waits. (3-5 seconds after page loaded). Even if angular doesn't detect any changes it waits.
     browser.waitForAngularEnabled(false);
   });
 
-  it('Can show object properties by selecting', async () => {
+  it('Filter by "Person" Node Type: should hide all person nodes', async () => {
     navigateTo();
-    expect(page.showObjProps()).toEqual(true);
+    expect(page.filterByNodeType()).toEqual(true);
   });
 
-  it('Should maintain settings when "Store user profile" is checked (true by default)', async () => {
+  it('Filter by "ACTOR" Edge Type: should hide all actor edges', async () => {
     navigateTo();
-    expect(page.maintainSettings()).toEqual(true);
+    expect(page.filterByEdgeType()).toEqual(true);
   });
 
   afterEach(async () => {

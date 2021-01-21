@@ -1,24 +1,19 @@
-import { AppPage } from './app.po';
+import { CalcTheoreticPropPage } from './calcTheoreticProp.po';
 import { browser, logging } from 'protractor';
 import { navigateTo } from './test-helper';
 
-describe('Visuall', () => {
-  let page: AppPage;
+describe('Calculate Theoretic Property', () => {
+  let page: CalcTheoreticPropPage;
 
   beforeEach(() => {
-    page = new AppPage();
+    page = new CalcTheoreticPropPage();
     // waiting for angular causes too long waits. (3-5 seconds after page loaded). Even if angular doesn't detect any changes it waits.
     browser.waitForAngularEnabled(false);
   });
 
-  it('Can show object properties by selecting', async () => {
+  it('Can calculate degree centrality and set widths', async () => {
     navigateTo();
-    expect(page.showObjProps()).toEqual(true);
-  });
-
-  it('Should maintain settings when "Store user profile" is checked (true by default)', async () => {
-    navigateTo();
-    expect(page.maintainSettings()).toEqual(true);
+    expect(page.resizeBasedOnDegreeCentrality()).toEqual(true);
   });
 
   afterEach(async () => {
