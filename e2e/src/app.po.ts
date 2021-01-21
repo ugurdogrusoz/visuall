@@ -1,8 +1,8 @@
-import { browser, by, element, Locator } from 'protractor';
+import { browser, by, element, ExpectedConditions, Locator } from 'protractor';
 
 export class AppPage {
 
-  readonly ANIM_WAIT = 500;
+  readonly ANIM_WAIT = 250;
 
   navigateTo() {
     return browser.get(browser.baseUrl) as Promise<any>;
@@ -20,14 +20,9 @@ export class AppPage {
   }
 
   async wait4Spinner() {
-    await browser.wait(element(by.css('loading-div')).isPresent());
-    await browser.sleep(100);
-  }
-
-  async wait4Angular() {
-    browser.waitForAngularEnabled(true);
-    await browser.waitForAngular();
-    browser.waitForAngularEnabled(false);
+    const EC = ExpectedConditions;
+    await browser.wait(EC.presenceOf(this.getFirstDisplayed(by.css('.loading-div'))));
+    await browser.wait(EC.invisibilityOf(this.getFirstDisplayed(by.css('.loading-div')) ) ) ;
   }
 
   async filterByNodeType() {
@@ -59,8 +54,8 @@ export class AppPage {
 
     await this.click2graph();
 
-    this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    this.wait4Angular();
+    await this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
+    await this.wait4Spinner();
     const isAllInRange = await browser.executeScript('return cy.$("[birth_year<1994],[death_year>2020]").length == 0 && cy.$("[birth_year>=1994],[death_year<=2020]").length > 0');
     return isAllInRange;
   }
@@ -108,7 +103,7 @@ export class AppPage {
     await this.click2graph();
 
     await this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await this.wait4Angular();
+    await this.wait4Spinner();
 
     if (isEdge) {
       const isAllFromTheType = await browser.executeScript(`return cy.$('.${type}').length > 0`);
@@ -223,20 +218,20 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
 
     await this.getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await this.wait4Angular();
+    await this.wait4Spinner();
     const el = element(by.css('input[placeholder="Search..."]'));
     el.clear();
     el.sendKeys('Tom');
-    await this.wait4Angular();
+    await this.wait4Spinner();
 
     // order by 
     element(by.cssContainingText('a.table-header', 'birth year')).click();
-    await this.wait4Angular();
+    await this.wait4Spinner();
 
     // merge selected to grahp
     element(by.css('input.cb-table-all')).click();
     element(by.css('img[title="Merge selected to graph"]')).click();
-    await this.wait4Angular();
+    await this.wait4Spinner();
 
     // download as CSV
     element(by.css('img[title="Download selected objects"]')).click();
@@ -247,7 +242,7 @@ export class AppPage {
 
     // load next page
     element.all(by.css('a.page-link')).last().click();
-    await this.wait4Angular();
+    await this.wait4Spinner();
     const cntElem2 = await browser.executeScript(`return cy.$().length`) as number;
     const hasAllToms = await browser.executeScript(`return cy.$("[primary_name *= 'Tom']").length > 0 && cy.$("[primary_name *= 'Tom']").length == cy.$().length`);
 
@@ -256,7 +251,7 @@ export class AppPage {
     await browser.sleep(this.ANIM_WAIT);
     // load next page
     element.all(by.css('a.page-link')).last().click();
-    await this.wait4Angular();
+    await this.wait4Spinner();
     const cntElem3 = await browser.executeScript(`return cy.$().length`) as number;
 
     return hasAllToms && (cntElem1 * 2) === cntElem2 && cntElem3 == cntElem1;

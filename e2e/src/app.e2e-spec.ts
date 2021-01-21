@@ -6,6 +6,7 @@ describe('Visuall', () => {
 
   beforeEach(() => {
     page = new AppPage();
+    // waiting for angular causes too long waits. (3-5 seconds after page loaded). Even if angular doesn't detect any changes it waits.
     browser.waitForAngularEnabled(false);
   });
 
