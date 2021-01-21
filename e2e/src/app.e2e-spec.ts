@@ -1,5 +1,6 @@
 import { AppPage } from './app.po';
 import { browser, logging } from 'protractor';
+import { navigateTo } from './test-helper';
 
 describe('Visuall', () => {
   let page: AppPage;
@@ -10,99 +11,83 @@ describe('Visuall', () => {
     browser.waitForAngularEnabled(false);
   });
 
-  it('should have at least 7 buttons on navbar', async () => {
-    page.navigateTo();
-    const cnt = await page.getButtons().count();
-    expect(cnt >= 7).toEqual(true);
-  });
-
-  it('"Data>Sample Data" should bring some visible data', async () => {
-    page.navigateTo();
-    expect(page.getSampleData()).toEqual(true);
-  });
-
   it('Filter by "Person" Node Type: should hide all person nodes', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.filterByNodeType()).toEqual(true);
   });
 
   it('Filter by "ACTOR" Edge Type: should hide all actor edges', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.filterByEdgeType()).toEqual(true);
   });
 
   it('Query by AND rule birth > 1994 && death < 2020', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.queryByAndRule()).toEqual(true);
   });
 
   it('Timebar metric as AND rule birth > 1994 && death < 2020', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.timebarMetricAndRule()).toEqual(true);
   });
 
   it('Query by Condition get All Persons', async () => {
-    await page.navigateTo();
+    await navigateTo();
     expect(await page.queryByConditionRuleGetAll('Person', false)).toEqual(true);
   });
 
   it('Query by Condition get All COMPOSER', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.queryByConditionRuleGetAll('COMPOSER', true)).toEqual(true);
   });
 
   it('Edit Query by Rule Condition', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.editQueryByRule()).toEqual(true);
   });
 
   it('Should be able to delete rule and change class of the rule in Query by Rule Condition', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.deleteQueryByRuleRule()).toEqual(true);
   });
 
   it('Should be able to run a nested rule in Query by Rule', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.nestedQueryByRuleRule()).toEqual(true);
   });
 
   it('Table of Query By Rule should work properly ', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.testTableOfQueryByRuleRule()).toEqual(true);
   });
 
   it('Client-side filtering should work properly on Query By Rule', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.testClientSideFiltering()).toEqual(true);
   });
 
   it('Can add/remove Query By Rule', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.testAddRemoveRules2QueryByRule()).toEqual(true);
   });
 
   it('Can show object properties by selecting', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.showObjProps()).toEqual(true);
   });
 
-  it('Can save as JSON', async () => {
-    page.navigateTo();
-    expect(page.saveAsJson()).toEqual(true);
-  });
-
   it('Can group with Louvain using compounds', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.groupNodes()).toEqual(true);
   });
 
   it('Can calculate degree centrality and set widths', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.resizeBasedOnDegreeCentrality()).toEqual(true);
   });
 
   it('Should maintain settings when "Store user profile" is checked (true by default)', async () => {
-    page.navigateTo();
+    navigateTo();
     expect(page.maintainSettings()).toEqual(true);
   });
 
