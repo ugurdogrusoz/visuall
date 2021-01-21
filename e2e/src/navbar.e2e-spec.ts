@@ -26,6 +26,21 @@ describe('Navbar', () => {
     navigateTo();
     expect(page.saveAsJson()).toEqual(true);
   });
+
+  it('Can save selected as JSON', async () => {
+    navigateTo();
+    expect(page.saveSelectedAsJson()).toEqual(true);
+  });
+
+  it('Can save as PNG', async () => {
+    navigateTo();
+    expect(page.saveAsPNG()).toEqual(true);
+  });
+
+  it('Can save user profile', async () => {
+    navigateTo();
+    expect(page.saveAsPNG()).toEqual(true);
+  });
   
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
