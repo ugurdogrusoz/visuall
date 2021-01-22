@@ -1,5 +1,5 @@
 import { browser, by, element } from 'protractor';
-import { ANIM_WAIT, getFirstDisplayed, getSampleData, navigateTo, openTab, wait4Spinner } from './test-helper';
+import { ANIM_WAIT, getFirstDisplayed, getSampleData, navigateTo, openSubTab, openTab, wait4Spinner } from './test-helper';
 
 export class QueryByRulePage {
   async queryByAndRule() {
@@ -23,13 +23,8 @@ export class QueryByRulePage {
   }
 
   async beginQueryByRule() {
-    await this.openSubTab('Query by Rule');
+    await openSubTab('Query by Rule');
     element(by.css('img[alt="Add Rule"]')).click();
-    await browser.sleep(ANIM_WAIT);
-  }
-
-  async openSubTab(subTab: string) {
-    element(by.cssContainingText('b.va-heading2', subTab)).click();
     await browser.sleep(ANIM_WAIT);
   }
 
@@ -216,7 +211,7 @@ export class QueryByRulePage {
     // reload the page, the new rule should be also reloaded
     await navigateTo();
 
-    await this.openSubTab('Query by Rule');
+    await openSubTab('Query by Rule');
     element(by.css('img[title="Delete query rule"]')).click();
     return true;
   }

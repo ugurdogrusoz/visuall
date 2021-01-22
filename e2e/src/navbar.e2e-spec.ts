@@ -41,6 +41,31 @@ describe('Navbar', () => {
     navigateTo();
     expect(page.saveUserProfile()).toEqual(true);
   });
+
+  it('Can add group and remove groups manually', async () => {
+    navigateTo();
+    expect(page.addRemoveGroupsManually()).toEqual(true);
+  });
+
+  it('Can delete selected', async () => {
+    navigateTo();
+    expect(page.deleteSelected()).toEqual(true);
+  });
+
+  it('Use history to go back and forth', async () => {
+    navigateTo();
+    expect(page.useHistory()).toEqual(true);
+  });
+
+  it('Hide and/or show elements', async () => {
+    navigateTo();
+    expect(page.hideShowElems()).toEqual(true);
+  });
+
+  it('Expand/collapse nodes and edges', async () => {
+    navigateTo();
+    expect(page.expandCollapseElems()).toEqual(true);
+  });
   
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
