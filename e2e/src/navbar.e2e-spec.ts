@@ -39,7 +39,7 @@ describe('Navbar', () => {
 
   it('Can save user profile', async () => {
     navigateTo();
-    expect(page.saveAsPNG()).toEqual(true);
+    expect(page.saveUserProfile()).toEqual(true);
   });
   
   afterEach(async () => {

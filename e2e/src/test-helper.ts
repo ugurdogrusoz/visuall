@@ -17,10 +17,14 @@ export function getFirstDisplayed(locator: Locator) {
 }
 
 export async function getSampleData() {
-  await element(by.buttonText('Data')).click();
-  await element(by.buttonText('Sample Data')).click();
+  await navbarAction('Data', 'Sample Data');
   await wait4Spinner();
   return browser.executeScript('return cy.$("node:visible").length > 0 && cy.$("edge:visible").length > 0');
+}
+
+export async function navbarAction(dropdownBtn: string, actionBtn: string) {
+  await element(by.buttonText(dropdownBtn)).click();
+  await element(by.buttonText(actionBtn)).click();
 }
 
 export async function openTab(s: string) {
