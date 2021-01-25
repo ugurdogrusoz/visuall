@@ -163,7 +163,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   showAll() { this._cyService.showHideSelectedElements(false); }
 
-  search2Highlight() { document.getElementById('#highlight-search-inp').focus(); }
+  search2Highlight() { document.getElementById('highlight-search-inp').focus(); }
 
   highlightSelected() { this._cyService.highlightSelected(); }
 
