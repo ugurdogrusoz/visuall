@@ -66,6 +66,21 @@ describe('Navbar', () => {
     navigateTo();
     expect(page.expandCollapseElems()).toEqual(true);
   });
+
+  it('Can highlight by seleting or searching', async () => {
+    navigateTo();
+    expect(page.highlightElems()).toEqual(true);
+  });
+
+  it('Can show help modals', async () => {
+    navigateTo();
+    expect(page.showHelpModals()).toEqual(true);
+  });
+
+  it('Can clear data', async () => {
+    navigateTo();
+    expect(page.clearData()).toEqual(true);
+  });
   
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser

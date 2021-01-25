@@ -23,8 +23,8 @@ export async function getSampleData() {
 }
 
 export async function navbarAction(dropdownBtn: string, actionBtn: string) {
-  await element(by.buttonText(dropdownBtn)).click();
-  await element(by.buttonText(actionBtn)).click();
+  await element.all(by.buttonText(dropdownBtn)).first().click();
+  await element.all(by.buttonText(actionBtn)).first().click();
 }
 
 export async function openTab(s: string) {

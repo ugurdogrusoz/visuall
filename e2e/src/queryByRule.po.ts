@@ -8,7 +8,7 @@ export class QueryByRulePage {
     await browser.sleep(ANIM_WAIT);
     await this.addPropertyRule('birth_year', '≥', '1994');
 
-    element(by.css('img[title="Add"]')).click();
+    await getFirstDisplayed(by.css('img[title="Add"]')).click();
     await browser.sleep(ANIM_WAIT);
     element(by.buttonText('Condition')).click();
     await browser.sleep(ANIM_WAIT);
@@ -24,7 +24,7 @@ export class QueryByRulePage {
 
   async beginQueryByRule() {
     await openSubTab('Query by Rule');
-    element(by.css('img[alt="Add Rule"]')).click();
+    await getFirstDisplayed(by.css('img[alt="Add Rule"]')).click();
     await browser.sleep(ANIM_WAIT);
   }
 
@@ -97,17 +97,17 @@ export class QueryByRulePage {
     await this.addPropertyRule('primary_name', 'contains', 'Jo');
 
     // start inner OR
-    element(by.css('img[title="Add"]')).click();
+    await getFirstDisplayed(by.css('img[title="Add"]')).click();
     await browser.sleep(ANIM_WAIT);
     element(by.buttonText('OR')).click();
-    element(by.css('img[title="Add"]')).click();
+    await getFirstDisplayed(by.css('img[title="Add"]')).click();
     await browser.sleep(ANIM_WAIT);
     element(by.buttonText('Condition')).click();
     await browser.sleep(ANIM_WAIT);
     await this.addPropertyRule('ACTRESS', '>', '3');
 
     // second rule of inner OR
-    element(by.css('img[title="Add"]')).click();
+    await getFirstDisplayed(by.css('img[title="Add"]')).click();
     await browser.sleep(ANIM_WAIT);
     element(by.buttonText('Condition')).click();
     await browser.sleep(ANIM_WAIT);

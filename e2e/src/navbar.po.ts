@@ -1,4 +1,4 @@
-import { browser, by, element } from 'protractor';
+import { browser, by, element, protractor } from 'protractor';
 import { ANIM_WAIT, getFirstDisplayed, navbarAction, openSubTab, openTab, wait4Spinner } from './test-helper';
 
 export class NavbarPage {
@@ -13,14 +13,14 @@ export class NavbarPage {
   }
 
   async saveAsJson() {
-    const hasVisibleNodesAndEdges = await this.getSampleData();
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
     await navbarAction('File', 'Save');
     await browser.sleep(ANIM_WAIT);
     return hasVisibleNodesAndEdges;
   }
 
   async saveSelectedAsJson() {
-    const hasVisibleNodesAndEdges = await this.getSampleData();
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
     await element(by.buttonText('File')).click();
     await browser.executeScript('cy.$().select()');
     await element(by.buttonText('Save Selected Objects')).click();
@@ -29,7 +29,7 @@ export class NavbarPage {
   }
 
   async saveAsPNG() {
-    const hasVisibleNodesAndEdges = await this.getSampleData();
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
     await this.click2SaveAsPng(1);
     await browser.executeScript('cy.zoom(3)');
     await this.click2SaveAsPng(2);
@@ -50,7 +50,7 @@ export class NavbarPage {
   }
 
   async addRemoveGroupsManually() {
-    const hasVisibleNodesAndEdges = await this.getSampleData();
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
     await browser.executeScript('cy.$().select()');
     await navbarAction('Edit', 'Add Group for Selected');
 
@@ -74,22 +74,20 @@ export class NavbarPage {
   }
 
   async deleteSelected() {
-    const hasVisibleNodesAndEdges = await this.getSampleData();
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
     const cntBefore = await browser.executeScript('return cy.$().length') as number;
-    console.log('cnt Before: ', cntBefore);
     await browser.executeScript('cy.$().slice(0, 10).select()');
     await navbarAction('Edit', 'Delete Selected');
     const cntAfter = await browser.executeScript('return cy.$().length') as number;
-    console.log('cnt After: ', cntAfter);
     const isDeleted = (cntBefore - cntAfter) >= 10;
     return hasVisibleNodesAndEdges && isDeleted;
   }
 
   async useHistory() {
-    const hasVisibleNodesAndEdges = await this.getSampleData();
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
     const cntBefore = await browser.executeScript('return cy.$().length') as number;
     await openSubTab('Query by Rule');
-    element(by.css('img[alt="Add Rule"]')).click();
+    getFirstDisplayed(by.css('img[alt="Add Rule"]')).click();
     await browser.sleep(ANIM_WAIT);
     await element(by.buttonText('Condition')).click();
     await element(by.css('img[title="Add/Update"]')).click();
@@ -114,19 +112,16 @@ export class NavbarPage {
   }
 
   async hideShowElems() {
-    const hasVisibleNodesAndEdges = await this.getSampleData();
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
     const cnt0 = await browser.executeScript('return cy.$(":visible").length') as number;
     await browser.executeScript('cy.$().slice(0, 10).select()');
     await navbarAction('View', 'Hide Selected');
-    console.log('l1');
     await wait4Spinner();
-    console.log('l2');
     const cnt1 = await browser.executeScript('return cy.$(":visible").length') as number;
     const isHideSelected = cnt1 < cnt0;
 
     await navbarAction('View', 'Show All');
     await browser.sleep(ANIM_WAIT);
-    console.log('l3');
     const cnt2 = await browser.executeScript('return cy.$(":visible").length') as number;
     // some collapsed edges might be expanded. So cnt2 can be greater.
     const isShowedAll = cnt2 >= cnt0;
@@ -134,7 +129,7 @@ export class NavbarPage {
   }
 
   async expandCollapseElems() {
-    const hasVisibleNodesAndEdges = await this.getSampleData();
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
     await openSubTab('Group Nodes');
     getFirstDisplayed(by.cssContainingText('label', 'By the Louvain modularity algorithm')).click();
     getFirstDisplayed(by.css('input[value="Execute"]')).click();
@@ -163,6 +158,58 @@ export class NavbarPage {
     const isCompoundEdgesMaintained = compoundEdgeCnt3 == compoundEdgeCnt;
     return hasVisibleNodesAndEdges && compoundCount > 2 && isCollapsedNodesProperly
       && isExpandedNodesProperly && isCompoundEdgesExpanded && isCompoundEdgesMaintained;
+  }
+
+  async highlightElems() {
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const js4ClassSum = `return cy.$().map(x => x.classes().length).reduce((s,x) => s+x, 0);`
+    const sumClassCnt = await browser.executeScript(js4ClassSum) as number;
+    await navbarAction('Highlight', 'Search...');
+    const activeElemId = await (await browser.switchTo().activeElement()).getAttribute('id');
+    const inpId = 'highlight-search-inp';
+    const isFocusedRight = activeElemId == inpId;
+    await element(by.id(inpId)).sendKeys('a');
+    await browser.actions().sendKeys(protractor.Key.ENTER).perform();
+    const sumClassCnt2 = await browser.executeScript(js4ClassSum) as number;
+    // remove highlights
+    await navbarAction('Highlight', 'Remove Highlights');
+    const sumClassCnt3 = await browser.executeScript(js4ClassSum) as number;
+    const isAddedClasses = sumClassCnt2 > sumClassCnt;
+    const isRemovedClasses = sumClassCnt3 == sumClassCnt;
+    // highlight selected
+    await browser.executeScript(`cy.$()[0].select();`);
+    await navbarAction('Highlight', 'Selected');
+    const sumClassCnt4 = await browser.executeScript(js4ClassSum) as number;
+    const isAddedAClass = sumClassCnt4 == sumClassCnt + 1;
+    await navbarAction('Highlight', 'Remove Highlights');
+    const sumClassCnt5 = await browser.executeScript(js4ClassSum) as number;
+    const isRemovedClasses2 = sumClassCnt5 == sumClassCnt;
+    // highlight neighbors of selected
+    await browser.executeScript(`cy.$()[0].select();`);
+    await navbarAction('Highlight', 'Neighbors of Selected');
+    const sumClassCnt6 = await browser.executeScript(js4ClassSum) as number;
+    const isAddedAClass2 = sumClassCnt6 >= sumClassCnt + 2;
+
+    return hasVisibleNodesAndEdges && isFocusedRight && isAddedClasses && isRemovedClasses
+      && isAddedAClass && isRemovedClasses2 && isAddedAClass2;
+  }
+
+  async showHelpModals() {
+    await navbarAction('Help', 'Quick Help');
+    await browser.sleep(ANIM_WAIT);
+    await getFirstDisplayed(by.css('button.close')).click();
+
+    await navbarAction('Help', 'About');
+    await browser.sleep(ANIM_WAIT);
+    await getFirstDisplayed(by.css('button.close')).click();
+    return true;
+  }
+
+  async clearData() {
+    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean as boolean;
+    await navbarAction('Data', 'Clear Data');
+    const isClear = await browser.executeScript('return cy.$().length == 0') as boolean;
+    return isClear && hasVisibleNodesAndEdges;
   }
 
   private async click2saveUserProfile(isSaveSettings: boolean, isSaveFilteringRules: boolean, isSaveTimebarMetrics: boolean) {
