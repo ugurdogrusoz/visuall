@@ -81,7 +81,17 @@ describe('Navbar', () => {
     navigateTo();
     expect(page.clearData()).toEqual(true);
   });
-  
+
+  it('Can load graph from JSON file', async () => {
+    navigateTo();
+    expect(page.loadGraphFromJsonFile()).toEqual(true);
+  });
+
+  it('Can load user profile from JSON file', async () => {
+    navigateTo();
+    expect(page.loadUserProfileFromJsonFile()).toEqual(true);
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);

@@ -1,7 +1,8 @@
 import { browser, by, element, protractor } from 'protractor';
 import { ANIM_WAIT, getFirstDisplayed, navbarAction, openSubTab, openTab, wait4Spinner } from './test-helper';
-
+import { FILE_PATH } from './../conf'
 export class NavbarPage {
+
   async getSampleData() {
     await navbarAction('Data', 'Sample Data');
     await wait4Spinner();
@@ -210,6 +211,23 @@ export class NavbarPage {
     await navbarAction('Data', 'Clear Data');
     const isClear = await browser.executeScript('return cy.$().length == 0') as boolean;
     return isClear && hasVisibleNodesAndEdges;
+  }
+
+  async loadGraphFromJsonFile() {
+    await navbarAction('File', 'Load...');
+    element.all(by.css('input[type="file"]')).get(1).sendKeys(FILE_PATH + 'visuall_sample_graph.json');
+    await browser.sleep(ANIM_WAIT);
+    const cntCollapsedNodes = await browser.executeScript(`return cy.$('.cy-expand-collapse-collapsed-node').length`) as number;
+    const cntParentNodes = await browser.executeScript(`return cy.$(':parent').length`) as number;
+    const cntClusterNodes = await browser.executeScript(`return cy.$('.Cluster').length`) as number;
+    return cntCollapsedNodes == 3 && cntClusterNodes == 7 && cntParentNodes == 4;
+  }
+
+  async loadUserProfileFromJsonFile() {
+    await navbarAction('File', 'Load User Profile...');
+    element.all(by.css('input[type="file"]')).get(1).sendKeys(FILE_PATH + 'Visuall_User_Profile.vall');
+    await browser.sleep(ANIM_WAIT);
+    return true;
   }
 
   private async click2saveUserProfile(isSaveSettings: boolean, isSaveFilteringRules: boolean, isSaveTimebarMetrics: boolean) {
