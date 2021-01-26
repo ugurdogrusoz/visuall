@@ -5,6 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
+    "start-logs": "node file-server.js",
     "build": "ng build && node time-stamper.js",
     "test": "ng test",
     "lint": "ng lint",
