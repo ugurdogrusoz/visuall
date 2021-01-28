@@ -9,7 +9,10 @@ exports.config = {
     './src/**/*.e2e-spec.ts'
   ],
   capabilities: {
-    'browserName': 'chrome'
+    'browserName': 'chrome',
+    'chromeOptions': {
+      args: ['--headless']
+    }
   },
   directConnect: true,
   baseUrl: 'http://visuall.herokuapp.com/',
@@ -17,7 +20,7 @@ exports.config = {
   jasmineNodeOpts: {
     showColors: true,
     defaultTimeoutInterval: 90000,
-    print: function() {}
+    print: function () { }
   },
   onPrepare() {
     require('ts-node').register({

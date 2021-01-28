@@ -55,8 +55,6 @@ export class NavbarPage {
     await browser.executeScript('cy.$().select()');
     await navbarAction('Edit', 'Add Group for Selected');
 
-    await wait4Spinner();
-
     const has1Group = await browser.executeScript('return cy.$(":parent").length == 1');
     await browser.executeScript('cy.$().unselect()');
     await browser.executeScript('cy.$(":parent").select()');
