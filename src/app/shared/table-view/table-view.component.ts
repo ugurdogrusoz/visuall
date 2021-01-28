@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, Pipe, PipeTransform, NgZone } from '@angular/core';
 import { GlobalVariableService } from '../../visuall/global-variable.service';
 import { CytoscapeService } from '../../visuall/cytoscape.service';
 import { EV_MOUSE_ON, EV_MOUSE_OFF, debounce } from '../../visuall/constants';
@@ -53,7 +53,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
   @Output() onFilteringChanged = new EventEmitter<TableFiltering>();
   @Output() onDataForQueryResult = new EventEmitter<{ dbIds: number[] | string[], tableIdx: number[] }>();
 
-  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService) { }
+  constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _ngZone: NgZone) { }
 
   ngOnInit() {
     this.tableFillSubs = this.tableFilled.subscribe(this.onTableFilled.bind(this));
@@ -121,15 +121,17 @@ export class TableViewComponent implements OnInit, OnDestroy {
   }
 
   private elemHovered(e) {
-    if (e.type == 'mouseover') {
-      if (this.params.isUseCySelector4Highlight) {
-        this.hoveredElemId = '#' + e.target.id();
+    this._ngZone.run(() => {
+      if (e.type == 'mouseover') {
+        if (this.params.isUseCySelector4Highlight) {
+          this.hoveredElemId = '#' + e.target.id();
+        } else {
+          this.hoveredElemId = e.target.id().substr(1);
+        }
       } else {
-        this.hoveredElemId = e.target.id().substr(1);
+        this.hoveredElemId = '-';
       }
-    } else {
-      this.hoveredElemId = '-';
-    }
+    });
   }
 
   private onTableFilled() {
