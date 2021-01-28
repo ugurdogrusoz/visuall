@@ -11,47 +11,47 @@ describe('Query By Rule', () => {
     browser.waitForAngularEnabled(false);
   });
 
-  it('Query by AND rule birth > 1994 && death < 2020', async () => {
+  it('rule for "birth > 1994 AND death < 2020"', async () => {
     navigateTo();
     expect(page.queryByAndRule()).toEqual(true);
   });
 
-  it('Query by Condition get All Persons', async () => {
+  it('Condition get All Persons', async () => {
     await navigateTo();
     expect(await page.queryByConditionRuleGetAll('Person', false)).toEqual(true);
   });
 
-  it('Query by Condition get All COMPOSER', async () => {
+  it('Condition get All COMPOSER', async () => {
     navigateTo();
     expect(page.queryByConditionRuleGetAll('COMPOSER', true)).toEqual(true);
   });
 
-  it('Edit Query by Rule Condition', async () => {
+  it('Edit Rule Condition', async () => {
     navigateTo();
     expect(page.editQueryByRule()).toEqual(true);
   });
 
-  it('Should be able to delete rule and change class of the rule in Query by Rule Condition', async () => {
+  it('Should be able to delete rule and change class of the rule', async () => {
     navigateTo();
     expect(page.deleteQueryByRuleRule()).toEqual(true);
   });
 
-  it('Should be able to run a nested rule in Query by Rule', async () => {
+  it('Should be able to run a nested rule', async () => {
     navigateTo();
     expect(page.nestedQueryByRuleRule()).toEqual(true);
   });
 
-  it('Table of Query By Rule should work properly ', async () => {
+  it('Table of should work properly ', async () => {
     navigateTo();
     expect(page.testTableOfQueryByRuleRule()).toEqual(true);
   });
 
-  it('Client-side filtering should work properly on Query By Rule', async () => {
+  it('Client-side filtering should work properly', async () => {
     navigateTo();
     expect(page.testClientSideFiltering()).toEqual(true);
   });
 
-  it('Can add/remove Query By Rule', async () => {
+  it('Can add/remove query', async () => {
     navigateTo();
     expect(page.testAddRemoveRules2QueryByRule()).toEqual(true);
   });
