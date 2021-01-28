@@ -6,7 +6,8 @@
       </option>
     </select>
   </div>
-  <div class="d-flex flex-wrap align-items-center justify-content-center m-1">
+  <div *ngIf="selectedPropFn && selectedPropFn.length > 0"
+    class="d-flex flex-wrap align-items-center justify-content-center m-1">
     <div class="custom-control custom-checkbox m-1">
       <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isDirectedGraph" />
       <label class="form-check-label va-text">Directed</label>
@@ -22,14 +23,16 @@
     <input type="number" (keydown.enter)="avgNodeSizeChanged()" min="5" max="1000" title="Average node size"
       [(ngModel)]="currNodeSize" class="mx-1 inp-3-char std-inp-hei form-control va-small-text">
   </div>
-  <div class="d-flex flex-wrap align-items-center justify-content-center m-1">
+  <div *ngIf="selectedPropFn && selectedPropFn.length > 0"
+    class="d-flex flex-wrap align-items-center justify-content-center m-1">
     <div class="custom-control custom-checkbox m-1">
       <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isMapBadgeSizes" />
       <label class="form-check-label va-text">Adjust badge size</label>
     </div>
     <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="badgeColor"></app-color-picker>
   </div>
-  <div class="d-flex flex-wrap align-items-center justify-content-center m-1">
+  <div *ngIf="selectedPropFn && selectedPropFn.length > 0"
+    class="d-flex flex-wrap align-items-center justify-content-center m-1">
     <input class="btn btn-sm btn-dark va-text m-1" type="button" value="Execute" (click)="runProperty()">
     <div class="custom-control custom-checkbox m-1">
       <input type="checkbox" class="form-check-input cb-filter" [(ngModel)]="isOnSelected" />
