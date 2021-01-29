@@ -221,6 +221,20 @@ export class QueryByRulePage {
     await browser.sleep(ANIM_WAIT);
   }
 
+  async testHighlightOnHover() {
+    await openTab('Settings');
+    // enable highlight on hover
+    await element.all(by.css('input[type="checkbox"]')).filter(x => x.isDisplayed()).get(2).click();
+    await openTab('Map');
+    const havePeople = await this.queryByConditionRuleGetAll('Person', false);
+    await browser.executeScript(`cy.nodes()[0].emit('mouseover');`);
+    const isHigh = await browser.executeScript(`return cy.nodes()[0].classes().join().includes('emphasize');`) as boolean;
+    await browser.sleep(ANIM_WAIT * 2);
+    const isHighRow = await element(by.css('tr.highlighted-row')).isPresent();
+    const isHighRow2 = await element(by.css('tr.highlighted-row')).isDisplayed();
+    return havePeople && isHigh && isHighRow && isHighRow2;
+  }
+
   /** clicks to "Graph" checkbox to load graph elements to cytoscape.js
    */
   async click2graph() {

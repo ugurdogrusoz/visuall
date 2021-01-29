@@ -56,6 +56,10 @@ describe('Query By Rule', () => {
     expect(page.testAddRemoveRules2QueryByRule()).toEqual(true);
   });
 
+  it('Highlight graph element and corresponding table row on hover', async () => {
+    navigateTo();
+    expect(page.testHighlightOnHover()).toEqual(true);
+  });
 
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
