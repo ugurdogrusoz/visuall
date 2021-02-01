@@ -4,7 +4,6 @@ import { TimebarGraphInclusionTypes, TimebarStatsInclusionTypes, MergedElemIndic
 import { UserProfileService } from '../../user-profile.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { MIN_HIGHTLIGHT_WIDTH, MAX_HIGHTLIGHT_WIDTH, getCyStyleFromColorAndWid } from '../../constants';
-import flatpickr from 'flatpickr';
 import { CustomizationModule } from 'src/app/custom/customization.module';
 
 @Component({
@@ -272,4 +271,33 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
       this.highlightWidth = MAX_HIGHTLIGHT_WIDTH;
     }
   }
+
+  resetGeneralSettings() {
+    this.transferSubjectValues(this._g.userPrefsFromFiles, this._g.userPrefs, 'timebar');
+    this.setViewUtilsStyle();
+    this.fillUIFromMemory();
+    this._g.updateSelectionCyStyle();
+  }
+
+  resetTimebarSettings() {
+    this.transferSubjectValues(this._g.userPrefsFromFiles.timebar, this._g.userPrefs.timebar);
+    this.fillUIFromMemory();
+  }
+
+  private transferSubjectValues(from, to, skip = null) {
+    for (const k in from) {
+      if (skip && k == skip) {
+        continue;
+      }
+      let p1 = from[k];
+      let p2 = to[k];
+      if (p1 instanceof BehaviorSubject) {
+        (p2 as BehaviorSubject<any>).next((p1 as BehaviorSubject<any>).getValue());
+      } else {
+        this.transferSubjectValues(p1, p2);
+      }
+    }
+  }
+
+
 }
