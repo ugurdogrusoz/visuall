@@ -298,6 +298,4 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
       }
     }
   }
-
-
 }
