@@ -26,11 +26,11 @@ Visu*all* is **not** an open source or free software. Please contact [i-Vis Rese
 
 ## User Guide
 
-A User Guide for the sample application of Visu*all* can be found [here](doc/UG.md). An application based on Visu*all* could naturally base their User Guide on this guide.
+A User Guide for the sample application of Visu*all* can be found [here](https://docs.google.com/document/d/1YAl43m63T1Zovi-yOQECWyr8_o9hWkMUN6TlcGdk63Y). An application based on Visu*all* could naturally base their User Guide on this guide.
 
 ## Developer Guide
 
-A Developer Guide that details how a custom application can be built using  Visu*all* can be found [here](doc/DG.md).
+A Developer Guide that details how a custom application can be built using  Visu*all* can be found [here](https://docs.google.com/document/d/1Sk4Xy4hJnYsmevef9e6lcHt_6a0nKkf8eJuEdiU6W6Q).
 
 ## Credits
 
