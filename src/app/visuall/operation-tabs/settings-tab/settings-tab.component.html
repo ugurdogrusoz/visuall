@@ -15,8 +15,8 @@
         <label class="form-check-label va-text">Show query results using &nbsp;</label>
         <div class="form-check-inline va-text" *ngFor="let str of mergedElemIndicators; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'mergedElemIndicator')"
-              name="optradio1" [checked]="i==mergedElemIndicator">{{str}}
+            <input type="radio" [(ngModel)]="mergedElemIndicator" [value]="i" class="form-check-input"
+              (click)="settingChanged(i, 'mergedElemIndicator')" name="optradio1">{{str}}
           </label>
         </div>
       </div>
@@ -26,8 +26,8 @@
         <label class="form-check-label va-text">Group using &nbsp;</label>
         <div class="form-check-inline va-text" *ngFor="let str of groupingOptions; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'groupingOption')" name="optradio2"
-              [checked]="i==groupingOption">{{str}}
+            <input type="radio" [(ngModel)]="groupingOption" [value]="i" class="form-check-input"
+              (click)="settingChanged(i, 'groupingOption')" name="optradio2">{{str}}
           </label>
         </div>
       </div>
@@ -37,8 +37,8 @@
         <div class="form-check-label va-text">Node label style &nbsp;</div>
         <div class="form-check-inline va-text" *ngFor="let str of nodeLabelWrapTypes; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'nodeLabelWrap')" name="optradio3"
-              [checked]="i==nodeLabelWrap">{{str}}
+            <input type="radio" [(ngModel)]="nodeLabelWrap" [value]="i" class="form-check-input"
+              (click)="settingChanged(i, 'nodeLabelWrap')" name="optradio3">{{str}}
           </label>
         </div>
       </div>
@@ -87,8 +87,8 @@
         <div class="form-check-label va-text">Object inclusion type: </div>
         <div class="form-check-inline va-text" *ngFor="let str of timebarGraphInclusionTypes; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'objectInclusionType')"
-              name="optradio4" [checked]="i==graphInclusionType">{{str}}
+            <input type="radio" [(ngModel)]="graphInclusionType" [value]="i" class="form-check-input"
+              (click)="settingChanged(i, 'objectInclusionType')" name="optradio4">{{str}}
           </label>
         </div>
       </div>
@@ -207,19 +207,20 @@
         <div class="form-check-label va-text">Statistics inclusion type: </div>
         <div class="form-check-inline va-text" *ngFor="let str of timebarStatsInclusionTypes; let i = index;">
           <label class="form-check-label">
-            <input type="radio" class="form-check-input" (click)="settingChanged(i, 'timebar.statsInclusionType')"
-              name="optradio5" [disabled]="!timebarBoolSettings[0].isEnable" [checked]="i==statsInclusionType">{{str}}
+            <input type="radio" [(ngModel)]="statsInclusionType" [value]="i" class="form-check-input"
+              (click)="settingChanged(i, 'timebar.statsInclusionType')" name="optradio5"
+              [disabled]="!timebarBoolSettings[0].isEnable">{{str}}
           </label>
         </div>
       </div>
     </div>
+    <input class="btn btn-sm btn-dark va-text m-2 center" type="button" (click)="resetTimebarSettings()" value="Default"
+      title="Reset to Default">
     <div class="card border-0 m-1">
       <div class="form">
         <app-timebar-metric-editor></app-timebar-metric-editor>
       </div>
     </div>
-    <input class="btn btn-sm btn-dark va-text m-2 center" type="button" (click)="resetTimebarSettings()" value="Default"
-      title="Reset to Default">
   </div>
 </div>
 
