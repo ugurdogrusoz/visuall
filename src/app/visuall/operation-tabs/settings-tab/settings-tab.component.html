@@ -2,7 +2,7 @@
   <div class="panel-heading" data-toggle="collapse" data-target="#general-settings" aria-expanded="true">
     <span class="panel-title accordion-toggle"><b class="va-heading2">General</b></span>
   </div>
-  <div id="general-settings" class="collapse show m-1">
+  <div id="general-settings" class="collapse show">
     <div class="card border-0 m-1" *ngFor="let setting of generalBoolSettings; let i = index;">
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="checkbox" [(ngModel)]="setting.isEnable"
