@@ -56,6 +56,7 @@ describe('Query By Rule', () => {
     expect(page.testAddRemoveRules2QueryByRule()).toEqual(true);
   });
 
+  // checks https://github.com/ugurdogrusoz/visuall/issues/341
   it('Highlight graph element and corresponding table row on hover', async () => {
     navigateTo();
     expect(page.testHighlightOnHover()).toEqual(true);
