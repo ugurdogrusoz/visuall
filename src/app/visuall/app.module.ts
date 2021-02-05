@@ -35,6 +35,7 @@ import { RuleDropdownComponent } from './rule-dropdown/rule-dropdown.component';
 import { SharedModule } from '../shared/shared.module';
 import { CustomizationModule } from '../custom/customization.module';
 import { PanelContainerComponent } from './panel-container/panel-container.component';
+import { LoadGraphFromFileModalComponent } from './popups/load-graph-from-file-modal/load-graph-from-file-modal.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { PanelContainerComponent } from './panel-container/panel-container.compo
     RuleTreeComponent,
     RuleDropdownComponent,
     PanelContainerComponent,
+    LoadGraphFromFileModalComponent,
   ],
   imports: [
     BrowserModule,

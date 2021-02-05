@@ -10,6 +10,8 @@ import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './
 import { UserProfileService } from './user-profile.service';
 import { LouvainClustering } from '../../lib/louvain-clustering/LouvainClustering';
 import { CyExtService } from './cy-ext.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { LoadGraphFromFileModalComponent } from './popups/load-graph-from-file-modal/load-graph-from-file-modal.component';
 @Injectable({
   providedIn: 'root'
 })
@@ -21,7 +23,7 @@ export class CytoscapeService {
   louvainClusterer: LouvainClustering;
 
   constructor(private _g: GlobalVariableService, private _timebarService: TimebarService, private _cyExtService: CyExtService,
-    private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService, private _ngZone: NgZone) {
+    private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService, private _ngZone: NgZone, private _modalService: NgbModal,) {
     this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g, this._profile);
     this.louvainClusterer = new LouvainClustering();
     this._timebarService.hideCompoundsFn = this.hideCompounds.bind(this);
@@ -495,7 +497,12 @@ export class CytoscapeService {
   loadFile(file: File) {
     C.readTxtFile(file, (txt) => {
       try {
-        this._g.expandCollapseApi.loadJson(txt);
+        if (this._g.cy.$().length == 0) {
+          this._g.expandCollapseApi.loadJson(txt, false);
+        } else {
+          const modal = this._modalService.open(LoadGraphFromFileModalComponent);
+          modal.componentInstance.txt = txt;
+        }
       } catch (e) {
         this._g.showErrorModal('Load', 'Cannot process provided JSON file!')
       }
