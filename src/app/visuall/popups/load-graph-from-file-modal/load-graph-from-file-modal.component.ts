@@ -20,15 +20,13 @@ export class LoadGraphFromFileModalComponent implements AfterViewChecked {
   replace() {
     this._g.layout.clusters = null;
     this._g.cy.remove(this._g.cy.$());
-    console.log('is override: ', this.isOverrideExisting);
-    this._g.expandCollapseApi.loadJson(this.txt, this.isOverrideExisting);
-    this.activeModal.dismiss();
-  }
-
-  merge() {
-    console.log('is override: ', this.isOverrideExisting);
-    this._g.expandCollapseApi.loadJson(this.txt, this.isOverrideExisting);
-    this.activeModal.dismiss();
+    try {
+      this._g.expandCollapseApi.loadJson(this.txt, this.isOverrideExisting);
+      this.activeModal.dismiss();
+    } catch(e) {
+      this.activeModal.dismiss();
+      this._g.showErrorModal('Load', 'Cannot process provided JSON file!');
+    }
   }
 
 }

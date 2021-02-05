@@ -504,7 +504,7 @@ export class CytoscapeService {
           modal.componentInstance.txt = txt;
         }
       } catch (e) {
-        this._g.showErrorModal('Load', 'Cannot process provided JSON file!')
+        this._g.showErrorModal('Load', 'Cannot process provided JSON file!');
       }
     });
   }
