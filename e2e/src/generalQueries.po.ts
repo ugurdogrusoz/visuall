@@ -14,9 +14,9 @@ export class GeneralQueriesPage {
     await navbarAction('Data', 'Clear Data');
     await browser.sleep(ANIM_WAIT);
     await getFirstDisplayed(by.css('input[value="Execute"]')).click();
-    await wait4Spinner();
-    await element(by.css('input.cb-table-all')).click();
-    await element(by.css('img[title="Merge selected to graph"]')).click();
+    await browser.sleep(ANIM_WAIT * 2);
+    await getFirstDisplayed(by.css('input.cb-table-all')).click();
+    await getFirstDisplayed(by.css('img[title="Merge selected to graph"]')).click();
     await wait4Spinner();
 
     return hasElems && await browser.executeScript('return cy.nodes().length > 0') as boolean

@@ -9,7 +9,7 @@ import { Subject, Subscription } from 'rxjs';
 import { TableViewInput, TableData, TableDataType, TableFiltering, TableRowMeta, property2TableData } from '../../../shared/table-view/table-view-types';
 import { DbResponse, DbResponseType, GraphResponse, HistoryMetaData } from '../../db-service/data-types';
 import { GroupTabComponent } from './group-tab/group-tab.component';
-import { MergedElemIndicatorTypes } from '../../user-preference.js';
+import { MergedElemIndicatorTypes } from '../../user-preference';
 import { UserProfileService } from '../../user-profile.service';
 import { CustomizationModule } from 'src/app/custom/customization.module';
 
