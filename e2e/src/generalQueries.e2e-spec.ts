@@ -16,6 +16,16 @@ describe('Timebar', () => {
     expect(page.testNeighoodQuery()).toEqual(true);
   });
 
+  it('"Get graph of interest" query should bring some nodes and edges', async () => {
+    navigateTo();
+    expect(page.testGoIQuery()).toEqual(true);
+  });
+
+  it('"Get common targets/regulators" query should bring some nodes and edges', async () => {
+    navigateTo();
+    expect(page.testCommonTargetRegulatorQuery()).toEqual(true);
+  });
+
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
     const logs = await browser.manage().logs().get(logging.Type.BROWSER);
