@@ -3,7 +3,6 @@ import cytoscape from 'cytoscape';
 import * as C from './constants';
 import { GlobalVariableService } from './global-variable.service';
 import { TimebarService } from './timebar.service';
-import { MarqueeZoomService } from './cytoscape/marquee-zoom.service';
 import { GraphResponse, GraphElem, CyEdge, CyNode } from './db-service/data-types';
 import { UserPrefHelper } from './user-pref-helper';
 import { MergedElemIndicatorTypes, TextWrapTypes, GroupingOptionTypes } from './user-preference';
@@ -23,7 +22,7 @@ export class CytoscapeService {
   louvainClusterer: LouvainClustering;
 
   constructor(private _g: GlobalVariableService, private _timebarService: TimebarService, private _cyExtService: CyExtService,
-    private _marqueeZoomService: MarqueeZoomService, private _profile: UserProfileService, private _ngZone: NgZone, private _modalService: NgbModal,) {
+    private _profile: UserProfileService, private _ngZone: NgZone, private _modalService: NgbModal,) {
     this.userPrefHelper = new UserPrefHelper(this, this._timebarService, this._g, this._profile);
     this.louvainClusterer = new LouvainClustering();
     this._timebarService.hideCompoundsFn = this.hideCompounds.bind(this);
@@ -71,7 +70,6 @@ export class CytoscapeService {
     this.bindComponentSelector();
 
     this.bindSelectObjOfThisType();
-    this._marqueeZoomService.init();
     (<any>window).cy = this._g.cy;
     this._g.cy.on('select unselect', (e) => { this._ngZone.run(() => { this.elemSelected(e) }); });
     this._g.cy.on('select unselect add remove tap', () => { this._ngZone.run(() => { this.statsChanged() }); });

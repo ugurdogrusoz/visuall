@@ -136,7 +136,9 @@ export class CyExtService {
         return false;
       },
       neighborSelectTime: 500, //ms, time to taphold to select desired neighbors,
-      colorCount: MAX_HIGHLIGHT_CNT
+      colorCount: MAX_HIGHLIGHT_CNT,
+      htmlElem4marqueeZoom: '#cy',
+      marqueeZoomCursor: window.location.href + 'assets/img/zoom-cursor.svg'
     };
     this._g.viewUtils = this._g.cy.viewUtilities(options);
     this._g.updateSelectionCyStyle();

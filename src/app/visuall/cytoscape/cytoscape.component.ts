@@ -2,7 +2,6 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { CytoscapeService } from '../cytoscape.service';
 import { TimebarService } from '../timebar.service';
 import { ContextMenuService } from '../context-menu/context-menu.service';
-import { MarqueeZoomService } from './marquee-zoom.service';
 import { GlobalVariableService } from '../global-variable.service';
 
 @Component({
@@ -12,7 +11,7 @@ import { GlobalVariableService } from '../global-variable.service';
 })
 export class CytoscapeComponent implements OnInit {
 
-  constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService, private _ctxMenuService: ContextMenuService, private _marqueeService: MarqueeZoomService) { }
+  constructor(private _g: GlobalVariableService, private _cyService: CytoscapeService, private _ctxMenuService: ContextMenuService) { }
   cyClass = false;
   private keyDown = {
     'Alt': false,
@@ -26,7 +25,6 @@ export class CytoscapeComponent implements OnInit {
   ngOnInit() {
     this._cyService.initCy(document.getElementById('cy'));
     this._ctxMenuService.bindContextMenuExtension();
-    this._marqueeService.setChangeClassFn(this.setClassForCyDiv.bind(this));
   }
 
   setClassForCyDiv(b: boolean) {
