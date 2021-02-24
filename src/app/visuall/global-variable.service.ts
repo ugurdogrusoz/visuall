@@ -111,6 +111,7 @@ export class GlobalVariableService {
       this.layout.quality = 'proof'
     }
     this.layout.tile = isRandomize;
+    this.layoutUtils.setOption('randomize', isRandomize);
   }
 
   applyClassFiltering() {
@@ -161,7 +162,7 @@ export class GlobalVariableService {
           return (this.userPrefs.selectionWidth.getValue() + e.width()) / 2 + 'px';
         },
       }).update();
-    
+
     this.addStyle4Emphasize();
   }
 
