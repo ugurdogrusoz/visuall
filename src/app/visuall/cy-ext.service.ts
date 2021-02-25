@@ -48,7 +48,7 @@ export class CyExtService {
   }
 
   private bindLayoutUtilitiesExtension() {
-    this._g.layoutUtils = this._g.cy.layoutUtilities({ desiredAspectRatio: this._g.cy.width() / this._g.cy.height(), componentSpacing: 30 });
+    this._g.layoutUtils = this._g.cy.layoutUtilities({ desiredAspectRatio: this._g.cy.width() / this._g.cy.height() });
   }
 
   bindNavigatorExtension() {

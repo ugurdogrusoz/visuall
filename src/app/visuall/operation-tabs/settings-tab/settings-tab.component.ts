@@ -69,6 +69,7 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
       { text: 'Show results of latest query only', isEnable: false, path2userPref: 'isOnlyHighlight4LatestQuery' },
       { text: 'Collapse multiple edges based on type', isEnable: false, path2userPref: 'isCollapseEdgesBasedOnType' },
       { text: 'Collapse multiple edges on load', isEnable: false, path2userPref: 'isCollapseMultiEdgesOnLoad' },
+      { text: 'Tile disconnected nodes on layout', isEnable: true, path2userPref: 'isTileDisconnectedOnLayout' },
     ];
 
     this.timebarBoolSettings = [
@@ -108,6 +109,7 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
     this.generalBoolSettings[5].isEnable = up.isOnlyHighlight4LatestQuery.getValue();
     this.generalBoolSettings[6].isEnable = up.isCollapseEdgesBasedOnType.getValue();
     this.generalBoolSettings[7].isEnable = up.isCollapseMultiEdgesOnLoad.getValue();
+    this.generalBoolSettings[8].isEnable = up.isTileDisconnectedOnLayout.getValue();
 
     this.nodeLabelWrap = up.nodeLabelWrap.getValue();
     this.mergedElemIndicator = up.mergedElemIndicator.getValue();

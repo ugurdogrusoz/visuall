@@ -7,6 +7,7 @@ export interface UserPref {
   isHighlightOnHover: BehaviorSubject<boolean>;
   isShowOverviewWindow: BehaviorSubject<boolean>;
   isShowEdgeLabels: BehaviorSubject<boolean>;
+  isTileDisconnectedOnLayout: BehaviorSubject<boolean>;
   isIgnoreCaseInText: BehaviorSubject<boolean>;
   isOnlyHighlight4LatestQuery: BehaviorSubject<boolean>;
   isStoreUserProfile: BehaviorSubject<boolean>;

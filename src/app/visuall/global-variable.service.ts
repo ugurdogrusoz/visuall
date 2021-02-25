@@ -389,6 +389,7 @@ export class GlobalVariableService {
       this.layout = this.getFcoseOptions();
     }
     this.layout.animationDuration = animationDuration;
+    this.layout.tile = this.userPrefs.isTileDisconnectedOnLayout.getValue();
     this.switchLayoutRandomization(isRandomize);
     this.runLayout();
   }

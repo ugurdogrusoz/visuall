@@ -3,6 +3,7 @@
     "isHighlightOnHover": true,
     "isShowOverviewWindow": false,
     "isShowEdgeLabels": true,
+    "isTileDisconnectedOnLayout": true,
     "isIgnoreCaseInText": false,
     "isOnlyHighlight4LatestQuery": true,
     "isStoreUserProfile": true,
