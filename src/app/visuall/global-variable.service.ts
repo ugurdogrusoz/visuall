@@ -265,7 +265,7 @@ export class GlobalVariableService {
       // padding around layout
       padding: 10,
       // whether to include labels in node dimensions. Valid in 'proof' quality
-      nodeDimensionsIncludeLabels: false,
+      nodeDimensionsIncludeLabels: true,
 
       /* spectral layout options */
 
