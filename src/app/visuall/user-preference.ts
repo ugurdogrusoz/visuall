@@ -32,7 +32,7 @@ export interface UserPref {
   objectInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
   selectionColor: BehaviorSubject<string>;
   selectionWidth: BehaviorSubject<number>;
-
+  tilingPadding: BehaviorSubject<number>,
 
   timebar: {
     isEnabled: BehaviorSubject<boolean>;

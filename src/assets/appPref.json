@@ -47,6 +47,7 @@
     "edgeCollapseLimit": 2,
     "avgNodeSize": 40,
     "objectInclusionType": 0,
+    "tilingPadding": 4,
     "timebar": {
         "isEnabled": false,
         "playingStep": 50,
