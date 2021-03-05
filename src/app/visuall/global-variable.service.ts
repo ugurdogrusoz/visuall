@@ -59,7 +59,7 @@ export class GlobalVariableService {
     }, this.showErr.bind(this));
 
     let isGraphEmpty = () => { return this.cy.elements().not(':hidden, :transparent').length > 0 };
-    this.performLayout = debounce(this.performLayoutFn, LAYOUT_ANIM_DUR, true, isGraphEmpty);
+    this.performLayout = debounce(this.performLayoutFn, LAYOUT_ANIM_DUR, false, isGraphEmpty);
 
     // set cytoscape.js style dynamicly
     this._http.get('./assets/generated/stylesheet.json').subscribe(x => {
