@@ -162,6 +162,7 @@ export class QueryByRulePage {
     // load next page
     element.all(by.css('a.page-link')).last().click();
     await wait4Spinner();
+    await wait4Spinner();
     const cntElem2 = await browser.executeScript(`return cy.$().length`) as number;
     const hasAllToms = await browser.executeScript(`return cy.$("[primary_name *= 'Tom']").length > 0 && cy.$("[primary_name *= 'Tom']").length == cy.$().length`);
 
@@ -171,8 +172,8 @@ export class QueryByRulePage {
     // load next page
     element.all(by.css('a.page-link')).last().click();
     await wait4Spinner();
+    await wait4Spinner();
     const cntElem3 = await browser.executeScript(`return cy.$().length`) as number;
-
     return hasAllToms && (cntElem1 * 2) === cntElem2 && cntElem3 == cntElem1;
   }
 

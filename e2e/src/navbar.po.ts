@@ -14,14 +14,14 @@ export class NavbarPage {
   }
 
   async saveAsJson() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     await navbarAction('File', 'Save');
     await browser.sleep(ANIM_WAIT);
     return hasVisibleNodesAndEdges;
   }
 
   async saveSelectedAsJson() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     await element(by.buttonText('File')).click();
     await browser.executeScript('cy.$().select()');
     await element(by.buttonText('Save Selected Objects')).click();
@@ -30,7 +30,7 @@ export class NavbarPage {
   }
 
   async saveAsPNG() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     await this.click2SaveAsPng(1);
     await browser.executeScript('cy.zoom(3)');
     await this.click2SaveAsPng(2);
@@ -51,7 +51,7 @@ export class NavbarPage {
   }
 
   async addRemoveGroupsManually() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     await browser.executeScript('cy.$().select()');
     await navbarAction('Edit', 'Add Group for Selected');
 
@@ -59,7 +59,7 @@ export class NavbarPage {
     await browser.executeScript('cy.$().unselect()');
     await browser.executeScript('cy.$(":parent").select()');
     await navbarAction('Edit', 'Remove Group for Selected');
-    await wait4Spinner();
+    await browser.sleep(ANIM_WAIT);
     const hasNoGroup = await browser.executeScript('return cy.$(":parent").length == 0');
 
     await openTab('Map');
@@ -73,7 +73,7 @@ export class NavbarPage {
   }
 
   async deleteSelected() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     const cntBefore = await browser.executeScript('return cy.$().length') as number;
     await browser.executeScript('cy.$().slice(0, 10).select()');
     await navbarAction('Edit', 'Delete Selected');
@@ -83,7 +83,7 @@ export class NavbarPage {
   }
 
   async useHistory() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     const cntBefore = await browser.executeScript('return cy.$().length') as number;
     await openSubTab('Query by Rule');
     getFirstDisplayed(by.css('img[alt="Add Rule"]')).click();
@@ -111,11 +111,11 @@ export class NavbarPage {
   }
 
   async hideShowElems() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     const cnt0 = await browser.executeScript('return cy.$(":visible").length') as number;
     await browser.executeScript('cy.$().slice(0, 10).select()');
     await navbarAction('View', 'Hide Selected');
-    await wait4Spinner();
+    await browser.sleep(ANIM_WAIT);
     const cnt1 = await browser.executeScript('return cy.$(":visible").length') as number;
     const isHideSelected = cnt1 < cnt0;
 
@@ -128,7 +128,7 @@ export class NavbarPage {
   }
 
   async expandCollapseElems() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     await openSubTab('Group Nodes');
     getFirstDisplayed(by.cssContainingText('label', 'By the Louvain modularity algorithm')).click();
     getFirstDisplayed(by.css('input[value="Execute"]')).click();
@@ -160,7 +160,7 @@ export class NavbarPage {
   }
 
   async highlightElems() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     const js4ClassSum = `return cy.$().map(x => x.classes().length).reduce((s,x) => s+x, 0);`
     const sumClassCnt = await browser.executeScript(js4ClassSum) as number;
     await navbarAction('Highlight', 'Search...');
@@ -205,7 +205,7 @@ export class NavbarPage {
   }
 
   async clearData() {
-    const hasVisibleNodesAndEdges = await this.getSampleData() as boolean as boolean;
+    const hasVisibleNodesAndEdges = await this.getSampleData();
     await navbarAction('Data', 'Clear Data');
     const isClear = await browser.executeScript('return cy.$().length == 0') as boolean;
     return isClear && hasVisibleNodesAndEdges;
