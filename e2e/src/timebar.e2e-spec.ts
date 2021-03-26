@@ -12,8 +12,8 @@ describe('Timebar', () => {
   });
 
   it('Timebar metric as AND rule birth > 1994 && death < 2020', async () => {
-    navigateTo();
-    expect(page.timebarMetricAndRule()).toEqual(true);
+    await navigateTo();
+    expect(await page.timebarMetricAndRule()).toEqual(true);
   });
 
   afterEach(async () => {

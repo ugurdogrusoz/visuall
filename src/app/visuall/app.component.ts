@@ -10,7 +10,10 @@ export class AppComponent {
   isLoading = false;
 
   constructor(private _g: GlobalVariableService) {
-    this._g.setLoadingStatus = (e) => { this.isLoading = e };
+    this._g.setLoadingStatus = (e) => {
+      this.isLoading = e;
+      window['IsVisuallLoading'] = e;
+    };
   }
 
 }

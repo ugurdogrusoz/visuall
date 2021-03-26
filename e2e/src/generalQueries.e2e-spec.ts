@@ -12,18 +12,18 @@ describe('Timebar', () => {
   });
 
   it('"Get Neigborhood" query should bring some nodes and edges', async () => {
-    navigateTo();
-    expect(page.testNeighoodQuery()).toEqual(true);
+    await navigateTo();
+    expect(await page.testNeighoodQuery()).toEqual(true);
   });
 
   it('"Get graph of interest" query should bring some nodes and edges', async () => {
-    navigateTo();
-    expect(page.testGoIQuery()).toEqual(true);
+    await navigateTo();
+    expect(await page.testGoIQuery()).toEqual(true);
   });
 
   it('"Get common targets/regulators" query should bring some nodes and edges', async () => {
-    navigateTo();
-    expect(page.testCommonTargetRegulatorQuery()).toEqual(true);
+    await navigateTo();
+    expect(await page.testCommonTargetRegulatorQuery()).toEqual(true);
   });
 
   afterEach(async () => {

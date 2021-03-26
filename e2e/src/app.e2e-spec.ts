@@ -12,13 +12,13 @@ describe('Visuall', () => {
   });
 
   it('Can show object properties by selecting', async () => {
-    navigateTo();
-    expect(page.showObjProps()).toEqual(true);
+    await navigateTo();
+    expect(await page.showObjProps()).toEqual(true);
   });
 
   it('Should maintain settings when "Store user profile" is checked (true by default)', async () => {
-    navigateTo();
-    expect(page.maintainSettings()).toEqual(true);
+    await navigateTo();
+    expect(await page.maintainSettings()).toEqual(true);
   });
 
   afterEach(async () => {

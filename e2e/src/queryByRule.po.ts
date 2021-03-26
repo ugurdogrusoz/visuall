@@ -229,8 +229,9 @@ export class QueryByRulePage {
     await openTab('Map');
     const havePeople = await this.queryByConditionRuleGetAll('Person', false);
     await browser.executeScript(`cy.nodes()[0].emit('mouseover');`);
+    await browser.sleep(ANIM_WAIT);
     const isHigh = await browser.executeScript(`return cy.nodes()[0].classes().join().includes('emphasize');`) as boolean;
-    await browser.sleep(ANIM_WAIT * 2);
+    await browser.sleep(ANIM_WAIT * 3);
     const isHighRow = await element(by.css('tr.highlighted-row')).isPresent();
     const isHighRow2 = await element(by.css('tr.highlighted-row')).isDisplayed();
     return havePeople && isHigh && isHighRow && isHighRow2;

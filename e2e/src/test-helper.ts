@@ -7,9 +7,31 @@ export function navigateTo() {
 }
 
 export async function wait4Spinner() {
-  const EC = ExpectedConditions;
-  await browser.wait(EC.presenceOf(getFirstDisplayed(by.css('.loading-div'))));
-  await browser.wait(EC.invisibilityOf(getFirstDisplayed(by.css('.loading-div'))));
+  await isLoading(4, ANIM_WAIT);
+  await browser.sleep(ANIM_WAIT);
+}
+
+async function isLoading(CHECK_COUNT: number, WAIT_MS:number) {
+  let notLoadingCnt = 0;
+
+  while (notLoadingCnt <= CHECK_COUNT) {
+    const isL = await browser.executeScript(`return window['IsVisuallLoading']`);
+    if (isL) {
+      notLoadingCnt--;
+    } else {
+      notLoadingCnt++;
+    }
+    await awaiter(WAIT_MS);
+  }
+  return true;
+}
+
+async function awaiter(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, ms);
+  })
 }
 
 export function getFirstDisplayed(locator: Locator) {

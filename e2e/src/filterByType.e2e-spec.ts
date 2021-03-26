@@ -12,13 +12,13 @@ describe('Filter By Node/Edge Type', () => {
   });
 
   it('Filter by "Person" Node Type: should hide all person nodes', async () => {
-    navigateTo();
-    expect(page.filterByNodeType()).toEqual(true);
+    await navigateTo();
+    expect(await page.filterByNodeType()).toEqual(true);
   });
 
   it('Filter by "ACTOR" Edge Type: should hide all actor edges', async () => {
-    navigateTo();
-    expect(page.filterByEdgeType()).toEqual(true);
+    await navigateTo();
+    expect(await page.filterByEdgeType()).toEqual(true);
   });
 
   afterEach(async () => {

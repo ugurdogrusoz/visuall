@@ -12,8 +12,8 @@ describe('Calculate Theoretic Property', () => {
   });
 
   it('Can calculate degree centrality and set widths', async () => {
-    navigateTo();
-    expect(page.resizeBasedOnDegreeCentrality()).toEqual(true);
+    await navigateTo();
+    expect(await page.resizeBasedOnDegreeCentrality()).toEqual(true);
   });
 
   afterEach(async () => {

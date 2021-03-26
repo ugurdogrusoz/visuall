@@ -12,8 +12,8 @@ describe('Group Nodes', () => {
   });
 
   it('Can group with Louvain using compounds', async () => {
-    navigateTo();
-    expect(page.groupNodes()).toEqual(true);
+    await navigateTo();
+    expect(await page.groupNodes()).toEqual(true);
   });
 
   afterEach(async () => {
