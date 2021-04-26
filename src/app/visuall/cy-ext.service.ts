@@ -183,10 +183,8 @@ export class CyExtService {
   }
 
   private bindExpandCollapseExtension() {
-    const l = this._g.getFcoseOptions();
-    l.fit = false;
     this._g.expandCollapseApi = this._g.cy.expandCollapse({
-      layoutBy: l, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
+      layoutBy: null, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
       // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
       fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
       animate: true, // whether to animate on drawing changes you can specify a function too
@@ -204,8 +202,6 @@ export class CyExtService {
       allowNestedEdgeCollapse: false
     });
   }
-
-
 
   private getHighlightStyles(): any[] {
     let r = [];

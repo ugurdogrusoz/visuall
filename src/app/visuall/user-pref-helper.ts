@@ -48,9 +48,7 @@ export class UserPrefHelper {
 
   changeAutoIncremental(x: boolean) {
     if (x) {
-      const opt = this._g.getFcoseOptions();
-      opt.fit = false;
-      this._g.expandCollapseApi.setOption('layoutBy', opt);
+      this._g.expandCollapseApi.setOption('layoutBy', this.expandCollaseLayout.bind(this));
       this._g.expandCollapseApi.setOption('fisheye', true);
       this._g.expandCollapseApi.setOption('animate', true);
     } else {
@@ -58,6 +56,16 @@ export class UserPrefHelper {
       this._g.expandCollapseApi.setOption('fisheye', false);
       this._g.expandCollapseApi.setOption('animate', false);
     }
+  }
+
+  private expandCollaseLayout() {
+    const l = this._g.getFcoseOptions();
+    l.fit = false;
+    const elems4layout = this._g.cy.elements().not(':hidden, :transparent');
+    if (elems4layout.length < 1) {
+      return;
+    }
+    elems4layout.layout(l).run();
   }
 
   changeCompoundPadding(x: string) {
