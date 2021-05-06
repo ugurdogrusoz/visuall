@@ -189,11 +189,11 @@ export class CytoscapeService {
       }
       filteredCyEdges.push(cyEdges[i]);
     }
-    this._g.cy.add(filteredCyEdges);
+    const addedEdges = this._g.cy.add(filteredCyEdges);
 
     let compoundEdgeIds = Object.values(collapsedEdgeIds) as string[];
     if (this._g.userPrefs.isCollapseMultiEdgesOnLoad.getValue()) {
-      this.collapseMultiEdges();
+      this.collapseMultiEdges(addedEdges);
     }
     let compoundEdgeIds2 = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
     elemIds.push(...C.arrayDiff(compoundEdgeIds, compoundEdgeIds2));
