@@ -920,7 +920,7 @@ export class CytoscapeService {
       if (!e.originalEvent.shiftKey) {
         return;
       }
-      e.target.component().select();
+      this.getVisibleComponentOf(e.target).select();
       // it selects current node again to prevent that, disable selection until next tap event
       this._g.cy.autounselectify(true);
       isSelectionLocked = true;
@@ -936,6 +936,39 @@ export class CytoscapeService {
         isSelectionLocked = false;
       }, 100);
     });
+  }
+
+  private getVisibleComponentOf(e) {
+    const comp = this._g.cy.collection();
+    const visited = {};
+    const stack = [];
+    if (e.isNode()) {
+      comp.merge(e);
+      stack.push(e);
+    } else {
+      comp.merge(e);
+      const conn = e.connectedNodes();
+      comp.connectedNodes(conn);
+      for (let i = 0; i < conn.length; i++) {
+        stack.push(conn[i]);
+      }
+    }
+
+    while (stack.length > 0) {
+      const curr = stack.pop();
+      visited[curr.id()] = true;
+      const connEdges = curr.connectedEdges(':visible');
+      const neigs = connEdges.union(connEdges.connectedNodes(':visible'));
+      comp.merge(neigs);
+      const neigNodes = neigs.nodes();
+      for (let i = 0; i < neigNodes.length; i++) {
+        if (!visited[neigNodes[i].id()]) {
+          stack.push(neigNodes[i]);
+        }
+      }
+    }
+
+    return comp;
   }
 
   bindSelectObjOfThisType() {
