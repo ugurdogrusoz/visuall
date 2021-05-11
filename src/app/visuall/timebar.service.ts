@@ -170,6 +170,20 @@ export class TimebarService {
   // this function should show only the provided elements, hide the remaining, then should make layout
   private shownOnlyElems(elems) {
     this._timebarExt.setSetting('isIgnoreElemChanges', true);
+    const hiddenCollapsed = this._g.cy.collection();
+    for (let i = 0; i < elems.length; i++) {
+      const collapsedChildren = elems[i].data('collapsedChildren');
+      const collapsedEdges = elems[i].data('collapsedEdges');
+      if (collapsedChildren || collapsedEdges) {
+        if (collapsedChildren) {
+          hiddenCollapsed.merge(collapsedChildren);
+        }
+        if (collapsedEdges) {
+          hiddenCollapsed.merge(collapsedEdges);
+        }
+      }
+    }
+    elems = elems.union(hiddenCollapsed);
     const alreadyVisibleNodes = this._g.cy.nodes(':visible');
     if (alreadyVisibleNodes.length > 0) {
       const nodes2Show = elems.nodes().difference(alreadyVisibleNodes);
