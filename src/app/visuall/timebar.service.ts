@@ -167,6 +167,10 @@ export class TimebarService {
     return this._timebarExt.getGraphRangeRatio();
   }
 
+  setIgnoreChanges(isIgnore: boolean) {
+    this._timebarExt.setSetting('isIgnoreElemChanges', isIgnore);
+  }
+
   // this function should show only the provided elements, hide the remaining, then should make layout
   private shownOnlyElems(elems) {
     this._timebarExt.setSetting('isIgnoreElemChanges', true);

@@ -746,6 +746,7 @@ export class CytoscapeService {
 
   // expands all the compound nodes and deletes them recursively
   hideCompounds(elems) {
+    this._timebarService.setIgnoreChanges(true);
     const nodes = elems.filter('.' + C.CLUSTER_CLASS).not('.' + C.META_EDGE_CLASS);
     let collapsedEdgeIds = elems.union(elems.connectedEdges()).filter('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
     const edgeIdDict = {};
@@ -758,6 +759,7 @@ export class CytoscapeService {
     for (let i in edgeIdDict) {
       this.hideCompoundEdge(this._g.cy.edges('#' + i));
     }
+    this._timebarService.setIgnoreChanges(false);
   }
 
   hideCompoundNode(node, edgeIdDict) {
