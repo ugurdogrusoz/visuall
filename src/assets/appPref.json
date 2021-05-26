@@ -48,6 +48,7 @@
     "edgeCollapseLimit": 2,
     "avgNodeSize": 40,
     "objectInclusionType": 0,
+    "queryResultPagination": "Client",
     "tilingPadding": 4,
     "timebar": {
         "isEnabled": false,

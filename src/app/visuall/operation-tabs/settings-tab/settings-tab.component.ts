@@ -35,6 +35,7 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
   nodeLabelWrapTypes: string[] = ['None', 'Wrap', 'Ellipsis'];
   // multiple choice settings
   graphInclusionType: TimebarGraphInclusionTypes;
+  queryResultPagination: 'Client' | 'Server';
   statsInclusionType: TimebarStatsInclusionTypes;
   mergedElemIndicator: MergedElemIndicatorTypes;
   groupingOption: GroupingOptionTypes;
@@ -131,6 +132,7 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
     this.compoundPadding = up.compoundPadding.getValue();
     this.isStoreUserProfile = up.isStoreUserProfile.getValue();
     this.graphInclusionType = up.objectInclusionType.getValue();
+    this.queryResultPagination = up.queryResultPagination.getValue();
 
     this.timebarBoolSettings[0].isEnable = up_t.isEnabled.getValue();
     this.timebarBoolSettings[1].isEnable = up_t.isHideDisconnectedNodesOnAnim.getValue();

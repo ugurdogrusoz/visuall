@@ -31,6 +31,7 @@ export interface UserPref {
   compoundPadding: BehaviorSubject<string>;
   edgeCollapseLimit: BehaviorSubject<number>;
   objectInclusionType: BehaviorSubject<TimebarGraphInclusionTypes>;
+  queryResultPagination: BehaviorSubject<'Client' | 'Server'>;
   selectionColor: BehaviorSubject<string>;
   selectionWidth: BehaviorSubject<number>;
   tilingPadding: BehaviorSubject<number>,

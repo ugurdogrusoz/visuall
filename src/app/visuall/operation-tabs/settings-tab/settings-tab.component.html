@@ -94,6 +94,23 @@
       </div>
     </div>
     <div class="card border-0 m-1">
+      <div class="form">
+        <div class="form-check-label va-text">Query result pagination: </div>
+        <div class="form-check-inline va-text">
+          <label class="form-check-label">
+            <input type="radio" [(ngModel)]="queryResultPagination" value="Client" class="form-check-input"
+              (click)="settingChanged('Client', 'queryResultPagination')" name="optradio6">Client
+          </label>
+        </div>
+        <div class="form-check-inline va-text">
+          <label class="form-check-label">
+            <input type="radio" [(ngModel)]="queryResultPagination" value="Server" class="form-check-input"
+              (click)="settingChanged('Server', 'queryResultPagination')" name="optradio6">Server
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
       <div class="form-inline">
         <label class="form-check-label va-text">Query result page size</label>
         <div class="mx-1">
