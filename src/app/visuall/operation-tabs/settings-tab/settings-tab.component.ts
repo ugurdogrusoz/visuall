@@ -23,6 +23,7 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
   @ViewChild('dbQueryDate1', { static: false }) dbQueryDate1: ElementRef;
   @ViewChild('dbQueryDate2', { static: false }) dbQueryDate2: ElementRef;
   dataPageSize: number;
+  dataPageLimit: number;
   queryHistoryLimit: number;
   dbTimeout: number;
   tableColumnLimit: number;
@@ -115,6 +116,7 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
     this.mergedElemIndicator = up.mergedElemIndicator.getValue();
     this.groupingOption = up.groupingOption.getValue();
     this.dataPageSize = up.dataPageSize.getValue();
+    this.dataPageLimit = up.dataPageLimit.getValue();
     this.queryHistoryLimit = up.queryHistoryLimit.getValue();
     this.dbTimeout = up.dbTimeout.getValue();
     this.tableColumnLimit = up.tableColumnLimit.getValue();

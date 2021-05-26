@@ -22,6 +22,7 @@ export interface UserPref {
   dbQueryTimeRange: { start: BehaviorSubject<number>, end: BehaviorSubject<number> },
   savedLists: SavedLists;
   dataPageSize: BehaviorSubject<number>;
+  dataPageLimit: BehaviorSubject<number>;
   queryHistoryLimit: BehaviorSubject<number>;
   dbTimeout: BehaviorSubject<number>;
   tableColumnLimit: BehaviorSubject<number>;

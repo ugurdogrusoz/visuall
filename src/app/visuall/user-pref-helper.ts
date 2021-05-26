@@ -27,6 +27,7 @@ export class UserPrefHelper {
       up.isShowEdgeLabels.subscribe(() => { this._cyService.showHideEdgeLabels(); });
       up.nodeLabelWrap.subscribe(() => { this._cyService.fitLabel2Node(); });
       up.dataPageSize.subscribe(x => { this.dataPageSizeChanged(x); });
+      up.dataPageLimit.subscribe(x => { this.dataPageLimitChanged(x); });
       up.tableColumnLimit.subscribe(x => { this.tableColumnLimitChanged(x); });
       up.compoundPadding.subscribe(x => { this.changeCompoundPadding(x); });
       up.objectInclusionType.subscribe(x => { tb.changeGraphInclusionType(x); });
@@ -83,6 +84,19 @@ export class UserPrefHelper {
     if (x < MIN_DATA_PAGE_SIZE) {
       x = MIN_DATA_PAGE_SIZE;
       this._g.userPrefs.dataPageSize.next(x);
+      return;
+    }
+  }
+
+  dataPageLimitChanged(x: number) {
+    if (x > MAX_DATA_PAGE_SIZE) {
+      x = MAX_DATA_PAGE_SIZE;
+      this._g.userPrefs.dataPageLimit.next(x);
+      return;
+    }
+    if (x < MIN_DATA_PAGE_SIZE) {
+      x = MIN_DATA_PAGE_SIZE;
+      this._g.userPrefs.dataPageLimit.next(x);
       return;
     }
   }

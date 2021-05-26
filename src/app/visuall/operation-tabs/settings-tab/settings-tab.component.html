@@ -95,10 +95,19 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form-inline">
-        <label class="form-check-label va-text">Query result limit</label>
+        <label class="form-check-label va-text">Query result page size</label>
         <div class="mx-1">
           <input type="number" max="10000" min="1" (keydown.enter)="settingChanged(dataPageSize, 'dataPageSize')"
             [(ngModel)]="dataPageSize" class="form-control inp-3-char std-inp-hei va-small-text">
+        </div>
+      </div>
+    </div>
+    <div class="card border-0 m-1">
+      <div class="form-inline">
+        <label class="form-check-label va-text">Query result page limit</label>
+        <div class="mx-1">
+          <input type="number" max="10000" min="1" (keydown.enter)="settingChanged(dataPageLimit, 'dataPageLimit')"
+            [(ngModel)]="dataPageLimit" class="form-control inp-3-char std-inp-hei va-small-text">
         </div>
       </div>
     </div>
