@@ -149,7 +149,7 @@ export class Neo4jDb implements DbService {
   getGraphOfInterest(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, type: DbResponseType, filter: TableFiltering, idFilter: (string | number)[], cb: (x) => void) {
     const t = filter.txt ?? '';
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
-    const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const pageSize = this.getPageSize4Backend();
     const currPage = filter.skip ? Math.floor(filter.skip / pageSize) + 1 : 1;
     const orderBy = filter.orderBy ? `'${filter.orderBy}'` : null;
     let orderDir = 0;
@@ -178,7 +178,7 @@ export class Neo4jDb implements DbService {
   getCommonStream(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, dir: Neo4jEdgeDirection, type: DbResponseType, filter: TableFiltering, idFilter: (string | number)[], cb: (x) => void) {
     const t = filter.txt ?? '';
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
-    const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const pageSize = this.getPageSize4Backend();
     const currPage = filter.skip ? Math.floor(filter.skip / pageSize) + 1 : 1;
     const orderBy = filter.orderBy ? `'${filter.orderBy}'` : null;
     let orderDir = 0;
@@ -212,7 +212,7 @@ export class Neo4jDb implements DbService {
   getNeighborhood(dbIds: (string | number)[], ignoredTypes: string[], lengthLimit: number, isDirected: boolean, filter: TableFiltering, idFilter: (string | number)[], cb: (x) => void) {
     const t = filter.txt ?? '';
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
-    const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const pageSize = this.getPageSize4Backend();
     const currPage = filter.skip ? Math.floor(filter.skip / pageSize) + 1 : 1;
     const orderBy = filter.orderBy ? `'${filter.orderBy}'` : null;
     let orderDir = 0;
@@ -236,6 +236,14 @@ export class Neo4jDb implements DbService {
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
     this.runQuery(`CALL neighborhood([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
       ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout}, ${idf})`, cb, DbResponseType.table, false);
+  }
+
+  private getPageSize4Backend(): number {
+    let pageSize = this._g.userPrefs.dataPageSize.getValue();
+    if (this._g.userPrefs.queryResultPagination.getValue() == 'Client') {
+      pageSize = pageSize * this._g.userPrefs.dataPageLimit.getValue();
+    }
+    return pageSize;
   }
 
   private getTimebarMapping4Java(): string {

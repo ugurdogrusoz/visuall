@@ -51,6 +51,8 @@ export class MapTabComponent implements OnInit, OnDestroy {
   dataPageSizeSubs: Subscription;
   appDescSubs: Subscription;
   dataModelSubs: Subscription;
+  dbResponse: DbResponse = null;
+  clearTableFilter = new Subject<boolean>();
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _dbService: DbAdapterService,
     private _timebarService: TimebarService, private _profile: UserProfileService) {
@@ -257,19 +259,69 @@ export class MapTabComponent implements OnInit, OnDestroy {
       this._g.showErrorModal('Query', 'There is no query!');
       return;
     }
-    const skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
-    const limit = this.tableInput.pageSize;
-    const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
 
+    const isClientSidePagination = this._g.userPrefs.queryResultPagination.getValue() == 'Client';
+    const skip = (this.tableInput.currPage - 1) * this.tableInput.pageSize;
+    const limit4clientSidePaginated = this._g.userPrefs.dataPageSize.getValue() * this._g.userPrefs.dataPageLimit.getValue();
+    const limit = isClientSidePagination ? limit4clientSidePaginated : this.tableInput.pageSize;
+    const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
+    this.tableInput.currPage = 1;
+    this.clearTableFilter.next(true);
     const cb2 = (x: DbResponse) => {
-      this.fillTable(x.tableData);
+      this.dbResponse = x;
+      const clientSideX = this.filterDbResponse(x, { orderBy: '', orderDirection: '', txt: '' });
+      if (isClientSidePagination) {
+        this.fillTable(clientSideX.tableData);
+      } else {
+        this.fillTable(x.tableData);
+      }
+
       if (this.tableInput.isLoadGraph) {
-        this._cyService.loadElementsFromDatabase(x.graphData as GraphResponse, isMerge);
+        if (isClientSidePagination) {
+          this._cyService.loadElementsFromDatabase(clientSideX.graphData, isMerge);
+        } else {
+          this._cyService.loadElementsFromDatabase(x.graphData, isMerge);
+        }
       }
       cb.apply(this, cbParams);
-      this.tableInput.resultCnt = x.count;
+      if (isClientSidePagination) {
+        this.tableInput.resultCnt = limit4clientSidePaginated;
+      } else {
+        this.tableInput.resultCnt = x.count;
+      }
+
     };
     this._dbService.getFilteringResult(this.queryRule, null, skip, limit, DbResponseType.table, cb2);
+  }
+
+  // used for client-side filtering
+  private filterDbResponse(d: DbResponse, filter: TableFiltering): DbResponse {
+    const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    const r: DbResponse = { count: pageSize * this._g.userPrefs.dataPageLimit.getValue(), graphData: { nodes: [], edges: d.graphData.edges }, tableData: { columns: d.tableData.columns, data: [] } };
+    for (let i = 0; i < d.tableData.data.length; i++) {
+      const vals = Object.values(d.tableData.data[i][1]).join('');
+      if ((isIgnoreCase && vals.toLowerCase().includes(filter.txt)) || (!isIgnoreCase && vals.includes(filter.txt))) {
+        r.graphData.nodes.push(d.graphData.nodes[i]);
+        r.tableData.data.push(d.tableData.data[i]);
+      }
+    }
+    // order by
+    if (filter.orderDirection.length > 0) {
+      const o = filter.orderBy;
+      if (filter.orderDirection == 'asc') {
+        r.tableData.data = r.tableData.data.sort((a, b) => { if (a[1][o] > b[1][o]) return 1; if (b[1][o] > a[1][o]) return -1; return 0 });
+        r.graphData.nodes = r.graphData.nodes.sort((a, b) => { if (a.properties[o] > b.properties[o]) return 1; if (b.properties[o] > a.properties[o]) return -1; return 0 });
+      } else {
+        r.tableData.data = r.tableData.data.sort((a, b) => { if (a[1][o] < b[1][o]) return 1; if (b[1][o] < a[1][o]) return -1; return 0 });
+        r.graphData.nodes = r.graphData.nodes.sort((a, b) => { if (a.properties[o] < b.properties[o]) return 1; if (b.properties[o] < a.properties[o]) return -1; return 0 });
+      }
+    }
+    const skip = filter.skip ? filter.skip : 0;
+    r.count = r.graphData.nodes.length;
+    r.tableData.data = r.tableData.data.slice(skip, skip + pageSize);
+    r.graphData.nodes = r.graphData.nodes.slice(skip, skip + pageSize);
+    return r;
   }
 
   private fillTable(data) {
@@ -319,6 +371,7 @@ export class MapTabComponent implements OnInit, OnDestroy {
   runQuery() {
     const arr = this._timebarService.getChartRange();
     if (this.isQueryOnDb) {
+      this.dbResponse = null;
       this.runQueryOnDatabase(this.maintainChartRange, arr);
     } else {
       this.runQueryOnClient(this.maintainChartRange, arr);
@@ -422,18 +475,22 @@ export class MapTabComponent implements OnInit, OnDestroy {
   }
 
   filterTable(filter: TableFiltering) {
-    this.tableInput.currPage = 1;
-    const limit = this.tableInput.pageSize;
-    let skip = filter.skip ? filter.skip : 0;
-    const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
     const cb2 = (x: DbResponse) => {
+      const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
       this.fillTable(x.tableData);
       if (this.tableInput.isLoadGraph) {
         this._cyService.loadElementsFromDatabase(x.graphData as GraphResponse, isMerge);
       }
       this.tableInput.resultCnt = x.count;
     };
-    this._dbService.getFilteringResult(this.queryRule, filter, skip, limit, DbResponseType.table, cb2);
+    this.tableInput.currPage = 1;
+    if (this._g.userPrefs.queryResultPagination.getValue() == 'Client') {
+      cb2(this.filterDbResponse(this.dbResponse, filter));
+    } else {
+      const limit = this.tableInput.pageSize;
+      let skip = filter.skip ? filter.skip : 0;
+      this._dbService.getFilteringResult(this.queryRule, filter, skip, limit, DbResponseType.table, cb2);
+    }
   }
 
   editRule(i: number) {

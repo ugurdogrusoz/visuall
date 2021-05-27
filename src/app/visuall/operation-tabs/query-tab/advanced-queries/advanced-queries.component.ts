@@ -34,6 +34,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   tableFilled = new Subject<boolean>();
   dataPageSizeSubs: Subscription;
   dataModelSubs: Subscription;
+  dbResponse = null;
 
   constructor(private _g: GlobalVariableService, private _dbService: DbAdapterService, private _cyService: CytoscapeService) {
     this.queries = ['Get neighborhood', 'Get graph of interest', 'Get common targets/regulators'];
@@ -115,38 +116,124 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     if (dbIds.length < 1) {
       return;
     }
-    let prepareDataFn = (x) => { this.fillTable(x); };
-    if (this.tableInput.isLoadGraph) {
-      prepareDataFn = (x) => {
-        this.fillTable(x);
-        this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(x), this.tableInput.isMergeGraph);
-        this.highlightSeedNodes();
-        this.highlightTargetRegulators(x);
-      };
-    }
-    if (idFilter) {
-      prepareDataFn = (x) => {
-        this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(x), this.tableInput.isMergeGraph);
-        this.highlightSeedNodes();
-        this.highlightTargetRegulators(x);
-      };
-    }
-    const types = this.ignoredTypes.map(x => `'${x}'`);
-    if (this.selectedIdx == 1) {
-      this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbResponseType.table, this.tableFilter, idFilter, prepareDataFn);
-    } else if (this.selectedIdx == 2) {
-      let dir: Neo4jEdgeDirection = this.targetOrRegulator;
-      if (!this.isDirected) {
-        dir = Neo4jEdgeDirection.BOTH;
+    const isClientSidePagination = this._g.userPrefs.queryResultPagination.getValue() == 'Client';
+    const prepareDataFn = (x) => {
+      if (!idFilter && !isFromFilter) {
+        this.dbResponse = x;
       }
-      this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.table, this.tableFilter, idFilter, prepareDataFn);
-    } else if (this.selectedIdx == 0) {
-      this._dbService.getNeighborhood(dbIds, types, this.lengthLimit, this.isDirected, this.tableFilter, idFilter, prepareDataFn);
+      let clientSideX = null;
+      if (isClientSidePagination) {
+        clientSideX = this.filterDbResponse(x, isFromFilter ? this.tableFilter : null);
+      }
+
+      if (!idFilter) {
+        if (isClientSidePagination) {
+          this.fillTable(clientSideX);
+        } else {
+          this.fillTable(x);
+        }
+      }
+      if (this.tableInput.isLoadGraph) {
+        if (isClientSidePagination) {
+          this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(clientSideX), this.tableInput.isMergeGraph);
+        } else {
+          this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(x), this.tableInput.isMergeGraph);
+        }
+
+        this.highlightSeedNodes();
+        this.highlightTargetRegulators(x);
+      }
+    };
+    if (isFromFilter && isClientSidePagination) {
+      prepareDataFn(this.dbResponse);
+    } else {
+      const types = this.ignoredTypes.map(x => `'${x}'`);
+      if (this.selectedIdx == 1) {
+        this._dbService.getGraphOfInterest(dbIds, types, this.lengthLimit, this.isDirected, DbResponseType.table, this.tableFilter, idFilter, prepareDataFn);
+      } else if (this.selectedIdx == 2) {
+        let dir: Neo4jEdgeDirection = this.targetOrRegulator;
+        if (!this.isDirected) {
+          dir = Neo4jEdgeDirection.BOTH;
+        }
+        this._dbService.getCommonStream(dbIds, types, this.lengthLimit, dir, DbResponseType.table, this.tableFilter, idFilter, prepareDataFn);
+      } else if (this.selectedIdx == 0) {
+        this._dbService.getNeighborhood(dbIds, types, this.lengthLimit, this.isDirected, this.tableFilter, idFilter, prepareDataFn);
+      }
     }
+
   }
 
   setSelected(x: ElemAsQueryParam[]) {
     this.selectedNodes = x;
+  }
+
+  // used for client-side filtering
+  private filterDbResponse(x, filter: TableFiltering) {
+    const r = { columns: x.columns, data: [[null, null, null, null, null, null, null, null]] };
+    const idxNodes = x.columns.indexOf('nodes');
+    const idxNodeId = x.columns.indexOf('nodeId');
+    const idxNodeClass = x.columns.indexOf('nodeClass');
+    const idxEdges = x.columns.indexOf('edges');
+    const idxEdgeId = x.columns.indexOf('edgeId');
+    const idxEdgeClass = x.columns.indexOf('edgeClass');
+    const idxEdgeSrcTgt = x.columns.indexOf('edgeSourceTargets');
+    const idxTotalCnt = x.columns.indexOf('totalNodeCount');
+    const maxResultCnt = this._g.userPrefs.dataPageLimit.getValue() * this._g.userPrefs.dataPageSize.getValue();
+
+    const nodes = x.data[0][idxNodes];
+    const nodeClass = x.data[0][idxNodeClass];
+    const nodeId = x.data[0][idxNodeId];
+    const edges = x.data[0][idxEdges];
+    const edgeClass = x.data[0][idxEdgeClass];
+    const edgeId = x.data[0][idxEdgeId];
+    const edgeSrcTgt = x.data[0][idxEdgeSrcTgt];
+    r.data[0][idxEdges] = edges;
+    r.data[0][idxEdgeClass] = edgeClass;
+    r.data[0][idxEdgeId] = edgeId;
+    r.data[0][idxEdgeSrcTgt] = edgeSrcTgt;
+    r.data[0][idxTotalCnt] = x.data[0][idxTotalCnt] > maxResultCnt ? maxResultCnt : x.data[0][idxTotalCnt];
+
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+
+    let tempNodes = [];
+    const srcNodeIds = this.selectedNodes.map(x => x.dbId);
+    if (filter) {
+      for (let i = 0; i < nodes.length; i++) {
+        const vals = Object.values(nodes[i]).join('');
+        // always include source nodes
+        if (srcNodeIds.includes(nodeId[i]) || (isIgnoreCase && vals.toLowerCase().includes(filter.txt)) || (!isIgnoreCase && vals.includes(filter.txt))) {
+          tempNodes.push({ node: nodes[i], cls: nodeClass[i], id: nodeId[i] });
+        }
+      }
+    } else {
+      tempNodes = nodes.map((_, i) => { return { node: nodes[i], cls: nodeClass[i], id: nodeId[i] } })
+    }
+
+    // order by
+    if (filter && filter.orderDirection.length > 0) {
+      const o = filter.orderBy;
+      if (filter.orderDirection == 'asc') {
+        tempNodes = tempNodes.sort((a, b) => { if (!(a.node[o]) || !(b.node[o])) return 0; if (a.node[o] > b.node[o]) return 1; if (b.node[o] > a.node[o]) return -1; return 0 });
+      } else {
+        tempNodes = tempNodes.sort((a, b) => { if (!(a.node[o]) || !(b.node[o])) return 0; if (a.node[o] < b.node[o]) return 1; if (b.node[o] < a.node[o]) return -1; return 0 });
+      }
+    }
+    const skip = filter && filter.skip ? filter.skip : 0;
+    for (let i = 0; i < srcNodeIds.length; i++) {
+      const idx = tempNodes.findIndex(x => x.id == srcNodeIds[i]);
+      // move src node to the beginning
+      if (idx > -1) {
+        const tmp = tempNodes[idx];
+        tempNodes[idx] = tempNodes[i];
+        tempNodes[i] = tmp;
+      }
+
+    }
+    tempNodes = tempNodes.slice(skip, skip + this._g.userPrefs.dataPageSize.getValue());
+    r.data[0][idxNodes] = tempNodes.map(x => x.node);
+    r.data[0][idxNodeClass] = tempNodes.map(x => x.cls);
+    r.data[0][idxNodeId] = tempNodes.map(x => x.id);
+    return r;
   }
 
   // fill table from graph response

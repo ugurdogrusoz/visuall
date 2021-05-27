@@ -90,7 +90,7 @@
         </div>
 
       </div>
-      <app-table-view [params]="tableInput" [tableFilled]="tableFilled"
+      <app-table-view [params]="tableInput" [tableFilled]="tableFilled" [clearFilter]="clearTableFilter"
         (onDataForQueryResult)="getDataForQueryResult($event)" (onFilteringChanged)="filterTable($event)">
       </app-table-view>
     </div>
