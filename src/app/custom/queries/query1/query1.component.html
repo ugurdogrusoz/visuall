@@ -2,7 +2,8 @@
   <div class="va-text">
     <div class="d-flex align-items-center justify-content-center">
       Get titles (and actors involved) with genre
-      <select class="custom-select std-inp-hei tight-select filter-form va-small-text m-1" id="genreSelector" [(ngModel)]="selectedGenre">
+      <select class="custom-select std-inp-hei tight-select filter-form va-small-text m-1" id="genreSelector"
+        [(ngModel)]="selectedGenre">
         <option *ngFor="let p of movieGenres" [value]="p">{{p}}</option>
       </select>
     </div>
@@ -20,5 +21,5 @@
   </div>
 </div>
 <app-table-view [params]="tableInput" [tableFilled]="tableFilled" (onDataForQueryResult)="getDataForQueryResult($event)"
-  (onFilteringChanged)="filterTable($event)">
+  (onFilteringChanged)="filterTable($event)" [clearFilter]="clearTableFilter">
 </app-table-view>

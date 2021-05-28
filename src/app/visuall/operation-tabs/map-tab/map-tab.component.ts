@@ -301,7 +301,7 @@ export class MapTabComponent implements OnInit, OnDestroy {
     const r: DbResponse = { count: pageSize * this._g.userPrefs.dataPageLimit.getValue(), graphData: { nodes: [], edges: d.graphData.edges }, tableData: { columns: d.tableData.columns, data: [] } };
     for (let i = 0; i < d.tableData.data.length; i++) {
       const vals = Object.values(d.tableData.data[i][1]).join('');
-      if ((isIgnoreCase && vals.toLowerCase().includes(filter.txt)) || (!isIgnoreCase && vals.includes(filter.txt))) {
+      if ((isIgnoreCase && vals.toLowerCase().includes(filter.txt.toLowerCase())) || (!isIgnoreCase && vals.includes(filter.txt))) {
         r.graphData.nodes.push(d.graphData.nodes[i]);
         r.tableData.data.push(d.tableData.data[i]);
       }
