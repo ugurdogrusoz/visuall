@@ -121,25 +121,22 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
       if (!idFilter && !isFromFilter) {
         this.dbResponse = x;
       }
-      let clientSideX = null;
-      if (isClientSidePagination) {
-        clientSideX = this.filterDbResponse(x, isFromFilter ? this.tableFilter : null);
-      }
 
       if (!idFilter) {
         if (isClientSidePagination) {
-          this.fillTable(clientSideX);
+          const clientSideX = this.filterDbResponse(x, isFromFilter ? this.tableFilter : null);
+          this.fillTable(clientSideX, !isFromFilter);
         } else {
-          this.fillTable(x);
+          this.fillTable(x, !isFromFilter);
         }
       }
-      if (this.tableInput.isLoadGraph) {
+      if (this.tableInput.isLoadGraph || idFilter) {
         if (isClientSidePagination) {
+          const clientSideX = this.filterDbResponse(x, isFromFilter ? this.tableFilter : null);
           this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(clientSideX), this.tableInput.isMergeGraph);
         } else {
           this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(x), this.tableInput.isMergeGraph);
         }
-
         this.highlightSeedNodes();
         this.highlightTargetRegulators(x);
       }
@@ -195,7 +192,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
 
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
 
-    let tempNodes = [];
+    let tempNodes: { node: any, cls: string, id: string | number }[] = [];
     const srcNodeIds = this.selectedNodes.map(x => x.dbId);
     if (filter) {
       for (let i = 0; i < nodes.length; i++) {
@@ -213,9 +210,9 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     if (filter && filter.orderDirection.length > 0) {
       const o = filter.orderBy;
       if (filter.orderDirection == 'asc') {
-        tempNodes = tempNodes.sort((a, b) => { if (!(a.node[o]) || !(b.node[o])) return 0; if (a.node[o] > b.node[o]) return 1; if (b.node[o] > a.node[o]) return -1; return 0 });
+        tempNodes = tempNodes.sort((a, b) => { if (!a.node[o]) return 1; if (!b.node[o]) return -1; if (a.node[o] > b.node[o]) return 1; if (b.node[o] > a.node[o]) return -1; return 0 });
       } else {
-        tempNodes = tempNodes.sort((a, b) => { if (!(a.node[o]) || !(b.node[o])) return 0; if (a.node[o] < b.node[o]) return 1; if (b.node[o] < a.node[o]) return -1; return 0 });
+        tempNodes = tempNodes.sort((a, b) => { if (!a.node[o]) return 1; if (!b.node[o]) return -1; if (a.node[o] < b.node[o]) return 1; if (b.node[o] < a.node[o]) return -1; return 0 });
       }
     }
     const skip = filter && filter.skip ? filter.skip : 0;
@@ -227,8 +224,11 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
         tempNodes[idx] = tempNodes[i];
         tempNodes[i] = tmp;
       }
-
     }
+    if (filter) {
+      this.tableInput.resultCnt = tempNodes.length;
+    }
+
     tempNodes = tempNodes.slice(skip, skip + this._g.userPrefs.dataPageSize.getValue());
     r.data[0][idxNodes] = tempNodes.map(x => x.node);
     r.data[0][idxNodeClass] = tempNodes.map(x => x.cls);
@@ -237,7 +237,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   }
 
   // fill table from graph response
-  private fillTable(data) {
+  private fillTable(data, isRefreshColumns = true) {
     const idxNodes = data.columns.indexOf('nodes');
     const idxNodeId = data.columns.indexOf('nodeId');
     const idxNodeClass = data.columns.indexOf('nodeClass');
@@ -245,10 +245,14 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     const nodes = data.data[0][idxNodes];
     const nodeClass = data.data[0][idxNodeClass];
     const nodeId = data.data[0][idxNodeId];
-    this.tableInput.resultCnt = data.data[0][idxTotalCnt];
+    if (isRefreshColumns) {
+      this.tableInput.resultCnt = data.data[0][idxTotalCnt];
+    }
 
     this.tableInput.results = [];
-    this.tableInput.columns = [];
+    if (isRefreshColumns) {
+      this.tableInput.columns = [];
+    }
     this.tableInput.classNames = [];
     const enumMapping = this._g.getEnumMapping();
     const props = this._g.dataModel.getValue();

@@ -216,9 +216,9 @@ export class Query1Component implements OnInit {
     if (filter && filter.orderDirection.length > 0) {
       const o = filter.orderBy;
       if (filter.orderDirection == 'asc') {
-        filtered = filtered.sort((a, b) => { if (!(a[o]) || !(b[o])) return 0; if (a[o] > b[o]) return 1; if (b[o] > a[o]) return -1; return 0 });
+        filtered = filtered.sort((a, b) => { if (!a[o]) return 1; if (!b[o]) return -1; if (a[o] > b[o]) return 1; if (b[o] > a[o]) return -1; return 0 });
       } else {
-        filtered = filtered.sort((a, b) => { if (!(a[o]) || !(b[o])) return 0; if (a[o] < b[o]) return 1; if (b[o] < a[o]) return -1; return 0 });
+        filtered = filtered.sort((a, b) => { if (!a[o]) return 1; if (!b[o]) return -1; if (a[o] < b[o]) return 1; if (b[o] < a[o]) return -1; return 0 });
       }
     }
     const skip = filter && filter.skip ? filter.skip : 0;
