@@ -289,38 +289,51 @@ export class MapTabComponent implements OnInit, OnDestroy {
       } else {
         this.tableInput.resultCnt = x.count;
       }
-
     };
     this._dbService.getFilteringResult(this.queryRule, null, skip, limit, DbResponseType.table, cb2);
   }
 
-  // used for client-side filtering
+  // used for client-side filtering, assumes tableData and graphData arrays are parallel (index i corresponds to the same element)
   private filterDbResponse(d: DbResponse, filter: TableFiltering): DbResponse {
     const pageSize = this._g.userPrefs.dataPageSize.getValue();
+    const pageLimit = this._g.userPrefs.dataPageLimit.getValue();
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
-    const r: DbResponse = { count: pageSize * this._g.userPrefs.dataPageLimit.getValue(), graphData: { nodes: [], edges: d.graphData.edges }, tableData: { columns: d.tableData.columns, data: [] } };
+    const r: DbResponse = { count: pageSize * pageLimit, graphData: { nodes: [], edges: [] }, tableData: { columns: d.tableData.columns, data: [] } };
+    let tmpData: { graph: any, table: any }[] = [];
     for (let i = 0; i < d.tableData.data.length; i++) {
       const vals = Object.values(d.tableData.data[i][1]).join('');
       if ((isIgnoreCase && vals.toLowerCase().includes(filter.txt.toLowerCase())) || (!isIgnoreCase && vals.includes(filter.txt))) {
-        r.graphData.nodes.push(d.graphData.nodes[i]);
-        r.tableData.data.push(d.tableData.data[i]);
+        if (this.queryRule.isEdge) {
+          tmpData.push({ table: d.tableData.data[i], graph: d.graphData.edges[i] });
+        } else {
+          tmpData.push({ table: d.tableData.data[i], graph: d.graphData.nodes[i] });
+        }
       }
     }
     // order by
     if (filter.orderDirection.length > 0) {
       const o = filter.orderBy;
       if (filter.orderDirection == 'asc') {
-        r.tableData.data = r.tableData.data.sort((a, b) => { if (a[1][o] > b[1][o]) return 1; if (b[1][o] > a[1][o]) return -1; return 0 });
-        r.graphData.nodes = r.graphData.nodes.sort((a, b) => { if (a.properties[o] > b.properties[o]) return 1; if (b.properties[o] > a.properties[o]) return -1; return 0 });
+        tmpData = tmpData.sort((a, b) => { if (a.table[1][o] > b.table[1][o]) return 1; if (b.table[1][o] > a.table[1][o]) return -1; return 0 });
       } else {
-        r.tableData.data = r.tableData.data.sort((a, b) => { if (a[1][o] < b[1][o]) return 1; if (b[1][o] < a[1][o]) return -1; return 0 });
-        r.graphData.nodes = r.graphData.nodes.sort((a, b) => { if (a.properties[o] < b.properties[o]) return 1; if (b.properties[o] < a.properties[o]) return -1; return 0 });
+        tmpData = tmpData.sort((a, b) => { if (a.table[1][o] < b.table[1][o]) return 1; if (b.table[1][o] < a.table[1][o]) return -1; return 0 });
       }
     }
     const skip = filter.skip ? filter.skip : 0;
-    r.count = r.graphData.nodes.length;
-    r.tableData.data = r.tableData.data.slice(skip, skip + pageSize);
-    r.graphData.nodes = r.graphData.nodes.slice(skip, skip + pageSize);
+    r.count = tmpData.length;
+    tmpData = tmpData.slice(skip, skip + pageSize);
+    r.tableData.data = tmpData.map(x => x.table);
+    if (this.queryRule.isEdge) {
+      r.graphData.edges = tmpData.map(x => x.graph);
+      for (let i = 0; i < r.graphData.edges.length; i++) {
+        const srcId = r.graphData.edges[i].startNode;
+        const tgtId = r.graphData.edges[i].endNode;
+        r.graphData.nodes.push(d.graphData.nodes.find(x => x.id == srcId));
+        r.graphData.nodes.push(d.graphData.nodes.find(x => x.id == tgtId));
+      }
+    } else {
+      r.graphData.nodes = tmpData.map(x => x.graph);
+    }
     return r;
   }
 
