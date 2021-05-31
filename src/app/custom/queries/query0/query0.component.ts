@@ -7,7 +7,6 @@ import { Subject } from 'rxjs';
 import { buildIdFilter, getOrderByExpression4Query, getQueryCondition4TxtFilter } from '../query-helper';
 import { DbResponseType, GraphResponse } from 'src/app/visuall/db-service/data-types';
 
-
 export interface ActorCountData {
   id: number;
   Actor: string;
@@ -27,7 +26,6 @@ export class Query0Component implements OnInit {
   };
   tableResponse = null;
   graphResponse = null;
-  totalDataCnt = 0;
   clearTableFilter = new Subject<boolean>();
 
   constructor(private _dbService: Neo4jDb, private _cyService: CytoscapeService, private _g: GlobalVariableService) {
@@ -58,11 +56,10 @@ export class Query0Component implements OnInit {
       }
       if (!filter) {
         this.tableResponse = processedTableData;
-        this.totalDataCnt = x.data[0][3];
       }
     };
     if (isClientSidePagination && filter) {
-      this.fillTable(this.filterTableResponse(this.tableResponse, filter), this.totalDataCnt);
+      this.fillTable(this.filterTableResponse(this.tableResponse, filter), null);
       return;
     }
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
@@ -96,11 +93,11 @@ export class Query0Component implements OnInit {
       } else {
         this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph);
       }
-      if (!filter) {
+      if (!filter || this.graphResponse == null) {
         this.graphResponse = x;
       }
     };
-    if (isClientSidePagination && filter) {
+    if (isClientSidePagination && filter && this.graphResponse) {
       this._cyService.loadElementsFromDatabase(this.filterGraphResponse(this.graphResponse), this.tableInput.isMergeGraph);
       return;
     }
@@ -122,19 +119,21 @@ export class Query0Component implements OnInit {
     this._dbService.runQuery(cql, cb);
   }
 
-  fillTable(data: ActorCountData[], totalDataCount: number) {
+  fillTable(data: ActorCountData[], totalDataCount: number | null) {
     const uiColumns = ['id'].concat(this.tableInput.columns);
     const columnTypes = [TableDataType.number, TableDataType.string, TableDataType.number];
 
     this.tableInput.results = [];
     for (let i = 0; i < data.length; i++) {
       const row: TableData[] = [];
-      for (let j = 0; j < 3; j++) {
+      for (let j = 0; j < uiColumns.length; j++) {
         row.push({ type: columnTypes[j], val: data[i][uiColumns[j]] })
       }
       this.tableInput.results.push(row)
     }
-    this.tableInput.resultCnt = totalDataCount;
+    if (totalDataCount) {
+      this.tableInput.resultCnt = totalDataCount;
+    }
     this.tableFilled.next(true);
   }
 
@@ -175,6 +174,7 @@ export class Query0Component implements OnInit {
   private filterTableResponse(x: ActorCountData[], filter: TableFiltering): ActorCountData[] {
     if (!filter || ((!filter.txt || filter.txt.length < 1) && filter.orderDirection == '' && (!filter.skip || filter.skip == 0))) {
       const skip = filter && filter.skip ? filter.skip : 0;
+      this.tableInput.resultCnt = x.length;
       return x.slice(skip, skip + this._g.userPrefs.dataPageSize.getValue());
     }
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
@@ -197,11 +197,14 @@ export class Query0Component implements OnInit {
       }
     }
     const skip = filter && filter.skip ? filter.skip : 0;
+    if (filter) {
+      this.tableInput.resultCnt = filtered.length;
+    }
     return filtered.slice(skip, skip + this._g.userPrefs.dataPageSize.getValue());
   }
 
   // tableInput is already filtered. Use that to filter graph elements.
-  // For this query, we should specificly bring the related nodes and their 1-neighborhood
+  // For this query, we should specifically bring the related nodes and their 1-neighborhood
   private filterGraphResponse(x: GraphResponse): GraphResponse {
     const r: GraphResponse = { nodes: [], edges: x.edges };
     const nodeIdDict = {};
