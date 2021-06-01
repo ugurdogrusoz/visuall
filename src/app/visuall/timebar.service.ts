@@ -168,6 +168,9 @@ export class TimebarService {
   }
 
   setIgnoreChanges(isIgnore: boolean) {
+    if (!this._timebarExt) {
+      return;
+    }
     this._timebarExt.setSetting('isIgnoreElemChanges', isIgnore);
   }
 
