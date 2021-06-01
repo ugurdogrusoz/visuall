@@ -81,6 +81,10 @@ export class CytoscapeService {
   private runLayoutIfNoTimebar() {
     if (!this._g.userPrefs.timebar.isEnabled.getValue()) {
       this._g.performLayout(false);
+    } else {
+      this._timebarService.isRandomizedLayout = false;
+      this._g.isLoadFromExpandCollapse = false;
+      this._g.isLoadFromHistory = false;
     }
   }
 
