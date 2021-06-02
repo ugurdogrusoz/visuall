@@ -285,7 +285,7 @@ export class MapTabComponent implements OnInit, OnDestroy {
       }
       cb.apply(this, cbParams);
       if (isClientSidePagination) {
-        this.tableInput.resultCnt = limit4clientSidePaginated;
+        this.tableInput.resultCnt = Math.min(x.count, limit4clientSidePaginated);
       } else {
         this.tableInput.resultCnt = x.count;
       }
