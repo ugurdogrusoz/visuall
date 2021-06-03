@@ -34,7 +34,7 @@
     </div>
     <div class="card border-0 m-1">
       <div class="form">
-        <div class="form-check-label va-text">Node label style &nbsp;</div>
+        <div class="form-check-label va-text">Node label style:</div>
         <div class="form-check-inline va-text" *ngFor="let str of nodeLabelWrapTypes; let i = index;">
           <label class="form-check-label">
             <input type="radio" [(ngModel)]="nodeLabelWrap" [value]="i" class="form-check-input"
@@ -44,7 +44,7 @@
       </div>
     </div>
     <div class="card border-0 m-1">
-      <label class="form-check-label va-text">Selection style</label>
+      <label class="form-check-label va-text">Selection style:</label>
       <div class="form-inline">
         <div class="mx-1">
           <input type="number" max="20" min="1" step="any" (change)="onSelWidSelected($event)"
