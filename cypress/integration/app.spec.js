@@ -13,7 +13,7 @@ context('Global properties about Visuall', () => {
     cy.get('div#prop-tab.collapse.show').should('be.visible');
   });
 
-  it('TC2: Can show object properties by selecting', () => {
+  it('TC2: Should maintain settings when "Store user profile" is checked (true by default)', () => {
     cy.get('a.nav-link').contains('Settings').click();
     cy.get('label').contains('Emphasize on hover').siblings('input[type="checkbox"]').first().should('not.to.be.checked');
     cy.get('label').contains('Emphasize on hover').siblings('input[type="checkbox"]').first().check();

@@ -1,6 +1,6 @@
-import { open, navbarAction, openSubTab } from '../helper';
+import { open, navbarAction } from '../helper';
 
-context('Global properties about Visuall', () => {
+context('Filter By Node/Edge Type', () => {
 
   beforeEach(open);
 
@@ -11,7 +11,7 @@ context('Global properties about Visuall', () => {
     cy.window().then((win) => {
       expect(win.cy.$('node:visible').filter('.Person').length == 0).to.eq(true);
     });
-    
+
     // show 'Person' node type
     cy.get('a.filter-node-class').contains('Person').click();
     cy.window().then((win) => {
@@ -30,6 +30,5 @@ context('Global properties about Visuall', () => {
       expect(win.cy.$('edge:visible').filter('.ACTOR').length > 0).to.eq(true);
     });
   });
-
-
+  
 });

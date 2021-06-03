@@ -1,6 +1,6 @@
 import { open, navbarAction, openSubTab } from '../helper';
 
-context('Global properties about Visuall', () => {
+context('Calculate Theoretic Property', () => {
 
   beforeEach(open);
 
