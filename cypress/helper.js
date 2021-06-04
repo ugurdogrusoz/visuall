@@ -9,11 +9,11 @@ export function open() {
  * @param  {string} actionBtn text shown on UI
  */
 export function navbarAction(dropdownBtn, actionBtn) {
-  cy.get('button.btn.btn-light.dropdown-toggle').contains(dropdownBtn).click();
-  cy.get('button.dropdown-item').contains(actionBtn).click();
+  cy.get('button.btn.btn-light.dropdown-toggle:visible').contains(dropdownBtn).click();
+  cy.get('button.dropdown-item:visible').contains(actionBtn).click();
 
   if (dropdownBtn == 'Data' && actionBtn == 'Sample Data') {
-    cy.wait(3000);
+    cy.wait(1500);
     cy.window().then((win) => {
       expect(win.cy.nodes().length > 0).to.eq(true);
     });

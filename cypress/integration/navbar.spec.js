@@ -53,7 +53,7 @@ context('Navbar buttons', () => {
     }
   });
 
-  it('TC4: Can add/remove group manually, delete selected, use history to go back and forth', () => {
+  it('TC4: Can add/remove group manually, delete selected', () => {
     navbarAction('Data', 'Sample Data');
 
     cy.window().then((win) => {
@@ -111,7 +111,7 @@ context('Navbar buttons', () => {
     let cnt1 = -1;
     cy.window().then((win) => {
       cnt1 = win.cy.$().length;
-      expect(cnt1 - cnt0 >= 5).to.eq(true);
+      expect(cnt1 >= 5 + cnt0).to.eq(true);
     });
 
     navbarAction('Edit', 'Query History');
@@ -210,6 +210,68 @@ context('Navbar buttons', () => {
       const sumClassCnt2 = win.cy.$().map(x => x.classes().length).reduce((s, x) => s + x, 0);
       expect(sumClassCnt2 > sumClassCnt).to.eq(true);
     });
+
+    navbarAction('Highlight', 'Remove Highlights');
+    cy.window().then((win) => {
+      const sumClassCnt3 = win.cy.$().map(x => x.classes().length).reduce((s, x) => s + x, 0);
+      expect(sumClassCnt3 == sumClassCnt).to.eq(true);
+      win.cy.$()[0].select();
+    });
+    navbarAction('Highlight', 'Selected');
+    cy.window().then((win) => {
+      const sumClassCnt4 = win.cy.$().map(x => x.classes().length).reduce((s, x) => s + x, 0);
+      expect(sumClassCnt4 == sumClassCnt + 1).to.eq(true);
+    });
+
+    navbarAction('Highlight', 'Remove Highlights');
+    cy.window().then((win) => {
+      const sumClassCnt5 = win.cy.$().map(x => x.classes().length).reduce((s, x) => s + x, 0);
+      expect(sumClassCnt5 == sumClassCnt).to.eq(true);
+      win.cy.$()[0].select();
+    });
+
+    navbarAction('Highlight', 'Neighbors of Selected');
+    cy.window().then((win) => {
+      const sumClassCnt6 = win.cy.$().map(x => x.classes().length).reduce((s, x) => s + x, 0);
+      expect(sumClassCnt6 >= sumClassCnt + 2).to.eq(true);
+    });
+
+  });
+
+  it('TC9: Can show help modals', () => {
+    navbarAction('Help', 'Quick Help');
+    cy.get('div.modal-title').contains('Quick Help').should('be.visible');
+    cy.get('button.close:visible').click();
+
+    navbarAction('Help', 'About');
+    cy.get('div.modal-title').contains('About').should('be.visible');
+    cy.get('button.close:visible').click();
+  });
+
+  it('TC10: Can clear data', () => {
+    navbarAction('Data', 'Sample Data');
+    navbarAction('Data', 'Clear Data');
+  });
+
+  it('TC11: Can load graph from JSON file', () => {
+    navbarAction('File', 'Load...');
+    cy.get('input[type="file"]').eq(1).attachFile('visuall_sample_graph.json');
+    cy.wait(50);
+    cy.window().then((win) => {
+      const cntCollapsedNodes = win.cy.$('.cy-expand-collapse-collapsed-node').length;
+      const cntParentNodes = win.cy.$(':parent').length;
+      const cntClusterNodes = win.cy.$('.Cluster').length;
+      expect(cntCollapsedNodes == 3).to.eq(true);
+      expect(cntClusterNodes == 7).to.eq(true);
+      expect(cntParentNodes == 4).to.eq(true);
+    });
+  });
+
+  it('TC12: Can load user profile from JSON file', () => {
+    navbarAction('File', 'Load User Profile...');
+    cy.get('input[type="file"]').eq(0).attachFile('Visuall_User_Profile.vall');
+    cy.wait(100);
+    cy.get('div.modal-body').should('not.exist');
   });
 
 });
