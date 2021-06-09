@@ -197,7 +197,7 @@ export class CytoscapeService {
 
     let compoundEdgeIds = Object.values(collapsedEdgeIds) as string[];
     if (this._g.userPrefs.isCollapseMultiEdgesOnLoad.getValue()) {
-      this.collapseMultiEdges(addedEdges);
+      this.collapseMultiEdges(addedEdges, false);
     }
     let compoundEdgeIds2 = this._g.cy.edges('.' + C.COLLAPSED_EDGE_CLASS).map(x => x.id());
     elemIds.push(...C.arrayDiff(compoundEdgeIds, compoundEdgeIds2));
@@ -219,9 +219,6 @@ export class CytoscapeService {
 
     const shouldRandomize = !isIncremental || wasEmpty;
     const hasNew = this.hasNewElem(elemIds, prevElems);
-    if (this._g.userPrefs.timebar.isEnabled.getValue()) {
-      this._timebarService.isRandomizedLayout = shouldRandomize; // make randomized layout on the next load
-    }
     if (hasNew) {
       this._g.performLayout(shouldRandomize);
     }
@@ -243,7 +240,7 @@ export class CytoscapeService {
     return false;
   }
 
-  collapseMultiEdges(edges2collapse?: any) {
+  collapseMultiEdges(edges2collapse?: any, isSetFlag = true) {
     if (!edges2collapse) {
       edges2collapse = this._g.cy.edges(':visible');
     }
@@ -273,7 +270,9 @@ export class CytoscapeService {
       let edges = this._g.cy.edges(`[source="${curr.s}"][target="${curr.t}"]`);
       this._g.expandCollapseApi.collapseEdges(edges);
     }
-    this._g.isLoadFromExpandCollapse = true;
+    if (isSetFlag) {
+      this._g.isLoadFromExpandCollapse = true;
+    }
   }
 
   expandMultiEdges(edges2expand?: any) {
