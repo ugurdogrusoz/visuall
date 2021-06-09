@@ -1,4 +1,4 @@
-import { open, openTab, openSubTab, navbarAction } from '../helper';
+import { open, openTab, openSubTab, navbarAction, addPropertyRule } from '../helper';
 
 context('Query By Rule', () => {
 
@@ -9,15 +9,7 @@ context('Query By Rule', () => {
     cy.get('img[alt="Add Rule"]:visible').click();
     cy.wait(250);
   }
-
-  function addPropertyRule(prop, op, inp) {
-    cy.get('select.prop').select(prop);
-    cy.get('select.prop-op-key').select(op);
-    cy.get('input[placeholder="Filter..."]').clear();
-    cy.get('input[placeholder="Filter..."]').type(inp);
-    cy.get('img[title="Add/Update"]').click();
-  }
-
+  
   function queryByConditionRuleGetAll(type, isEdge) {
     beginQueryByRule();
     cy.get('button:visible').contains('Condition').click();
@@ -201,7 +193,7 @@ context('Query By Rule', () => {
     });
   });
 
-  it('TC9: Client-side filtering should work properly', () => {
+  it('TC9: Can add/remove query', () => {
     beginQueryByRule();
     cy.get('button:visible').contains('Condition').click();
     cy.get('img[title="Add/Update"]').click();

@@ -29,7 +29,7 @@ export function navbarAction(dropdownBtn, actionBtn) {
  * @param  {string} subTab text shown on UI
  */
 export function openSubTab(subTab) {
-  cy.get('b.va-heading2').contains(subTab).click();
+  cy.get('b.va-heading2:visible').contains(subTab).click();
 }
 
 /**
@@ -61,4 +61,17 @@ export function groupBy(algoName, shouldResultCompounds) {
       expect(win.cy.$(':parent').length == 0).to.eq(true);
     }
   });
+}
+
+/**
+ * @param  {string} prop Object type to select
+ * @param  {string} op Operator to select
+ * @param  {string} inp input value as operand 
+ */
+export function addPropertyRule(prop, op, inp) {
+  cy.get('select.prop').select(prop);
+  cy.get('select.prop-op-key').select(op);
+  cy.get('input[placeholder="Filter..."]').clear();
+  cy.get('input[placeholder="Filter..."]').type(inp);
+  cy.get('img[title="Add/Update"]').click();
 }
