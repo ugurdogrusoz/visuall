@@ -168,7 +168,7 @@ export class GlobalVariableService {
       if (this.graphHistory.length > this.userPrefs.queryHistoryLimit.getValue() - 1) {
         this.graphHistory.splice(0, 1);
       }
-      const options = { bg: 'white', scale: 3, full: true };
+      const options = { bg: 'white', scale: 1, full: true };
       const base64png: string = this.cy.png(options);
       const elements = this.cy.json().elements;
 
