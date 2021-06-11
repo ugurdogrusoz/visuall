@@ -223,6 +223,7 @@ export class CytoscapeService {
       this._g.performLayout(shouldRandomize);
     }
     this.highlightElems(isIncremental, elemIds);
+    this._g.isLoadFromDB = true;
   }
 
   hasNewElem(newElemIds: string[], prevElems: any) {

@@ -17,7 +17,6 @@ export class TimebarService {
   private _timebarExt: Timebar;
   private _playingPeriod: number;
   private _prevElems: any = null;
-  isShowFromHide = false;
   showHideFn: (isHide: boolean) => void;
   rangeListenerSetterFn: () => void;
   hideCompoundsFn: (elems) => void;
@@ -69,8 +68,9 @@ export class TimebarService {
 
   // ----------------------------------------- start of timebar settings  -----------------------------------------
   showHideTimebar(isActive: boolean) {
+    this.showHideFn(!isActive);
     // call init only once
-    if (isActive && this._g.cy.$(':visible').length > 0 && !this._timebarExt) {
+    if (isActive && !this._timebarExt) {
       this.init();
     }
     if (this._timebarExt) {
@@ -214,9 +214,9 @@ export class TimebarService {
     if (!isChanged) {
       return;
     }
-    if (this.isShowFromHide) {
-      this.isShowFromHide = false;
-      this._g.cy.fit();
+    this._g.shownElemsChanged.next(true);
+    if (this._g.isLoadFromDB) {
+      this._g.isLoadFromDB = false;
       return;
     }
     if (this.isRandomizedLayout) {
@@ -233,7 +233,6 @@ export class TimebarService {
         this._g.isLoadFromExpandCollapse = false;
       }
     }
-    this._g.shownElemsChanged.next(true);
   }
 
   // only `elems` will be shown. Highlight elements to be shown "new" (previously hidden),
@@ -302,10 +301,7 @@ export class TimebarService {
         return this._g.filterByClass(elems);
       },
       showOnlyElems: this.shownOnlyElems.bind(this),
-      chartRendered: () => {
-        const isEnabled = s.isEnabled && this._g.cy.$().length > 0;
-        this.showHideFn(!isEnabled);
-      },
+      chartRendered: () => { },
     };
     s['events'] = e;
     s['defaultBeginDate'] = this._g.userPrefs.dbQueryTimeRange.start.getValue();

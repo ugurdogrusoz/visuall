@@ -35,7 +35,6 @@ export class TimebarComponent implements OnInit {
     this.currPlayIcon = this.playImg;
     this.s.showHideFn = this.showHide.bind(this);
     this.s.rangeListenerSetterFn = this.setRangeListeners.bind(this);
-    this._g.cy.on('add remove', debounce(this.hideIfEmpty, HIDE_EMPTY_TIMEBAR_DELAY).bind(this));
   }
 
   playTiming() {
@@ -115,21 +114,10 @@ export class TimebarComponent implements OnInit {
       }, CY_NAVI_POSITION_WAIT_DUR);
     }
     this.isHide = isHide;
-  }
-
-  hideIfEmpty() {
-    if (this._g.cy.$(':visible').length < 1) {
-      // change if needed
-      if (!this.isHide) {
-        this.isHide = true;
-        setTimeout(() => {
-          this._g.cyNaviPositionSetter();
-        }, CY_NAVI_POSITION_WAIT_DUR);
-      }
-    } else if (this._g.userPrefs.timebar.isEnabled.getValue() && this.isHide) {
-      this.isHide = false;
-      this.s.showHideTimebar(true);
-      this.s.isShowFromHide = true;
+    if (!this.isHide) {
+      const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+      const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+      this.setGraphRangeStr(d1, d2);
     }
   }
 

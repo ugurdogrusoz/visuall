@@ -31,6 +31,7 @@ export class GlobalVariableService {
   showHideGraphHistory = new BehaviorSubject<boolean>(false);
   addNewGraphHistoryItem = new BehaviorSubject<boolean>(false);
   isLoadFromHistory: boolean = false;
+  isLoadFromDB: boolean = false;
   isLoadFromExpandCollapse: boolean = false;
   isUserPrefReady = new BehaviorSubject<boolean>(false);
   statusMsg = new BehaviorSubject<string>('');
