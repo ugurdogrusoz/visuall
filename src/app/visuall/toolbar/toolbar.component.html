@@ -20,7 +20,11 @@
     <span class="dash" [ngClass]="{'color-disabled': !isLimitDbQueries2range}">-</span>
     <input type="text" #dbQueryDate2 [disabled]="!isLimitDbQueries2range" title="Limit Database Queries To Time Range"
       class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
-    &nbsp;&nbsp;
+    &nbsp;
+    <div (click)="resetDbQueryRange()" title="Show entire range">
+      <img class="toolbar-element" [ngClass]="{'disabled': !isLimitDbQueries2range}" src="/assets/img/width.svg">
+    </div>
+    &nbsp;
   </div>
   <div>&nbsp;&nbsp;</div>
   <div class="va-small-text ml-auto my-auto">

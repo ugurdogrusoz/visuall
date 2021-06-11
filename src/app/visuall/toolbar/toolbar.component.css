@@ -22,6 +22,10 @@ input:disabled {
   color: #ABABAB;
 }
 
+.disabled {
+  cursor: not-allowed !important;
+}
+
 .inp-10-ch {
   width: 10.5em;
 }
