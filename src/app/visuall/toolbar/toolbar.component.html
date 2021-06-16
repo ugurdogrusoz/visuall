@@ -21,7 +21,7 @@
     <input type="text" #dbQueryDate2 [disabled]="!isLimitDbQueries2range" title="Limit Database Queries To Time Range"
       class="inp-10-ch p-1 tight-select filter-form form-control va-small-text">
     &nbsp;
-    <div (click)="resetDbQueryRange()" title="Show entire range">
+    <div [ngClass]="{'color-disabled-bg': !isLimitDbQueries2range}" (click)="resetDbQueryRange()" title="Show Entire Range">
       <img class="toolbar-element" [ngClass]="{'disabled': !isLimitDbQueries2range}" src="/assets/img/width.svg">
     </div>
     &nbsp;

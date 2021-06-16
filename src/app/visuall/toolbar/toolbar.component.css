@@ -3,13 +3,13 @@ img {
 }
 
 img:hover {
-  opacity: 1;
-  background: #dae0e5;
+  opacity      : 1;
+  background   : #dae0e5;
   border-radius: 5px;
 }
 
 input[type=checkbox] {
-  margin-left: 0.3rem;
+  margin-left : 0.3rem;
   margin-right: 0.3rem;
 }
 
@@ -17,13 +17,19 @@ input[type=checkbox] {
   color: #ABABAB;
 }
 
+.color-disabled-bg {
+  opacity: 0.5;
+}
+
 input:disabled {
   cursor: not-allowed;
-  color: #ABABAB;
+  color : #ABABAB;
 }
 
 .disabled {
-  cursor: not-allowed !important;
+  cursor    : not-allowed !important;
+  background: transparent !important;
+  opacity   : 0.7 !important;
 }
 
 .inp-10-ch {
@@ -31,9 +37,9 @@ input:disabled {
 }
 
 .mid {
-  display: flex;
+  display        : flex;
   justify-content: center;
-  align-items: center;
+  align-items    : center;
 }
 
 .tight-select {
