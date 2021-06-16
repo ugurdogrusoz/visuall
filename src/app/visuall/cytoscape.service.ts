@@ -369,7 +369,7 @@ export class CytoscapeService {
     nodes.removeClass('ellipsis_label wrap_label');
     if (wrapType == TextWrapTypes.ellipsis) {
       for (let i = 0; i < nodes.length; i++) {
-        let origLabel = this._g.getLabels4Elems([nodes[i].id().substr(1)]);
+        let origLabel = nodes[i].style('label');
         nodes[i].data('__label__', this.truncateText(origLabel, nodes[i]));
       }
       nodes.addClass('ellipsis_label');

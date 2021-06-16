@@ -1,110 +1,89 @@
 {
-    "general": [
-        {
-            "selector": ".hidden",
-            "style": {
-                "display": "none"
-            }
-        },
-        {
-            "selector": "node",
-            "style": {
-                "background-opacity": 0,
-                "font-size": "13px",
-                "text-valign": "center",
-                "text-halign": "center",
-                "background-color": "#555",
-                "text-outline-color": "#555",
-                "text-outline-width": "2px",
-                "color": "#fff",
-                "overlay-color": "#6c757d",
-                "overlay-padding": "6px",
-                "z-index": "10",
-                "text-max-width": "44px"
-            }
-        },
-        {
-            "selector": "node:selected",
-            "style": {
-                "overlay-color": "#6c757d",
-                "overlay-opacity": 0.3,
-                "background-color": "#999999"
-            }
-        },
-        {
-            "selector": "edge:selected",
-            "style": {
-                "overlay-color": "#6c757d",
-                "overlay-opacity": 0.3,
-                "line-color": "#808080"
-            }
-        },
-        {
-            "selector": "edge",
-            "style": {
-                "font-size": "13px",
-                "text-outline-color": "#ffffff",
-                "text-outline-width": "2px",
-                "control-point-step-size": 13,
-                "curve-style": "bezier"
-            }
-        },
-        {
-            "selector": "node.Cluster",
-            "style": {
-                "background-opacity": 0.07,
-                "background-color": "#555",
-                "shape": "barrel",
-                "border-color": "black",
-                "font-size": "9px"
-            }
-        },
-        {
-            "selector": "node.cy-expand-collapse-collapsed-node",
-            "style": {
-                "label": "data(name)",
-                "font-size": "9px",
-                "border-color": "black",
-                "border-width": 1,
-                "border-style": "dotted",
-                "background-opacity": 0,
-                "shape": "barrel"
-            }
-        },
-        {
-            "selector": ":compound",
-            "style": {
-                "padding": "5%"
-            }
-        },
-        {
-            "selector": "edge.cy-expand-collapse-collapsed-edge",
-            "style": {
-                "font-size": "7px",
-                "line-style": "dotted",
-                "target-arrow-shape": "triangle",
-                "text-rotation": "autorotate"
-            }
-        }
-    ],
-    "override": [
-        {
-            "selector": "node.ellipsis_label",
-            "style": {
-                "label": "data(__label__)"
-            }
-        },
-        {
-            "selector": "node.wrap_label",
-            "style": {
-                "text-wrap": "wrap"
-            }
-        },
-        {
-            "selector": "edge.nolabel",
-            "style": {
-                "label": ""
-            }
-        }
-    ]
+  "general": [{
+      "selector": ".hidden",
+      "style": {
+        "display": "none"
+      }
+    },
+    {
+      "selector": "node",
+      "style": {
+        "background-opacity": 0,
+        "font-size": "13px",
+        "text-valign": "center",
+        "text-halign": "center",
+        "background-color": "#555",
+        "text-outline-color": "#555",
+        "text-outline-width": "2px",
+        "color": "#fff",
+        "overlay-color": "#6c757d",
+        "overlay-padding": "6px",
+        "z-index": "10",
+        "text-max-width": "44px"
+      }
+    },
+    {
+      "selector": "node:selected",
+      "style": {
+        "overlay-color": "#6c757d",
+        "overlay-opacity": 0.3,
+        "background-color": "#999999"
+      }
+    },
+    {
+      "selector": "edge:selected",
+      "style": {
+        "overlay-color": "#6c757d",
+        "overlay-opacity": 0.3,
+        "line-color": "#808080"
+      }
+    },
+    {
+      "selector": "edge",
+      "style": {
+        "font-size": "13px",
+        "text-outline-color": "#ffffff",
+        "text-outline-width": "2px",
+        "control-point-step-size": 13,
+        "curve-style": "bezier"
+      }
+    },
+    {
+      "selector": "node.Cluster",
+      "style": {
+        "background-opacity": 0.07,
+        "background-color": "#555",
+        "shape": "barrel",
+        "border-color": "black",
+        "font-size": "9px"
+      }
+    },
+    {
+      "selector": "node.cy-expand-collapse-collapsed-node",
+      "style": {
+        "label": "data(name)",
+        "font-size": "9px",
+        "border-color": "black",
+        "border-width": 1,
+        "border-style": "dotted",
+        "background-opacity": 0,
+        "shape": "barrel"
+      }
+    },
+    {
+      "selector": ":compound",
+      "style": {
+        "padding": "5%"
+      }
+    },
+    {
+      "selector": "edge.cy-expand-collapse-collapsed-edge",
+      "style": {
+        "font-size": "7px",
+        "line-style": "dotted",
+        "target-arrow-shape": "triangle",
+        "text-rotation": "autorotate"
+      }
+    }
+  ]
 }

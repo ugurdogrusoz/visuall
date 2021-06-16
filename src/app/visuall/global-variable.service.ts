@@ -7,6 +7,7 @@ import { isPrimitiveType, debounce, LAYOUT_ANIM_DUR, COLLAPSED_EDGE_CLASS, COLLA
 import { GraphHistoryItem, GraphElem } from './db-service/data-types';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorModalComponent } from './popups/error-modal/error-modal.component';
+import { CyStyleCustomizationService } from '../custom/cy-style-customization.service';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +42,7 @@ export class GlobalVariableService {
   dataModel = new BehaviorSubject<any>(null);
   enums = new BehaviorSubject<any>(null);
 
-  constructor(private _http: HttpClient, private _modalService: NgbModal) {
+  constructor(private _http: HttpClient, private _modalService: NgbModal, private _cyCustomStyle: CyStyleCustomizationService) {
     this.hiddenClasses = new Set([]);
     // set user preferences staticly (necessary for rendering html initially)
     this.setUserPrefs(appPref, this.userPrefs);
@@ -464,6 +465,22 @@ export class GlobalVariableService {
         'line-color': this.setColor4CompoundEdge.bind(this),
         'target-arrow-color': this.setColor4CompoundEdge.bind(this),
         'target-arrow-shape': this.setTargetArrowShape.bind(this),
+      }).update();
+    this._cyCustomStyle.addCustomStyles(this.cy);
+
+    // add override styles
+    this.cy.style()
+      .selector('node.ellipsis_label')
+      .style({
+        "label": "data(__label__)"
+      })
+      .selector('node.wrap_label')
+      .style({
+        "text-wrap": "wrap"
+      })
+      .selector('edge.nolabel')
+      .style({
+        "label": ""
       }).update();
 
     setTimeout(() => { this.cy.endBatch(); }, CY_BATCH_END_DELAY);

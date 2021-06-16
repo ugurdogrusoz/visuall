@@ -283,23 +283,5 @@
       "target-arrow-color": "#aaaaaa",
       "text-rotation": "autorotate"
     }
-  },
-  {
-    "selector": "node.ellipsis_label",
-    "style": {
-      "label": "data(__label__)"
-    }
-  },
-  {
-    "selector": "node.wrap_label",
-    "style": {
-      "text-wrap": "wrap"
-    }
-  },
-  {
-    "selector": "edge.nolabel",
-    "style": {
-      "label": ""
-    }
   }
 ]
