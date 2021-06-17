@@ -205,8 +205,6 @@ export class TimebarService {
     // hide only non-compound nodes and edges
     this._g.viewUtils.hide(remaining4Hide);
     this.hideCompoundsFn(remaining4Hide);
-    // `select` function of cytoscape should be called on visible elements
-    this.handleHighlight(elems2show, elems2hide);
 
     const isChanged = this.hasElemsChanged(this._prevElems, elems);
     this._timebarExt.setSetting('isIgnoreElemChanges', false);
@@ -219,6 +217,8 @@ export class TimebarService {
       this._g.isLoadFromDB = false;
       return;
     }
+    // `select` function of cytoscape should be called on visible elements
+    this.handleHighlight(elems2show, elems2hide);
     if (this.isRandomizedLayout) {
       this._g.performLayout(true, false, this._playingPeriod);
       this.isRandomizedLayout = false;
@@ -235,10 +235,10 @@ export class TimebarService {
     }
   }
 
-  // only `elems` will be shown. Highlight elements to be shown "new" (previously hidden),
+  // only `elems2show` will be shown. Highlight elements to be shown "new" (previously hidden),
   // unhighlight elemenets to be hidden 
   private handleHighlight(elems2show, elems2hide) {
-    if (elems2show.length < 1 && elems2show.length < 1) {
+    if (elems2show.length < 1 && elems2hide.length < 1) {
       return;
     }
     const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();
