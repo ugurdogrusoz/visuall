@@ -155,64 +155,27 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
   showAll() { this._cyService.showHideSelectedElements(false); }
 
   highlightSearch() {
-    const q = this.generateCyQueryForStrSearch(this.searchTxt);
-    const e1 = this.findInListProps(this.searchTxt);
-    const e2 = this._g.cy.$(q);
-    const e3 = this.searchNumberProps(this.searchTxt);
-    this._g.highlightElems(e1.union(e2).union(e3))
+    const satisfyingElems = this.filterElemsByTxt(this._g.cy.$(), this.searchTxt);
+    this._g.highlightElems(satisfyingElems);
   }
 
-  generateCyQueryForStrSearch(pattern) {
+  filterElemsByTxt(elems, txt: string) {
     const entityMap = this._g.dataModel.getValue();
-    const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['string']);
-    let cyQuery = '';
-    let caseInsensitive = '';
-    if (this._g.userPrefs.isIgnoreCaseInText.getValue()) {
-      caseInsensitive = '@'
-    }
-    for (const name of Array.from(propNames)) {
-      cyQuery += `[${name} ${caseInsensitive}*= "${pattern}"],`
-    }
-    // delete last
-    cyQuery = cyQuery.substr(0, cyQuery.length - 1);
-    return cyQuery;
-  }
-
-  findInListProps(txt) {
-    const entityMap = this._g.dataModel.getValue();
-    const listPropNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['list']);
-    return this._g.cy.filter(function (e) {
-      const d = e.data();
-
-      for (const propName of Array.from(listPropNames)) {
-        const prop = d[propName];
-        if (!prop) {
-          continue;
-        }
-        for (const p of prop) {
-          if (p.toLowerCase().includes(txt.toLowerCase())) {
-            return true;
-          }
+    const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], false);
+    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
+    return elems.filter((x) => {
+      let s = '';
+      for (const propName of propNames) {
+        const val = x.data(propName);
+        if (val != undefined && val != null) {
+          s += val;
         }
       }
-      return false;
+      if (isIgnoreCase) {
+        return s.toLowerCase().includes(txt.toLowerCase());
+      }
+      return s.includes(txt);
     });
-  }
-
-  searchNumberProps(txt: string) {
-    const n = Number(txt);
-    if (!n) {
-      return this._g.cy.collection();
-    }
-    const entityMap = this._g.dataModel.getValue();
-    const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], ['int', 'float']);
-    let cyQuery = '';
-    for (const name of Array.from(propNames)) {
-      cyQuery += `[${name} = ${n}],`
-    }
-    // delete last
-    cyQuery = cyQuery.substr(0, cyQuery.length - 1);
-    return this._g.cy.$(cyQuery);
   }
 
   highlightSelected() { this._cyService.highlightSelected(); }

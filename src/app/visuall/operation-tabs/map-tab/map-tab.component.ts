@@ -237,16 +237,16 @@ export class MapTabComponent implements OnInit, OnDestroy {
   }
 
   runQueryOnClient(cb: (s: number, end: number) => void, cbParams: any[]) {
-    let fnStr2 = getBoolExpressionFromMetric(this.queryRule) + ' return true; return false;';
+    const fnStr2 = getBoolExpressionFromMetric(this.queryRule) + ' return true; return false;';
 
-    let filteredClassElems = this._g.cy.filter(new Function('x', fnStr2));
-    filteredClassElems.merge(filteredClassElems.connectedNodes());
+    let satisfyingElems = this._g.cy.filter(new Function('x', fnStr2));
+    satisfyingElems = satisfyingElems.union(satisfyingElems.connectedNodes());
     const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();
     if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
-      this._g.highlightElems(filteredClassElems);
+      this._g.highlightElems(satisfyingElems);
     } else if (newElemIndicator == MergedElemIndicatorTypes.selection) {
       this._g.isSwitch2ObjTabOnSelect = false;
-      filteredClassElems.select();
+      satisfyingElems.select();
       this._g.isSwitch2ObjTabOnSelect = true;
     }
     this._g.applyClassFiltering();
