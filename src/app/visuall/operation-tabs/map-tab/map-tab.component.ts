@@ -239,8 +239,9 @@ export class MapTabComponent implements OnInit, OnDestroy {
   runQueryOnClient(cb: (s: number, end: number) => void, cbParams: any[]) {
     const fnStr2 = getBoolExpressionFromMetric(this.queryRule) + ' return true; return false;';
 
-    let satisfyingElems = this._g.cy.filter(new Function('x', fnStr2));
-    satisfyingElems = satisfyingElems.union(satisfyingElems.connectedNodes());
+    const filterFn = new Function('x', fnStr2);
+    let satisfyingElems = this._g.cy.filter(filterFn);
+    satisfyingElems = satisfyingElems.union(this._g.filterRemovedElems(filterFn));
     const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();
     if (newElemIndicator == MergedElemIndicatorTypes.highlight) {
       this._g.highlightElems(satisfyingElems);

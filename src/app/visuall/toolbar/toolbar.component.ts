@@ -155,15 +155,10 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
   showAll() { this._cyService.showHideSelectedElements(false); }
 
   highlightSearch() {
-    const satisfyingElems = this.filterElemsByTxt(this._g.cy.$(), this.searchTxt);
-    this._g.highlightElems(satisfyingElems);
-  }
-
-  filterElemsByTxt(elems, txt: string) {
-    const entityMap = this._g.dataModel.getValue();
-    const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], false);
-    const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
-    return elems.filter((x) => {
+    const filterFn = (x) => {
+      const entityMap = this._g.dataModel.getValue();
+      const propNames = getPropNamesFromObj([entityMap.nodes, entityMap.edges], false);
+      const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
       let s = '';
       for (const propName of propNames) {
         const val = x.data(propName);
@@ -172,10 +167,13 @@ export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       if (isIgnoreCase) {
-        return s.toLowerCase().includes(txt.toLowerCase());
+        return s.toLowerCase().includes(this.searchTxt.toLowerCase());
       }
-      return s.includes(txt);
-    });
+      return s.includes(this.searchTxt);
+    };
+    let satisfyingElems = this._g.cy.filter(filterFn);
+    satisfyingElems = satisfyingElems.union(this._g.filterRemovedElems(filterFn));
+    this._g.highlightElems(satisfyingElems);
   }
 
   highlightSelected() { this._cyService.highlightSelected(); }

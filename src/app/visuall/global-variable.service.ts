@@ -333,6 +333,47 @@ export class GlobalVariableService {
     instance.componentInstance.msg = msg;
   }
 
+  /** 
+   * @param  {} fn should be a function that takes a cytoscape.js element and returns true or false
+   */
+  filterRemovedElems(fn) {
+    const r = this.cy.collection();
+    const collapsedNodes = this.cy.nodes('.' + COLLAPSED_NODE_CLASS);
+    for (let i = 0; i < collapsedNodes.length; i++) {
+      const ancestors = this.cy.collection();
+      this.filterOnElem(collapsedNodes[i], fn, r, ancestors);
+    }
+    const collapsedEdges = this.cy.edges('.' + COLLAPSED_EDGE_CLASS);
+    for (let i = 0; i < collapsedEdges.length; i++) {
+      const ancestors = this.cy.collection();
+      this.filterOnElem(collapsedEdges[i], fn, r, ancestors);
+    }
+    return r;
+  }
+
+  filterOnElem(elem, fn, r, ancestors) {
+    const collapsedChildren = elem.data('collapsedChildren');
+    const collapsedEdges = elem.data('collapsedEdges');
+    let collapsed = this.cy.collection();
+    if (collapsedChildren) {
+      collapsed.merge(collapsedChildren);
+    }
+    if (collapsedEdges) {
+      collapsed.merge(collapsedEdges);
+    }
+    if (!collapsedChildren && !collapsedEdges && fn(elem)) {
+      r.merge(elem);
+      r.merge(ancestors);
+    }
+
+    if (collapsed.length > 0) {
+      ancestors = ancestors.union(elem);
+    }
+    for (let i = 0; i < collapsed.length; i++) {
+      this.filterOnElem(collapsed[i], fn, r, ancestors);
+    }
+  }
+
   private performLayoutFn(isRandomize: boolean, isDirectCommand: boolean = false, animationDuration: number = LAYOUT_ANIM_DUR) {
     if (!this.userPrefs.isAutoIncrementalLayoutOnChange.getValue() && !isRandomize && !isDirectCommand) {
       this.cy.fit();

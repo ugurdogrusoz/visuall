@@ -467,6 +467,7 @@ export class CytoscapeService {
 
   removeHighlights() {
     this._g.viewUtils.removeHighlights();
+    this._g.viewUtils.removeHighlights(this._g.filterRemovedElems(() => true));
     this.removePopperFn();
   }
 
