@@ -433,7 +433,7 @@ export class GlobalVariableService {
 
       // separation amount between nodes in a cluster
       // note: increasing this amount will also increase the simulation time
-      nodeSeparation: 18,
+      nodeSeparation: 10,
 
       // Inter-cluster edge length factor
       // (2.0 means inter-cluster edges should be twice as long as intra-cluster edges)
