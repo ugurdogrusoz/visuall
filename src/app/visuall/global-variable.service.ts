@@ -100,11 +100,28 @@ export class GlobalVariableService {
     }
     this.setLoadingStatus(true);
     if (this.layout.clusters && this.layout.clusters.length > 0) {
+      this.removeDeletedClusters();
       elems4layout.layout(this.getCiseOptions()).run();
     } else {
       elems4layout.layout(this.layout).run();
     }
     this.statusMsg.next('Rendering graph...');
+  }
+
+  private removeDeletedClusters() {
+    const clusters = [];
+    for (let i = 0; i < this.layout.clusters.length; i++) {
+      const c = [];
+      for (let j = 0; j < this.layout.clusters[i].length; j++) {
+        if (this.cy.$id(this.layout.clusters[i][j]).length > 0) {
+          c.push(this.layout.clusters[i][j]);
+        }
+      }
+      if (c.length > 0) {
+        clusters.push(c);
+      }
+    }
+    this.layout.clusters = clusters;
   }
 
   switchLayoutRandomization(isRandomize: boolean) {
