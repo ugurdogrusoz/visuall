@@ -111,6 +111,10 @@ export interface TimebarItem {
   cyElem: any;
 }
 
+export function isSumRule(r: Rule): boolean {
+  return r && (!r.operator) && (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'edge');
+}
+
 export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules): string {
   let classCondition = '';
   // apply class condition
@@ -124,7 +128,8 @@ export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules):
     classCondition = ` x.classes().map(x => x.toLowerCase()).includes('${m.className.toLowerCase()}') `;
   }
 
-  let propertyCondition = getBoolExpressionFromRuleNode(m.rules);
+  const isAgg = m.rules.r && isSumRule(m.rules.r);
+  const propertyCondition = getBoolExpressionFromRuleNode(m.rules, isAgg);
 
   if (propertyCondition.length < 1) {
     return `if (${classCondition})`;
@@ -132,9 +137,9 @@ export function getBoolExpressionFromMetric(m: TimebarMetric | ClassBasedRules):
   return `if ( (${classCondition}) && (${propertyCondition}))`;
 }
 
-function getBoolExpressionFromRuleNode(node: RuleNode) {
+function getBoolExpressionFromRuleNode(node: RuleNode, isAgg: boolean) {
   let s = '(';
-  if (!node.r || !node.r.ruleOperator) {
+  if (!isAgg && (!node.r || !node.r.ruleOperator)) {
     if (!node.r || !node.r.propertyType) {
       s += 'true';
     } else {
@@ -147,9 +152,9 @@ function getBoolExpressionFromRuleNode(node: RuleNode) {
         if (node.r.ruleOperator == 'OR') {
           op = '||';
         }
-        s += ' ' + getBoolExpressionFromRuleNode(node.children[i]) + ' ' + op;
+        s += ' ' + getBoolExpressionFromRuleNode(node.children[i], false) + ' ' + op;
       } else {
-        s += ' ' + getBoolExpressionFromRuleNode(node.children[i]) + ' ';
+        s += ' ' + getBoolExpressionFromRuleNode(node.children[i], false) + ' ';
       }
     }
   }

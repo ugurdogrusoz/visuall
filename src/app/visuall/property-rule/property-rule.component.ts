@@ -202,6 +202,9 @@ export class PropertyRuleComponent implements OnInit {
         }
       }
     }
+    if (Number.isNaN(value)) {
+      value = '';
+    }
     const rule: Rule = {
       propertyOperand: attribute,
       propertyType: atType,

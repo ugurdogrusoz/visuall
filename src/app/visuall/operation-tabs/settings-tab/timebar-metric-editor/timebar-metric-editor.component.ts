@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric, RuleNode, deepCopyTimebarMetric } from '../../map-tab/query-types';
+import { ClassOption, TimebarMetric, Rule, RuleSync, getBoolExpressionFromMetric, RuleNode, deepCopyTimebarMetric, isSumRule } from '../../map-tab/query-types';
 import { COLLAPSED_EDGE_CLASS, GENERIC_TYPE } from '../../../constants';
 import { TimebarService } from '../../../timebar.service';
 import { UserProfileService } from '../../../user-profile.service';
@@ -27,7 +27,6 @@ export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
   isHideEditing = true;
   isAddingNew = false;
   isGenericTypeSelected = true;
-  isSumMetric = false;
   currProperties: Subject<RuleSync> = new Subject<RuleSync>();
   editingPropertyRule: Rule;
   currRuleNode: RuleNode;
@@ -166,7 +165,6 @@ export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
 
     this.putSumRule2Root(r);
     this.isAClassSelectedForMetric = true;
-    this.isSumMetric = this.isSumRule(this.filteringRule.rules.r); // sum rule should be at the root if it exists 
     this.isShowPropertyRule = r.ruleOperator !== null;
   }
 
@@ -200,11 +198,6 @@ export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
     this.isAClassSelectedForMetric = false;
     this.filteringRule.rules = null;
     this.isShowPropertyRule = true;
-    if (this.filteringRule.rules) {
-      this.isSumMetric = this.isSumRule(this.filteringRule.rules.r);
-    } else {
-      this.isSumMetric = false;
-    }
   }
 
   deleteMetric(i: number) {
@@ -242,7 +235,6 @@ export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
       this.changeSelectedClass();
       this.isAClassSelectedForMetric = true;
       this.newStatBtnTxt = 'Update';
-      this.isSumMetric = this.isSumRule(this.filteringRule.rules.r);
     }
   }
 
@@ -300,7 +292,7 @@ export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
   private setFnsForMetrics() {
     for (let m of this.currMetrics) {
       let fnStr = getBoolExpressionFromMetric(m);
-      const isS = this.isSumRule(m.rules.r);
+      const isS = isSumRule(m.rules.r);
       if (isS) {
         const r = m.rules.r;
         if (r.propertyType == 'edge') {
@@ -313,28 +305,48 @@ export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
         fnStr += `return 1;`
       }
       fnStr += ' return 0;'
+      console.log('fn: ', fnStr);
       m.incrementFn = new Function('x', fnStr) as (x: any) => number;
     }
   }
 
-  private isSumRule(r: Rule): boolean {
-    return r && (!r.operator) && (r.propertyType == 'int' || r.propertyType == 'float' || r.propertyType == 'edge');
-  }
-
   private putSumRule2Root(r: Rule) {
-    const isSum = this.isSumRule(r);
+    const isSum = isSumRule(r);
     if (!isSum) {
       return;
     }
 
     // if root is already a sum rule, replace the root
-    if (this.isSumRule(this.filteringRule.rules.r)) {
+    if (isSumRule(this.filteringRule.rules.r)) {
       const newNode: RuleNode = { parent: null, children: this.filteringRule.rules.children, r: r };
       this.filteringRule.rules = newNode;
     } else { // add sum rule as root
+      let idx = -1;
+      for (let i = 0; i < this.currRuleNode.children.length; i++) {
+        if (this.areRulesEqual(r, this.currRuleNode.children[i].r)) {
+          idx = i;
+        }
+      }
+      // remove rule from current
+      this.currRuleNode.children.splice(idx, 1);
       const newNode: RuleNode = { parent: null, children: [this.filteringRule.rules], r: r };
+      this.filteringRule.rules.parent = newNode;
       this.filteringRule.rules = newNode;
     }
+    this.clearEditingOnRules();
+  }
+
+  private areRulesEqual(a: Rule, b: Rule) {
+    // Create arrays of property names
+    const aProps = Object.getOwnPropertyNames(a);
+
+    for (let i = 0; i < aProps.length; i++) {
+      const propName = aProps[i];
+      if (a[propName] !== b[propName]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private refreshTimebar() {
@@ -350,7 +362,6 @@ export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
     this.selectedClass = this.classOptions[0].text;
     this.isAClassSelectedForMetric = false;
     this.changeSelectedClass();
-    this.isSumMetric = false;
   }
 
   private getRandomColor() {
