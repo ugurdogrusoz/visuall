@@ -158,7 +158,9 @@ function getBoolExpressionFromRuleNode(node: RuleNode, isAgg: boolean) {
       }
     }
   }
-
+  if (s == '(') {
+    return 'true';
+  }
   return s + ')';
 }
 

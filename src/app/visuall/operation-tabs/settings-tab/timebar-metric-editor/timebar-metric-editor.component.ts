@@ -305,7 +305,6 @@ export class TimebarMetricEditorComponent implements OnInit, OnDestroy {
         fnStr += `return 1;`
       }
       fnStr += ' return 0;'
-      console.log('fn: ', fnStr);
       m.incrementFn = new Function('x', fnStr) as (x: any) => number;
     }
   }
