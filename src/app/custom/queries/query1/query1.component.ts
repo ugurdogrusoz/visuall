@@ -152,16 +152,15 @@ export class Query1Component implements OnInit {
   }
 
   getDataForQueryResult(e: TableRowMeta) {
-    let d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
-    let d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
     const cb = (x) => this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph)
 
-    let idFilter = buildIdFilter(e.dbIds, true);
-    let ui2Db = { 'Title': 'n.primary_title' };
-    let orderExpr = getOrderByExpression4Query(null, 'n.primary_title', 'desc', ui2Db);
+    const idFilter = buildIdFilter(e.dbIds);
+    const ui2Db = { 'Title': 'n.primary_title' };
+    const orderExpr = getOrderByExpression4Query(null, 'n.primary_title', 'desc', ui2Db);
+    const dateFilter = this.getDateRangeCQL();
 
     let cql = `MATCH (n:Title)<-[r:ACTOR|ACTRESS]-(:Person)
-      WHERE '${this.selectedGenre}' IN n.genres AND ${idFilter}  n.production_start_date > ${d1} AND n.production_end_date < ${d2}
+      WHERE '${this.selectedGenre}' IN n.genres AND ${idFilter} AND ${dateFilter}
       WITH n, COLLECT(r) as edges
       RETURN  DISTINCT n, edges
       ORDER BY ${orderExpr} SKIP 0 LIMIT ${this.tableInput.pageSize}`;

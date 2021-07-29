@@ -138,22 +138,23 @@ export class Query0Component implements OnInit {
   }
 
   getDataForQueryResult(e: TableRowMeta) {
-    let d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
-    let d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
+    const d1 = this._g.userPrefs.dbQueryTimeRange.start.getValue();
+    const d2 = this._g.userPrefs.dbQueryTimeRange.end.getValue();
     let s = `Get actors by title counts with: "${new Date(d1).toLocaleString()}", "${new Date(d2).toLocaleString()}", "${this.movieCnt}"`;
     if (e.tableIdx) {
       s += ', ' + e.tableIdx.join(',');
     }
-    let cb = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph); this._g.add2GraphHistory(s); };
+    const cb = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph); this._g.add2GraphHistory(s); };
 
-    let idFilter = buildIdFilter(e.dbIds, true);
+    const idFilter = buildIdFilter(e.dbIds);
     const isIgnoreCase = this._g.userPrefs.isIgnoreCaseInText.getValue();
-    let txtCondition = getQueryCondition4TxtFilter(null, ['n.primary_name', 'degree'], isIgnoreCase);
-    let ui2Db = { 'Actor': 'n.primary_name', 'Count': 'degree' };
-    let orderExpr = getOrderByExpression4Query(null, 'degree', 'desc', ui2Db);
+    const txtCondition = getQueryCondition4TxtFilter(null, ['n.primary_name', 'degree'], isIgnoreCase);
+    const ui2Db = { 'Actor': 'n.primary_name', 'Count': 'degree' };
+    const orderExpr = getOrderByExpression4Query(null, 'degree', 'desc', ui2Db);
+    const dateFilter = this.getDateRangeCQL();
 
     let cql = `MATCH (n:Person)-[r:ACTOR|ACTRESS]->(:Title)
-      WHERE ${idFilter} r.act_begin >= ${d1} AND r.act_end <= ${d2}  
+      WHERE ${idFilter} AND ${dateFilter}  
       WITH n, SIZE(COLLECT(r)) as degree, COLLECT(r) as edges
       WHERE degree >= ${this.movieCnt} ${txtCondition}
       RETURN DISTINCT n, edges, degree 
