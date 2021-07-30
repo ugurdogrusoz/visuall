@@ -912,6 +912,7 @@ export class CytoscapeService {
   deleteClusteringNodes() {
     this._g.cy.$().move({ parent: null });
     this._g.cy.remove('node.' + C.CLUSTER_CLASS);
+    this._g.layout.clusters = null;
   }
 
   expandAllCompounds() {
