@@ -125,9 +125,9 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
       if (!idFilter) {
         if (isClientSidePagination) {
           const clientSideX = this.filterDbResponse(x, isFromFilter ? this.tableFilter : null);
-          this.fillTable(clientSideX, !isFromFilter);
+          this.fillTable(clientSideX, !isFromFilter, isClientSidePagination);
         } else {
-          this.fillTable(x, !isFromFilter);
+          this.fillTable(x, !isFromFilter, isClientSidePagination);
         }
       }
       if (this.tableInput.isLoadGraph || idFilter) {
@@ -237,7 +237,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   }
 
   // fill table from graph response
-  private fillTable(data, isRefreshColumns = true) {
+  private fillTable(data, isRefreshColumns = true, isClientSidePagination = true) {
     const idxNodes = data.columns.indexOf('nodes');
     const idxNodeId = data.columns.indexOf('nodeId');
     const idxNodeClass = data.columns.indexOf('nodeClass');
@@ -245,7 +245,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     const nodes = data.data[0][idxNodes];
     const nodeClass = data.data[0][idxNodeClass];
     const nodeId = data.data[0][idxNodeId];
-    if (isRefreshColumns) {
+    if (isRefreshColumns || !isClientSidePagination) {
       this.tableInput.resultCnt = data.data[0][idxTotalCnt];
     }
 
@@ -389,6 +389,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   }
 
   filterTable(filter: TableFiltering) {
+    console.log('filter table: ', filter);
     this.tableFilter = filter;
     this.runQuery(true, null);
   }
