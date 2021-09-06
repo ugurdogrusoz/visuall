@@ -467,7 +467,23 @@ export class MapTabComponent implements OnInit, OnDestroy {
   getDataForQueryResult(e: TableRowMeta) {
     let fn = (x) => { this._cyService.loadElementsFromDatabase(x, this.tableInput.isMergeGraph) };
     let historyMeta: HistoryMetaData = { customTxt: 'Loaded from table: ', isNode: !this.queryRule.isEdge, labels: e.tableIdx.join(',') }
-    this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: this.queryRule.isEdge }, historyMeta);
+    if (this._g.userPrefs.queryResultPagination.getValue() == 'Client' && this.dbResponse) {
+      const isMerge = this.tableInput.isMergeGraph && this._g.cy.elements().length > 0;
+      let r: GraphResponse = { nodes: this.dbResponse.graphData.nodes.filter(x => e.dbIds.findIndex(a => a == x.id) > -1), edges: [] };
+      if (this.queryRule.isEdge) {
+        const edges = this.dbResponse.graphData.edges.filter(x => e.dbIds.findIndex(a => a == x.id) > -1);
+        const nodes = [];
+        for (let i = 0; i < edges.length; i++) {
+          const n1 = this.dbResponse.graphData.nodes.find(x => x.id == edges[i].startNode);
+          const n2 = this.dbResponse.graphData.nodes.find(x => x.id == edges[i].endNode);
+          nodes.push(n1, n2);
+        }
+        r = { edges: edges, nodes: nodes };
+      }
+      this._cyService.loadElementsFromDatabase(r, isMerge);
+    } else {
+      this._dbService.getElems(e.dbIds, fn, { isEdgeQuery: this.queryRule.isEdge }, historyMeta);
+    }
   }
 
   resetRule() {

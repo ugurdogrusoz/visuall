@@ -124,7 +124,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
 
       if (!idFilter) {
         if (isClientSidePagination) {
-          const clientSideX = this.filterDbResponse(x, isFromFilter ? this.tableFilter : null);
+          const clientSideX = this.filterDbResponse(x, isFromFilter ? this.tableFilter : null, idFilter);
           this.fillTable(clientSideX, !isFromFilter, isClientSidePagination);
         } else {
           this.fillTable(x, !isFromFilter, isClientSidePagination);
@@ -132,7 +132,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
       }
       if (this.tableInput.isLoadGraph || idFilter) {
         if (isClientSidePagination) {
-          const clientSideX = this.filterDbResponse(x, isFromFilter ? this.tableFilter : null);
+          const clientSideX = this.filterDbResponse(x, isFromFilter ? this.tableFilter : null, idFilter);
           this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(clientSideX), this.tableInput.isMergeGraph);
         } else {
           this._cyService.loadElementsFromDatabase(this.prepareElems4Cy(x), this.tableInput.isMergeGraph);
@@ -165,7 +165,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   }
 
   // used for client-side filtering
-  private filterDbResponse(x, filter: TableFiltering) {
+  private filterDbResponse(x, filter: TableFiltering, idFilter: (string | number)[]) {
     const r = { columns: x.columns, data: [[null, null, null, null, null, null, null, null]] };
     const idxNodes = x.columns.indexOf('nodes');
     const idxNodeId = x.columns.indexOf('nodeId');
@@ -194,7 +194,11 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
 
     let tempNodes: { node: any, cls: string, id: string | number }[] = [];
     const srcNodeIds = this.selectedNodes.map(x => x.dbId);
-    if (filter) {
+    if (idFilter) {
+      tempNodes = nodes.map((_, i) => { return { node: nodes[i], cls: nodeClass[i], id: nodeId[i] } })
+        .filter((_, i) => { return idFilter.includes(nodeId[i]) || srcNodeIds.findIndex(x => x == nodeId[i]) > -1; });
+    }
+    else if (filter) {
       for (let i = 0; i < nodes.length; i++) {
         const vals = Object.values(nodes[i]).join('');
         // always include source nodes
@@ -207,7 +211,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     }
 
     // order by
-    if (filter && filter.orderDirection.length > 0) {
+    if (!idFilter && filter && filter.orderDirection.length > 0) {
       const o = filter.orderBy;
       if (filter.orderDirection == 'asc') {
         tempNodes = tempNodes.sort((a, b) => { if (!a.node[o]) return 1; if (!b.node[o]) return -1; if (a.node[o] > b.node[o]) return 1; if (b.node[o] > a.node[o]) return -1; return 0 });
@@ -225,7 +229,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
         tempNodes[i] = tmp;
       }
     }
-    if (filter) {
+    if (filter && !idFilter) {
       this.tableInput.resultCnt = tempNodes.length;
     }
 
@@ -385,7 +389,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   }
 
   getDataForQueryResult(e: TableRowMeta) {
-    this.runQuery(false, e.dbIds);
+    this.runQuery(true, e.dbIds);
   }
 
   filterTable(filter: TableFiltering) {

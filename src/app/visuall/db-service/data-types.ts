@@ -75,5 +75,5 @@ export interface DbResponse {
 }
 
 export enum DbResponseType {
-  graph = 0, table = 1, generic = 2, count = 3
+  graph = 0, table = 1, generic = 2, count = 3, raw = 4
 }
