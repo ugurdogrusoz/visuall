@@ -1033,11 +1033,13 @@ export class CytoscapeService {
         this._g.layout.clusters = null;
         return;
       }
+      let i = 0;
       for (const cluster of this._g.layout.clusters) {
-        const parentId = this.addParentNode(new Date().getTime());
+        const parentId = this.addParentNode(new Date().getTime() + '_' + i);
         for (const nodeId of cluster) {
           this._g.cy.nodes('#' + nodeId).move({ parent: parentId });
         }
+        i++;
       }
       this._g.layout.clusters = null;
       this._g.performLayout(false);
