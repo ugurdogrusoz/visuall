@@ -107,7 +107,7 @@ context('Navbar buttons', () => {
     cy.get('img[title="Add/Update"]:visible').click();
     cy.get('input.cb-is-load-graph').check();
     cy.get('input[value="Execute"]:visible').click();
-    cy.wait(3000);
+    cy.wait(5000);
     let cnt1 = -1;
     cy.window().then((win) => {
       cnt1 = win.cy.$().length;
