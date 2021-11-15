@@ -49,7 +49,7 @@ export class UserPrefHelper {
 
   changeAutoIncremental(x: boolean) {
     if (x) {
-      this._g.expandCollapseApi.setOption('layoutBy', this.expandCollaseLayout.bind(this));
+      this._g.expandCollapseApi.setOption('layoutBy', this.expandCollapseLayout.bind(this));
       this._g.expandCollapseApi.setOption('fisheye', true);
       this._g.expandCollapseApi.setOption('animate', true);
     } else {
@@ -59,13 +59,14 @@ export class UserPrefHelper {
     }
   }
 
-  private expandCollaseLayout() {
+  private expandCollapseLayout() {
     const l = this._g.getFcoseOptions();
     l.fit = false;
     const elems4layout = this._g.cy.elements().not(':hidden, :transparent');
     if (elems4layout.length < 1) {
       return;
     }
+    this._g.isLoadFromExpandCollapse = true;
     elems4layout.layout(l).run();
   }
 
