@@ -181,19 +181,17 @@ export class TimebarService {
     for (let i = 0; i < elems.length; i++) {
       const collapsedChildren = elems[i].data('collapsedChildren');
       const collapsedEdges = elems[i].data('collapsedEdges');
-      if (collapsedChildren || collapsedEdges) {
-        if (collapsedChildren) {
-          hiddenCollapsed.merge(collapsedChildren);
-        }
-        if (collapsedEdges) {
-          hiddenCollapsed.merge(collapsedEdges);
-        }
+      if (collapsedChildren) {
+        hiddenCollapsed.merge(collapsedChildren);
+      }
+      if (collapsedEdges) {
+        hiddenCollapsed.merge(collapsedEdges);
       }
     }
     elems = elems.union(hiddenCollapsed);
     const alreadyVisibleNodes = this._g.cy.nodes(':visible');
     if (alreadyVisibleNodes.length > 0) {
-      const nodes2Show = elems.nodes().difference(alreadyVisibleNodes);
+      const nodes2Show = elems.nodes(':inside').difference(alreadyVisibleNodes);
       this._g.layoutUtils.placeNewNodes(nodes2Show);
     }
     const alreadyVisible = this._g.cy.$(':visible');
