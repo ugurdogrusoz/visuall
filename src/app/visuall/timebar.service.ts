@@ -236,7 +236,7 @@ export class TimebarService {
   // only `elems2show` will be shown. Highlight elements to be shown "new" (previously hidden),
   // unhighlight elemenets to be hidden 
   private handleHighlight(elems2show, elems2hide) {
-    if (elems2show.length < 1 && elems2hide.length < 1) {
+    if ((elems2show.length < 1 && elems2hide.length < 1) || this._g.isLoadFromExpandCollapse) {
       return;
     }
     const newElemIndicator = this._g.userPrefs.mergedElemIndicator.getValue();
