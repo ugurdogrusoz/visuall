@@ -300,6 +300,21 @@ export class TimebarService {
       },
       showOnlyElems: this.shownOnlyElems.bind(this),
       chartRendered: () => { },
+      onMouseOverChart: (ids) => {
+        if (!ids) {
+          return;
+        }
+        this._g.viewUtils.removeHighlights();
+        for (let i = 0; i < ids.length; i++) {
+          this._g.highlightElems(this._g.cy.$id(ids[i]));
+        }
+      },
+      onMouseOutChart: (ids) => {
+        if (!ids) {
+          return;
+        }
+        this._g.viewUtils.removeHighlights();
+      },
     };
     s['events'] = e;
     s['defaultBeginDate'] = this._g.userPrefsFromFiles.dbQueryTimeRange.start.getValue();
