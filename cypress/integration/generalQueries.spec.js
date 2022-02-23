@@ -8,7 +8,7 @@ context('General Queries implemented in the backend side', () => {
     navbarAction('Data', 'Sample Data');
     openTab('Database');
 
-    cy.get('select.custom-select:visible').select('Get neighborhood');
+    cy.get('select.form-select:visible').select('Get neighborhood');
 
     cy.get('img[title="Select nodes to add"]').click();
 
@@ -37,7 +37,7 @@ context('General Queries implemented in the backend side', () => {
     navbarAction('Data', 'Sample Data');
     openTab('Database');
 
-    cy.get('select.custom-select:visible').select('Get graph of interest');
+    cy.get('select.form-select:visible').select('Get graph of interest');
 
     cy.get('img[title="Select nodes to add"]').click();
 
@@ -75,7 +75,7 @@ context('General Queries implemented in the backend side', () => {
     navbarAction('Data', 'Sample Data');
     openTab('Database');
 
-    cy.get('select.custom-select:visible').select('Get common targets/regulators');
+    cy.get('select.form-select:visible').select('Get common targets/regulators');
 
     cy.get('img[title="Select nodes to add"]').click();
 

@@ -2,8 +2,8 @@
 <div>
   <div class="va-text">
     <div class="d-flex align-items-center justify-content-center">
-      <select class="custom-select std-inp-hei tight-select filter-form va-small-text query-select"
-        [(ngModel)]="selectedQuery" (change)="changeAdvancedQuery($event)">
+      <select class="form-select tight-select filter-form va-small-text query-select" [(ngModel)]="selectedQuery"
+        (change)="changeAdvancedQuery($event)">
         <option value="">Choose a query</option>
         <option *ngFor="let p of queries" [value]="p">{{p}}</option>
       </select>
@@ -30,7 +30,7 @@
 
     <!-- ignored types -->
     <div class="panel">
-      <div class="subpanel-heading collapsed px-1" data-toggle="collapse" data-target="#types2consider"
+      <div class="subpanel-heading collapsed px-1" data-bs-toggle="collapse" data-bs-target="#types2consider"
         aria-expanded="false">
         <span class="panel-title accordion-toggle"><span class="va-heading3">Object Types to Consider</span></span>
       </div>
@@ -41,18 +41,21 @@
 
     <!-- options -->
     <div class="panel">
-      <div class="subpanel-heading collapsed px-1" data-toggle="collapse" data-target="#options" aria-expanded="false">
+      <div class="subpanel-heading collapsed px-1" data-bs-toggle="collapse" data-bs-target="#options"
+        aria-expanded="false">
         <span class="panel-title accordion-toggle"><span class="va-heading3">Options</span></span>
       </div>
       <div id="options" class="collapse">
         <div class="form-inline justify-content-center">
-          <label class="form-check-label va-text">Length limit</label>
+          <label class="va-text">Length limit</label>
           <div class="mx-1">
             <input type="number" max="10" min="1" [(ngModel)]="lengthLimit"
               class="form-control inp-3-char std-inp-hei va-small-text">
           </div>
-          <input class="form-check-input" type="checkbox" [(ngModel)]="isDirected">
-          <label class="form-check-label va-text">Directed</label>
+          <div class="form-check va-text m-1">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="isDirected" id="isDirected">
+            <label for="isDirected" class="form-check-label">Directed</label>
+          </div>
         </div>
 
 
@@ -61,10 +64,16 @@
 
     <div class="form-inline justify-content-center">
       <input class="btn btn-sm btn-dark va-text m-1" type="button" value="Execute" (click)="runQuery()">
-      <input class="form-check-input" type="checkbox" [(ngModel)]="tableInput.isLoadGraph">
-      <label class="form-check-label va-text">Graph&nbsp;</label>
-      <input class="form-check-input" type="checkbox" [(ngModel)]="tableInput.isMergeGraph">
-      <label class="form-check-label va-text">Merge</label>
+
+      <div class="form-check va-text m-1">
+        <input class="form-check-input" type="checkbox" [(ngModel)]="tableInput.isLoadGraph" id="isGraph">
+        <label class="form-check-label" for="isGraph">Graph</label>
+      </div>
+
+      <div class="form-check va-text m-1">
+        <input class="form-check-input" type="checkbox" [(ngModel)]="tableInput.isMergeGraph" id="isMerge">
+        <label class="form-check-label" for="isMerge">Merge</label>
+      </div>
     </div>
   </div>
   <app-table-view [params]="tableInput" [tableFilled]="tableFilled"

@@ -1,6 +1,6 @@
 <div class="panel-group">
   <div class="panel" *ngIf="selectedClasses && selectedClasses.length > 0">
-    <div class="panel-heading" data-toggle="collapse" data-target="#prop-tab" aria-expanded="true">
+    <div class="panel-heading" data-bs-toggle="collapse" data-bs-target="#prop-tab" aria-expanded="true">
       <span class="panel-title accordion-toggle"><b class="va-heading2">{{selectedClasses}}</b></span>
     </div>
 
@@ -8,8 +8,8 @@
       <table class="table table-responsive table-borderless table-sm">
         <tbody>
           <tr *ngFor="let item of selectedItemProps" class="small">
-            <td class="text-right"><b class="va-text">{{item.key}}</b></td>
-            <td class="va-text text-left">{{item.val}}</td>
+            <td class="text-end"><b class="va-text">{{item.key}}</b></td>
+            <td class="va-text text-start">{{item.val}}</td>
           </tr>
         </tbody>
       </table>
@@ -21,7 +21,7 @@
   </div>
 
   <div class="panel">
-    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#stat-tab" aria-expanded="false">
+    <div class="panel-heading collapsed" data-bs-toggle="collapse" data-bs-target="#stat-tab" aria-expanded="false">
       <span class="panel-title accordion-toggle"><b class="va-heading2">Statistics</b></span>
     </div>
     <div id="stat-tab" class="collapse">

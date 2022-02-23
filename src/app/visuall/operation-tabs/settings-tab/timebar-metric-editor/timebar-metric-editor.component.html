@@ -1,4 +1,4 @@
-<div class="subpanel-heading collapsed px-1" data-toggle="collapse" data-target="#new-statistic-panel"
+<div class="subpanel-heading collapsed px-1" data-bs-toggle="collapse" data-bs-target="#new-statistic-panel"
   aria-expanded="false">
   <span class="panel-title accordion-toggle"><span class="va-heading3">Configure Statistics</span></span>
 </div>
@@ -30,9 +30,10 @@
       <app-color-picker (onColorSelected)="colorSelected($event)" [currColor]="currMetricColor"></app-color-picker>
 
       <select title="Type" [disabled]="isAClassSelectedForMetric"
-        class="std-inp-hei custom-select tight-select filter-form va-small-text" [(ngModel)]="selectedClass"
+        class="form-select tight-select filter-form va-small-text" [(ngModel)]="selectedClass"
         (change)="changeSelectedClass()">
-        <option class="tbme-class-opt" [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">{{opt.text}}
+        <option class="tbme-class-opt" [disabled]="opt.isDisabled" *ngFor="let opt of classOptions" [value]="opt.text">
+          {{opt.text}}
         </option>
       </select>
     </div>

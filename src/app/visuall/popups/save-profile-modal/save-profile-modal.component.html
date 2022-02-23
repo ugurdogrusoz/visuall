@@ -2,9 +2,9 @@
 <div class="modal-header">
   <div class="modal-title va-heading1 text-center">Save User Profile</div>
   <div>
-    <button #closeBtn type="button" class="close" data-dismiss="modal" aria-label="Close"
+    <button #closeBtn type="button" class="btn-close" data-dismiss="modal" aria-label="Close"
       (click)="activeModal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
+      
     </button>
   </div>
 </div>
@@ -13,7 +13,7 @@
   <div class="card border-0 mx-3 my-2" *ngFor="let boolSetting of boolSettings; let i = index">
     <div class="form-check form-check-inline">
       <input [id]="'save-profile-cb' + i" type="checkbox" class="form-check-input cb-filter" [(ngModel)]="boolSetting.isEnable" />
-      <label class="form-check-label va-text">{{boolSetting.text}}</label>
+      <label class="form-label va-text">{{boolSetting.text}}</label>
     </div>
   </div>
 </div>

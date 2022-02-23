@@ -11,11 +11,11 @@
   </span>
 
   <span *ngIf="root.r" class="va-text padding4 rounded" [ngClass]="{'curr-condition': root.isEditing}">
-    <span *ngIf="root.parent" class="va-heading1 mr-2">
-      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, true)" class="pointer" title="Move up">
+    <span *ngIf="root.parent" class="va-heading1 me-2">
+      <span class="me-1 pointer" (click)="changeQueryRuleOrder(root, true)" class="pointer" title="Move up">
         <span class="black-up-triangle"></span>
       </span>
-      <span class="mr-1 pointer" (click)="changeQueryRuleOrder(root, false)" class="pointer" title="Move down">
+      <span class="me-1 pointer" (click)="changeQueryRuleOrder(root, false)" class="pointer" title="Move down">
         <span class="black-down-triangle"></span>
       </span>
     </span>

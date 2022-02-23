@@ -1,4 +1,5 @@
-body, html {
+body,
+html {
   height: 100%;
 }
 
@@ -86,7 +87,7 @@ app-operation-tabs {
 
 .root {
   display: grid;
-  grid-template-areas: 'nb nb' 'tb tb' 'cy ot' 'ti ti';
+  grid-template-areas: 'nb nb''tb tb''cy ot''ti ti';
   height: 99vh;
   grid-template-columns: 75% 25%;
   grid-template-rows: min-content min-content auto max-content;
@@ -105,6 +106,7 @@ app-operation-tabs {
   border-bottom: 2px solid #343a40;
   margin: 1%;
   padding: 3px;
+  text-decoration: none;
 }
 
 .filter-edge-class:hover {
@@ -221,11 +223,11 @@ app-operation-tabs {
   background: #fff;
 }
 
-[data-toggle="collapse"] .fa:before {
+[data-bs-toggle="collapse"] .fa:before {
   content: "\f139";
 }
 
-[data-toggle="collapse"].collapsed .fa:before {
+[data-bs-toggle="collapse"].collapsed .fa:before {
   content: "\f13a";
 }
 
@@ -331,6 +333,7 @@ app-operation-tabs {
 
 .std-inp-hei {
   height: 2em;
+  padding: .25rem !important;
 }
 
 .std-inp-hei-sec {
@@ -340,4 +343,15 @@ app-operation-tabs {
 .modal-dialog {
   width: fit-content;
   min-width: 380px;
+}
+
+.form-inline {
+  display: flex;
+  vertical-align: middle;
+  align-items: center;
+}
+
+label.form-check-label,
+input.form-check-input {
+  cursor: pointer;
 }

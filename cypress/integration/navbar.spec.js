@@ -241,11 +241,11 @@ context('Navbar buttons', () => {
   it('TC9: Can show help modals', () => {
     navbarAction('Help', 'Quick Help');
     cy.get('div.modal-title').contains('Quick Help').should('be.visible');
-    cy.get('button.close:visible').click();
+    cy.get('button.btn-close:visible').click();
 
     navbarAction('Help', 'About');
     cy.get('div.modal-title').contains('About').should('be.visible');
-    cy.get('button.close:visible').click();
+    cy.get('button.btn-close:visible').click();
   });
 
   it('TC10: Can clear data', () => {

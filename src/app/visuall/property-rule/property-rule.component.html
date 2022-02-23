@@ -1,19 +1,19 @@
-<div class="row m-1 no-gutters justify-content-center">
+<div class="row m-1 g-0 justify-content-center">
   <div class="col-3 px-1">
-    <select autofocus class="custom-select std-inp-hei tight-select filter-form va-small-text prop"
-      [(ngModel)]="selectedProp" [disabled]="isGenericTypeSelected" (change)="changeSelectedProp()">
+    <select autofocus class="form-select tight-select filter-form va-small-text prop" [(ngModel)]="selectedProp"
+      [disabled]="isGenericTypeSelected" (change)="changeSelectedProp()">
       <option *ngFor="let p of selectedClassProps" [value]="p" class="prop-opt">{{p}}</option>
     </select>
   </div>
 
-  <div class="col-3 pr-1">
-    <select class="custom-select std-inp-hei tight-select filter-form va-small-text prop-op-key"
-      [(ngModel)]="selectedOperatorKey" [disabled]="isGenericTypeSelected">
+  <div class="col-3 ps-1">
+    <select class="form-select tight-select filter-form va-small-text prop-op-key" [(ngModel)]="selectedOperatorKey"
+      [disabled]="isGenericTypeSelected">
       <option *ngFor="let o of operatorKeys" [value]="o" class="prop-op-key">{{o}}</option>
     </select>
   </div>
 
-  <div class="col-5 pr-1">
+  <div class="col-5 ps-1">
     <div [hidden]="selectedPropertyCategory != 0 && selectedOperatorKey != 'one of'">
       <input [type]="currInpType" title="Value" [(ngModel)]="filterInp"
         [disabled]="isGenericTypeSelected || isShowTxtArea" (click)="filterInpClicked()"
@@ -24,8 +24,7 @@
         class="tight-select std-inp-hei filter-form form-control va-small-text">
     </div>
     <div [hidden]="selectedPropertyCategory != 2 || selectedOperatorKey == 'one of'">
-      <select class="custom-select tight-select std-inp-hei filter-form va-small-text" [(ngModel)]="optInp"
-        (change)="optSelected()">
+      <select class="form-select tight-select filter-form va-small-text" [(ngModel)]="optInp" (change)="optSelected()">
         <option *ngFor="let p of finiteSetPropertyMap" [value]="p.key">{{p.value}}</option>
       </select>
     </div>
@@ -42,8 +41,8 @@
     <div #DragHandle style="cursor: move;" class="modal-header">
       <div class="modal-title va-heading1 text-center"><span *ngIf="selectedProp">{{selectedProp}} - </span>One of</div>
       <div>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="txtAreaPopupCancel()">
-          <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" (click)="txtAreaPopupCancel()">
+
         </button>
       </div>
     </div>
@@ -52,19 +51,19 @@
         [(ngModel)]="textAreaInp">
       </textarea>
       <select #multiSelect *ngIf="selectedPropertyCategory == 2" multiple [size]="finiteSetPropertyMap.length"
-        class="custom-select tight-select std-inp-hei filter-form va-small-text" (change)="filterInpClicked()">
+        class="form-select tight-select filter-form va-small-text" (change)="filterInpClicked()">
         <option *ngFor="let p of finiteSetPropertyMap" [value]="p.key" [(selected)]="option2selected[p.key]">{{p.value}}
         </option>
       </select>
     </div>
     <div class="d-flex align-items-center justify-content-center">
-      <select title="Saved lists" class="m-1 custom-select tight-select std-inp-hei filter-form va-small-text"
+      <select title="Saved lists" class="m-1 form-select tight-select filter-form va-small-text"
         [(ngModel)]="currSelectedList" (change)="changeSelectedSavedList($event.target.value)">
         <option disabled selected value>Choose a predefined list</option>
         <option *ngFor="let p of fittingSavedLists" [value]="p">{{p}} </option>
       </select>
-      <input autoSizeInput maxlength="33" [includeBorders]="true" [extraWidth]="3" type="text" title="Name" [(ngModel)]="currListName"
-        class="tight-select filter-form form-control std-inp-hei m-1 va-small-text">
+      <input autoSizeInput maxlength="33" [includeBorders]="true" [extraWidth]="3" type="text" title="Name"
+        [(ngModel)]="currListName" class="tight-select filter-form form-control std-inp-hei m-1 va-small-text">
       <span class="m-1">
         <img src="assets/img/tick.svg" title="Add/Update list" (click)="saveCurrList()">
       </span>
