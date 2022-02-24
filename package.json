@@ -89,9 +89,5 @@
   "bugs": {
     "url": "https://github.com/ahmetcandiroglu/visuall/issues"
   },
-  "engines": {
-    "node": "16.13.2",
-    "npm": "8.4.1"
-  },
   "homepage": "https://github.com/ivis-at-bilkent/visuall#readme"
 }
