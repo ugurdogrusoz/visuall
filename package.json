@@ -90,8 +90,8 @@
     "url": "https://github.com/ahmetcandiroglu/visuall/issues"
   },
   "engines": {
-    "node": "16.13.2",
-    "npm": "8.4.1"
+    "node": "16.x",
+    "npm": "8.x"
   },
   "homepage": "https://github.com/ivis-at-bilkent/visuall#readme"
 }
