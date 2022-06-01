@@ -26,7 +26,7 @@
       <img [src]="addNodeBtnImg" class="img-btn" [title]="addNodeBtnTxt" (click)="addSelectedNodes()">
     </button>
     <button *ngIf="selectedNodes && selectedNodes.length > 0" class="btn btn-sm m-1">
-      <img src="assets/img/delete-bin.svg" class="img-btn" (click)="removeAllSelectedNodes(i)" title="Remove all">
+      <img src="assets/img/delete-bin.svg" class="img-btn" (click)="removeAllSelectedNodes()" title="Remove all">
     </button>
   </div>
 </div>

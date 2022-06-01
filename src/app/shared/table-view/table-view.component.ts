@@ -235,7 +235,8 @@ export class TableViewComponent implements OnInit, OnDestroy {
     this.onFilteringChanged.emit({ txt: this.filterTxt, orderBy: o, orderDirection: this.sortDirection });
   }
 
-  cbChanged(idx: number, isChecked: boolean) {
+  cbChanged(idx: number, t: EventTarget) {
+    const isChecked = (<HTMLInputElement>t).checked
     delete this.checkedIdx[idx];
 
     if (isChecked) {
@@ -255,7 +256,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  cb4AllChanged(isChecked: boolean) {
+  cb4AllChanged() {
     this.checkedIdx = {};
     let elems = this.dynamicDiv.nativeElement.querySelectorAll('.row-cb');
     let elemsArr: HTMLInputElement[] = [];
@@ -264,7 +265,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
     }
     elemsArr = elemsArr.filter(x => !x.parentElement.hidden);
 
-    if (isChecked) {
+    if (this.isCheckbox4AllChecked) {
       for (let i = 0; i < this.params.results.length; i++) {
         this.checkedIdx[i] = true;
         elemsArr[i].checked = true;

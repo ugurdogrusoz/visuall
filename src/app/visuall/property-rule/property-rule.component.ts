@@ -153,7 +153,7 @@ export class PropertyRuleComponent implements OnInit {
   }
 
   @HostListener('document:keydown.enter', ['$event'])
-  onAddRuleClick(event: KeyboardEvent) {
+  onAddRuleClick(event: MouseEvent) {
     // do not enter rule with keyboard shortcut if we are showing text area for 'one of'
     if (event && this.isShowTxtArea) {
       return;
@@ -320,7 +320,8 @@ export class PropertyRuleComponent implements OnInit {
     this.fillFittingSavedLists();
   }
 
-  changeSelectedSavedList(ev: string) {
+  changeSelectedSavedList(t: EventTarget) {
+    let ev = (<HTMLInputElement>t).value;
     this.currListName = ev;
     let savedList: BehaviorSubject<string>[] = [];
     const isNum = this.isNumberProperty();

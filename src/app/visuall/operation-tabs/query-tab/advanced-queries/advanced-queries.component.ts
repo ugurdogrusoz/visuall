@@ -107,7 +107,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     this.clickedNodeIdx = -1;
   }
 
-  runQuery(isFromFilter: boolean, idFilter: (string | number)[]) {
+  runQuery(isFromFilter: boolean, idFilter: (string | number)[] | null) {
     if (!isFromFilter && !idFilter) {
       this.tableFilter.skip = 0;
       this.tableInput.currPage = 1;

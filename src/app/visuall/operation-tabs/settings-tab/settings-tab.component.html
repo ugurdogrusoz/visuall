@@ -47,7 +47,7 @@
       <div class="form-check-label va-text">Highlight style</div>
       <div class="form-inline mx-1">
         <select class="form-select tight-select filter-form va-small-text inp-4-char mx-1"
-          (change)="highlightStyleSelected($event.target.selectedIndex)">
+          (change)="highlightStyleSelected($event.target)">
           <option *ngFor="let t of currHighlightStyles; let i=index" [selected]="highlightStyleIdx == i" [value]="t">
             {{t}}
           </option>

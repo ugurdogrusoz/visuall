@@ -60,7 +60,7 @@
           </th>
           <th scope="col" [hidden]="params.isLoadGraph">
             <input type="checkbox" class="m-1 cb-table-all" [(ngModel)]="isCheckbox4AllChecked"
-              (change)="cb4AllChanged($event.target.checked)" />
+              (change)="cb4AllChanged()" />
           </th>
         </tr>
       </thead>
@@ -78,7 +78,7 @@
           <td *ngIf="!isDraggable && ((params.columns.length -1) >= columnLimit)"><span>...</span></td>
           <td [hidden]="params.isLoadGraph">
             <!-- row-cb class is used in TS, it is useless in CSS -->
-            <input type="checkbox" class="m-1 row-cb" (change)="cbChanged(i, $event.target.checked)" />
+            <input type="checkbox" class="m-1 row-cb" (change)="cbChanged(i, $event.target)" />
           </td>
         </tr>
       </tbody>

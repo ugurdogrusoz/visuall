@@ -21,7 +21,7 @@ context('General Queries implemented in the backend side', () => {
     navbarAction('Data', 'Clear Data');
     cy.wait(1000);
 
-    cy.get('input.form-check-input:visible').eq(0).check();
+    cy.get('input#isGraph.form-check-input:visible').eq(0).check();
     cy.get('input[value="Execute"]:visible').click();
 
     cy.wait(3000);
@@ -59,7 +59,7 @@ context('General Queries implemented in the backend side', () => {
     click2options();
 
     // check graph
-    cy.get('input[type="checkbox"].form-check-input:visible').eq(0).check();
+    cy.get('input#isGraph.form-check-input:visible').eq(0).check();
     cy.get('input[value="Execute"]:visible').click();
 
     cy.wait(3000);
@@ -96,7 +96,7 @@ context('General Queries implemented in the backend side', () => {
     click2options();
 
     // check graph
-    cy.get('input[type="checkbox"].form-check-input:visible').eq(0).check();
+    cy.get('input#isGraph.form-check-input:visible').eq(0).check();
     cy.get('input[value="Execute"]:visible').click();
 
     cy.wait(3000);

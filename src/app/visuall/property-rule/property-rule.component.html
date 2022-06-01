@@ -58,7 +58,7 @@
     </div>
     <div class="d-flex align-items-center justify-content-center">
       <select title="Saved lists" class="m-1 form-select tight-select filter-form va-small-text"
-        [(ngModel)]="currSelectedList" (change)="changeSelectedSavedList($event.target.value)">
+        [(ngModel)]="currSelectedList" (change)="changeSelectedSavedList($event.target)">
         <option disabled selected value>Choose a predefined list</option>
         <option *ngFor="let p of fittingSavedLists" [value]="p">{{p}} </option>
       </select>

@@ -19,7 +19,7 @@ import flatpickr from 'flatpickr';
 })
 export class ToolbarComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('file', { static: false }) file;
-  private searchTxt: string;
+  searchTxt: string;
   menu: ToolbarDiv[];
   statusMsg = '';
   statusMsgQueue: string[] = [];

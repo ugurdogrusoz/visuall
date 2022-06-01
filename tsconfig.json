@@ -12,7 +12,7 @@
     "importHelpers": true,
     "target": "es2015",
     "resolveJsonModule": true,
-    "esModuleInterop": true, 
+    "esModuleInterop": true,
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -20,5 +20,8 @@
       "es2018",
       "dom"
     ]
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true
   }
 }

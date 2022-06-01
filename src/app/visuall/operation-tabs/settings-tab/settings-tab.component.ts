@@ -260,7 +260,13 @@ export class SettingsTabComponent implements OnInit, OnDestroy {
     this._g.updateSelectionCyStyle();
   }
 
-  highlightStyleSelected(i: number) {
+  highlightStyleSelected(t: EventTarget | number) {
+    let i = 0;
+    if (typeof t == 'number') {
+      i = t;
+    } else {
+      i = (<HTMLSelectElement>t).selectedIndex;
+    }
     this.highlightStyleIdx = i;
     this._g.userPrefs.currHighlightIdx.next(i);
     let style = this._g.viewUtils.getHighlightStyles()[i];
