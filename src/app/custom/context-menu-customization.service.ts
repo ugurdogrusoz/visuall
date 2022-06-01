@@ -3,8 +3,8 @@ import { CytoscapeService } from "../visuall/cytoscape.service";
 import { DbAdapterService } from "../visuall/db-service/db-adapter.service";
 import { GlobalVariableService } from "../visuall/global-variable.service";
 import { ContextMenuItem } from "../visuall/context-menu/icontext-menu";
-import axios from "axios";
 import { DbQueryMeta, HistoryMetaData } from "../visuall/db-service/data-types";
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: "root",
@@ -46,7 +46,8 @@ export class ContextMenuCustomizationService {
   constructor(
     private _cyService: CytoscapeService,
     private _dbService: DbAdapterService,
-    private _g: GlobalVariableService
+    private _g: GlobalVariableService,
+    private _http: HttpClient
   ) {
     this._menu = [
       {
@@ -173,26 +174,29 @@ export class ContextMenuCustomizationService {
 
   private setBgImg2MoviePoster(e) {
     const id = e.data("tconst");
-    axios
+    this._http
       .get(this._movie_api_url + `?i=${id}` + this._api_key_param)
-      .then((response) => {
-        const url = response.data.Poster;
-        if (url && url != "" && url != "N/A") {
-          axios
-            .get(url)
-            .then(() => {
-              e.style({ "background-image": url });
-            })
-            .catch((e) => {
-              this._g.showErrorModal(
-                "Use Title Poster",
-                "Poster(s) does not exist!"
-              );
-            });
+      .subscribe({
+        next: (response: any) => {
+          const url = response.Poster;
+          if (url && url != "" && url != "N/A") {
+            this._http
+              .get(url, { responseType: 'blob' })
+              .subscribe({
+                next: () => {
+                  e.style({ "background-image": url });
+                }, error: (e) => {
+                  this._g.showErrorModal(
+                    "Use Title Poster",
+                    "Poster(s) does not exist!"
+                  );
+                }
+              })
+
+          }
+        }, error: (err) => {
+          this._g.showErrorModal("Background Image", err);
         }
-      })
-      .catch((err) => {
-        this._g.showErrorModal("Background Image", err);
       });
   }
 }
