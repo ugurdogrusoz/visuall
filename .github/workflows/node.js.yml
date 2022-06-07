@@ -28,6 +28,9 @@ jobs:
       - run: npm run build-prod
   cypress-e2e:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
     # https://github.com/cypress-io/cypress-docker-images
     container: cypress/browsers:node14.17.6-chrome100-ff98
     steps:
