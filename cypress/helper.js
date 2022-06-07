@@ -1,5 +1,4 @@
-// export const URL = 'http://localhost:4200/';
-export const URL = 'http://visuall.herokuapp.com/';
+export const URL = 'http://localhost:4200/';
 
 export function open() {
   cy.visit(URL);
