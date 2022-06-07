@@ -40,7 +40,6 @@ jobs:
         uses: cypress-io/github-action@v4
         timeout-minutes: 10
         with:
-          build: npm run build
-          start: node server.js
+          node-version: ${{ matrix.node-version }}
           browser: chrome
           headless: true
