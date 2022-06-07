@@ -37,7 +37,5 @@ jobs:
         uses: cypress-io/github-action@v2
         timeout-minutes: 10
         with:
-          build: npm run build
-          start: node server.js
           browser: chrome
           headless: true
