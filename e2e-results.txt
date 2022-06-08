@@ -1,0 +1,281 @@
+
+
+====================================================================================================
+
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        10.0.3                                                                         │
+  │ Browser:        Chrome 102 (headless)                                                          │
+  │ Node Version:   v14.19.0 (C:\Program Files\nodejs\node.exe)                                    │
+  │ Specs:          8 found (app.cy.js, filterByType.cy.js, generalQueries.cy.js, graphTheoreticPr │
+  │                 operty.cy.js, groupNodes.cy.js, navbar.cy.js, queryByRule.cy.js, timebar.cy.js │
+  │                 )                                                                              │
+  │ Searched:       cypress/e2e/**/*.cy.{js,jsx,ts,tsx}                                            │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  app.cy.js                                                                       (1 of 8)
+
+
+  Global properties about Visuall
+    √ TC1: Can show object properties by selecting (4542ms)
+    √ TC2: Should maintain settings when "Store user profile" is checked (true by default) (2455ms)
+
+
+  2 passing (9s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        2                                                                                │
+  │ Passing:      2                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     8 seconds                                                                        │
+  │ Spec Ran:     app.cy.js                                                                        │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  filterByType.cy.js                                                              (2 of 8)
+
+
+  Filter By Node/Edge Type
+    √ TC1: Filter by node/edge type should show or hide based on type (4633ms)
+
+
+  1 passing (6s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      1                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     filterByType.cy.js                                                               │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  generalQueries.cy.js                                                            (3 of 8)
+
+
+  General Queries implemented in the backend side
+    √ TC1: "Get Neigborhood" query should bring some nodes and edges (10002ms)
+    √ TC2: "Get graph of interest" query should bring some nodes and edges (9185ms)
+    √ TC3: "Get common targets/regulators" query should bring some nodes and edges (9594ms)
+
+
+  3 passing (30s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        3                                                                                │
+  │ Passing:      3                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     30 seconds                                                                       │
+  │ Spec Ran:     generalQueries.cy.js                                                             │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  graphTheoreticProperty.cy.js                                                    (4 of 8)
+
+
+  Calculate Theoretic Property
+    √ TC1: Can calculate degree centrality and set widths (4839ms)
+
+
+  1 passing (6s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      1                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     6 seconds                                                                        │
+  │ Spec Ran:     graphTheoreticProperty.cy.js                                                     │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  groupNodes.cy.js                                                                (5 of 8)
+
+
+  Group Nodes
+    √ TC1: Can group with Louvain using compounds (5536ms)
+
+
+  1 passing (7s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      1                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     6 seconds                                                                        │
+  │ Spec Ran:     groupNodes.cy.js                                                                 │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  navbar.cy.js                                                                    (6 of 8)
+
+
+  Navbar buttons
+    √ TC1: should have at least 7 buttons on navbar (2096ms)
+    √ TC2: Can save as JSON and PNG (5415ms)
+    √ TC3: Can save user profile (7728ms)
+    √ TC4: Can add/remove group manually, delete selected (6612ms)
+    √ TC5: Use history to go back and forth (10572ms)
+    √ TC6: Hide and/or show elements (3658ms)
+    √ TC7: Expand/collapse nodes and edges (5031ms)
+    √ TC8: Can highlight by seleting or searching (4354ms)
+    √ TC9: Can show help modals (1961ms)
+    √ TC10: Can clear data (3016ms)
+    √ TC11: Can load graph from JSON file (1863ms)
+    √ TC12: Can load user profile from JSON file (1649ms)
+
+
+  12 passing (55s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        12                                                                               │
+  │ Passing:      12                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     55 seconds                                                                       │
+  │ Spec Ran:     navbar.cy.js                                                                     │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  queryByRule.cy.js                                                               (7 of 8)
+
+
+  Query By Rule
+    √ TC1: rule for "birth > 1994 AND death < 2020" (8835ms)
+    √ TC2: Condition get All Persons (6400ms)
+    √ TC3: Condition get All COMPOSER (6463ms)
+    √ TC4: Edit Rule Condition (4057ms)
+    √ TC5: Should be able to delete rule and change class of the rule (2909ms)
+    √ TC6: Should be able to run a nested rule (5703ms)
+    √ TC7: Test if table works (9925ms)
+    √ TC8: Client-side filtering should work properly (5597ms)
+    √ TC9: Can add/remove query (3677ms)
+    √ TC10: Highlight graph element and corresponding table row on hover (6840ms)
+
+
+  10 passing (1m)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        10                                                                               │
+  │ Passing:      10                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     1 minute, 1 second                                                               │
+  │ Spec Ran:     queryByRule.cy.js                                                                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  timebar.cy.js                                                                   (8 of 8)
+
+
+  Timebar
+    √ TC1: Timebar metric as AND rule birth > 1994 && death < 2020 (6326ms)
+
+
+  1 passing (8s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      1                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     7 seconds                                                                        │
+  │ Spec Ran:     timebar.cy.js                                                                    │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ √  app.cy.js                                00:08        2        2        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ √  filterByType.cy.js                       00:05        1        1        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ √  generalQueries.cy.js                     00:30        3        3        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ √  graphTheoreticProperty.cy.js             00:06        1        1        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ √  groupNodes.cy.js                         00:06        1        1        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ √  navbar.cy.js                             00:55       12       12        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ √  queryByRule.cy.js                        01:01       10       10        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ √  timebar.cy.js                            00:07        1        1        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    √  All specs passed!                        03:02       31       31        -        -        -  
+

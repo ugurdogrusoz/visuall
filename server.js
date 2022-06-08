@@ -63,6 +63,10 @@ app.get('/urlquery/*', function (req, res) {
   }
 });
 
+app.get('/e2e', function (req, res) {
+  res.sendFile(path.join(__dirname + '/e2e-results.txt'));
+});
+
 app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname + appPath + '/index.html'));
 });
