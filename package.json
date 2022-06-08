@@ -15,7 +15,7 @@
     "serve-public": "ng serve --host 0.0.0.0",
     "build-prod": "ng build --configuration production && node time-stamper.js",
     "cy": "cypress open",
-    "e2e": "cypress run --config-file cypress.config.ts --browser chrome > e2e-results.txt"
+    "e2e": "cypress run --config-file cypress.config.ts > e2e-results.txt"
   },
   "private": true,
   "dependencies": {
