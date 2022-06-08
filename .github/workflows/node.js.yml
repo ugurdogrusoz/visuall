@@ -28,17 +28,13 @@ jobs:
       - run: npm run build-prod
   cypress-e2e:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
-    # https://github.com/cypress-io/cypress-docker-images
-    container: cypress/browsers:node14.17.6-chrome100-ff98
     steps:
-      - uses: actions/setup-node@v1
-        timeout-minutes: 10
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
         with:
-          node-version: ${{ matrix.node }}
-          browser: chrome
-          headless: true
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v4
+          build: npm run build
+          start: npm start
