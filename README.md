@@ -2,7 +2,7 @@
 
 Visu*all* is a library or template to *jump start* software developers in building a visual web based component for analysis of relational information represented as a graph.
 
-The library assumes a certain graphical user interface with utmost flexibility for customization. Hence, all components of the GUI from menus to toolbar to panels as well as the canvas are customizable. Most customization can be done via [a model description file](src/assets/app_description.json).
+The library assumes a certain graphical user interface with utmost flexibility for customization. Hence, all components of the GUI from menus to toolbar to panels as well as the canvas are customizable. Most customization can be done via [a model description file](src/app/custom/config/app_description.json).
 
 ## License
 
