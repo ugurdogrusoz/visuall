@@ -23,10 +23,9 @@ export class Neo4jDb implements DbService {
     const requestType = responseType == DbResponseType.graph ? 'graph' : 'row';
     this._g.setLoadingStatus(true);
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
-    let q = `CALL apoc.cypher.runTimeboxed("${query}", {}, ${timeout}) YIELD value RETURN value`;
-    if (!isTimeboxed) {
-      q = query;
-    }
+    let q = isTimeboxed
+      ? `CALL apoc.cypher.run("${query}", null ) YIELD value RETURN value`
+      : query;
     console.log(q);
     this._g.statusMsg.next('Executing database query...');
     const requestBody = {
@@ -37,26 +36,31 @@ export class Neo4jDb implements DbService {
       }]
     };
     let isTimeout = true;
+    let timeoutId;
+
     if (isTimeboxed) {
-      setTimeout(() => {
-        if (isTimeout) {
-          this._g.showErrorModal('Database Timeout', 'Your query took too long! <br> Consider adjusting timeout setting.');
-        }
+      timeoutId = setTimeout(() => {
+        isTimeout = true;
+        this._g.showErrorModal('Database Timeout', 'Your query took too long! <br> Consider adjusting timeout setting.');
       }, timeout);
     }
 
     const errFn = (err) => {
+      if (isTimeout) {
+        clearTimeout(timeoutId); // Clear the timeout if the request has already timed out
+      }
       isTimeout = false;
-      // It means our user-defined stored procedure intentionally throws exception to signal timeout
+      // Handle errors
       if (err.message.includes('Timeout occurred! It takes longer than')) {
         this._g.statusMsg.next('');
         this._g.showErrorModal('Database Timeout', 'Your query took too long!  <br> Consider adjusting timeout setting.');
       } else {
-        this._g.statusMsg.next('Database query execution raised error!');
-        this._g.showErrorModal('Database Query Qxecution Error', err.message);
+        this._g.statusMsg.next('Database query execution raised an error!');
+        this._g.showErrorModal('Database Query Execution Error', err.message);
       }
       this._g.setLoadingStatus(false);
     };
+
     this._http.post(url, requestBody, {
       headers: {
         'Accept': 'application/json; charset=UTF-8',
@@ -64,6 +68,9 @@ export class Neo4jDb implements DbService {
         'Authorization': 'Basic ' + btoa(username + ':' + password)
       }
     }).subscribe(x => {
+      if (isTimeout) {
+        clearTimeout(timeoutId); // Clear the timeout if the request completed before the timeout
+      }
       isTimeout = false;
       this._g.setLoadingStatus(false);
       if (x['errors'] && x['errors'].length > 0) {
@@ -79,8 +86,7 @@ export class Neo4jDb implements DbService {
         callback(this.extractGenericData(x, isTimeboxed));
       }
     }, errFn);
-  }
-
+}
   getNeighbors(elemIds: string[] | number[], callback: (x: GraphResponse) => any, meta?: DbQueryMeta) {
     let isEdgeQuery = meta && meta.isEdgeQuery;
     const idFilter = this.buildIdFilter(elemIds, false, isEdgeQuery);

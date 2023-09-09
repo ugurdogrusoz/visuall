@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
   dbConfig: {
-    url: 'http://localhost:7474/db/data/transaction/commit',
+    url: 'http://localhost:7474/db/neo4j/tx/commit',
     username: 'neo4j',
-    password: '123'
+    password: '12345678'
   }
 };
