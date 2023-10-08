@@ -175,9 +175,9 @@ export class Neo4jDb implements DbService {
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
     let idf = 'null';
     if (idFilter) {
-      idf = `[${idFilter.join()}]`;
+      idf = `[${idFilter.map(element => `'${element}'`).join()}]`;
     }
-    this.runQuery(`CALL graphOfInterest([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
+    this.runQuery(`CALL graphOfInterest([${dbIds.map(element => `'${element}'`).join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
       ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout}, ${idf})`, cb, type, false);
   }
 
@@ -204,13 +204,13 @@ export class Neo4jDb implements DbService {
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
     let idf = 'null';
     if (idFilter) {
-      idf = `[${idFilter.join()}]`;
+      idf = `[${idFilter.map(element => `'${element}'`).join()}]`;
     }
     if (type == DbResponseType.count) {
-      this.runQuery(`CALL commonStreamCount([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase},
+      this.runQuery(`CALL commonStreamCount([${dbIds.map(element => `'${element}'`).join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, '${t}', ${isIgnoreCase},
        ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout}, ${idf})`, cb, type, false);
     } else if (type == DbResponseType.table) {
-      this.runQuery(`CALL commonStream([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, ${pageSize}, ${currPage},
+      this.runQuery(`CALL commonStream([${dbIds.map(element => `'${element}'`).join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${dir}, ${pageSize}, ${currPage},
        '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout}, ${idf})`, cb, type, false);
     }
   }
@@ -236,11 +236,11 @@ export class Neo4jDb implements DbService {
     }
     let idf = 'null';
     if (idFilter) {
-      idf = `[${idFilter.join()}]`;
+      idf = `[${idFilter.map(element => `'${element}'`).join()}]`;
     }
     const inclusionType = this._g.userPrefs.objectInclusionType.getValue();
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
-    this.runQuery(`CALL neighborhood([${dbIds.join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
+    this.runQuery(`CALL neighborhood([${dbIds.map(element => `'${element}'`).join()}], [${ignoredTypes.join()}], ${lengthLimit}, ${isDirected},
       ${pageSize}, ${currPage}, '${t}', ${isIgnoreCase}, ${orderBy}, ${orderDir}, ${timeMap}, ${d1}, ${d2}, ${inclusionType}, ${timeout}, ${idf})`, cb, DbResponseType.table, false);
   }
 
@@ -350,7 +350,7 @@ export class Neo4jDb implements DbService {
       const cols = Object.keys(obj[0].row[0]);
       const data = obj.map(x => Object.values(x.row[0]));
       // put id to first
-      const idxId = cols.indexOf('ID(x)');
+      const idxId = cols.indexOf('ElementId(x)');
       if (idxId > -1) {
         const tmp = cols[idxId];
         cols[idxId] = cols[0];
@@ -375,16 +375,16 @@ export class Neo4jDb implements DbService {
     }
     if (isTimeboxed) {
       const obj = response.results[0].data[0].row[0];
-      const r: DbResponse = { tableData: { columns: ['ID(x)', 'x'], data: [] }, graphData: { nodes: [], edges: [] }, count: obj.count };
+      const r: DbResponse = { tableData: { columns: ['elementId(x)', 'x'], data: [] }, graphData: { nodes: [], edges: [] }, count: obj.count };
       // response is a node response
       if (obj.nodeIds) {
         r.tableData.data = obj.nodeIds.map((x, i) => [x, obj.nodes[i]]);
-        r.graphData.nodes = obj.nodeIds.map((x, i) => { return { properties: obj.nodes[i], labels: obj.nodeTypes[i], id: x }; });
+        r.graphData.nodes = obj.nodeIds.map((x, i) => { return { properties: obj.nodes[i], labels: obj.nodeTypes[i], elementId: x }; });
       } else {
         r.tableData.data = obj.edgeIds.map((x, i) => [x, obj.edges[i]]);
-        r.graphData.nodes = r.graphData.nodes.concat(obj.srcNodeIds.map((x, i) => { return { properties: obj.srcNodes[i], labels: obj.srcNodeTypes[i], id: x }; }));
-        r.graphData.nodes = r.graphData.nodes.concat(obj.tgtNodeIds.map((x, i) => { return { properties: obj.tgtNodes[i], labels: obj.tgtNodeTypes[i], id: x }; }));
-        r.graphData.edges = obj.edgeIds.map((x, i) => { return { properties: obj.edges[i], type: obj.edgeTypes[i], id: x, startNode: obj.srcNodeIds[i], endNode: obj.tgtNodeIds[i] }; });
+        r.graphData.nodes = r.graphData.nodes.concat(obj.srcNodeIds.map((x, i) => { return { properties: obj.srcNodes[i], labels: obj.srcNodeTypes[i], elementId: x }; }));
+        r.graphData.nodes = r.graphData.nodes.concat(obj.tgtNodeIds.map((x, i) => { return { properties: obj.tgtNodes[i], labels: obj.tgtNodeTypes[i], elementId: x }; }));
+        r.graphData.edges = obj.edgeIds.map((x, i) => { return { properties: obj.edges[i], type: obj.edgeTypes[i],elementId:x, startNodeElementId: obj.srcNodeIds[i], endNodeElementId: obj.tgtNodeIds[i] }; });
       }
 
       return r;
@@ -535,12 +535,12 @@ export class Neo4jDb implements DbService {
         orderExp = `WITH x ORDER BY x.${filter.orderBy} ${filter.orderDirection}`;
       }
       if (isEdge) {
-        return `${orderExp} RETURN collect(ID(x))${r} as edgeIds, collect(type(x))${r} as edgeTypes, collect(x)${r} as edges, 
-        collect(ID(startNode(x)))${r} as srcNodeIds, collect(labels(startNode(x)))${r} as srcNodeTypes, collect(startNode(x))${r} as srcNodes,
-        collect(ID(endNode(x)))${r} as tgtNodeIds, collect(labels(endNode(x)))${r} as tgtNodeTypes, collect(endNode(x))${r} as tgtNodes,
+        return `${orderExp} RETURN collect(ElementId(x))${r} as edgeIds, collect(type(x))${r} as edgeTypes, collect(x)${r} as edges, 
+        collect(ElementId(startNode(x)))${r} as srcNodeIds, collect(labels(startNode(x)))${r} as srcNodeTypes, collect(startNode(x))${r} as srcNodes,
+        collect(ElementId(endNode(x)))${r} as tgtNodeIds, collect(labels(endNode(x)))${r} as tgtNodeTypes, collect(endNode(x))${r} as tgtNodes,
         size(collect(x)) as count`;
       }
-      return `${orderExp} RETURN collect(ID(x))${r} as nodeIds, collect(labels(x))${r} as nodeTypes, collect(x)${r} as nodes, size(collect(x)) as count`;
+      return `${orderExp} RETURN collect(ElementId(x))${r} as nodeIds, collect(labels(x))${r} as nodeTypes, collect(x)${r} as nodes, size(collect(x)) as count`;
     } else if (type == DbResponseType.count) {
       return `RETURN COUNT(x)`;
     }
@@ -560,7 +560,7 @@ export class Neo4jDb implements DbService {
       cql = '(';
     }
     for (let i = 0; i < ids.length; i++) {
-      cql += `ID(${varName})=${ids[i]} OR `
+      cql += `ElementId(${varName})='${ids[i]}' OR `
     }
 
     if (ids.length > 0) {

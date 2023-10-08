@@ -155,7 +155,7 @@ export class CytoscapeService {
     let elemIds: string[] = [];
     let cyNodes = [];
     for (let i = 0; i < nodes.length; i++) {
-      let cyNodeId = 'n' + nodes[i].id;
+      let cyNodeId = 'n' + nodes[i].elementId.replace(/:/g, "_");
       cyNodes.push(this.createCyNode(nodes[i], cyNodeId));
       elemIds.push(cyNodeId);
     }
@@ -166,7 +166,7 @@ export class CytoscapeService {
       collapsedEdgeIds = this.getCollapsedEdgeIds();
     }
     for (let i = 0; i < edges.length; i++) {
-      let cyEdgeId = 'e' + edges[i].id;
+      let cyEdgeId = 'e' + edges[i].elementId.replace(/:/g, "_");
       if (collapsedEdgeIds[cyEdgeId]) {
         elemIds.push(collapsedEdgeIds[cyEdgeId]);
         continue;
@@ -188,7 +188,7 @@ export class CytoscapeService {
     for (let i = 0; i < cyEdges.length; i++) {
       const sId = cyEdges[i].data.source;
       const eId = cyEdges[i].data.target;
-      if ((this._g.cy.$id(sId).length < 1 && !nodes.find(x => x.id == sId)) || (this._g.cy.$id(eId).length < 1 && !nodes.find(x => x.id == eId))) {
+      if ((this._g.cy.$id(sId).length < 1 && !nodes.find(x => x.elementId == sId)) || (this._g.cy.$id(eId).length < 1 && !nodes.find(x => x.elementId == eId))) {
         continue;
       }
       filteredCyEdges.push(cyEdges[i]);
@@ -338,16 +338,16 @@ export class CytoscapeService {
   createCyNode(node: CyNode, id) {
     const classes = node.labels.join(' ');
     let properties = node.properties;
-    properties.id = id
-
+    properties.elementId = id
+    properties.id = id;
     return { data: properties, classes: classes };
   }
 
   createCyEdge(edge: CyEdge, id) {
     let properties = edge.properties || {};
-    properties.id = id;
-    properties.source = 'n' + edge.startNode;
-    properties.target = 'n' + edge.endNode;
+    properties.elementId = id;
+    properties.source = 'n' + edge.startNodeElementId.replace(/:/g, "_");
+    properties.target = 'n' + edge.endNodeElementId.replace(/:/g, "_");
 
     return { data: properties, classes: edge.type };
   }
@@ -573,7 +573,7 @@ export class CytoscapeService {
 
   addParentNode(idSuffix: string | number, parent = undefined): string {
     const id = 'c' + idSuffix;
-    const parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name }, id: '' }, id);
+    const parentNode = this.createCyNode({ labels: [C.CLUSTER_CLASS], properties: { end_datetime: 0, begin_datetime: 0, name: name } ,elementId:''}, id);
     this._g.cy.add(parentNode);
     this._g.cy.$('#' + id).move({ parent: parent });
     return id;

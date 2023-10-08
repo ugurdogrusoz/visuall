@@ -200,11 +200,11 @@ export class GlobalVariableService {
     }, this.HISTORY_SNAP_DELAY);
   }
 
-  getLabels4Elems(elemIds: string[] | number[], isNode: boolean = true, objDatas: GraphElem[] = null): string {
+  getLabels4Elems(elemIds: string[] , isNode: boolean = true, objDatas: GraphElem[] = null): string {
     return this.getLabels4ElemsAsArray(elemIds, isNode, objDatas).join(',');
   }
 
-  getLabels4ElemsAsArray(elemIds: string[] | number[], isNode: boolean = true, objDatas: GraphElem[] = null): string[] {
+  getLabels4ElemsAsArray(elemIds: string[] , isNode: boolean = true, objDatas: GraphElem[] = null): string[] {
     let cyIds: string[] = [];
     let idChar = 'n';
     if (!isNode) {
@@ -214,7 +214,7 @@ export class GlobalVariableService {
       cyIds = objDatas.map(x => x.data.id);
     } else {
       for (let i = 0; i < elemIds.length; i++) {
-        cyIds.push(idChar + elemIds[i]);
+        cyIds.push(idChar + elemIds[i].replace(/:/g, "_"));
       }
     }
 

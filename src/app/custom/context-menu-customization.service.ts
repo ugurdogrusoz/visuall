@@ -146,7 +146,7 @@ export class ContextMenuCustomizationService {
   getNeighbors(event, historyMeta: HistoryMetaData, queryMeta: DbQueryMeta) {
     const ele = event.target || event.cyTarget;
     this._dbService.getNeighbors(
-      [ele.id().substr(1)],
+      [ele.id().substr(1).replace(/_/g, ":")],
       (x) => {
         this._cyService.loadElementsFromDatabase(x, true);
       },

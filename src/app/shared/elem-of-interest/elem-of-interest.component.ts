@@ -29,7 +29,7 @@ export class ElemOfInterestComponent implements OnInit {
   selectedNodeClicked(i: number) {
     this._g.isSwitch2ObjTabOnSelect = false;
     this.clickedNodeIdx = i;
-    const idSelector = '#n' + this.selectedNodes[i].dbId;
+    const idSelector = '#n' + this.selectedNodes[i].dbId.replace(":", '_');
     this._g.cy.$().unselect();
     this._g.cy.$(idSelector).select();
     this._g.isSwitch2ObjTabOnSelect = true;
@@ -49,7 +49,7 @@ export class ElemOfInterestComponent implements OnInit {
     if (selectedNodes.length < 1) {
       return;
     }
-    const dbIds = selectedNodes.map(x => x.id().slice(1));
+    const dbIds = selectedNodes.map(x => x.id().slice(1).replace(/_/g, ":"));
     const labels = this._g.getLabels4ElemsAsArray(dbIds);
     const types = selectedNodes.map(x => x.classes()[0]);
     for (let i = 0; i < labels.length; i++) {
@@ -73,10 +73,10 @@ export class ElemOfInterestComponent implements OnInit {
         if (arr.length < 0) {
           return;
         }
-        const idx4id = arr[0].indexOf('id');
+        const idx4id = arr[0].indexOf('elementId');
 
         for (let i = 1; i < arr.length; i++) {
-          if (this.selectedNodes.find(x => x.dbId == arr[i][idx4id].substring(1))) {
+          if (this.selectedNodes.find(x => x.dbId == arr[i][idx4id].substring(1).replace(/_/g, ":"))) {
             continue;
           }
           const o = {};
@@ -87,7 +87,7 @@ export class ElemOfInterestComponent implements OnInit {
         }
       } else {
         elems = JSON.parse(txt) as GraphElem[];
-        const fn1 = x => this.selectedNodes.find(y => y.dbId === x.data.id.substring(1)) === undefined;
+        const fn1 = x => this.selectedNodes.find(y => y.dbId === x.data.id.substring(1).replace(/_/g, ":")) === undefined;
         if (!(elems instanceof Array)) {
           elems = (JSON.parse(txt).nodes as any[]).filter(fn1);
         } else {
@@ -97,7 +97,7 @@ export class ElemOfInterestComponent implements OnInit {
 
       elems = elems.filter(x => this.isValidType(x.classes.split(' ')[0]));
       const labels = this._g.getLabels4ElemsAsArray(null, true, elems);
-      this.selectedNodes = this.selectedNodes.concat(elems.map((x, i) => { return { dbId: x.data.id.substring(1), label: x.classes.split(' ')[0] + ':' + labels[i] } }));
+      this.selectedNodes = this.selectedNodes.concat(elems.map((x, i) => { return { dbId: x.data.id.substring(1).replace(/_/g, ":"), label: x.classes.split(' ')[0] + ':' + labels[i] } }));
 
       this.selectedElemsChanged.next(this.selectedNodes);
     });
@@ -106,7 +106,7 @@ export class ElemOfInterestComponent implements OnInit {
   removeSelected(i: number) {
     if (i == this.clickedNodeIdx) {
       this.clickedNodeIdx = -1;
-      const idSelector = '#n' + this.selectedNodes[i].dbId;
+      const idSelector = '#n' + this.selectedNodes[i].dbId.replace(":", '_');;
       this._g.cy.$(idSelector).unselect();
     } else if (i < this.clickedNodeIdx) {
       this.clickedNodeIdx--;
