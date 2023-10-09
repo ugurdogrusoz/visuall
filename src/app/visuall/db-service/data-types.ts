@@ -17,19 +17,15 @@ export interface GraphResponse {
 }
 
 export interface CyNode {
-  //id: string;
   elementId: string;
   labels: string[];
   properties?: any;
 }
 
 export interface CyEdge {
-  //id: string;
   elementId: string;
   properties?: any;
-  //startNode: string | number;
   startNodeElementId: string;
-  //endNode: string | number;
   endNodeElementId: string;
   type: string;
 }
