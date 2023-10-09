@@ -51,7 +51,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
   @Input() tableFilled = new Subject<boolean>();
   @Input() clearFilter = new Subject<boolean>();
   @Output() onFilteringChanged = new EventEmitter<TableFiltering>();
-  @Output() onDataForQueryResult = new EventEmitter<{ dbIds: number[] | string[], tableIdx: number[] }>();
+  @Output() onDataForQueryResult = new EventEmitter<{ dbIds: string[], tableIdx: number[] }>();
 
   constructor(private _cyService: CytoscapeService, private _g: GlobalVariableService, private _ngZone: NgZone) { }
 
@@ -248,7 +248,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
 
   loadGraph4Checked() {
     // index 0 keeps database IDs
-    let dbIds = this.params.results.filter((_, i) => this.checkedIdx[i]).map(x => x[0].val) as number[];
+    let dbIds = this.params.results.filter((_, i) => this.checkedIdx[i]).map(x => x[0].val) as string[];
     let idxes = [];
     for (let i in this.checkedIdx) {
       idxes.push(Number(i) + 1);
