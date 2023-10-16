@@ -126,7 +126,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
         if (this.params.isUseCySelector4Highlight) {
           this.hoveredElemId = '#' + e.target.id();
         } else {
-          this.hoveredElemId = e.target.id().substr(1).replace(/_/g, ":");
+          this.hoveredElemId = e.target.id().substr(1);
         }
       } else {
         this.hoveredElemId = '-';
@@ -159,32 +159,31 @@ export class TableViewComponent implements OnInit, OnDestroy {
   }
 
   onMouseEnter(id: string) {
-    let elementId = id;
     if (this.params.isDisableHover || !this._g.userPrefs.isHighlightOnHover.getValue()) {
       return;
     }
     if (this.params.isUseCySelector4Highlight) {
       this.highlighterFn({ target: null, type: EV_MOUSE_ON, cySelector: id });
     } else {
-      let target = this._g.cy.$('#n' + elementId.replace(/:/g, "_"));
+      let target = this._g.cy.elements(`[id = "n${id}"]`);
+      
       if (!this.params.isNodeData) {
-        target = this._g.cy.$('#e' + elementId.replace(/:/g, "_"));
+        target = this._g.cy.edges(`[id = "e${id}"]`);
       }
       this.highlighterFn({ target: target, type: EV_MOUSE_ON });
     }
   }
 
   onMouseExit(id: string) {
-    let elementId = id;
     if (this.params.isDisableHover || !this._g.userPrefs.isHighlightOnHover.getValue()) {
       return;
     }
     if (this.params.isUseCySelector4Highlight) {
       this.highlighterFn({ target: null, type: EV_MOUSE_OFF, cySelector: id });
     } else {
-      let target = this._g.cy.$('#n' + elementId.replace(/:/g, "_"));
+      let target = this._g.cy.elements(`[id = "n${id}"]`);
       if (!this.params.isNodeData) {
-        target = this._g.cy.$('#e' + elementId.replace(/:/g, "_"));
+        target =  this._g.cy.edges(`[id = "e${id}"]`);
       }
       this.highlighterFn({ target: target, type: EV_MOUSE_OFF });
     }
@@ -319,7 +318,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
       }
       data['id'] = prefix + r[0].val;
       if (this.params.isUseCySelector4Highlight) {
-        data['id'] = r[0].val.substr(1).replace(/_/g, ":");
+        data['id'] = r[0].val.substr(1);
       }
       objs.push({ classes: cName, data: data });
     }

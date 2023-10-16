@@ -214,7 +214,7 @@ export class GlobalVariableService {
       cyIds = objDatas.map(x => x.data.id);
     } else {
       for (let i = 0; i < elemIds.length; i++) {
-        cyIds.push(idChar + elemIds[i].replace(/:/g, "_"));
+        cyIds.push(idChar + elemIds[i]);
       }
     }
 
@@ -226,7 +226,7 @@ export class GlobalVariableService {
     for (let i = 0; i < cyIds.length; i++) {
       let cName = '';
       if (!objDatas) {
-        cName = this.cy.$('#' + cyIds[i]).className()[0];
+        cName = this.cy.elements(`[id = "${cyIds[i]}"]`).className()[0];
       } else {
         cName = objDatas[i].classes.split(' ')[0];
       }
@@ -237,7 +237,7 @@ export class GlobalVariableService {
       } else {
         let propName = s.slice(s.indexOf('(') + 1, s.indexOf(')'));
         if (!objDatas) {
-          labels.push(this.cy.$('#' + cyIds[i]).data(propName));
+          labels.push(this.cy.elements(`[id = "${cyIds[i]}"]`).data(propName));
         } else {
           const currData = objDatas[i].data;
           let l = currData[propName];

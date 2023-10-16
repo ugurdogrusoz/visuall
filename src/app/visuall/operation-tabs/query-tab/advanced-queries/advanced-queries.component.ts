@@ -81,7 +81,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     if (selectedNodes.length < 1) {
       return;
     }
-    const dbIds = selectedNodes.map(x => x.id().slice(1).replace(/_/g, ":"));
+    const dbIds = selectedNodes.map(x => x.id().slice(1));
     const labels = this._g.getLabels4ElemsAsArray(dbIds);
     const types = selectedNodes.map(x => x.classes()[0]);
     for (let i = 0; i < labels.length; i++) {
@@ -94,8 +94,8 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   removeSelected(i: number) {
     if (i == this.clickedNodeIdx) {
       this.clickedNodeIdx = -1;
-      const idSelector = '#n' + this.selectedNodes[i].dbId.replace(/:/g, "_");
-      this._g.cy.$(idSelector).unselect();
+      const idSelector = 'n' + this.selectedNodes[i].dbId;
+      this._g.cy.$id(idSelector).unselect();
     } else if (i < this.clickedNodeIdx) {
       this.clickedNodeIdx--;
     }
@@ -296,7 +296,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
 
   private highlightSeedNodes() {
     const dbIds = this.selectedNodes.map(x => x.dbId);
-    const seedNodes = this._g.cy.nodes(dbIds.map(x => '#n' + x.replace(/:/g, "_")).join());
+    const seedNodes = this._g.cy.nodes().filter(node => dbIds.includes(node.id().substring(1)));
     // add a new higlight style
     if (this._g.userPrefs.highlightStyles.length < 2) {
       const cyStyle = getCyStyleFromColorAndWid('#0b9bcd', 4.5);
@@ -316,7 +316,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
     if (!dbIds || dbIds.length < 1) {
       return;
     }
-    const cyNodes = this._g.cy.nodes(dbIds.map(x => '#n' + x.replace(/:/g, "_")).join());
+    const cyNodes = this._g.cy.nodes().filter(node => dbIds.includes(node.id().substring(1)));
 
     // add a new higlight style
     if (this._g.userPrefs.highlightStyles.length < 3) {
@@ -353,7 +353,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
         }
       } else {
         elems = JSON.parse(txt) as GraphElem[];
-        const fn1 = x => this.selectedNodes.find(y => y.dbId === x.data.id.substring(1).replace(/_/g, ":")) === undefined;
+        const fn1 = x => this.selectedNodes.find(y => y.dbId === x.data.id.substring(1)) === undefined;
         if (!(elems instanceof Array)) {
           elems = (JSON.parse(txt).nodes as any[]).filter(fn1);
         } else {
@@ -362,7 +362,7 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
       }
 
       const labels = this._g.getLabels4ElemsAsArray(null, true, elems);
-      this.selectedNodes = this.selectedNodes.concat(elems.map((x, i) => { return { dbId: x.data.id.substring(1).replace(/_/g, ":"), label: x.classes.split(' ')[0] + ':' + labels[i] } }));
+      this.selectedNodes = this.selectedNodes.concat(elems.map((x, i) => { return { dbId: x.data.id.substring(1), label: x.classes.split(' ')[0] + ':' + labels[i] } }));
     });
   }
 
@@ -382,9 +382,9 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   selectedNodeClicked(i: number) {
     this._g.isSwitch2ObjTabOnSelect = false;
     this.clickedNodeIdx = i;
-    const idSelector = '#n' + this.selectedNodes[i].dbId.replace(/:/g, "_");
+    const idSelector = 'n' + this.selectedNodes[i].dbId;
     this._g.cy.$().unselect();
-    this._g.cy.$(idSelector).select();
+    this._g.cy.elements(`[id = "${idSelector}"]`).select();
     this._g.isSwitch2ObjTabOnSelect = true;
   }
 
@@ -426,8 +426,8 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
       const srcId = edgeSrcTgt[i][0];
       const tgtId = edgeSrcTgt[i][1];
       // check if src and target exist in cy or current data.
-      const isSrcLoaded = this.tableInput.isMergeGraph ? this._g.cy.$('#n' + srcId.replace(/:/g, "_")).length > 0 : false;
-      const isTgtLoaded = this.tableInput.isMergeGraph ? this._g.cy.$('#n' + tgtId.replace(/:/g, "_")).length > 0 : false;
+      const isSrcLoaded = this.tableInput.isMergeGraph ? this._g.cy.elements(`[id = "n${srcId}"]`).length > 0 : false;
+      const isTgtLoaded = this.tableInput.isMergeGraph ? this._g.cy.elements(`[id = "n${tgtId}"]`).length > 0 : false;
       if ((nodeIdsDict[srcId] || isSrcLoaded) && (nodeIdsDict[tgtId] || isTgtLoaded)) {
         cyData.edges.push({ properties: edges[i], startNodeElementId: srcId, endNodeElementId: tgtId, elementId: edgeId[i], type: edgeClass[i] });
       }
