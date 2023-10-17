@@ -144,7 +144,7 @@ export class Neo4jDb implements DbService {
     if (f2.length > 0) {
       f += f2;
     }
-    this.runQuery(`MATCH (n)-[e]-() ${f} RETURN n,e limit 5`, callback);
+    this.runQuery(`MATCH (n)-[e]-() ${f} RETURN n,e limit 100`, callback);
   }
 
   getFilteringResult(rules: ClassBasedRules, filter: TableFiltering, skip: number, limit: number, type: DbResponseType, callback: (x: GraphResponse | TableResponse) => any) {
