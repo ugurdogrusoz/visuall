@@ -295,8 +295,8 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
   }
 
   private highlightSeedNodes() {
-    const dbIds = this.selectedNodes.map(x => x.dbId);
-    const seedNodes = this._g.cy.nodes().filter(node => dbIds.includes(node.id().substring(1)));
+    const dbIds = new Set(this.selectedNodes.map(x => x.dbId));
+    const seedNodes = this._g.cy.nodes().filter(node => dbIds.has(node.id().substring(1)));
     // add a new higlight style
     if (this._g.userPrefs.highlightStyles.length < 2) {
       const cyStyle = getCyStyleFromColorAndWid('#0b9bcd', 4.5);
@@ -312,11 +312,11 @@ export class AdvancedQueriesComponent implements OnInit, OnDestroy {
 
   private highlightTargetRegulators(data) {
     const idxTargetRegulator = data.columns.indexOf('targetRegulatorNodeIds');
-    const dbIds = data.data[0][idxTargetRegulator];
-    if (!dbIds || dbIds.length < 1) {
+    const dbIds = new Set(data.data[0][idxTargetRegulator]);
+    if (!dbIds || dbIds.size < 1) {
       return;
     }
-    const cyNodes = this._g.cy.nodes().filter(node => dbIds.includes(node.id().substring(1)));
+    const cyNodes = this._g.cy.nodes().filter(node => dbIds.has(node.id().substring(1)));
 
     // add a new higlight style
     if (this._g.userPrefs.highlightStyles.length < 3) {

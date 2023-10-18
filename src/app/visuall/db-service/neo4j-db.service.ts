@@ -23,7 +23,7 @@ export class Neo4jDb implements DbService {
     const requestType = responseType == DbResponseType.graph ? 'graph' : 'row';
     this._g.setLoadingStatus(true);
     const timeout = this._g.userPrefs.dbTimeout.getValue() * 1000;
-    let q = isTimeboxed
+    const q = isTimeboxed
       ? `CALL apoc.cypher.run("${query}", null ) YIELD value RETURN value`
       : query;
     console.log(q);
