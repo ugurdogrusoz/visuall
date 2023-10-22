@@ -202,8 +202,9 @@ export class CytoscapeService {
     elemIds.push(...C.arrayDiff(compoundEdgeIds, compoundEdgeIds2));
     // elements might already exist but hidden, so show them
     const elemIdSet = new Set(elemIds);
-    this._g.viewUtils.show(this._g.cy.nodes().filter(node => elemIdSet.has(node.id())));
+    this._g.viewUtils.show(this._g.cy.elements().filter(element => elemIdSet.has(element.id())));
     this._g.applyClassFiltering();
+    console.log("bUraya geldii")
 
     if (isIncremental && !wasEmpty) {
       let collection = this._g.cy.collection();
