@@ -204,7 +204,6 @@ export class CytoscapeService {
     const elemIdSet = new Set(elemIds);
     this._g.viewUtils.show(this._g.cy.elements().filter(element => elemIdSet.has(element.id())));
     this._g.applyClassFiltering();
-    console.log("bUraya geldii")
 
     if (isIncremental && !wasEmpty) {
       let collection = this._g.cy.collection();
@@ -761,7 +760,7 @@ export class CytoscapeService {
       this.hideCompoundNode(nodes[i], edgeIdDict);
     }
     for (let i in edgeIdDict) {
-      this.hideCompoundEdge(this._g.cy.edges('#' + i));
+      this.hideCompoundEdge(this._g.cy.edges(i));
     }
     this._timebarService.setIgnoreChanges(false);
   }
@@ -1035,7 +1034,7 @@ export class CytoscapeService {
       for (const cluster of this._g.layout.clusters) {
         const parentId = this.addParentNode(new Date().getTime() + '_' + i);
         for (const nodeId of cluster) {
-          this._g.cy.nodes('#' + nodeId).move({ parent: parentId });
+          this._g.cy.nodes(nodeId).move({ parent: parentId });
         }
         i++;
       }
