@@ -760,7 +760,7 @@ export class CytoscapeService {
       this.hideCompoundNode(nodes[i], edgeIdDict);
     }
     for (let i in edgeIdDict) {
-      this.hideCompoundEdge(this._g.cy.edges(i));
+      this.hideCompoundEdge(this._g.cy.edges('#' +i));
     }
     this._timebarService.setIgnoreChanges(false);
   }
@@ -1034,7 +1034,7 @@ export class CytoscapeService {
       for (const cluster of this._g.layout.clusters) {
         const parentId = this.addParentNode(new Date().getTime() + '_' + i);
         for (const nodeId of cluster) {
-          this._g.cy.nodes(nodeId).move({ parent: parentId });
+          this._g.cy.nodes('#' + nodeId).move({ parent: parentId });
         }
         i++;
       }
