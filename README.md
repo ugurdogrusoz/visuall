@@ -6,7 +6,7 @@ The library assumes a certain graphical user interface with utmost flexibility f
 
 ## License
 
-Visu*all* is **not** an open source or free software. Please contact [i-Vis Research Lab](http://www.cs.bilkent.edu.tr/~ivis/) for terms of use of this software.
+Visu*all* is open source but not **not** free software. Please contact [i-Vis Research Lab](http://www.cs.bilkent.edu.tr/~ivis/) for terms of use of this software.
 
 ## Running a local instance
 
